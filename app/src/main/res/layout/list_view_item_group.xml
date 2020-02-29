@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/listViewItemBackground">
+
+    <TextView
+        android:id="@+id/speciality_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/specialty_label"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/speciality_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textStub"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/speciality_text"
+        android:layout_marginStart="13dp"/>
+
+    <TextView
+        android:id="@+id/course_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/course_label"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="35dp"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/course_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="35dp"
+        android:layout_toEndOf="@id/course_text"
+        android:text="@string/textStub"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/groupName_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/groupName_label"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/groupName_label"
+        android:layout_toEndOf="@id/groupName_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="60dp"
+        android:text="@string/textStub"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btn_lsvOptions"
+        android:layout_width="8dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/ic_path_153"
+        android:focusable="false"/>
+
+</RelativeLayout>

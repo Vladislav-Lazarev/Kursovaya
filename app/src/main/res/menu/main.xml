@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group
+        android:id="@+id/main_menu_group">
+        <item
+            android:id="@+id/action_datePicker"
+            android:orderInCategory="100"
+            android:title="@string/action_datePicker"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_importTemplates"
+            android:orderInCategory="100"
+            android:title="@string/action_importTemplates"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_checkRead"
+            android:orderInCategory="100"
+            android:title="@string/action_read"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_checkCanceled"
+            android:orderInCategory="100"
+            android:title="@string/action_canceled"
+            app:showAsAction="never" />
+    </group>
+</menu>
