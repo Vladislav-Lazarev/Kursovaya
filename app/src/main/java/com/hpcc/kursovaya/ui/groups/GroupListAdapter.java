@@ -46,7 +46,7 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
         Group group = new Group()
                 .setName(getItem(position).getName())
                 .setSpecialty(getItem(position).getSpecialty())
-                .setCourse(getItem(position).getCourse());
+                .setSemester(getItem(position).getSemester());
 
         final View result;
         ViewHolder holder;
@@ -57,12 +57,12 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
 
             holder = new ViewHolder();
 
-            holder.speciality = (TextView) convertView.findViewById(R.id.speciality_label);
-            holder.course = (TextView) convertView.findViewById(R.id.course_label);
-            holder.name = (TextView) convertView.findViewById(R.id.groupName_label);
+            holder.speciality = convertView.findViewById(R.id.speciality_label);
+            holder.course = convertView.findViewById(R.id.course_label);
+            holder.name = convertView.findViewById(R.id.groupName_label);
 
             //setting onclick action on button
-            final Button button = (Button) convertView.findViewById(R.id.btn_lsvOptions);
+            final Button button = convertView.findViewById(R.id.btn_lsvOptions);
 
             button.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View view){
@@ -159,7 +159,7 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
 
         holder.name.setText(group.getName());
         holder.speciality.setText(group.getSpecialty().getName());
-        holder.course.setText(String.valueOf(group.getCourse()));
+        holder.course.setText(String.valueOf(group.getSemester().getNumberCourse()));
 
         return convertView;
     }

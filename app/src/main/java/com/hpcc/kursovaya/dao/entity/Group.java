@@ -7,21 +7,21 @@ public class Group extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private String name;// Название(имя) группы
-    private int course;// Номер курса группы
+    private Semester semester;// Номер семестра группы
     private Specialty specialty;// Принадленость группы к специальности
 
     {
         id = 0;
         name = "";
-        course = 0;
+        semester = new Semester();
         specialty = new Specialty();
     }
     public Group() {
 
     }
-    public Group(String name, int course, Specialty specialty) {
+    public Group(String name, Semester semester, Specialty specialty) {
         setName(name);
-        setCourse(course);
+        setSemester(semester);
         setSpecialty(specialty);
     }
 
@@ -37,11 +37,11 @@ public class Group extends RealmObject {
         return this;
     }
 
-    public int getCourse() {
-        return course;
+    public Semester getSemester() {
+        return semester;
     }
-    public Group setCourse(int course) {
-        this.course = course;
+    public Group setSemester(Semester semester) {
+        this.semester = semester;
         return this;
     }
 
@@ -58,7 +58,7 @@ public class Group extends RealmObject {
         return "Group{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", course=" + course +
+                ", semester=" + semester +
                 ", specialty=" + specialty +
                 '}';
     }

@@ -38,7 +38,7 @@ public class Semester extends RealmObject {
     public Semester setNumber(int number) {
         try {
             if (ConstantEntity.MIN_COUNT_SEMESTER < number && number > ConstantEntity.MAX_COUNT_SEMESTER){
-                throw new Exception("Exception! semester()");
+                throw new Exception("Exception! setNumber()");
             }
             this.number = number;
         } catch (Exception ex) {
@@ -48,19 +48,19 @@ public class Semester extends RealmObject {
         return this;
     }
 
-    public int getCourse(){
+    public int getNumberCourse(){
         int result = number / ConstantEntity.TWO;
         if (result == 0 || number % ConstantEntity.TWO != 0){
             ++result;
         }
         return result;
     }
-    public Semester setCourse(int number){
+    public Semester setNumberCourse(int number){
         try {
             if (ConstantEntity.MIN_COUNT_COURSE < number && number > ConstantEntity.MAX_COUNT_COURSE){
-                throw new Exception("Exception! getCourse()");
+                throw new Exception("Exception! setNumberCourse()");
             }
-            this.number *= 2;
+            this.number = number * ConstantEntity.TWO;
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
