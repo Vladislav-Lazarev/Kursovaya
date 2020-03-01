@@ -17,6 +17,7 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         simpleDateFormat = new SimpleDateFormat(PatternFormat.DATE_FULL.text(), Locale.ENGLISH);
     }
 
+    // Дату выводит строкой по pattern
     public static String format(Date date, PatternFormat pattern) {
         simpleDateFormat.applyPattern(pattern.text());
         return simpleDateFormat.format(date);
@@ -26,21 +27,25 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         return simpleDateFormat.format(date.getTime());
     }
 
+    // Выводит аттрибуты по частям
     public static int get(Date date, PatternCalendar pattern) {
         calendar.setTime(date);
         return calendar.get(pattern.ordinal());
     }
 
+    // Проверка на высокосный год
     public static boolean isLeapYear(int year){
         calendar.set(year, Calendar.FEBRUARY, 1);
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH) == 29;
     }
 
+    // Выводит день недели(число)
     public static int getFistDayOfWeek(Date date) {
         calendar.setTime(date);
         return calendar.getFirstDayOfWeek();
     }
 
+    // Текущая дата
     public static DateTime currentDateTime() {
         DateTime dateTime = new DateTime();
         dateTime.date = Calendar.getInstance().getTime();
@@ -73,9 +78,11 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         setDate(calendar.getTime());
     }
 
+    // date в String
     public String getString() {
         return date.toString();
     }
+    // Принимает String по шаблону
     public DateTime setPattern(String date, PatternFormat pattern) {
         simpleDateFormat.applyPattern(pattern.text());
 
@@ -101,9 +108,11 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         return setPattern(date, PatternFormat.TIME_HM);
     }
 
+    // date в Date
     public Date getDate(){
         return date;
     }
+    // Принимает Date по шаблону
     public DateTime setPattern(Date date, PatternFormat pattern) {
         setPattern(format(date, pattern), pattern);
         return this;
@@ -121,10 +130,12 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         return setPattern(date, PatternFormat.TIME_HM);
     }
 
+    // date в Calendar
     public Calendar getCalendar(){
         calendar.setTime(date);
         return calendar;
     }
+    // Принимает Calendar по шаблону
     public DateTime setPattern(Calendar date, PatternFormat pattern) {
         setPattern(format(date, pattern), pattern);
         return this;
@@ -142,11 +153,13 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         return setPattern(date, PatternFormat.TIME_HM);
     }
 
+    // По pattern добавляет, отнимает значения в date
     public void add(PatternCalendar pattern, int amount) {
         calendar.setTime(date);
         calendar.add(pattern.ordinal(), amount);
     }
 
+    // Сравнение
     @Override
     public int compareTo(DateTime dateTime) {
         calendar.setTime(date);
@@ -156,6 +169,7 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
 
         return calendar.compareTo(calendarOther);
     }
+    // По pattern сравнивает dateTime
     public int compareTo(DateTime dateTime, PatternCalendar pattern) {
         calendar.setTime(date);
 
