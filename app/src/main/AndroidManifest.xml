@@ -3,7 +3,7 @@
     package="com.hpcc.kursovaya">
 
     <application
-
+        android:name=".dao.MyApplication"
 
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
