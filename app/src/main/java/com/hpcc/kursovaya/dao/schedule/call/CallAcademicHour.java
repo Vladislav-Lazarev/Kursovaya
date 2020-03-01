@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.schedule.call;
 
-import com.hpcc.kursovaya.dao.schedule.range.DateRange;
+import com.hpcc.kursovaya.dao.schedule.date_time.DateTime;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -8,27 +8,27 @@ import io.realm.annotations.PrimaryKey;
 public class CallAcademicHour extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
-    private DateRange dateRange;// Диапозон дат
+    private DateTime dateTime;// Диапозон дат
 
     {
-        dateRange = new DateRange();
+        dateTime = new DateTime();
     }
     public CallAcademicHour() {
 
     }
-    public CallAcademicHour(DateRange dateRange) {
-        setDateRange(dateRange);
+    public CallAcademicHour(DateTime dateTime) {
+        setDateTime(dateTime);
     }
 
     public int getId() {
         return id;
     }
 
-    public DateRange getDateRange() {
-        return dateRange;
+    public DateTime getDateTime() {
+        return dateTime;
     }
-    public CallAcademicHour setDateRange(DateRange dateRange) {
-        this.dateRange = dateRange;
+    public CallAcademicHour setDateTime(DateTime dateTimeRange) {
+        this.dateTime = dateTimeRange;
         return this;
     }
 
@@ -36,7 +36,7 @@ public class CallAcademicHour extends RealmObject {
     public String toString() {
         return "CallAcademicHour{" +
                 "id=" + id +
-                ", dateRange=" + dateRange +
+                ", dateTime=" + dateTime +
                 '}';
     }
 }

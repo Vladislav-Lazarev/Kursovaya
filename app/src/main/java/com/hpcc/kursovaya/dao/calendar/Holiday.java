@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.calendar;
 
-import java.util.Date;
+import com.hpcc.kursovaya.dao.schedule.date_time.DateTime;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -9,19 +9,19 @@ public class Holiday extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private String name;// Назани(имя) праздника
-    private Date date;// Дата проведения праздника
+    private DateTime dateTime;// Дата проведения праздника
 
     {
         id = 0;
         name = "";
-        date = new Date();
+        dateTime = new DateTime();
     }
     public Holiday() {
 
     }
-    public Holiday(Date date, String name) {
+    public Holiday(DateTime dateTime, String name) {
         setName(name);
-        setDate(date);
+        setDateTime(dateTime);
     }
 
     public int getId() {
@@ -36,11 +36,11 @@ public class Holiday extends RealmObject {
         return this;
     }
 
-    public Date getDate() {
-        return date;
+    public DateTime getDateTime() {
+        return dateTime;
     }
-    public Holiday setDate(Date date) {
-        this.date = date;
+    public Holiday setDateTime(DateTime dateTime) {
+        this.dateTime = dateTime;
         return this;
     }
 
@@ -49,7 +49,7 @@ public class Holiday extends RealmObject {
         return "Holiday{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", date=" + date +
+                ", dateTime=" + dateTime +
                 '}';
     }
 }

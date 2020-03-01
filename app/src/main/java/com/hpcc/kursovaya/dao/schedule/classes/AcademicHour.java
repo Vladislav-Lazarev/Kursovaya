@@ -2,8 +2,7 @@ package com.hpcc.kursovaya.dao.schedule.classes;
 
 import com.hpcc.kursovaya.dao.ConstantEntity;
 import com.hpcc.kursovaya.dao.schedule.classes.template.TemplateAcademicHour;
-
-import java.util.Date;
+import com.hpcc.kursovaya.dao.schedule.date_time.DateTime;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -12,21 +11,21 @@ public class AcademicHour extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private TemplateAcademicHour templateAcademicHour;// Шаблон полупары
-    private Date date;// Дата проведения
+    private DateTime dateTime;// Дата проведения
     private String note;// Заметка
 
     {
         id = 0;
         templateAcademicHour = new TemplateAcademicHour();
-        date = new Date(0);
+        dateTime = new DateTime();
         note = "";
     }
     public AcademicHour() {
 
     }
-    public AcademicHour(TemplateAcademicHour templateAcademicHour, Date date, String note) {
+    public AcademicHour(TemplateAcademicHour templateAcademicHour, DateTime dateTime, String note) {
         setTemplateAcademicHour(templateAcademicHour);
-        setDate(date);
+        setDateTime(dateTime);
         setNote(note);
     }
 
@@ -38,15 +37,15 @@ public class AcademicHour extends RealmObject {
         return this;
     }
 
-    public Date getDate() {
-        return date;
+    public DateTime getDate() {
+        return dateTime;
     }
-    public AcademicHour setDate(Date date) {
+    public AcademicHour setDateTime(DateTime dateTime) {
         try {
-            if (date.compareTo(new Date(0)) < ConstantEntity.ONE) {
-                throw new Exception("Exception! setDate()");
+            if (dateTime.compareTo(new DateTime()) < ConstantEntity.ONE) {
+                throw new Exception("Exception! setDateTime()");
             }
-            this.date = date;
+            this.dateTime = dateTime;
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
@@ -67,7 +66,7 @@ public class AcademicHour extends RealmObject {
         return "AcademicHour{" +
                 "id=" + id +
                 ", templateAcademicHour=" + templateAcademicHour +
-                ", date=" + date +
+                ", dateTime=" + dateTime +
                 ", note='" + note + '\'' +
                 '}';
     }

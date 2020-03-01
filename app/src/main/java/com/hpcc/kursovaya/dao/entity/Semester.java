@@ -10,21 +10,21 @@ public class Semester extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private int number;// Номер семестра
-    private RealmList<Discipline> disciplineList;// Список дисциплин проходящие в этом семестре
+    private RealmList<Subject> subjectList;// Список дисциплин проходящие в этом семестре
     private RealmList<Group> groupList;// Список групп проходящие(учащие) в этом семестре
 
     {
         id = 0;
         number = 0;
-        disciplineList = new RealmList<>();
+        subjectList = new RealmList<>();
         groupList = new RealmList<>();
     }
     public Semester() {
 
     }
-    public Semester(int number, RealmList<Discipline> disciplineList, RealmList<Group> groupList) {
+    public Semester(int number, RealmList<Subject> subjectList, RealmList<Group> groupList) {
         setNumber(number);
-        setDisciplineList(disciplineList);
+        setSubjectList(subjectList);
         setGroupList(groupList);
     }
 
@@ -68,15 +68,15 @@ public class Semester extends RealmObject {
         return this;
     }
 
-    public RealmList<Discipline> getDisciplineList() {
-        return disciplineList;
+    public RealmList<Subject> getSubjectList() {
+        return subjectList;
     }
-    public Semester setDisciplineList(RealmList<Discipline> disciplineList) {
+    public Semester setSubjectList(RealmList<Subject> subjectList) {
         try {
-            if (disciplineList.size() < ConstantEntity.ONE) {
+            if (subjectList.size() < ConstantEntity.ONE) {
                 throw new Exception("Exception! setDisciplineList()");
             }
-            this.disciplineList = disciplineList;
+            this.subjectList = subjectList;
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
@@ -105,7 +105,7 @@ public class Semester extends RealmObject {
         return "Semester{" +
                 "id=" + id +
                 ", number=" + number +
-                ", disciplineList=" + disciplineList +
+                ", disciplineList=" + subjectList +
                 ", groupList=" + groupList +
                 '}';
     }
