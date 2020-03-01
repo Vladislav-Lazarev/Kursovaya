@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         toolbar1 = findViewById(R.id.toolbarEdit);
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         if(fragment!=null){
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
-            drawer.openDrawer(Gravity.LEFT);
+            drawer.openDrawer(GravityCompat.START);
         }
     }
 
@@ -343,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private String monthNumberToString(int monthNumber) {
-        String monthStr = new String();
+        String monthStr;
         Resources res = getResources();
         switch (monthNumber) {
             case 1:
