@@ -14,8 +14,15 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.Discipline;
+import com.hpcc.kursovaya.dao.entity.Semester;
+import com.hpcc.kursovaya.dao.entity.Specialty;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmList;
 
 public class SubjectsFragment extends Fragment {
     boolean isCreatedAlready = false;
@@ -37,11 +44,18 @@ public class SubjectsFragment extends Fragment {
             });
 
 
-            SubjectEntity clarnet = new SubjectEntity("РПЗ", 4, "Уроки гри на кларнеті");
-            SubjectEntity web = new SubjectEntity("РПЗ", 4, "В гостях у Гордон");
-            SubjectEntity metro = new SubjectEntity("РПЗ", 4, "Метро");
+            Specialty specialtyRPZ = new Specialty("РПЗ", 8);
 
-            ArrayList<SubjectEntity> subjects = new ArrayList<>();
+            Discipline clarnet = new Discipline( "Уроки гри на кларнеті", 92, specialtyRPZ,
+                    new RealmList<Semester>(new Semester(7, null, null)), 0);
+
+            Discipline web = new Discipline( "В гостях у Гордон", 78, specialtyRPZ,
+                    new RealmList<Semester>(new Semester(7, null, null)), 0);
+
+            Discipline metro = new Discipline( "Метро", 97, specialtyRPZ,
+                    new RealmList<Semester>(new Semester(7, null, null)), 0);
+
+            List<Discipline> subjects = new ArrayList<>();
             subjects.add(clarnet);
             subjects.add(web);
             subjects.add(metro);
