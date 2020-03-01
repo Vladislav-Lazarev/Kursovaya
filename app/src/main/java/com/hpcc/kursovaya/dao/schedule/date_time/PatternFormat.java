@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.schedule.date_time;
 
-public enum PatternFormat {
+public enum  PatternFormat {
     DATE_DMY("dd-MM-yyyy"), // Дата с представлением день-месяц-год
     DATE_YMD("yyyy-MM-dd"), // Дата с представлением год-месяц-день
     TIME_HM("HH:mm"), // Время с представлением час:минута

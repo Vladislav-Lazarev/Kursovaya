@@ -33,6 +33,12 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         return calendar.get(pattern.ordinal());
     }
 
+    // По pattern добавляет, отнимает значения в date
+    public static void add(Date date, PatternCalendar pattern, int amount) {
+        calendar.setTime(date);
+        calendar.add(pattern.ordinal(), amount);
+    }
+
     // Проверка на высокосный год
     public static boolean isLeapYear(int year){
         calendar.set(year, Calendar.FEBRUARY, 1);
@@ -153,10 +159,19 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         return setPattern(date, PatternFormat.TIME_HM);
     }
 
+    // Дату выводит строкой по pattern
+    public String format(PatternFormat pattern) {
+        return format(date, pattern);
+    }
+
+    // Выводит аттрибуты по частям
+    public int get(PatternCalendar pattern) {
+        return get(date, pattern);
+    }
+
     // По pattern добавляет, отнимает значения в date
     public void add(PatternCalendar pattern, int amount) {
-        calendar.setTime(date);
-        calendar.add(pattern.ordinal(), amount);
+        add(date, pattern,amount);
     }
 
     // Сравнение
@@ -185,4 +200,6 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
                 "date=" + date +
                 '}';
     }
+
+
 }
