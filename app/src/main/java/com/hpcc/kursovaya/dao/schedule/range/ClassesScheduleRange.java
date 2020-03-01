@@ -1,5 +1,5 @@
 package com.hpcc.kursovaya.dao.schedule.range;
 
-public class ClassesScheduleRange extends ClassesSchedule {
+public class ClassesScheduleRange {
     // TODO ClassesScheduleRange
 }

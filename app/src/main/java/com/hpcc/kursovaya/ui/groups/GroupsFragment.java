@@ -41,7 +41,7 @@ public class GroupsFragment extends Fragment {
             });
 
             //creating elements for listview
-            Group P61 = new Group("П-61", new Semester().setNumberCourse(4), new Specialty("РПЗ", 8));
+            Group P61 = new Group("П-61", new Semester().setNumber(3), new Specialty("РПЗ", 8));
             Group P62 = new Group("П-611111", new Semester().setNumber(5), new Specialty("Йцу", 8));
             Group P63 = new Group("П-612222", new Semester().setNumberCourse(1), new Specialty("Пасв", 8));
 

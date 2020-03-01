@@ -43,10 +43,7 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
-        Group group = new Group()
-                .setName(getItem(position).getName())
-                .setSpecialty(getItem(position).getSpecialty())
-                .setSemester(getItem(position).getSemester());
+        Group group = new Group(getItem(position).getName(), getItem(position).getSemester(), getItem(position).getSpecialty());
 
         final View result;
         ViewHolder holder;

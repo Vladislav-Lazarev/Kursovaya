@@ -4,12 +4,12 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Discipline extends RealmObject {
+public class Subject extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private String name;// Название дисциплины
     private int countHours;// Нагрузка - количество часов на дисциплину
-    private Specialty specialty;// Отношение к специальности
+    private RealmList<Specialty> specialtyList;// к специальности
     private RealmList<Semester> semesterList;// В каких семестрах проводится
     private int color;// Цвет дисциплины
 
@@ -17,17 +17,17 @@ public class Discipline extends RealmObject {
         id = 0;
         name = "";
         countHours = 0;
-        specialty = new Specialty();
+        specialtyList = new RealmList<>();
         semesterList = new RealmList<>();
         color = 0;
     }
-    public Discipline() {
+    public Subject() {
 
     }
-    public Discipline(String name, int countHours, Specialty specialty, RealmList<Semester> semesterList, int color) {
+    public Subject(String name, int countHours, RealmList<Specialty> specialtyList, RealmList<Semester> semesterList, int color) {
         setName(name);
         setCountHours(countHours);
-        setSpecialty(specialty);
+        setSpecialtyList(specialtyList);
         setSemesterList(semesterList);
         setColor(color);
     }
@@ -39,23 +39,23 @@ public class Discipline extends RealmObject {
     public String getName() {
         return name;
     }
-    public Discipline setName(String name) {
+    public Subject setName(String name) {
         this.name = name;
         return this;
     }
 
-    public Specialty getSpecialty() {
-        return specialty;
+    public RealmList<Specialty> getSpecialtyList() {
+        return specialtyList;
     }
-    public Discipline setSpecialty(Specialty specialty) {
-        this.specialty = specialty;
+    public Subject setSpecialtyList(RealmList<Specialty> specialtyList) {
+        this.specialtyList = specialtyList;
         return this;
     }
 
     public int getCountHours() {
         return countHours;
     }
-    public Discipline setCountHours(int countHours) {
+    public Subject setCountHours(int countHours) {
         this.countHours = countHours;
         return this;
     }
@@ -63,7 +63,7 @@ public class Discipline extends RealmObject {
     public RealmList<Semester> getSemesterList() {
         return semesterList;
     }
-    public Discipline setSemesterList(RealmList<Semester> semesters) {
+    public Subject setSemesterList(RealmList<Semester> semesters) {
         try {
             if (semesters.size() < 1) {
                 throw new Exception("Exception! setSemesterList()");
@@ -80,7 +80,7 @@ public class Discipline extends RealmObject {
     public int getColor() {
         return color;
     }
-    public Discipline setColor(int color) {
+    public Subject setColor(int color) {
         this.color = color;
         return this;
     }
@@ -91,7 +91,7 @@ public class Discipline extends RealmObject {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", countHours=" + countHours +
-                ", specialty=" + specialty +
+                ", specialty=" + specialtyList +
                 ", semesterList=" + semesterList +
                 ", color=" + color +
                 '}';
