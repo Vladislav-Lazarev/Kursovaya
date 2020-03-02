@@ -1,5 +1,8 @@
 package com.hpcc.kursovaya.dao.schedule.date_time;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -9,21 +12,31 @@ import java.util.Locale;
 import io.realm.RealmObject;
 
 public class DateTime extends RealmObject implements Comparable<DateTime> {
+    private static org.joda.time.DateTime dateTime;// Для манипулирования с классом Date
+    private static org.joda.time.DateTimeField dateTimeField;// Для манипулирования с классом Date
+    private static DateTimeFormatter dateTimeFormatter;// Для форматирования с классом Date
+    private static org.joda.time.DateTime.Property property;
+
     private static Calendar calendar;// Для манипулирования с классом Date
     private static SimpleDateFormat simpleDateFormat;// Для форматирования с классом Date
 
     static {
+        dateTime = org.joda.time.DateTime.now();
+        dateTimeField.add(1, 3);
+        dateTimeFormatter = DateTimeFormat.forPattern(PatternFormat.DATE_TIME.formatText());
+        property.
+
         calendar = Calendar.getInstance();
-        simpleDateFormat = new SimpleDateFormat(PatternFormat.DATE_FULL.text(), Locale.ENGLISH);
+        simpleDateFormat = new SimpleDateFormat(PatternFormat.DATE_FULL.formatText(), Locale.ENGLISH);
     }
 
     // Дату выводит строкой по pattern
     public static String format(Date date, PatternFormat pattern) {
-        simpleDateFormat.applyPattern(pattern.text());
+        simpleDateFormat.applyPattern(pattern.formatText());
         return simpleDateFormat.format(date);
     }
     public static String format(Calendar date, PatternFormat pattern) {
-        simpleDateFormat.applyPattern(pattern.text());
+        simpleDateFormat.applyPattern(pattern.formatText());
         return simpleDateFormat.format(date.getTime());
     }
 
@@ -90,7 +103,7 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
     }
     // Принимает String по шаблону
     public DateTime setPattern(String date, PatternFormat pattern) {
-        simpleDateFormat.applyPattern(pattern.text());
+        simpleDateFormat.applyPattern(pattern.formatText());
 
         try {
             this.date = simpleDateFormat.parse(date);

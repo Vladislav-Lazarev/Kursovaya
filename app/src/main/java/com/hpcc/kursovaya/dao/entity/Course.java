@@ -6,7 +6,8 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Semester extends RealmObject {
+public class Course extends RealmObject {
+    // TODO Course
     @PrimaryKey
     private int id;// Индентификатор
     private int number;// Номер семестра
@@ -20,10 +21,10 @@ public class Semester extends RealmObject {
         subjectList = new RealmList<>();
         groupList = new RealmList<>();
     }
-    public Semester() {
+    public Course() {
 
     }
-    public Semester(int number, RealmList<Subject> subjectList, RealmList<Group> groupList) {
+    public Course(int number, RealmList<Subject> subjectList, RealmList<Group> groupList) {
         setNumber(number);
         setSubjectList(subjectList);
         setGroupList(groupList);
@@ -36,9 +37,9 @@ public class Semester extends RealmObject {
     public int getNumber() {
         return number;
     }
-    public Semester setNumber(int number) {
+    public Course setNumber(int number) {
         try {
-            if (ConstantEntity.MIN_COUNT_SEMESTER < number && number > ConstantEntity.MAX_COUNT_SEMESTER){
+            if (ConstantEntity.MIN_COUNT_COURSE < number && number > ConstantEntity.MAX_COUNT_COURSE){
                 throw new Exception("Exception! setNumber()");
             }
             this.number = number;
@@ -49,14 +50,14 @@ public class Semester extends RealmObject {
         return this;
     }
 
-    public int getNumberCourse(){
+    /*public int getNumberCourse(){
         int result = number / ConstantEntity.TWO;
         if (result == 0 || number % ConstantEntity.TWO != 0){
             ++result;
         }
         return result;
     }
-    public Semester setNumberCourse(int number){
+    public Course setNumberCourse(int number){
         try {
             if (ConstantEntity.MIN_COUNT_COURSE < number && number > ConstantEntity.MAX_COUNT_COURSE){
                 throw new Exception("Exception! setNumberCourse()");
@@ -67,12 +68,12 @@ public class Semester extends RealmObject {
             ex.printStackTrace();
         }
         return this;
-    }
+    }*/
 
     public RealmList<Subject> getSubjectList() {
         return subjectList;
     }
-    public Semester setSubjectList(RealmList<Subject> subjectList) {
+    public Course setSubjectList(RealmList<Subject> subjectList) {
         try {
             if (subjectList.size() < ConstantEntity.ONE) {
                 throw new Exception("Exception! setDisciplineList()");
@@ -88,7 +89,7 @@ public class Semester extends RealmObject {
     public RealmList<Group> getGroupList() {
         return groupList;
     }
-    public Semester setGroupList(RealmList<Group> groupList) {
+    public Course setGroupList(RealmList<Group> groupList) {
         try {
             if (groupList.size() < ConstantEntity.ONE) {
                 throw new Exception("Exception! course()");

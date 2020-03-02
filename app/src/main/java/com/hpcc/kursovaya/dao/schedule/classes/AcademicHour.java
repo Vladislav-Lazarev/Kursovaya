@@ -13,20 +13,26 @@ public class AcademicHour extends RealmObject {
     private TemplateAcademicHour templateAcademicHour;// Шаблон полупары
     private DateTime dateTime;// Дата проведения
     private String note;// Заметка
+    private boolean isCompleted;// Проведенная или не проведенная полупара
+    private boolean isCanceled;// Отмененная или не проведенная полупара
 
     {
         id = 0;
         templateAcademicHour = new TemplateAcademicHour();
         dateTime = new DateTime();
         note = "";
+        isCompleted = false;
+        isCanceled = false;
     }
     public AcademicHour() {
 
     }
-    public AcademicHour(TemplateAcademicHour templateAcademicHour, DateTime dateTime, String note) {
+    public AcademicHour(TemplateAcademicHour templateAcademicHour, DateTime dateTime, String note, boolean isCompleted, boolean isCanceled) {
         setTemplateAcademicHour(templateAcademicHour);
         setDateTime(dateTime);
         setNote(note);
+        setCompleted(isCompleted);
+        setCanceled(isCanceled);
     }
 
     public TemplateAcademicHour getTemplateAcademicHour() {
@@ -61,6 +67,20 @@ public class AcademicHour extends RealmObject {
         return this;
     }
 
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
+    }
+
+    public boolean isCanceled() {
+        return isCanceled;
+    }
+    public void setCanceled(boolean canceled) {
+        isCanceled = canceled;
+    }
+
     @Override
     public String toString() {
         return "AcademicHour{" +
@@ -68,6 +88,8 @@ public class AcademicHour extends RealmObject {
                 ", templateAcademicHour=" + templateAcademicHour +
                 ", dateTime=" + dateTime +
                 ", note='" + note + '\'' +
+                ", isCompleted=" + isCompleted +
+                ", isCanceled=" + isCanceled +
                 '}';
     }
 }

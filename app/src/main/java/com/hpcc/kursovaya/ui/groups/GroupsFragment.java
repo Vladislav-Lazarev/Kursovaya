@@ -13,8 +13,8 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.Course;
 import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.Semester;
 import com.hpcc.kursovaya.dao.entity.Specialty;
 
 import java.util.ArrayList;
@@ -41,9 +41,9 @@ public class GroupsFragment extends Fragment {
             });
 
             //creating elements for listview
-            Group P61 = new Group("П-61", new Semester().setNumber(3), new Specialty("РПЗ", 8));
-            Group P62 = new Group("П-611111", new Semester().setNumber(5), new Specialty("Йцу", 8));
-            Group P63 = new Group("П-612222", new Semester().setNumberCourse(1), new Specialty("Пасв", 8));
+            Group P61 = new Group("П-61", new Course().setNumber(3), new Specialty("РПЗ", 8));
+            Group P62 = new Group("П-611111", new Course().setNumber(5), new Specialty("Йцу", 8));
+            Group P63 = new Group("П-612222", new Course().setNumberCourse(1), new Specialty("Пасв", 8));
 
             List<Group> groupList = new ArrayList<>();
             groupList.add(P61);

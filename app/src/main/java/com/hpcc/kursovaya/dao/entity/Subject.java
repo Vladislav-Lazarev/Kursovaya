@@ -10,7 +10,7 @@ public class Subject extends RealmObject {
     private String name;// Название дисциплины
     private int countHours;// Нагрузка - количество часов на дисциплину
     private RealmList<Specialty> specialtyList;// к специальности
-    private RealmList<Semester> semesterList;// В каких семестрах проводится
+    private RealmList<Course> courseList;// В каких семестрах проводится
     private int color;// Цвет дисциплины
 
     {
@@ -18,17 +18,17 @@ public class Subject extends RealmObject {
         name = "";
         countHours = 0;
         specialtyList = new RealmList<>();
-        semesterList = new RealmList<>();
+        courseList = new RealmList<>();
         color = 0;
     }
     public Subject() {
 
     }
-    public Subject(String name, int countHours, RealmList<Specialty> specialtyList, RealmList<Semester> semesterList, int color) {
+    public Subject(String name, int countHours, RealmList<Specialty> specialtyList, RealmList<Course> courseList, int color) {
         setName(name);
         setCountHours(countHours);
         setSpecialtyList(specialtyList);
-        setSemesterList(semesterList);
+        setCourseList(courseList);
         setColor(color);
     }
 
@@ -60,15 +60,15 @@ public class Subject extends RealmObject {
         return this;
     }
 
-    public RealmList<Semester> getSemesterList() {
-        return semesterList;
+    public RealmList<Course> getCourseList() {
+        return courseList;
     }
-    public Subject setSemesterList(RealmList<Semester> semesters) {
+    public Subject setCourseList(RealmList<Course> courses) {
         try {
-            if (semesters.size() < 1) {
+            if (courses.size() < 1) {
                 throw new Exception("Exception! setSemesterList()");
             }
-            this.semesterList = semesters;
+            this.courseList = courses;
         }
         catch (Exception ex){
             System.out.println(ex.getMessage());
@@ -92,7 +92,7 @@ public class Subject extends RealmObject {
                 ", name='" + name + '\'' +
                 ", countHours=" + countHours +
                 ", specialty=" + specialtyList +
-                ", semesterList=" + semesterList +
+                ", semesterList=" + courseList +
                 ", color=" + color +
                 '}';
     }
