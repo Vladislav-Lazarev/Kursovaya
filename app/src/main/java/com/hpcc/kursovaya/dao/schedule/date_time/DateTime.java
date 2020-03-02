@@ -24,7 +24,6 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         dateTime = org.joda.time.DateTime.now();
         dateTimeField.add(1, 3);
         dateTimeFormatter = DateTimeFormat.forPattern(PatternFormat.DATE_TIME.formatText());
-        property.
 
         calendar = Calendar.getInstance();
         simpleDateFormat = new SimpleDateFormat(PatternFormat.DATE_FULL.formatText(), Locale.ENGLISH);

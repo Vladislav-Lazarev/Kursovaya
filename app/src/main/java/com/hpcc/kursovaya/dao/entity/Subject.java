@@ -10,7 +10,8 @@ public class Subject extends RealmObject {
     private String name;// Название дисциплины
     private int countHours;// Нагрузка - количество часов на дисциплину
     private RealmList<Specialty> specialtyList;// к специальности
-    private RealmList<Course> courseList;// В каких семестрах проводится
+    private Course course;// Гомер курса
+    private RealmList<Subject> subjectList;// Список дисциплин
     private int color;// Цвет дисциплины
 
     {
@@ -18,17 +19,17 @@ public class Subject extends RealmObject {
         name = "";
         countHours = 0;
         specialtyList = new RealmList<>();
-        courseList = new RealmList<>();
+        course = new Course();
         color = 0;
     }
     public Subject() {
 
     }
-    public Subject(String name, int countHours, RealmList<Specialty> specialtyList, RealmList<Course> courseList, int color) {
+    public Subject(String name, int countHours, RealmList<Specialty> specialtyList, Course course, int color) {
         setName(name);
         setCountHours(countHours);
         setSpecialtyList(specialtyList);
-        setCourseList(courseList);
+        setCourse(course);
         setColor(color);
     }
 
@@ -60,15 +61,12 @@ public class Subject extends RealmObject {
         return this;
     }
 
-    public RealmList<Course> getCourseList() {
-        return courseList;
+    public Course getCourse() {
+        return course;
     }
-    public Subject setCourseList(RealmList<Course> courses) {
+    public Subject setCourse(Course course) {
         try {
-            if (courses.size() < 1) {
-                throw new Exception("Exception! setSemesterList()");
-            }
-            this.courseList = courses;
+            // TODO setCourse
         }
         catch (Exception ex){
             System.out.println(ex.getMessage());
@@ -87,12 +85,13 @@ public class Subject extends RealmObject {
 
     @Override
     public String toString() {
-        return "Discipline{" +
+        return "Subject{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", countHours=" + countHours +
-                ", specialty=" + specialtyList +
-                ", semesterList=" + courseList +
+                ", specialtyList=" + specialtyList +
+                ", course=" + course +
+                ", subjectList=" + subjectList +
                 ", color=" + color +
                 '}';
     }
