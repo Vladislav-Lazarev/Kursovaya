@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.groups.AddGroupActivity"
+    tools:showIn="@layout/activity_add_group">
+
+    <TextView
+        android:id="@+id/addSpecialityLabel"
+        android:text="@string/specialty_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:layout_marginStart="15dp"/>
+
+    <TextView
+        android:id="@+id/addCourseLabel"
+        android:text="@string/course_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/addSpecialityLabel"/>
+
+    <TextView
+        android:id="@+id/addGroupNameLabel"
+        android:text="@string/groupName_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/addCourseLabel"/>
+
+    <Spinner
+        android:id="@+id/spinnerSpeciality"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/addSpecialityLabel"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="23dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerCourse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerSpeciality"
+        android:layout_marginStart="71dp"
+        android:layout_marginTop="23dp"
+        android:layout_toEndOf="@id/addCourseLabel" />
+
+    <EditText
+        android:id="@+id/editTextGroupName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerCourse"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="16dp"
+        android:layout_toEndOf="@id/addCourseLabel"
+        android:hint="@string/groupName_hint"
+        android:inputType="text"
+        android:textSize="16sp" />
+
+
+</RelativeLayout>

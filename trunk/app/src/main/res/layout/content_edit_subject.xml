@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.subjects.EditSubjectActivity"
+    tools:showIn="@layout/activity_edit_subject">
+
+    <TextView
+        android:id="@+id/editSpecialityLabel"
+        android:text="@string/specialty_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:layout_marginStart="15dp"/>
+
+    <TextView
+        android:id="@+id/editCourseLabel"
+        android:text="@string/course_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/editSpecialityLabel"/>
+
+    <TextView
+        android:id="@+id/editSubjectNameLabel"
+        android:text="@string/groupName_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/editCourseLabel"/>
+
+
+    <Spinner
+        android:id="@+id/spinnerSpeciality"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/editSpecialityLabel"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="23dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerCourse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerSpeciality"
+        android:layout_marginStart="71dp"
+        android:layout_marginTop="23dp"
+        android:layout_toEndOf="@id/editCourseLabel" />
+
+    <EditText
+        android:id="@+id/editTextSubjectName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerCourse"
+        android:layout_marginStart="71dp"
+        android:layout_marginTop="15dp"
+        android:layout_toEndOf="@id/editCourseLabel"
+        android:hint="@string/groupName_hint"
+        android:inputType="text"
+        android:textSize="16sp" />
+    <TextView
+        android:id="@+id/editColorLabel"
+        android:text="@string/color_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/editSubjectNameLabel"/>
+
+    <Button
+        android:id="@+id/pickColorBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/editTextSubjectName"
+        android:layout_toEndOf="@id/editColorLabel"
+        android:layout_marginStart="65dp"
+        android:background="@drawable/round_button"/>
+
+</RelativeLayout>

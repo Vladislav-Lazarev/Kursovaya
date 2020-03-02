@@ -1,0 +1,81 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.groups.AddGroupActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppActionBarTheme">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.AppActionBarTheme">
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/appDefaultBlack"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/create_template"
+                android:layout_width="16.78dp"
+                android:layout_height="12.58dp"
+                android:layout_gravity="right"
+                android:background="@drawable/ic_path_161"/>
+        </androidx.appcompat.widget.Toolbar>
+
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarEdit"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.AppActionBarTheme">
+
+            <Button
+                android:id="@+id/turnOff_editing"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="left"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/ic_clear_24px" />
+
+
+            <Button
+                android:id="@+id/completed_classes"
+                android:layout_width="24dp"
+                android:visibility="gone"
+                android:layout_height="24dp"
+                android:layout_gravity="right"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/ic_check_circle_24px" />
+
+            <Button
+                android:id="@+id/cutted_classes"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:visibility="gone"
+                android:layout_gravity="right"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/ic_cancel_24px" />
+
+            <Button
+                android:id="@+id/delete_classes"
+                android:layout_width="12dp"
+                android:layout_height="15.5dp"
+                android:layout_gravity="right"
+                android:background="@drawable/ic_delete_icon" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/content_add_template" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
