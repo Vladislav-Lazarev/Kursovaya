@@ -6,7 +6,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class DateTime implements Comparable<DateTime> {
+import io.realm.RealmObject;
+
+public class DateTime extends RealmObject implements Comparable<DateTime> {
     private static Calendar calendar;// Для манипулирования с классом Date
     private static SimpleDateFormat simpleDateFormat;// Для форматирования с классом Date
 

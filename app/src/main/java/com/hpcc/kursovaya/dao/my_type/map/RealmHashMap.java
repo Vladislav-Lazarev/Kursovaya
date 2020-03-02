@@ -10,17 +10,17 @@ import java.util.Map;
 import java.util.Set;
 
 import io.realm.RealmList;
-import io.realm.RealmObject;
+import io.realm.RealmModel;
 import io.realm.annotations.Ignore;
 
-public class RealmHashMap<K extends RealmObject, V extends RealmObject> extends RealmObject implements Map<K, V>, Cloneable, Serializable {
-    //private static final long serialVersionUID = 362498820763181265L;
+public class RealmHashMap<K , V> implements RealmModel, Map<K, V>, Cloneable, Serializable {
+    private static final long serialVersionUID = 362498820763181265L;
 
     @Ignore
     private HashMap<K,V> hashMap;
 
     private RealmList<K> key;
-    private RealmList<RealmList<V>> value;
+    private RealmList<V> value;
 
     {
         key = new RealmList<>();
@@ -68,21 +68,21 @@ public class RealmHashMap<K extends RealmObject, V extends RealmObject> extends 
     @Nullable
     @Override
     public V put(K key, V value) {
-        Object keyObj = key;
-        Object valueObj = value;
-
-        this.key.add(key);
-        RealmList<V> tempList = new RealmList<>();
-        tempList.add(value);
-        this.value.add(tempList);
-
-
+        if (!containsKey(key)){
+            this.key.add(key);
+            this.value.add(value);
+        } else {
+            int index = this.key.indexOf(key);
+            this.value.set(index, value);
+        }
         return hashMap.put(key, value);
     }
 
     @Nullable
     @Override
     public V remove(@Nullable Object key) {
+        int index = this.key.indexOf(key);
+        this.value.remove(index);
         return hashMap.remove(key);
     }
 
@@ -110,7 +110,7 @@ public class RealmHashMap<K extends RealmObject, V extends RealmObject> extends 
 
     @NonNull
     @Override
-    public Set<Entry<K, V>> entrySet() {
+    public Set<Map.Entry<K, V>> entrySet() {
         return hashMap.entrySet();
     }
 
