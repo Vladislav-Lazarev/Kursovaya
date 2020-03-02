@@ -159,7 +159,7 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
 
         holder.name.setText(group.getName());
         holder.speciality.setText(group.getSpecialty().getName());
-        holder.course.setText(String.valueOf(group.getCourse()));
+        holder.course.setText(String.valueOf(group.getCourse().getNumber()));
 
         return convertView;
     }

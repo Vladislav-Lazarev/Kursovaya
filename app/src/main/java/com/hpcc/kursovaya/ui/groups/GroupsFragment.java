@@ -42,7 +42,7 @@ public class GroupsFragment extends Fragment {
 
             //creating elements for listview
             Group P61 = new Group("П-61", new Course().setNumber(3), new Specialty("РПЗ", 8));
-            Group P62 = new Group("П-611111", new Course().setNumber(5), new Specialty("Йцу", 8));
+            Group P62 = new Group("П-611111", new Course().setNumber(2), new Specialty("Йцу", 8));
             Group P63 = new Group("П-612222", new Course().setNumber(1), new Specialty("Пасв", 8));
 
             List<Group> groupList = new ArrayList<>();

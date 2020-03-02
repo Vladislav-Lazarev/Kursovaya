@@ -13,7 +13,7 @@ import io.realm.RealmList;
 import io.realm.RealmModel;
 import io.realm.annotations.Ignore;
 
-public class RealmHashMap<K , V> implements RealmModel, Map<K, V>, Cloneable, Serializable {
+public class RealmHashMap<K, V> implements RealmModel, Map<K, V>, Cloneable, Serializable {
     private static final long serialVersionUID = 362498820763181265L;
 
     @Ignore
