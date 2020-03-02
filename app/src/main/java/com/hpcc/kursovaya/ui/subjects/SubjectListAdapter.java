@@ -144,6 +144,7 @@ public class SubjectListAdapter extends ArrayAdapter<Discipline> {
         holder.course.setText(discipline.getCourseList().first().getNumber());
         return convertView;
     }
+    //
 
 
 
