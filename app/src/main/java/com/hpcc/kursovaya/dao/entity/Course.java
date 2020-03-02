@@ -10,7 +10,7 @@ public class Course extends RealmObject {
     // TODO Course
     @PrimaryKey
     private int id;// Индентификатор
-    private int number;// Номер семестра
+    private int number;// Номер курса
     // TODO должно быть так Map<List<Subject>, List<Group>>
     private RealmList<Subject> subjectList;// Список дисциплин проходящие в этом семестре
     private RealmList<Group> groupList;// Список групп проходящие(учащие) в этом семестре

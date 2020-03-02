@@ -10,7 +10,7 @@ public class Discipline extends RealmObject {
     private String name;// Название дисциплины
     private int countHours;// Нагрузка - количество часов на дисциплину
     private Specialty specialty;// Отношение к специальности
-    private RealmList<Semester> semesterList;// В каких семестрах проводится
+    private RealmList<Course> courseList;// В каких семестрах проводится
     private int color;// Цвет дисциплины
 
     {
@@ -18,17 +18,17 @@ public class Discipline extends RealmObject {
         name = "";
         countHours = 0;
         specialty = new Specialty();
-        semesterList = new RealmList<>();
+        courseList = new RealmList<>();
         color = 0;
     }
     public Discipline() {
 
     }
-    public Discipline(String name, int countHours, Specialty specialty, RealmList<Semester> semesterList, int color) {
+    public Discipline(String name, int countHours, Specialty specialty, RealmList<Course>  courseList, int color) {
         setName(name);
         setCountHours(countHours);
         setSpecialty(specialty);
-        setSemesterList(semesterList);
+        setCourseList(courseList);
         setColor(color);
     }
 
@@ -60,15 +60,15 @@ public class Discipline extends RealmObject {
         return this;
     }
 
-    public RealmList<Semester> getSemesterList() {
-        return semesterList;
+    public RealmList<Course> getCourseList() {
+        return courseList;
     }
-    public Discipline setSemesterList(RealmList<Semester> semesters) {
+    public Discipline setCourseList(RealmList<Course> courses) {
         try {
-            if (semesters.size() < 1) {
+            if (courses.size() < 1) {
                 throw new Exception("Exception! setSemesterList()");
             }
-            this.semesterList = semesters;
+            this.courseList = courses;
         }
         catch (Exception ex){
             System.out.println(ex.getMessage());
@@ -92,7 +92,7 @@ public class Discipline extends RealmObject {
                 ", name='" + name + '\'' +
                 ", countHours=" + countHours +
                 ", specialty=" + specialty +
-                ", semesterList=" + semesterList +
+                ", semesterList=" + courseList +
                 ", color=" + color +
                 '}';
     }

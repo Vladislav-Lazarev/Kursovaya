@@ -40,7 +40,7 @@ public class SubjectListAdapter extends ArrayAdapter<Discipline> {
                 getItem(position).getName(),
                 getItem(position).getCountHours(),
                 getItem(position).getSpecialty(),
-                getItem(position).getSemesterList(),
+                getItem(position).getCourseList(),
                 getItem(position).getColor());
 
 
@@ -55,7 +55,7 @@ public class SubjectListAdapter extends ArrayAdapter<Discipline> {
             holder = new ViewHolder();
 
             holder.speciality = (TextView) convertView.findViewById(R.id.speciality_label);
-            holder.semester = (TextView) convertView.findViewById(R.id.course_label); // Поменять на semester_label
+            holder.course = (TextView) convertView.findViewById(R.id.course_label);
             holder.name = (TextView) convertView.findViewById(R.id.subjectName_label);
 
             //setting onclick action on button
@@ -141,7 +141,7 @@ public class SubjectListAdapter extends ArrayAdapter<Discipline> {
 
         holder.name.setText(discipline.getName());
         holder.speciality.setText(discipline.getSpecialty().getName());
-        holder.semester.setText(discipline.getSemesterList().first().getNumber());
+        holder.course.setText(discipline.getCourseList().first().getNumber());
         return convertView;
     }
 
@@ -149,7 +149,7 @@ public class SubjectListAdapter extends ArrayAdapter<Discipline> {
 
     static class ViewHolder{
         TextView speciality;
-        TextView semester;
+        TextView course;
         TextView name;
     }
 
