@@ -14,8 +14,8 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.Course;
 import com.hpcc.kursovaya.dao.entity.Discipline;
-import com.hpcc.kursovaya.dao.entity.Semester;
 import com.hpcc.kursovaya.dao.entity.Specialty;
 
 import java.util.ArrayList;
@@ -47,13 +47,13 @@ public class SubjectsFragment extends Fragment {
             Specialty specialtyRPZ = new Specialty("РПЗ", 8);
 
             Discipline clarnet = new Discipline( "Уроки гри на кларнеті", 92, specialtyRPZ,
-                    new RealmList<Semester>(new Semester(7, null, null)), 0);
+                    new RealmList<Course>(new Course(7, null, null)), 0);
 
             Discipline web = new Discipline( "В гостях у Гордон", 78, specialtyRPZ,
-                    new RealmList<Semester>(new Semester(7, null, null)), 0);
+                    new RealmList<Course>(new Course(7, null, null)), 0);
 
             Discipline metro = new Discipline( "Метро", 97, specialtyRPZ,
-                    new RealmList<Semester>(new Semester(7, null, null)), 0);
+                    new RealmList<Course>(new Course(7, null, null)), 0);
 
             List<Discipline> subjects = new ArrayList<>();
             subjects.add(clarnet);
