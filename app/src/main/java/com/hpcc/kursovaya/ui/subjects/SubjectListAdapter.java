@@ -160,4 +160,5 @@ public class SubjectListAdapter extends ArrayAdapter<Discipline> {
         mContext=context;
         mResource=resource;
     }
+    //
 }
