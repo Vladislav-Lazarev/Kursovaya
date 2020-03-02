@@ -2,8 +2,8 @@ package com.hpcc.kursovaya.dao.schedule.classes;
 
 import com.hpcc.kursovaya.dao.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.schedule.date_time.DateTime;
-import com.hpcc.kursovaya.dao.schedule.date_time.PatternCalendar;
+import com.hpcc.kursovaya.dao.my_type.date_time.vlad.DateTime;
+import com.hpcc.kursovaya.dao.my_type.date_time.vlad.PatternCalendar;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;

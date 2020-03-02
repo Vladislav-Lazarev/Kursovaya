@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.calendar;
 
-import com.hpcc.kursovaya.dao.schedule.date_time.DateTime;
+import com.hpcc.kursovaya.dao.my_type.date_time.vlad.DateTime;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

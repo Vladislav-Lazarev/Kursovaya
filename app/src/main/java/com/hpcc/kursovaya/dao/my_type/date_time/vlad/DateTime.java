@@ -1,7 +1,4 @@
-package com.hpcc.kursovaya.dao.schedule.date_time;
-
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+package com.hpcc.kursovaya.dao.my_type.date_time.vlad;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,33 +6,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import io.realm.RealmObject;
-
-public class DateTime extends RealmObject implements Comparable<DateTime> {
-    private static org.joda.time.DateTime dateTime;// Для манипулирования с классом Date
-    private static org.joda.time.DateTimeField dateTimeField;// Для манипулирования с классом Date
-    private static DateTimeFormatter dateTimeFormatter;// Для форматирования с классом Date
-    private static org.joda.time.DateTime.Property property;
-
+public class DateTime implements Comparable<DateTime> {
     private static Calendar calendar;// Для манипулирования с классом Date
     private static SimpleDateFormat simpleDateFormat;// Для форматирования с классом Date
 
     static {
-        dateTime = org.joda.time.DateTime.now();
-        dateTimeField.add(1, 3);
-        dateTimeFormatter = DateTimeFormat.forPattern(PatternFormat.DATE_TIME.formatText());
-
         calendar = Calendar.getInstance();
-        simpleDateFormat = new SimpleDateFormat(PatternFormat.DATE_FULL.formatText(), Locale.ENGLISH);
+        simpleDateFormat = new SimpleDateFormat(PatternFormat.DATE_FULL.text(), Locale.ENGLISH);
     }
 
     // Дату выводит строкой по pattern
     public static String format(Date date, PatternFormat pattern) {
-        simpleDateFormat.applyPattern(pattern.formatText());
+        simpleDateFormat.applyPattern(pattern.text());
         return simpleDateFormat.format(date);
     }
     public static String format(Calendar date, PatternFormat pattern) {
-        simpleDateFormat.applyPattern(pattern.formatText());
+        simpleDateFormat.applyPattern(pattern.text());
         return simpleDateFormat.format(date.getTime());
     }
 
@@ -46,9 +32,10 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
     }
 
     // По pattern добавляет, отнимает значения в date
-    public static void add(Date date, PatternCalendar pattern, int amount) {
+    public static Date add(Date date, PatternCalendar pattern, int amount) {
         calendar.setTime(date);
-        calendar.add(pattern.ordinal(), amount);
+        calendar.add(pattern.number(), amount);
+        return calendar.getTime();
     }
 
     // Проверка на высокосный год
@@ -102,7 +89,7 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
     }
     // Принимает String по шаблону
     public DateTime setPattern(String date, PatternFormat pattern) {
-        simpleDateFormat.applyPattern(pattern.formatText());
+        simpleDateFormat.applyPattern(pattern.text());
 
         try {
             this.date = simpleDateFormat.parse(date);
@@ -183,7 +170,7 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
 
     // По pattern добавляет, отнимает значения в date
     public void add(PatternCalendar pattern, int amount) {
-        add(date, pattern,amount);
+        date = add(date, pattern,amount);
     }
 
     // Сравнение
