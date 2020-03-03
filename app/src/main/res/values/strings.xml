@@ -15,6 +15,13 @@
         <item>За 2 доби</item>
     </string-array>
 
+    <string-array name="courses">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
     <string name="app_name">Kursovaya</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="scheduleTag">Schedule</string>
@@ -29,8 +36,11 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_datePicker">Перейти до дати</string>
     <string name="action_importTemplates">Імпортувати шаблони</string>
+    <string name="action_report">Сформувати звіт</string>
     <string name="popup_Follow">Перейти</string>
-
+    <string name="popup_choose_date_report">Оберіть період звіту</string>
+    <string name="popup_gen_report">Згенерувати звіт</string>
+    <string name="popup_dates_wrong">Введений діпазон дат невірний, повторіть введення!</string>
     <string name="popup_edit">Редагувати</string>
     <string name="popup_groupName_label">Група:</string>
     <string name="popup_subjectName_label">Предмет:</string>
@@ -85,7 +95,8 @@
     <string name="title_activity_add_group">AddGroupActivity</string>
     <string name="title_activity_add_subject">AddSubjectActivity</string>
     <string name="title_activity_edit_group">EditGroupActivity</string>
-
+    <string name="date_creation">Дата створення: ДД.ММ.РРРР р.</string>
+    <string name="period_report"> Період: </string>
     <string name="delete_alert_header">Видалити</string>
     <string name="delete_alert_msg">Ви справді хочете видалити запис?</string>
     <string name="delete_positive">Так</string>

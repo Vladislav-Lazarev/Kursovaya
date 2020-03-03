@@ -43,6 +43,7 @@ import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.joda.time.DateTime;
 import org.joda.time.Weeks;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private View actionDatePicker;
     private View importTemplates;
+    private View genReport;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,9 +210,72 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 toolbar.setVisibility(View.GONE);
                 toolbarCanceledClasses.setVisibility(View.VISIBLE);
                 return true;
+            case R.id.action_reportPeriod:
+                prepareReporDatePicker();
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void prepareReporDatePicker() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.popup_choose_date_report);
+        builder.setPositiveButton(R.string.popup_gen_report, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onClickAcceptReportDates(dialog, which);
+        }
+        });
+        builder.setCancelable(false);
+        builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+               dialog.cancel();
+            }
+        });
+        genReport = getLayoutInflater().inflate(R.layout.dialog_choose_report_period, null);
+        builder.setView(genReport);
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+            }
+        });
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout parent = (LinearLayout) positiveButton.getParent();
+        parent.setGravity(Gravity.CENTER_HORIZONTAL);
+        View leftSpacer = parent.getChildAt(1);
+        leftSpacer.setVisibility(View.GONE);
+    }
+
+    private void onClickAcceptReportDates(DialogInterface dialog, int which) {
+        final DatePicker pickerFrom = genReport.findViewById(R.id.dateFromPicker);
+        final DatePicker pickerTo = genReport.findViewById(R.id.dateToPicker);
+        int fromYear = pickerFrom.getYear();
+        int fromMonth = pickerFrom.getMonth();
+        int fromDay = pickerFrom.getDayOfMonth();
+
+        int toYear = pickerTo.getYear();
+        int toMonth = pickerTo.getMonth();
+        int toDay = pickerTo.getDayOfMonth();
+        boolean isDatesCorrect = true;
+        if(fromYear>toYear){
+            isDatesCorrect = false;
+        } else if(fromYear<=toYear && fromMonth>toMonth) {
+            isDatesCorrect = false;
+        } else if(fromYear<=toYear && fromMonth<=toMonth && fromDay>toDay){
+            isDatesCorrect = false;
+        }
+        if(isDatesCorrect){
+            //open activity
+        } else {
+            prepareReporDatePicker();
+            Toast.makeText(getApplicationContext(),R.string.popup_dates_wrong,Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void prepareActionImportTemplates() {
