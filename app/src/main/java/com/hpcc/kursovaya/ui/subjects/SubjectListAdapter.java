@@ -19,13 +19,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.Discipline;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
-public class SubjectListAdapter extends ArrayAdapter<SubjectEntity> {
+public class SubjectListAdapter extends ArrayAdapter<Discipline> {
     private static final String TAG = "SubjectListAdapter";
+
     private int mResource;
     private Context mContext;
     private int lastPosition =-1;
@@ -33,21 +36,29 @@ public class SubjectListAdapter extends ArrayAdapter<SubjectEntity> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        String speciality = getItem(position).getSpeciality();
-        int course = getItem(position).getCourse();
-        String name = getItem(position).getName();
-        final View result;
+        Discipline discipline = new Discipline(
+                getItem(position).getName(),
+                getItem(position).getCountHours(),
+                getItem(position).getSpecialty(),
+                getItem(position).getCourseList(),
+                getItem(position).getColor());
 
+
+        final View result;
         ViewHolder holder;
 
 
         if(convertView==null){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource,parent,false);
+
             holder = new ViewHolder();
+
             holder.speciality = (TextView) convertView.findViewById(R.id.speciality_label);
             holder.course = (TextView) convertView.findViewById(R.id.course_label);
             holder.name = (TextView) convertView.findViewById(R.id.subjectName_label);
+
+            //setting onclick action on button
             final Button button = (Button) convertView.findViewById(R.id.btn_lsvOptions);
 
             button.setOnClickListener(new View.OnClickListener(){
@@ -128,11 +139,12 @@ public class SubjectListAdapter extends ArrayAdapter<SubjectEntity> {
        Animation animation = AnimationUtils.loadAnimation(mContext,(position>lastPosition) ? R.anim.load_down_anim:R.anim.load_up_anim);
        result.startAnimation(animation);
 
-        holder.name.setText(name);
-        holder.speciality.setText(speciality);
-        holder.course.setText(Integer.toString(course));
+        holder.name.setText(discipline.getName());
+        holder.speciality.setText(discipline.getSpecialty().getName());
+        holder.course.setText(discipline.getCourseList().first().getNumber());
         return convertView;
     }
+    //
 
 
 
@@ -143,9 +155,10 @@ public class SubjectListAdapter extends ArrayAdapter<SubjectEntity> {
     }
 
 
-    public SubjectListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<SubjectEntity> objects) {
+    public SubjectListAdapter(@NonNull Context context, int resource, @NonNull List<Discipline> objects) {
         super(context, resource, objects);
         mContext=context;
         mResource=resource;
     }
+    //
 }

@@ -1,0 +1,127 @@
+<resources>
+    <string-array name="week_repeat_list">
+        <item>Ні</item>
+        <item>На 1 тиждень</item>
+        <item>На 2 тижні</item>
+        <item>На 3 тижні</item>
+    </string-array>
+
+    <string-array name="notification_before_variants">
+        <item>Ні</item>
+        <item>За 1 годину</item>
+        <item>За 2 години</item>
+        <item>За 3 години</item>
+        <item>За 1 добу</item>
+        <item>За 2 доби</item>
+    </string-array>
+
+    <string name="app_name">Kursovaya</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="scheduleTag">Schedule</string>
+    <string name="templatesTag">Templates</string>
+    <string name="groupsTag">Groups</string>
+    <string name="subjectsTag">Subject</string>
+    <string name="settingsTag">Settings</string>
+
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_datePicker">Перейти до дати</string>
+    <string name="action_importTemplates">Імпортувати шаблони</string>
+    <string name="popup_Follow">Перейти</string>
+
+    <string name="popup_edit">Редагувати</string>
+    <string name="popup_groupName_label">Група:</string>
+    <string name="popup_subjectName_label">Предмет:</string>
+    <string name="popup_duration_label">Тривалість:</string>
+    <string name="description_label">Опис:</string>
+    <string name="notification_label">Нагадування до початку:</string>
+    <string name="repeat_for_next_weeks_label">Повторити на наступні тижні:</string>
+    <string name="popup_delete">Видалити</string>
+    <string name="popup_delete_classes_template">Видалити заняття</string>
+    <string name="popup_delete_classes_content">Ви дійсно хочете видалити обрані заняття?</string>
+    <string name="popup_complete_classes_template">Вичитані заняття</string>
+    <string name="popup_complete_classes_content">Ви дійсно хочете позначити вичитаними обрані заняття?</string>
+    <string name="popup_uncomplete_classes_content">Ви дійсно хочете позначити не вичитаними обрані заняття?</string>
+    <string name="popup_cut_classes_template">Зняти заняття</string>
+    <string name="popup_cut_classes_content">Ви дійсно хочете зняти обрані заняття?</string>
+    <string name="popup_uncut_classes_content">Ви дійсно хочете повернути обраним заняттям статус невичитаних?</string>
+    <string name="popup_add_template">Додавання шаблону</string>
+    <string name="popup_edit_template">Редагування шаблону</string>
+    <string name="popup_edit_class">Редагувати заняття</string>
+    <string name="popup_add_class">Додати заняття</string>
+    <string name="add_class">Додавання заняття</string>
+    <string name="edit_class">Редагування заняття</string>
+    <string name="popup_accept">Прийняти</string>
+    <string name="popup_cancel">Відмінити</string>
+    <string name="popup_duration_short">1 год.</string>
+    <string name="popup_duration_full">2 год.</string>
+
+
+    <string name="menu_schedule">Розклад</string>
+    <string name="menu_templates">Шаблони</string>
+    <string name="menu_groups">Групи</string>
+    <string name="menu_subjects">Предмети</string>
+    <string name="menu_settings">Налаштування</string>
+
+    <string name="groupName_hint">Назва групи</string>
+
+    <string name="template_label">Назва шаблону:</string>
+    <string name="week_label">Тиждень:</string>
+
+    <string name="week_upper_label">Верхня</string>
+    <string name="week_down_label">Нижня</string>
+
+
+    <string name="specialty_label">Спеціальність:</string>
+    <string name="course_label">Курс:</string>
+    <string name="groupName_label">Назва:</string>
+    <string name="subjectName_label">Назва:</string>
+    <string name="color_label">Колір:</string>
+    <string name="textStub">Текст</string>
+
+    <string name="title_activity_add_template">AddTemplateActivity</string>
+    <string name="title_activity_add_group">AddGroupActivity</string>
+    <string name="title_activity_add_subject">AddSubjectActivity</string>
+    <string name="title_activity_edit_group">EditGroupActivity</string>
+
+    <string name="delete_alert_header">Видалити</string>
+    <string name="delete_alert_msg">Ви справді хочете видалити запис?</string>
+    <string name="delete_positive">Так</string>
+    <string name="delete_negative">Ні</string>
+    <string name="title_activity_edit_subject">EditSubjectActivity</string>
+
+    <string name="hoursHeader">Години</string>
+    <string name="monHeader">Пн</string>
+    <string name="tueHeader">Вв</string>
+    <string name="wedHeader">Ср</string>
+    <string name="thuHeader">Чт</string>
+    <string name="friHeader">Пт</string>
+    <string name="satHeader">Сб</string>
+    <string name="sunHeader">Нд</string>
+
+    <string name="contentDateFiller">ДД</string>
+
+    <string name="January">Січень</string>
+    <string name="February">Лютий</string>
+    <string name="March">Березень</string>
+    <string name="April">Квітень</string>
+    <string name="May">Травень</string>
+    <string name="June">Червень</string>
+    <string name="July">Липень</string>
+    <string name="August">Серпень</string>
+    <string name="September">Вересень</string>
+    <string name="October">Жовтень</string>
+    <string name="November">Листопад</string>
+    <string name="December">Грудень</string>
+
+    <string name="firstCoupleHeader">1</string>
+    <string name="secondCoupleHeader">2</string>
+    <string name="thirdCoupleHeader">3</string>
+    <string name="fourthCoupleHeader">4</string>
+    <string name="fifthCoupleHeader">5</string>
+
+    <string name="firstHalfCoupleHeader">1</string>
+    <string name="secondHalfCoupleHeader">2</string>
+</resources>

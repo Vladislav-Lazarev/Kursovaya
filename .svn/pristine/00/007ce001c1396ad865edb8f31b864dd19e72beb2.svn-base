@@ -1,0 +1,36 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionBarStyle">@style/AppTheme.AppActionBarTheme</item>
+        <item name="android:fontFamily">@font/pt_sans</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+    </style>
+
+    <style name="NumberPickerStyle">
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="AppTheme.AppActionBarTheme" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="background">@color/menuTextColor</item>
+        <item name="colorPrimary">@color/menuTextColor</item>
+        <item name="colorPrimaryDark">@color/appDefaultBlack</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="AppTheme.Drawer">
+        <item name="android:textColor">@color/menuTextColor</item>
+        <item name="android:textSize">20sp</item>
+        <item name="listPreferredItemHeightSmall">26dp</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+</resources>

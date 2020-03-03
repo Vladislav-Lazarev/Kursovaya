@@ -21,7 +21,7 @@ public class CallScheduleDay extends RealmObject {
 
     {
         id = 0;
-        dayOfWeek = DayOfWeek.MONDAY.getValue();
+        dayOfWeek = DayOfWeek.MONDAY.ordinal();
         callLessonList = new RealmList<>();
     }
     public CallScheduleDay() {

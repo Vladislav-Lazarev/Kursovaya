@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="sideBar">#1D57BC</color>
+    <color name="sideBarTransp">#B31D57BC</color>
+    <color name="menuTextColor">#FFFFFF</color>
+    <color name="appDefaultBlack">#000000</color>
+    <color name="appDefaultIconTint">#A5A5A5</color>
+    <color name="listViewItemBackground">#F3F6FB</color>
+</resources>

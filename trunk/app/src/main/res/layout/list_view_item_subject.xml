@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/listViewItemBackground">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/specialty_label"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/speciality_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textStub"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="117dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/course_label"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="35dp"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/course_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="117dp"
+        android:layout_marginTop="35dp"
+        android:text="@string/textStub"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/subjectName_label"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/subjectName_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textStub"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="117dp"/>
+
+    <Button
+        android:id="@+id/btn_lsvOptions"
+        android:layout_width="8dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="10dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/ic_path_153"
+        android:focusable="false"/>
+
+</RelativeLayout>

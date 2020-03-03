@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item
+    android:id="@+id/completed_classes"
+    android:icon="@drawable/ic_add_24px_white"
+    android:title="test"
+    />
+</menu>
