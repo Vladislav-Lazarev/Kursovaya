@@ -3,27 +3,31 @@ package com.hpcc.kursovaya.dao.entity;
 import com.hpcc.kursovaya.dao.ConstantEntity;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
-public class Specialty extends RealmObject{
+public class Specialty extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private String name;// Название(имя) специальности
-    private int countSemester;// Количество проведения семестров в конкретной специальности
+    private int countCourse;// Количество проведения семестров в конкретной специальности
 
     {
         id = 0;
         name = "";
-        countSemester = 0;
+        countCourse = 0;
     }
     public Specialty() {
 
     }
-    public Specialty(String name, int countSemester) {
+
+    public Specialty(int id, String name, int countCourse) {
+        setId(id);
         setName(name);
-        setCountSemester(countSemester);
+        setCountCourse(countCourse);
     }
 
+    private void setId(int id){this.id = id;}
     public int getId() {
         return id;
     }
@@ -36,15 +40,15 @@ public class Specialty extends RealmObject{
         return this;
     }
 
-    public int getCountSemester() {
-        return countSemester;
+    public int getCountCourseCourse() {
+        return countCourse;
     }
-    public Specialty setCountSemester(int countSemester) {
+    public Specialty setCountCourse(int countCourse) {
         try {
-            if (countSemester > ConstantEntity.MIN_COUNT_SEMESTER && countSemester < ConstantEntity.MAX_COUNT_SEMESTER) {
+            if (countCourse < ConstantEntity.MIN_COUNT_COURSE || countCourse > ConstantEntity.MAX_COUNT_COURSE) {
                 throw new Exception("Exception! setCountSemester()");
             }
-            this.countSemester = countSemester;
+            this.countCourse = countCourse;
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
@@ -57,7 +61,7 @@ public class Specialty extends RealmObject{
         return "Specialty{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", countSemester=" + countSemester +
+                ", countCourse=" + countCourse +
                 '}';
     }
 }

@@ -19,14 +19,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.Discipline;
+import com.hpcc.kursovaya.dao.entity.Subject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
-public class SubjectListAdapter extends ArrayAdapter<Discipline> {
+public class SubjectListAdapter extends ArrayAdapter<Subject> {
     private static final String TAG = "SubjectListAdapter";
 
     private int mResource;
@@ -36,11 +35,12 @@ public class SubjectListAdapter extends ArrayAdapter<Discipline> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        Discipline discipline = new Discipline(
+        Subject subject = new Subject(
+                1,
                 getItem(position).getName(),
                 getItem(position).getCountHours(),
-                getItem(position).getSpecialty(),
-                getItem(position).getCourseList(),
+                getItem(position).getSpecialtyList(),
+                getItem(position).getCourse(),
                 getItem(position).getColor());
 
 
@@ -139,9 +139,9 @@ public class SubjectListAdapter extends ArrayAdapter<Discipline> {
        Animation animation = AnimationUtils.loadAnimation(mContext,(position>lastPosition) ? R.anim.load_down_anim:R.anim.load_up_anim);
        result.startAnimation(animation);
 
-        holder.name.setText(discipline.getName());
-        holder.speciality.setText(discipline.getSpecialty().getName());
-        holder.course.setText(discipline.getCourseList().first().getNumber());
+        holder.name.setText(subject.getName());
+        holder.speciality.setText(subject.getSpecialtyList().first().getName());
+        holder.course.setText(subject.getCourse().getNumber());
         return convertView;
     }
     //
@@ -155,7 +155,7 @@ public class SubjectListAdapter extends ArrayAdapter<Discipline> {
     }
 
 
-    public SubjectListAdapter(@NonNull Context context, int resource, @NonNull List<Discipline> objects) {
+    public SubjectListAdapter(@NonNull Context context, int resource, @NonNull List<Subject> objects) {
         super(context, resource, objects);
         mContext=context;
         mResource=resource;

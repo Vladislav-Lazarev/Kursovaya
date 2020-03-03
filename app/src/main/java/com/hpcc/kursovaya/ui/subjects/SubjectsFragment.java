@@ -9,19 +9,17 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Course;
-import com.hpcc.kursovaya.dao.entity.Discipline;
 import com.hpcc.kursovaya.dao.entity.Specialty;
+import com.hpcc.kursovaya.dao.entity.Subject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
 import io.realm.RealmList;
 
 public class SubjectsFragment extends Fragment {
@@ -44,18 +42,21 @@ public class SubjectsFragment extends Fragment {
             });
 
 
-            Specialty specialtyRPZ = new Specialty("РПЗ", 8);
+            Specialty specialtyRPZ = new Specialty(1, "РПЗ", 8);
 
-            Discipline clarnet = new Discipline( "Уроки гри на кларнеті", 92, specialtyRPZ,
-                    new RealmList<Course>(new Course(7, null, null)), 0);
+            Subject clarnet = new Subject( 1, "Уроки гри на кларнеті", 92,
+                    new RealmList<Specialty>(specialtyRPZ),
+                    new Course(1, 4, null, null), 0);
 
-            Discipline web = new Discipline( "В гостях у Гордон", 78, specialtyRPZ,
-                    new RealmList<Course>(new Course(7, null, null)), 0);
+            Subject web = new Subject( 2, "В гостях у Гордон", 78,
+                    new RealmList<Specialty>(specialtyRPZ),
+                   new Course(1, 4, null, null), 0);
 
-            Discipline metro = new Discipline( "Метро", 97, specialtyRPZ,
-                    new RealmList<Course>(new Course(7, null, null)), 0);
+            Subject metro = new Subject( 3, "Метро", 97,
+                    new RealmList<Specialty>(specialtyRPZ),
+                    new Course(1, 4, null, null), 0);
 
-            List<Discipline> subjects = new ArrayList<>();
+            List<Subject> subjects = new ArrayList<>();
             subjects.add(clarnet);
             subjects.add(web);
             subjects.add(metro);

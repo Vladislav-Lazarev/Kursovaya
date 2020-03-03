@@ -4,14 +4,14 @@ import com.hpcc.kursovaya.dao.ConstantEntity;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class Course extends RealmObject {
-    // TODO Course
     @PrimaryKey
     private int id;// Индентификатор
     private int number;// Номер курса
-    // TODO должно быть так Map<List<Subject>, List<Group>>
+    // TODO должно быть так Map<Subject, List<Group>>
     private RealmList<Subject> subjectList;// Список дисциплин проходящие в этом семестре
     private RealmList<Group> groupList;// Список групп проходящие(учащие) в этом семестре
 
@@ -24,12 +24,14 @@ public class Course extends RealmObject {
     public Course() {
 
     }
-    public Course(int number, RealmList<Subject> subjectList, RealmList<Group> groupList) {
+    public Course(int id, int number, RealmList<Subject> subjectList, RealmList<Group> groupList) {
+        setId(id);
         setNumber(number);
         setSubjectList(subjectList);
         setGroupList(groupList);
     }
 
+    private void setId(int id){this.id = id;}
     public int getId() {
         return id;
     }

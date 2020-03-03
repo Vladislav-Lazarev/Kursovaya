@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.dao.entity;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class Subject extends RealmObject {
@@ -11,7 +12,7 @@ public class Subject extends RealmObject {
     private int countHours;// Нагрузка - количество часов на дисциплину
     private RealmList<Specialty> specialtyList;// к специальности
     private Course course;// Гомер курса
-    private RealmList<Subject> subjectList;// Список дисциплин
+    private RealmList<Group> groupList; // Список дисциплин
     private int color;// Цвет дисциплины
 
     {
@@ -25,7 +26,8 @@ public class Subject extends RealmObject {
     public Subject() {
 
     }
-    public Subject(String name, int countHours, RealmList<Specialty> specialtyList, Course course, int color) {
+    public Subject(int id, String name, int countHours, RealmList<Specialty> specialtyList, Course course, int color) {
+        setId(id);
         setName(name);
         setCountHours(countHours);
         setSpecialtyList(specialtyList);
@@ -33,6 +35,7 @@ public class Subject extends RealmObject {
         setColor(color);
     }
 
+    private void setId(int id){this.id = id;}
     public int getId() {
         return id;
     }
@@ -91,7 +94,7 @@ public class Subject extends RealmObject {
                 ", countHours=" + countHours +
                 ", specialtyList=" + specialtyList +
                 ", course=" + course +
-                ", subjectList=" + subjectList +
+                ", groupList=" + groupList +
                 ", color=" + color +
                 '}';
     }

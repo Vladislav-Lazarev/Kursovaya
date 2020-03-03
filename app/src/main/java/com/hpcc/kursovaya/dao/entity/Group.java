@@ -1,6 +1,7 @@
 package com.hpcc.kursovaya.dao.entity;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class Group extends RealmObject {
@@ -8,23 +9,25 @@ public class Group extends RealmObject {
     private int id;// Индентификатор
     private String name;// Название(имя) группы
     private Course course;// Номер курса группы
-    private Specialty specialty;// Принадленость группы к специальности
+    private Specialty speciality;// Принадленость группы к специальности
 
     {
         id = 0;
         name = "";
         course = new Course();
-        specialty = new Specialty();
+        speciality = new Specialty();
     }
     public Group() {
 
     }
-    public Group(String name, Course course, Specialty specialty) {
+    public Group(int id, String name, Course course, Specialty speciality) {
+        setId(id);
         setName(name);
         setCourse(course);
-        setSpecialty(specialty);
+        setSpecialty(speciality);
     }
 
+    private void setId(int id){this.id = id;}
     public int getId() {
         return id;
     }
@@ -46,10 +49,10 @@ public class Group extends RealmObject {
     }
 
     public Specialty getSpecialty() {
-        return specialty;
+        return speciality;
     }
     public Group setSpecialty(Specialty specialty) {
-        this.specialty = specialty;
+        this.speciality = speciality;
         return this;
     }
 
@@ -59,7 +62,7 @@ public class Group extends RealmObject {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", course=" + course +
-                ", specialty=" + specialty +
+                ", specialty=" + speciality +
                 '}';
     }
 }

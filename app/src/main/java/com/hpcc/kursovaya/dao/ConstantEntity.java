@@ -4,6 +4,10 @@ public class ConstantEntity {
     public static final int ONE = 1;
     public static final int TWO = 2;
 
+    public static final String ID = "id";
+    public static final String NAME = "name";
+    public static final String NUMBER = "number";
+
     public static final int MIN_COUNT_ACADEMIC_HOUR = ONE;// Максимальной(наибольшее) количестов чатов в паре
     public static final int MAX_COUNT_ACADEMIC_HOUR = TWO;// Максимальной(наибольшее) количестов чатов в паре
 
@@ -13,11 +17,8 @@ public class ConstantEntity {
     public static final int MIN_WEEK = ONE;
     public static final int MAX_WEEK = 7;
 
-    public static final int MIN_COUNT_SEMESTER = ONE;
-    public static final int MAX_COUNT_SEMESTER = (int)Math.pow(TWO, 3);
-
-    public static final int MIN_COUNT_COURSE = MIN_COUNT_SEMESTER;
-    public static final int MAX_COUNT_COURSE = MAX_COUNT_SEMESTER / TWO;
+    public static final int MIN_COUNT_COURSE = ONE;
+    public static final int MAX_COUNT_COURSE = 4;
 
     public static final int MIN_COUNT_SEMESTER_IN_YEAR = ONE;
     public static final int MAX_COUNT_SEMESTER_IN_YEAR = TWO;

@@ -21,6 +21,10 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
+import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.DBManager;
+import com.hpcc.kursovaya.dao.entity.Course;
+import com.hpcc.kursovaya.dao.entity.Specialty;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
 import com.hpcc.kursovaya.ui.settings.SettingsFragment;
@@ -54,6 +58,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import io.realm.Realm;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Menu fuckingMenu;
     private final String TAG = "MainActivity";
@@ -66,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private View actionDatePicker;
     private View importTemplates;
+    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +101,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     new ScheduleFragment(),getResources().getString(R.string.scheduleTag)).commit();
             navigationView.setCheckedItem(R.id.nav_schedule);
         }
+
+        realm = Realm.getDefaultInstance();
+
+       Specialty specialty = new Specialty(1, "РПЗ", ConstantEntity.MAX_COUNT_COURSE);
+
+        DBManager.add(realm, specialty);
 
     }
 
