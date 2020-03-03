@@ -2,6 +2,7 @@ package com.hpcc.kursovaya;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 
@@ -22,6 +23,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
+import com.hpcc.kursovaya.ui.report.GeneratedReportActivity;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
 import com.hpcc.kursovaya.ui.settings.SettingsFragment;
 import com.hpcc.kursovaya.ui.subjects.SubjectsFragment;
@@ -270,7 +272,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             isDatesCorrect = false;
         }
         if(isDatesCorrect){
-            //open activity
+            Intent intent = new Intent(this, GeneratedReportActivity.class);
+            startActivity(intent);
         } else {
             prepareReporDatePicker();
             Toast.makeText(getApplicationContext(),R.string.popup_dates_wrong,Toast.LENGTH_LONG).show();

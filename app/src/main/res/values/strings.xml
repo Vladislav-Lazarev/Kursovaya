@@ -103,6 +103,7 @@
     <string name="delete_negative">Ні</string>
     <string name="title_activity_edit_subject">EditSubjectActivity</string>
 
+    <string name="report">Звіт</string>
     <string name="tableDisciplineHeader">Дисципліна</string>
     <string name="tableGroupHeader">Група</string>
     <string name="tablePlanHeader">За планом</string>
