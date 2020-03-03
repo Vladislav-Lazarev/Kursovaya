@@ -1,23 +1,37 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textColor="@color/appDefaultBlack"
-    android:textSize="16sp"
-    android:text="@string/date_creation"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/appDefaultBlack"
-        android:textSize="16sp"
-        android:text="@string/period_report"/>
-    <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    tools:context=".ui.report.GeneratedReportActivity">
 
-    </TableLayout>
-</LinearLayout>
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppActionBarTheme">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.AppActionBarTheme">
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/appDefaultBlack"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/create_template"
+                android:layout_width="16.78dp"
+                android:layout_height="12.58dp"
+                android:layout_gravity="right"
+                android:background="@drawable/ic_path_161"/>
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/content_generated_report" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

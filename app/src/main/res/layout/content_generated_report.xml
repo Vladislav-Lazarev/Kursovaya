@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<TextView
+    android:id="@+id/creationDateLabel"
+    android:layout_marginTop="20dp"
+    android:layout_marginStart="20dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/appDefaultBlack"
+    android:textSize="16sp"
+    android:text="@string/date_creation"/>
+    <TextView
+        android:id="@+id/periodLabel"
+        android:layout_below="@id/creationDateLabel"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:text="@string/period_report"/>
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@id/periodLabel"
+    android:layout_marginTop="20dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp">
+    <TableLayout
+        android:id="@+id/reportHeaderTable"
+        android:layout_below="@id/periodLabel"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/grid">
+        <TableRow>
+            <TextView
+                android:textColor="@color/appDefaultBlack"
+                android:textSize="16sp"
+                android:layout_gravity="center"
+                android:text="@string/tableDisciplineHeader"/>
+
+            <TableLayout
+                android:id="@+id/reportHeaderTableGroups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/grid"
+                android:layout_weight="1">
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/grid">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tableGroupHeader"
+                        android:textColor="@color/appDefaultBlack"
+                        android:textSize="16sp"
+                        android:textAlignment="center"
+                        android:layout_weight="1"/>
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/grid">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/appDefaultBlack"
+                        android:textSize="16sp"
+                        android:text="@string/tablePlanHeader"
+                        android:textAlignment="center"
+                        android:layout_weight="1"
+                        />
+                </TableRow>
+            </TableLayout>
+        </TableRow>
+    </TableLayout>
+</ScrollView>
+
+</RelativeLayout>
