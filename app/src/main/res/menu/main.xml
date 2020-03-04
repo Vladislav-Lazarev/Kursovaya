@@ -23,5 +23,9 @@
             android:orderInCategory="100"
             android:title="@string/action_canceled"
             app:showAsAction="never" />
+        <item
+            android:id="@+id/action_reportPeriod"
+            android:orderInCategory="100"
+            android:title="@string/action_report"/>
     </group>
 </menu>

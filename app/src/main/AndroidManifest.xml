@@ -15,7 +15,10 @@
             android:name=".ui.schedule.AddClass"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_edit_subject"/>
-
+        <activity
+            android:name=".ui.report.GeneratedReportActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_edit_subject"/>
         <activity
             android:name=".ui.schedule.EditClass"
             android:theme="@style/AppTheme.NoActionBar"
