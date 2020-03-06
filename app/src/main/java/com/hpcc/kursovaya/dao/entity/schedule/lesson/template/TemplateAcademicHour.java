@@ -1,8 +1,10 @@
-package com.hpcc.kursovaya.dao.schedule.classes.template;
+package com.hpcc.kursovaya.dao.entity.schedule.lesson.template;
 
 import com.hpcc.kursovaya.dao.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -10,8 +12,8 @@ import io.realm.annotations.PrimaryKey;
 public class TemplateAcademicHour extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
-    private Group group;// Группа на полупаре
     private Subject subject;// Дисциплина на полупаре
+    private Group group;// Группа на полупаре
     private int numberAcademicTwoHour;// Номер полупары(1 или 2 полупара)
 
     {
@@ -23,29 +25,46 @@ public class TemplateAcademicHour extends RealmObject {
     public TemplateAcademicHour() {
 
     }
-    public TemplateAcademicHour(Group group, Subject subject, int numberAcademicTwoHour) {
-        setGroup(group);
+    public TemplateAcademicHour(int id, @NotNull Subject subject, @NotNull Group group, int numberAcademicTwoHour) {
+        setId(id);
         setSubject(subject);
+        setGroup(group);
         setNumberAcademicTwoHour(numberAcademicTwoHour);
     }
 
+    private void setId(int id){
+        try{
+            if (id < ConstantEntity.ONE){
+                throw new Exception("Exception! setId()");
+            }
+            this.id = id;
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
     public int getId() {
         return id;
     }
 
-    public Group getGroup() {
-        return group;
-    }
-    public TemplateAcademicHour setGroup(Group group) {
-        this.group = group;
-        return this;
-    }
-
+    @NotNull
     public Subject getSubject() {
         return subject;
     }
-    public TemplateAcademicHour setSubject(Subject subject) {
+    public TemplateAcademicHour setSubject(@NotNull Subject subject) {
+        // TODO setSubject - проверка
         this.subject = subject;
+        return this;
+    }
+
+    @NotNull
+    public Group getGroup() {
+        return group;
+    }
+    public TemplateAcademicHour setGroup(@NotNull Group group) {
+        // TODO setGroup - проверка
+        this.group = group;
         return this;
     }
 
@@ -70,8 +89,8 @@ public class TemplateAcademicHour extends RealmObject {
     public String toString() {
         return "TemplateAcademicHour{" +
                 "id=" + id +
-                ", group=" + group +
                 ", discipline=" + subject +
+                ", group=" + group +
                 ", numberAcademicTwoHour=" + numberAcademicTwoHour +
                 '}';
     }

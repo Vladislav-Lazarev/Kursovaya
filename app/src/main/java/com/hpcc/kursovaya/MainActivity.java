@@ -5,13 +5,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -21,7 +34,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
 import com.hpcc.kursovaya.ui.report.GeneratedReportActivity;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
@@ -29,33 +41,10 @@ import com.hpcc.kursovaya.ui.settings.SettingsFragment;
 import com.hpcc.kursovaya.ui.subjects.SubjectsFragment;
 import com.hpcc.kursovaya.ui.templates.TemplatesFragment;
 
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import org.joda.time.DateTime;
 import org.joda.time.Weeks;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Menu fuckingMenu;
@@ -95,10 +84,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ab.setDisplayShowTitleEnabled(false);
         if(savedInstanceState==null) {
             getSupportFragmentManager().beginTransaction().add(R.id.nav_host_fragment,
-                    new ScheduleFragment(),getResources().getString(R.string.scheduleTag)).commit();
+                    new ScheduleFragment(), getResources().getString(R.string.scheduleTag)).commit();
             navigationView.setCheckedItem(R.id.nav_schedule);
         }
 
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        /*Speciality specialityRPZ = new Speciality(3, "РПЗ", 3);
+        DBManager.write(specialityRPZ);
+
+        // TODO ошибка в считывание данных
+        Speciality qaw = DBManager.read(Speciality.class, ConstantEntity.NAME, "РПЗ");
+        //System.out.println(qaw.toString());*/
     }
 
     public void setActionBarTitle(String title){

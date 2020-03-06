@@ -1,10 +1,10 @@
-package com.hpcc.kursovaya.dao.setting;
+package com.hpcc.kursovaya.dao.entity.setting;
 
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.hpcc.kursovaya.dao.schedule.call.CallScheduleDay;
+import com.hpcc.kursovaya.dao.entity.schedule.call.CallScheduleDay;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class Setting {

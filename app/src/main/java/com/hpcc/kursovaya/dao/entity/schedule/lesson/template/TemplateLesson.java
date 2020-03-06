@@ -1,12 +1,14 @@
-package com.hpcc.kursovaya.dao.schedule.classes.template;
+package com.hpcc.kursovaya.dao.entity.schedule.lesson.template;
 
 import com.hpcc.kursovaya.dao.ConstantEntity;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class TemplateClasses extends RealmObject {
+public class TemplateLesson extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private RealmList<TemplateAcademicHour> templateAcademicHourList;// Шаблое занятия, пары
@@ -15,31 +17,45 @@ public class TemplateClasses extends RealmObject {
         id = 0;
         templateAcademicHourList = new RealmList<>();
     }
-    public TemplateClasses() {
+    public TemplateLesson() {
 
     }
-    public TemplateClasses(RealmList<TemplateAcademicHour> templateAcademicHourList) {
+    public TemplateLesson(int id, @NotNull RealmList<TemplateAcademicHour> templateAcademicHourList) {
+        setId(id);
         setTemplateAcademicHourList(templateAcademicHourList);
     }
 
+    private void setId(int id){
+        try{
+            if (id < ConstantEntity.ONE){
+                throw new Exception("Exception! setId()");
+            }
+            this.id = id;
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
     public int getId() {
         return id;
     }
 
+    @NotNull
     public RealmList<TemplateAcademicHour> getTemplateAcademicHourList() {
         return templateAcademicHourList;
     }
-    public TemplateClasses setTemplateAcademicHourList(RealmList<TemplateAcademicHour> templateAcademicHourList) {
-        try {
-            if (templateAcademicHourList.size() < ConstantEntity.MIN_COUNT_ACADEMIC_HOUR ||
-                    templateAcademicHourList.size() > ConstantEntity.MAX_COUNT_ACADEMIC_HOUR) {
+    public TemplateLesson setTemplateAcademicHourList(@NotNull RealmList<TemplateAcademicHour> templateAcademicHourList) {
+        // TODO setTemplateAcademicHourList - проверка
+        /*try {
+            if () {
                 throw new Exception("Exception! setTemplateAcademicHourList()");
             }
             this.templateAcademicHourList = templateAcademicHourList;
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
-        }
+        }*/
         return this;
     }
 
@@ -47,7 +63,7 @@ public class TemplateClasses extends RealmObject {
     public String toString() {
         return "TemplateClasses{" +
                 "id=" + id +
-                ", templateAcademicHourList=" + templateAcademicHourList +
+                ", templateAcademicHourList=" + templateAcademicHourList.toString() +
                 '}';
     }
 }
