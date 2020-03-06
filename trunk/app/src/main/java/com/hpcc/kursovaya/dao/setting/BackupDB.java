@@ -1,4 +1,4 @@
-package com.hpcc.kursovaya.dao.setting;
+package com.hpcc.kursovaya.dao.entity.setting;
 
 import java.util.Date;
 

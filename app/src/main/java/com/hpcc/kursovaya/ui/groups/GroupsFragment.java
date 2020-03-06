@@ -15,14 +15,17 @@ import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Course;
 import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.Specialty;
+import com.hpcc.kursovaya.dao.entity.Speciality;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+
 public class GroupsFragment extends Fragment {
     private boolean isCreatedAlready = false;
     private View root;
+    private Realm realm;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -40,10 +43,12 @@ public class GroupsFragment extends Fragment {
                 }
             });
 
+            realm = Realm.getDefaultInstance();
+
             //creating elements for listview
-            Group P61 = new Group("П-61", new Course().setNumber(3), new Specialty("РПЗ", 8));
-            Group P62 = new Group("П-611111", new Course().setNumber(2), new Specialty("Йцу", 8));
-            Group P63 = new Group("П-612222", new Course().setNumber(1), new Specialty("Пасв", 8));
+            Group P61 = new Group(1, "П-61", new Speciality(2, "Йцу", 8), new Course().setNumber(3));
+            Group P62 = new Group(2, "П-611111", new Speciality(2, "Йцу", 8), new Course().setNumber(2));
+            Group P63 = new Group(3, "П-612222", new Speciality(3, "Пасв", 8), new Course().setNumber(1));
 
             List<Group> groupList = new ArrayList<>();
             groupList.add(P61);

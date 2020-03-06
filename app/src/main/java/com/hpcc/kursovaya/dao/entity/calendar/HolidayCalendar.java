@@ -1,4 +1,8 @@
-package com.hpcc.kursovaya.dao.calendar;
+package com.hpcc.kursovaya.dao.entity.calendar;
+
+import com.hpcc.kursovaya.dao.ConstantEntity;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -16,18 +20,33 @@ public class HolidayCalendar extends RealmObject {
     public HolidayCalendar() {
 
     }
-    public HolidayCalendar(RealmList<Holiday> holidayList) {
+    public HolidayCalendar(int id, @NotNull RealmList<Holiday> holidayList) {
+        setId(id);
         setHolidayList(holidayList);
     }
 
+    private void setId(int id){
+        try{
+            if (id < ConstantEntity.ONE){
+                throw new Exception("Exception! setId()");
+            }
+            this.id = id;
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
     public int getId() {
         return id;
     }
 
+    @NotNull
     public RealmList<Holiday> getHolidayList() {
         return holidayList;
     }
-    public HolidayCalendar setHolidayList(RealmList<Holiday> holidayList) {
+    public HolidayCalendar setHolidayList(@NotNull RealmList<Holiday> holidayList) {
+        // TODO setHolidayList - проверка
         this.holidayList = holidayList;
         return this;
     }
@@ -36,7 +55,7 @@ public class HolidayCalendar extends RealmObject {
     public String toString() {
         return "HolidayCalendar{" +
                 "id=" + id +
-                ", holidayList=" + holidayList +
+                ", holidayList=" + holidayList.toString() +
                 '}';
     }
 }

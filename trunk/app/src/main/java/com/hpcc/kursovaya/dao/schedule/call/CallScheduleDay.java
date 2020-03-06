@@ -1,4 +1,4 @@
-package com.hpcc.kursovaya.dao.schedule.call;
+package com.hpcc.kursovaya.dao.entity.schedule.call;
 
 import android.os.Build;
 

@@ -1,4 +1,4 @@
-package com.hpcc.kursovaya.dao.calendar;
+package com.hpcc.kursovaya.dao.entity.calendar;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;

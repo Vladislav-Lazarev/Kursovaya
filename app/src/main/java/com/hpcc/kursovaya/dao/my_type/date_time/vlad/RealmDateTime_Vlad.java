@@ -8,7 +8,7 @@ import java.util.Locale;
 
 import io.realm.RealmObject;
 
-public class DateTime extends RealmObject implements Comparable<DateTime> {
+public class RealmDateTime_Vlad extends RealmObject implements Comparable<RealmDateTime_Vlad> {
     private static Calendar calendar;// Для манипулирования с классом Date
     private static SimpleDateFormat simpleDateFormat;// Для форматирования с классом Date
 
@@ -53,10 +53,10 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
     }
 
     // Текущая дата
-    public static DateTime currentDateTime() {
-        DateTime dateTime = new DateTime();
-        dateTime.date = Calendar.getInstance().getTime();
-        return dateTime;
+    public static RealmDateTime_Vlad currentDateTime() {
+        RealmDateTime_Vlad realmDateTime = new RealmDateTime_Vlad();
+        realmDateTime.date = Calendar.getInstance().getTime();
+        return realmDateTime;
     }
 
     private Date date;// Внутри класса: дата, время
@@ -64,24 +64,24 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
     {
         date = new Date(0);
     }
-    public DateTime() {
+    public RealmDateTime_Vlad() {
 
     }
-    public DateTime(String date, PatternFormat pattern) {
+    public RealmDateTime_Vlad(String date, PatternFormat pattern) {
         setPattern(date, pattern);
     }
-    public DateTime(String date) {
+    public RealmDateTime_Vlad(String date) {
         setFull(date);
     }
 
-    public DateTime(Date date, PatternFormat pattern) {
+    public RealmDateTime_Vlad(Date date, PatternFormat pattern) {
         setPattern(date, pattern);
     }
-    public DateTime(Date date) {
+    public RealmDateTime_Vlad(Date date) {
         setFull(date);
     }
 
-    public DateTime(Calendar date) {
+    public RealmDateTime_Vlad(Calendar date) {
         setDate(calendar.getTime());
     }
 
@@ -90,7 +90,7 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         return date.toString();
     }
     // Принимает String по шаблону
-    public DateTime setPattern(String date, PatternFormat pattern) {
+    public RealmDateTime_Vlad setPattern(String date, PatternFormat pattern) {
         simpleDateFormat.applyPattern(pattern.text());
 
         try {
@@ -102,16 +102,16 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         }
         return this;
     }
-    public DateTime setFull(String date) {
+    public RealmDateTime_Vlad setFull(String date) {
         return setPattern(date, PatternFormat.DATE_FULL);
     }
-    public DateTime setDateTime(String date) {
+    public RealmDateTime_Vlad setDateTime(String date) {
         return setPattern(date, PatternFormat.DATE_TIME);
     }
-    public DateTime setDate(String date) {
+    public RealmDateTime_Vlad setDate(String date) {
         return setPattern(date, PatternFormat.DATE_DMY);
     }
-    public DateTime setTime(String date) {
+    public RealmDateTime_Vlad setTime(String date) {
         return setPattern(date, PatternFormat.TIME_HM);
     }
 
@@ -120,20 +120,20 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         return date;
     }
     // Принимает Date по шаблону
-    public DateTime setPattern(Date date, PatternFormat pattern) {
+    public RealmDateTime_Vlad setPattern(Date date, PatternFormat pattern) {
         setPattern(format(date, pattern), pattern);
         return this;
     }
-    public DateTime setFull(Date date) {
+    public RealmDateTime_Vlad setFull(Date date) {
         return setPattern(date, PatternFormat.DATE_FULL);
     }
-    public DateTime setDateTime(Date date) {
+    public RealmDateTime_Vlad setDateTime(Date date) {
         return setPattern(date, PatternFormat.DATE_TIME);
     }
-    public DateTime setDate(Date date) {
+    public RealmDateTime_Vlad setDate(Date date) {
         return setPattern(date, PatternFormat.DATE_DMY);
     }
-    public DateTime setTime(Date date) {
+    public RealmDateTime_Vlad setTime(Date date) {
         return setPattern(date, PatternFormat.TIME_HM);
     }
 
@@ -143,20 +143,20 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
         return calendar;
     }
     // Принимает Calendar по шаблону
-    public DateTime setPattern(Calendar date, PatternFormat pattern) {
+    public RealmDateTime_Vlad setPattern(Calendar date, PatternFormat pattern) {
         setPattern(format(date, pattern), pattern);
         return this;
     }
-    public DateTime setFull(Calendar date) {
+    public RealmDateTime_Vlad setFull(Calendar date) {
         return setPattern(date, PatternFormat.DATE_FULL);
     }
-    public DateTime setDateTime(Calendar date) {
+    public RealmDateTime_Vlad setDateTime(Calendar date) {
         return setPattern(date, PatternFormat.DATE_TIME);
     }
-    public DateTime setDate(Calendar date) {
+    public RealmDateTime_Vlad setDate(Calendar date) {
         return setPattern(date, PatternFormat.DATE_DMY);
     }
-    public DateTime setTime(Calendar date) {
+    public RealmDateTime_Vlad setTime(Calendar date) {
         return setPattern(date, PatternFormat.TIME_HM);
     }
 
@@ -177,20 +177,20 @@ public class DateTime extends RealmObject implements Comparable<DateTime> {
 
     // Сравнение
     @Override
-    public int compareTo(DateTime dateTime) {
+    public int compareTo(RealmDateTime_Vlad realmDateTime) {
         calendar.setTime(date);
 
         Calendar calendarOther = Calendar.getInstance();
-        calendarOther.setTime(dateTime.date);
+        calendarOther.setTime(realmDateTime.date);
 
         return calendar.compareTo(calendarOther);
     }
     // По pattern сравнивает dateTime
-    public int compareTo(DateTime dateTime, PatternCalendar pattern) {
+    public int compareTo(RealmDateTime_Vlad realmDateTime, PatternCalendar pattern) {
         calendar.setTime(date);
 
         Calendar calendarOther = Calendar.getInstance();
-        calendarOther.setTime(dateTime.date);
+        calendarOther.setTime(realmDateTime.date);
 
         return Integer.compare(calendar.get(pattern.ordinal()), calendarOther.get(pattern.ordinal()));
     }

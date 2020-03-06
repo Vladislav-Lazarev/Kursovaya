@@ -1,8 +1,10 @@
-package com.hpcc.kursovaya.dao.schedule.classes;
+package com.hpcc.kursovaya.dao.entity.schedule.lesson;
 
 import com.hpcc.kursovaya.dao.ConstantEntity;
-import com.hpcc.kursovaya.dao.my_type.date_time.vlad.DateTime;
-import com.hpcc.kursovaya.dao.schedule.classes.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.my_type.date_time.maks.RealmDateTime;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -11,7 +13,7 @@ public class AcademicHour extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private TemplateAcademicHour templateAcademicHour;// Шаблон полупары
-    private DateTime dateTime;// Дата проведения
+    private RealmDateTime dateTime;// Дата проведения
     private String note;// Заметка
     private boolean isCompleted;// Проведенная или не проведенная полупара
     private boolean isCanceled;// Отмененная или не проведенная полупара
@@ -19,7 +21,7 @@ public class AcademicHour extends RealmObject {
     {
         id = 0;
         templateAcademicHour = new TemplateAcademicHour();
-        dateTime = new DateTime();
+        dateTime = new RealmDateTime();
         note = "";
         isCompleted = false;
         isCanceled = false;
@@ -27,7 +29,8 @@ public class AcademicHour extends RealmObject {
     public AcademicHour() {
 
     }
-    public AcademicHour(TemplateAcademicHour templateAcademicHour, DateTime dateTime, String note, boolean isCompleted, boolean isCanceled) {
+    public AcademicHour(int id, @NotNull TemplateAcademicHour templateAcademicHour, @NotNull RealmDateTime dateTime, @NotNull String note, boolean isCompleted, boolean isCanceled) {
+        setId(id);
         setTemplateAcademicHour(templateAcademicHour);
         setDateTime(dateTime);
         setNote(note);
@@ -35,50 +38,68 @@ public class AcademicHour extends RealmObject {
         setCanceled(isCanceled);
     }
 
+    private void setId(int id){
+        try{
+            if (id < ConstantEntity.ONE){
+                throw new Exception("Exception! setId()");
+            }
+            this.id = id;
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+    public int getId() {
+        return id;
+    }
+
+    @NotNull
     public TemplateAcademicHour getTemplateAcademicHour() {
         return templateAcademicHour;
     }
-    public AcademicHour setTemplateAcademicHour(TemplateAcademicHour templateAcademicHour) {
+    public AcademicHour setTemplateAcademicHour(@NotNull TemplateAcademicHour templateAcademicHour) {
+        // TODO setTemplateAcademicHour - проверка
         this.templateAcademicHour = templateAcademicHour;
         return this;
     }
 
-    public DateTime getDate() {
+    @NotNull
+    public RealmDateTime getDateTime() {
         return dateTime;
     }
-    public AcademicHour setDateTime(DateTime dateTime) {
-        try {
-            if (dateTime.compareTo(new DateTime()) < ConstantEntity.ONE) {
-                throw new Exception("Exception! setDateTime()");
-            }
-            this.dateTime = dateTime;
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
-        }
+    public AcademicHour setDateTime(@NotNull RealmDateTime dateTime) {
+        // TODO setDateTime - проверка
+        this.dateTime = dateTime;
         return this;
     }
 
+    @NotNull
     public String getNote() {
         return note;
     }
-    public AcademicHour setNote(String note) {
+    public AcademicHour setNote(@NotNull String note) {
+        // TODO setNote - проверка
         this.note = note;
         return this;
     }
 
-    public boolean isCompleted() {
+    public boolean hasCompleted() {
         return isCompleted;
     }
-    public void setCompleted(boolean completed) {
+    public AcademicHour setCompleted(boolean completed) {
+        // TODO setNote - проверка
         isCompleted = completed;
+        return this;
     }
 
-    public boolean isCanceled() {
+    public boolean hasCanceled() {
         return isCanceled;
     }
-    public void setCanceled(boolean canceled) {
+    public AcademicHour setCanceled(boolean canceled) {
+        // TODO setNote - проверка
         isCanceled = canceled;
+        return this;
     }
 
     @Override

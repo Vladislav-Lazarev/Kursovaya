@@ -9,6 +9,8 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.DBManager;
+import com.hpcc.kursovaya.dao.entity.Group;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,10 +23,12 @@ import android.widget.TextView;
 
 import java.lang.reflect.Field;
 
+import io.realm.Realm;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class AddGroupActivity extends AppCompatActivity {
 
+    Realm realm;
 
 
     @Override
@@ -56,13 +60,19 @@ public class AddGroupActivity extends AppCompatActivity {
             }
         });
 
-
-
+        realm = Realm.getDefaultInstance();
 
     }
 
     private void addGroup(){
         //adding group logic
+        TextView speciality = findViewById(R.id.addSpecialityLabel);
+        TextView course = findViewById(R.id.addCourseLabel);
+        TextView groupName = findViewById(R.id.addGroupNameLabel);
+
+
+
+
         finish();
     }
 
