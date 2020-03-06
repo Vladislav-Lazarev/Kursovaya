@@ -1,58 +1,73 @@
 package com.hpcc.kursovaya.dao.entity;
 
+import com.hpcc.kursovaya.dao.ConstantEntity;
+
+import org.jetbrains.annotations.NotNull;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class Subject extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private String name;// Название дисциплины
+    private RealmList<Speciality> specialityList;// к специальности
     private int countHours;// Нагрузка - количество часов на дисциплину
-    private RealmList<Specialty> specialtyList;// к специальности
-    private Course course;// Гомер курса
-    private RealmList<Group> groupList; // Список дисциплин
+    private RealmList<Course> courseList;// Номер курса
     private int color;// Цвет дисциплины
 
-    {
+    public Subject() {
         id = 0;
         name = "";
+        specialityList = new RealmList<>();
         countHours = 0;
-        specialtyList = new RealmList<>();
-        course = new Course();
+        courseList = new RealmList<>();
         color = 0;
     }
-    public Subject() {
-
-    }
-    public Subject(int id, String name, int countHours, RealmList<Specialty> specialtyList, Course course, int color) {
+    public Subject(int id, @NotNull String name, @NotNull RealmList<Speciality> specialityList, int countHours, @NotNull RealmList<Course> courseList, int color) {
+        this();
         setId(id);
         setName(name);
+        setSpecialityList(specialityList);
         setCountHours(countHours);
-        setSpecialtyList(specialtyList);
-        setCourse(course);
+        setCourseList(courseList);
         setColor(color);
     }
 
-    private void setId(int id){this.id = id;}
+    private void setId(int id){
+        try{
+            if (id < ConstantEntity.ONE){
+                throw new Exception("Exception! setId()");
+            }
+            this.id = id;
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
     public int getId() {
         return id;
     }
 
+    @NotNull
     public String getName() {
         return name;
     }
-    public Subject setName(String name) {
+    public Subject setName(@NotNull String name) {
+        // TODO setName - сделать проверку
         this.name = name;
         return this;
     }
 
-    public RealmList<Specialty> getSpecialtyList() {
-        return specialtyList;
+    @NotNull
+    public RealmList<Speciality> getSpecialityList() {
+        return specialityList;
     }
-    public Subject setSpecialtyList(RealmList<Specialty> specialtyList) {
-        this.specialtyList = specialtyList;
+    public Subject setSpecialityList(@NotNull RealmList<Speciality> specialityList) {
+        // TODO setSpecialtyList - сделать проверку
+        this.specialityList = specialityList;
         return this;
     }
 
@@ -60,16 +75,23 @@ public class Subject extends RealmObject {
         return countHours;
     }
     public Subject setCountHours(int countHours) {
+        // TODO setCountHours - сделать проверку
         this.countHours = countHours;
         return this;
     }
 
-    public Course getCourse() {
-        return course;
+    @NotNull
+    public RealmList<Course> getCourseList() {
+        return courseList;
     }
-    public Subject setCourse(Course course) {
+    public Subject setCourseList(@NotNull RealmList<Course> courseList) {
         try {
-            // TODO setCourse
+            for (Course course:courseList){
+                if (course.getNumber() < ConstantEntity.MIN_COUNT_COURSE ||
+                        course.getNumber() > ConstantEntity.MAX_COUNT_COURSE){
+                    throw new Exception("Exception! setCourseList()");
+                }
+            }
         }
         catch (Exception ex){
             System.out.println(ex.getMessage());
@@ -82,8 +104,15 @@ public class Subject extends RealmObject {
         return color;
     }
     public Subject setColor(int color) {
+        // TODO setColor - проверку
         this.color = color;
         return this;
+    }
+
+    @Override
+    public boolean equals(@NotNull Object obj) {
+        Subject subject = (Subject)obj;
+        return this.id == subject.id && this.name.equals(subject.name);
     }
 
     @Override
@@ -91,10 +120,9 @@ public class Subject extends RealmObject {
         return "Subject{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", specialtyList=" + specialityList.toString() +
                 ", countHours=" + countHours +
-                ", specialtyList=" + specialtyList +
-                ", course=" + course +
-                ", groupList=" + groupList +
+                ", course=" + courseList.toString() +
                 ", color=" + color +
                 '}';
     }

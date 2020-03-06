@@ -14,7 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Course;
-import com.hpcc.kursovaya.dao.entity.Specialty;
+import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
 
 import java.util.ArrayList;
@@ -42,19 +42,21 @@ public class SubjectsFragment extends Fragment {
             });
 
 
-            Specialty specialtyRPZ = new Specialty(1, "РПЗ", 8);
+            Speciality specialityRPZ = new Speciality(1, "РПЗ", 8);
 
-            Subject clarnet = new Subject( 1, "Уроки гри на кларнеті", 92,
-                    new RealmList<Specialty>(specialtyRPZ),
-                    new Course(1, 4, null, null), 0);
+            RealmList<Course> courses = new RealmList<>();
 
-            Subject web = new Subject( 2, "В гостях у Гордон", 78,
-                    new RealmList<Specialty>(specialtyRPZ),
-                   new Course(1, 4, null, null), 0);
+            Subject clarnet = new Subject( 1, "Уроки гри на кларнеті",
+                    new RealmList<Speciality>(specialityRPZ), 78,
+                    courses, 0);
 
-            Subject metro = new Subject( 3, "Метро", 97,
-                    new RealmList<Specialty>(specialtyRPZ),
-                    new Course(1, 4, null, null), 0);
+            Subject web = new Subject( 2, "В гостях у Гордон",
+                    new RealmList<Speciality>(specialityRPZ), 78,
+                   courses, 0);
+
+            Subject metro = new Subject( 3, "Метро",
+                    new RealmList<Speciality>(specialityRPZ), 78,
+                    courses, 0);
 
             List<Subject> subjects = new ArrayList<>();
             subjects.add(clarnet);

@@ -1,44 +1,59 @@
-package com.hpcc.kursovaya.dao.schedule.call;
+package com.hpcc.kursovaya.dao.entity.schedule.call;
 
 import com.hpcc.kursovaya.dao.ConstantEntity;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class CallClasses extends RealmObject {
+public class CallLesson extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private RealmList<CallAcademicHour> callAcademicHourList;// Звонок на пару, занятие, пара(2 полупары)
 
-    {
+    public CallLesson() {
         id = 0;
         callAcademicHourList = new RealmList<>();
     }
-    public CallClasses() {
-
-    }
-    public CallClasses(RealmList<CallAcademicHour> callAcademicHourList) {
+    public CallLesson(int id, @NotNull RealmList<CallAcademicHour> callAcademicHourList) {
+        this();
+        setId(id);
         setCallAcademicHourList(callAcademicHourList);
     }
 
+    private void setId(int id){
+        try{
+            if (id < ConstantEntity.ONE){
+                throw new Exception("Exception! setId()");
+            }
+            this.id = id;
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
     public int getId() {
         return id;
     }
 
+    @NotNull
     public RealmList<CallAcademicHour> getCallAcademicHourList() {
         return callAcademicHourList;
     }
-    public CallClasses setCallAcademicHourList(RealmList<CallAcademicHour> v) {
-        try {
-            if (callAcademicHourList.size() < ConstantEntity.ONE) {
+    public CallLesson setCallAcademicHourList(@NotNull RealmList<CallAcademicHour> callAcademicHourList) {
+        // TODO setCallAcademicHourList - проверка
+        /*try {
+            if () {
                 throw new Exception("Exception! setCallAcademicHourList()");
             }
             this.callAcademicHourList = callAcademicHourList;
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
-        }
+        }*/
         return this;
     }
 
@@ -46,7 +61,7 @@ public class CallClasses extends RealmObject {
     public String toString() {
         return "CallClasses{" +
                 "id=" + id +
-                ", callAcademicHourList=" + callAcademicHourList +
+                ", callAcademicHourList=" + callAcademicHourList.toString() +
                 '}';
     }
 }

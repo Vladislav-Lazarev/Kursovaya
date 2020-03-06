@@ -1,33 +1,46 @@
 package com.hpcc.kursovaya.dao.entity;
 
+import com.hpcc.kursovaya.dao.ConstantEntity;
+
+import org.jetbrains.annotations.NotNull;
+
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class Group extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private String name;// Название(имя) группы
+    private Speciality speciality;// Принадленость группы к специальности
     private Course course;// Номер курса группы
-    private Specialty speciality;// Принадленость группы к специальности
 
-    {
+
+    public Group() {
         id = 0;
         name = "";
+        speciality = new Speciality();
         course = new Course();
-        speciality = new Specialty();
     }
-    public Group() {
-
-    }
-    public Group(int id, String name, Course course, Specialty speciality) {
+    public Group(int id, @NotNull String name, @NotNull Speciality speciality, @NotNull Course course) {
+        this();
         setId(id);
         setName(name);
-        setCourse(course);
         setSpecialty(speciality);
+        setCourse(course);
     }
 
-    private void setId(int id){this.id = id;}
+    private void setId(int id) {
+        try{
+            if (id < ConstantEntity.ONE){
+                throw new Exception("Exception! setId()");
+            }
+            this.id = id;
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
     public int getId() {
         return id;
     }
@@ -36,7 +49,17 @@ public class Group extends RealmObject {
         return name;
     }
     public Group setName(String name) {
+        // TODO setName - сделать проверку
         this.name = name;
+        return this;
+    }
+
+    public Speciality getSpecialty() {
+        return speciality;
+    }
+    public Group setSpecialty(Speciality speciality) {
+        // TODO setName - сделать проверку
+        this.speciality = speciality;
         return this;
     }
 
@@ -44,16 +67,15 @@ public class Group extends RealmObject {
         return course;
     }
     public Group setCourse(Course course) {
+        // TODO setName - сделать проверку
         this.course = course;
         return this;
     }
 
-    public Specialty getSpecialty() {
-        return speciality;
-    }
-    public Group setSpecialty(Specialty specialty) {
-        this.speciality = speciality;
-        return this;
+    @Override
+    public boolean equals(Object obj) {
+        Group group = (Group)obj;
+        return this.name.equals(group.name);
     }
 
     @Override
@@ -61,8 +83,8 @@ public class Group extends RealmObject {
         return "Group{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", course=" + course +
                 ", specialty=" + speciality +
+                ", course=" + course +
                 '}';
     }
 }

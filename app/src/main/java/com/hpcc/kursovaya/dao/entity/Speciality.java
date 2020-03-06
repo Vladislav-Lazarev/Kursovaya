@@ -1,33 +1,45 @@
 package com.hpcc.kursovaya.dao.entity;
 
+import android.util.Log;
+
 import com.hpcc.kursovaya.dao.ConstantEntity;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
-public class Specialty extends RealmObject {
+public class Speciality extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private String name;// Название(имя) специальности
-    private int countCourse;// Количество проведения семестров в конкретной специальности
+    private int countCourse;// Количество проведения курсов в конкретной специальности
 
-    {
+    public Speciality() {
         id = 0;
         name = "";
         countCourse = 0;
     }
-    public Specialty() {
-
-    }
-
-    public Specialty(int id, String name, int countCourse) {
+    public Speciality(int id, @NotNull String name, int countCourse) {
+        this();
         setId(id);
         setName(name);
         setCountCourse(countCourse);
     }
 
-    private void setId(int id){this.id = id;}
+    private void setId(int id) {
+        try{
+            Log.println(Log.INFO, "Speciality", String.valueOf(id));
+            if (id < ConstantEntity.ONE){
+                throw new Exception("Exception! setId()");
+            }
+            this.id = id;
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
     public int getId() {
         return id;
     }
@@ -35,16 +47,19 @@ public class Specialty extends RealmObject {
     public String getName() {
         return name;
     }
-    public Specialty setName(String name) {
+    public Speciality setName(String name) {
+        // TODO setName - проверка
         this.name = name;
         return this;
     }
 
-    public int getCountCourseCourse() {
+    public int getCountCourse() {
         return countCourse;
     }
-    public Specialty setCountCourse(int countCourse) {
+    public Speciality setCountCourse(int countCourse) {
         try {
+            Log.println(Log.INFO, "Speciality", String.valueOf(countCourse));
+            System.out.println("setCountCourse " + countCourse);
             if (countCourse < ConstantEntity.MIN_COUNT_COURSE || countCourse > ConstantEntity.MAX_COUNT_COURSE) {
                 throw new Exception("Exception! setCountSemester()");
             }
@@ -57,11 +72,17 @@ public class Specialty extends RealmObject {
     }
 
     @Override
+    public boolean equals(@NotNull Object obj) {
+        Speciality speciality = (Speciality)obj;
+        return this.name.equals(speciality.name);
+    }
+
+    /*@Override
     public String toString() {
         return "Specialty{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", countCourse=" + countCourse +
                 '}';
-    }
+    }*/
 }

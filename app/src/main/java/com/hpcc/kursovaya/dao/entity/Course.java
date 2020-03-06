@@ -1,37 +1,44 @@
 package com.hpcc.kursovaya.dao.entity;
 
 import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.my_type.pair_subject_list_group.Pair;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class Course extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private int number;// Номер курса
-    // TODO должно быть так Map<Subject, List<Group>>
-    private RealmList<Subject> subjectList;// Список дисциплин проходящие в этом семестре
-    private RealmList<Group> groupList;// Список групп проходящие(учащие) в этом семестре
+    private RealmList<Pair> pairList;
 
-    {
+    public Course() {
         id = 0;
         number = 0;
-        subjectList = new RealmList<>();
-        groupList = new RealmList<>();
+        pairList = new RealmList<>();
     }
-    public Course() {
-
-    }
-    public Course(int id, int number, RealmList<Subject> subjectList, RealmList<Group> groupList) {
+    public Course(int id, int number, @NotNull RealmList<Pair> pairList) {
+        this();
         setId(id);
         setNumber(number);
-        setSubjectList(subjectList);
-        setGroupList(groupList);
+        setPairList(pairList);
     }
 
-    private void setId(int id){this.id = id;}
+    private void setId(int id){
+        try{
+            if (id < ConstantEntity.ONE){
+                throw new Exception("Exception! setId()");
+            }
+            this.id = id;
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
     public int getId() {
         return id;
     }
@@ -41,7 +48,7 @@ public class Course extends RealmObject {
     }
     public Course setNumber(int number) {
         try {
-            if (ConstantEntity.MIN_COUNT_COURSE < number && number > ConstantEntity.MAX_COUNT_COURSE){
+            if (number < ConstantEntity.MIN_COUNT_COURSE  || number > ConstantEntity.MAX_COUNT_COURSE){
                 throw new Exception("Exception! setNumber()");
             }
             this.number = number;
@@ -52,65 +59,85 @@ public class Course extends RealmObject {
         return this;
     }
 
-    /*public int getNumberCourse(){
-        int result = number / ConstantEntity.TWO;
-        if (result == 0 || number % ConstantEntity.TWO != 0){
-            ++result;
-        }
-        return result;
+    @NotNull
+    public RealmList<Pair> getPairList() {
+        return pairList;
     }
-    public Course setNumberCourse(int number){
-        try {
-            if (ConstantEntity.MIN_COUNT_COURSE < number && number > ConstantEntity.MAX_COUNT_COURSE){
-                throw new Exception("Exception! setNumberCourse()");
-            }
-            this.number = number * ConstantEntity.TWO;
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
-        }
-        return this;
-    }*/
-
-    public RealmList<Subject> getSubjectList() {
-        return subjectList;
-    }
-    public Course setSubjectList(RealmList<Subject> subjectList) {
-        try {
-            if (subjectList.size() < ConstantEntity.ONE) {
-                throw new Exception("Exception! setDisciplineList()");
-            }
-            this.subjectList = subjectList;
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
-        }
-        return this;
+    public void setPairList(@NotNull RealmList<Pair> pairList) {
+        // TODO setPairSubjectListGroupList - сделать проверку
+        this.pairList = pairList;
     }
 
-    public RealmList<Group> getGroupList() {
-        return groupList;
+    public int pairListSize() {
+        return pairList.size();
     }
-    public Course setGroupList(RealmList<Group> groupList) {
-        try {
-            if (groupList.size() < ConstantEntity.ONE) {
-                throw new Exception("Exception! course()");
+    public boolean isPairListEmpty() {
+        return pairList.isEmpty();
+    }
+
+    public boolean containsPairListKey(Subject key) {
+        for(Pair pair:pairList){
+            if(pair.getSubject().equals(key)){
+                return true;
             }
-            this.groupList = groupList;
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
         }
-        return this;
+
+        return false;
+    }
+    public boolean containsPairListValue(RealmList<Group> value) {
+        for(Pair pair:pairList){
+            boolean isSizeEqual = pair.getGroupList().size() == value.size();
+            for (int i = 0; i < pair.getGroupList().size() && isSizeEqual; i++) {
+                if(!pair.getGroupList().get(i).equals(value.get(i))){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public RealmList<Group> pairListGet( Subject key) {
+        for(Pair pair:pairList){
+            if(pair.getSubject().equals(key)){
+                return pair.getGroupList();
+            }
+        }
+
+        return null;
+    }
+
+    public RealmList<Group> pairListPut( Pair pair) {
+        if (!containsPairListKey(pair.getSubject())){
+            pairList.add(pair);
+        }
+        else {
+            int index = pairList.indexOf(pair);
+            pairList.get(index).set(pair.getSubject(), pair.getGroupList());
+        }
+        return pairListGet(pair.getSubject());
+    }
+
+    public RealmList<Group> pairListRemove( Subject key) {
+        for (Pair pair : pairList){
+            if (key.equals(pair.getSubject())){
+                pairList.remove(pair);
+                return pair.getGroupList();
+            }
+        }
+        return null;
+    }
+
+    public void pairListClear() {
+        pairList.clear();
     }
 
     @Override
     public String toString() {
-        return "Semester{" +
+        return "Course{" +
                 "id=" + id +
                 ", number=" + number +
-                ", disciplineList=" + subjectList +
-                ", groupList=" + groupList +
+                ", pairSubjectListGroupList=" + pairList.toString() +
                 '}';
     }
 }

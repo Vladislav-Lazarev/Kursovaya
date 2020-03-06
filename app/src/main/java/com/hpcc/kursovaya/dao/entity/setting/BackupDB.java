@@ -1,4 +1,8 @@
-package com.hpcc.kursovaya.dao.setting;
+package com.hpcc.kursovaya.dao.entity.setting;
+
+import com.hpcc.kursovaya.dao.ConstantEntity;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
@@ -12,21 +16,32 @@ public class BackupDB extends RealmObject {
     private String path;
     private Date date;
 
-    {
+    public BackupDB() {
         id = 0;
         name = "";
         path = "";
-        date = new Date(0);
+        date = new Date();
     }
-    public BackupDB() {
-
-    }
-    public BackupDB(String name, String path, Date date) {
+    public BackupDB(int id, @NotNull String name, @NotNull String path, @NotNull Date date) {
+        this();
+        setId(id);
         setName(name);
         setPath(path);
         setDate(date);
     }
 
+    private void setId(int id){
+        try{
+            if (id < ConstantEntity.ONE){
+                throw new Exception("Exception! setId()");
+            }
+            this.id = id;
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
     public int getId() {
         return id;
     }
@@ -34,7 +49,8 @@ public class BackupDB extends RealmObject {
     public String getName() {
         return name;
     }
-    public BackupDB setName(String name) {
+    public BackupDB setName(@NotNull String name) {
+        // TODO setName - проверка
         this.name = name;
         return this;
     }
@@ -42,7 +58,8 @@ public class BackupDB extends RealmObject {
     public String getPath() {
         return path;
     }
-    public BackupDB setPath(String path) {
+    public BackupDB setPath(@NotNull String path) {
+        // TODO setPath - проверка
         this.path = path;
         return this;
     }
@@ -50,7 +67,8 @@ public class BackupDB extends RealmObject {
     public Date getDate() {
         return date;
     }
-    public BackupDB setDate(Date date) {
+    public BackupDB setDate(@NotNull Date date) {
+        // TODO setRealmDateTime - проверка
         this.date = date;
         return this;
     }
