@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class Subject extends RealmObject {
     private RealmList<Course> courseList;// Номер курса
     private int color;// Цвет дисциплины
 
-    {
+    public Subject() {
         id = 0;
         name = "";
         specialityList = new RealmList<>();
@@ -25,10 +25,8 @@ public class Subject extends RealmObject {
         courseList = new RealmList<>();
         color = 0;
     }
-    public Subject() {
-
-    }
     public Subject(int id, @NotNull String name, @NotNull RealmList<Speciality> specialityList, int countHours, @NotNull RealmList<Course> courseList, int color) {
+        this();
         setId(id);
         setName(name);
         setSpecialityList(specialityList);

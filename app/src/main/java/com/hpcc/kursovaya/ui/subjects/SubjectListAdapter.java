@@ -141,7 +141,7 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
 
         holder.name.setText(subject.getName());
         holder.speciality.setText(subject.getSpecialityList().first().getName());
-        holder.course.setText("Pidor");//(Integer.toString(subject.getCourseList().get(1).getNumber()));
+        holder.course.setText("Pidor"); // (Integer.toString(subject.getCourseList().get(1).getNumber()));
         return convertView;
     }
     //

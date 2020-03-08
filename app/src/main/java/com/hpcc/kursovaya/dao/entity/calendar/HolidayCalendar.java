@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.calendar;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -13,14 +13,12 @@ public class HolidayCalendar extends RealmObject {
     private int id;// Индентификатор
     private RealmList<Holiday> holidayList;// Календарь(список) праздничных дней
 
-    {
+    public HolidayCalendar() {
         id = 0;
         holidayList = new RealmList<>();
     }
-    public HolidayCalendar() {
-
-    }
     public HolidayCalendar(int id, @NotNull RealmList<Holiday> holidayList) {
+        this();
         setId(id);
         setHolidayList(holidayList);
     }

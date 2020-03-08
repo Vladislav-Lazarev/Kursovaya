@@ -1,9 +1,10 @@
 package com.hpcc.kursovaya.dao.entity.calendar;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
-import com.hpcc.kursovaya.dao.my_type.date_time.maks.RealmDateTime;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -12,20 +13,18 @@ public class Holiday extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private String name;// Назани(имя) праздника
-    private RealmDateTime dateTime;// Дата проведения праздника
+    private Date date;// Дата проведения праздника
 
-    {
+    public Holiday() {
         id = 0;
         name = "";
-        dateTime = new RealmDateTime();
+        date = new Date();
     }
-    public Holiday() {
-
-    }
-    public Holiday(int id, @NotNull String name, @NotNull RealmDateTime dateTime) {
+    public Holiday(int id, @NotNull String name, @NotNull Date date) {
+        this();
         setId(id);
         setName(name);
-        setDateTime(dateTime);
+        setDate(date);
     }
 
     private void setId(int id){
@@ -55,12 +54,12 @@ public class Holiday extends RealmObject {
     }
 
     @NotNull
-    public RealmDateTime getRealmDateTime() {
-        return dateTime;
+    public Date getDate() {
+        return date;
     }
-    public Holiday setDateTime(@NotNull RealmDateTime dateTime) {
+    public Holiday setDate(@NotNull Date dateTime) {
         // TODO setRealmDateTime - проверка
-        this.dateTime = dateTime;
+        this.date = dateTime;
         return this;
     }
 
@@ -69,7 +68,7 @@ public class Holiday extends RealmObject {
         return "Holiday{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", dateTime=" + dateTime +
+                ", date=" + date +
                 '}';
     }
 }

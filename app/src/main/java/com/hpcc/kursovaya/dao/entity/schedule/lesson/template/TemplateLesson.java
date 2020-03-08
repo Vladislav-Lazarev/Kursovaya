@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.schedule.lesson.template;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -13,14 +13,12 @@ public class TemplateLesson extends RealmObject {
     private int id;// Индентификатор
     private RealmList<TemplateAcademicHour> templateAcademicHourList;// Шаблое занятия, пары
 
-    {
+    public TemplateLesson() {
         id = 0;
         templateAcademicHourList = new RealmList<>();
     }
-    public TemplateLesson() {
-
-    }
     public TemplateLesson(int id, @NotNull RealmList<TemplateAcademicHour> templateAcademicHourList) {
+        this();
         setId(id);
         setTemplateAcademicHourList(templateAcademicHourList);
     }

@@ -11,14 +11,12 @@ public class Setting extends RealmObject {
     private RealmList<BackupDB> backupDBList;
     private CallScheduleDay callScheduleDay;
 
-    {
+    public Setting() {
         backupDBList = new RealmList<>();
         callScheduleDay = new CallScheduleDay();
     }
-    public Setting() {
-
-    }
     public Setting(@NotNull RealmList<BackupDB> backupDBList, @NotNull CallScheduleDay callScheduleDay) {
+        this();
         setBackupDBList(backupDBList);
         setCallScheduleDay(callScheduleDay);
     }

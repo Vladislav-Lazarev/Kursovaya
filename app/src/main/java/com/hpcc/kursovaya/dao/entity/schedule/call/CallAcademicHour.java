@@ -1,9 +1,10 @@
 package com.hpcc.kursovaya.dao.entity.schedule.call;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
-import com.hpcc.kursovaya.dao.my_type.date_time.maks.RealmDateTime;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -11,23 +12,24 @@ import io.realm.annotations.PrimaryKey;
 public class CallAcademicHour extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
-    private RealmDateTime startDateTime;// Начало пары
-    private RealmDateTime endDateTime;// Начало пары
-
-    {
-        id = 0;
-        startDateTime = new RealmDateTime();
-        endDateTime = new RealmDateTime();
-    }
+    private Date startDate;// Начало пары
+    private Date endDate;// Начало пары
+    
     public CallAcademicHour() {
-
+        id = 0;
+        startDate = new Date();
+        endDate = new Date();
     }
-    public CallAcademicHour(int id, @NotNull RealmDateTime startDateTime, @NotNull RealmDateTime endDateTime) {
+    public CallAcademicHour(int id, @NotNull Date startDate, @NotNull Date endDate) {
+        this();
         setId(id);
-        setStartDateTime(startDateTime);
-        setEndDateTime(endDateTime);
+        setStartDate(startDate);
+        setEndDate(endDate);
     }
 
+    public int getId() {
+        return id;
+    }
     private void setId(int id){
         try{
             if (id < ConstantEntity.ONE){
@@ -40,27 +42,24 @@ public class CallAcademicHour extends RealmObject {
             ex.printStackTrace();
         }
     }
-    public int getId() {
-        return id;
-    }
 
     @NotNull
-    public RealmDateTime getStartDateTime() {
-        return startDateTime;
+    public Date getStartDate() {
+        return startDate;
     }
-    public CallAcademicHour setStartDateTime(@NotNull RealmDateTime startDateTime) {
+    public CallAcademicHour setStartDate(@NotNull Date startDate) {
         // TODO setStartDateTime - провекра
-        this.startDateTime = startDateTime;
+        this.startDate = startDate;
         return this;
     }
 
     @NotNull
-    public RealmDateTime getEndDateTime() {
-        return endDateTime;
+    public Date getEndDate() {
+        return endDate;
     }
-    public CallAcademicHour setEndDateTime(@NotNull RealmDateTime endDateTime) {
+    public CallAcademicHour setEndDate(@NotNull Date endDate) {
         // TODO setEndDateTime - провекра
-        this.endDateTime = endDateTime;
+        this.endDate = endDate;
         return this;
     }
 
@@ -68,8 +67,8 @@ public class CallAcademicHour extends RealmObject {
     public String toString() {
         return "CallAcademicHour{" +
                 "id=" + id +
-                ", startDateTime=" + startDateTime +
-                ", endDateTime=" + endDateTime +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
                 '}';
     }
 }

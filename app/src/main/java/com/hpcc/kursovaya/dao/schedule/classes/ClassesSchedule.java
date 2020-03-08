@@ -2,8 +2,11 @@ package com.hpcc.kursovaya.dao.schedule.classes;
 
 import com.hpcc.kursovaya.dao.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.my_type.date_time.vlad.DateTime;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
+//import com.hpcc.kursovaya.dao.my_type.date_time.vlad.DateTime;
 import com.hpcc.kursovaya.dao.my_type.date_time.vlad.PatternCalendar;
+
+import org.joda.time.DateTime;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -48,7 +51,7 @@ public class ClassesSchedule extends RealmObject {
             if (subject.equals(academicHourList.get(i).getTemplateAcademicHour().getSubject())) {
                 ++result;
             }
-            startOther.add(PatternCalendar.DAY_OF_MONTH, ConstantEntity.ONE);
+            //startOther.add(PatternCalendar.DAY_OF_MONTH, ConstantEntity.ONE);
         }
         return result;
     }

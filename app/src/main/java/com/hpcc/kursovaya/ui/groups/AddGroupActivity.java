@@ -1,35 +1,17 @@
 package com.hpcc.kursovaya.ui.groups;
 
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.DBManager;
-import com.hpcc.kursovaya.dao.entity.Group;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.Gravity;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-import java.lang.reflect.Field;
-
-import io.realm.Realm;
-import yuku.ambilwarna.AmbilWarnaDialog;
+import com.hpcc.kursovaya.R;
 
 public class AddGroupActivity extends AppCompatActivity {
-
-    Realm realm;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +41,6 @@ public class AddGroupActivity extends AppCompatActivity {
                 addGroup();
             }
         });
-
-        realm = Realm.getDefaultInstance();
-
     }
 
     private void addGroup(){

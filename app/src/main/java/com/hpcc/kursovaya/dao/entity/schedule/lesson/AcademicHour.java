@@ -1,10 +1,11 @@
 package com.hpcc.kursovaya.dao.entity.schedule.lesson;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
-import com.hpcc.kursovaya.dao.my_type.date_time.maks.RealmDateTime;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -13,26 +14,24 @@ public class AcademicHour extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private TemplateAcademicHour templateAcademicHour;// Шаблон полупары
-    private RealmDateTime dateTime;// Дата проведения
+    private Date date;// Дата проведения
     private String note;// Заметка
     private boolean isCompleted;// Проведенная или не проведенная полупара
     private boolean isCanceled;// Отмененная или не проведенная полупара
 
-    {
+    public AcademicHour() {
         id = 0;
         templateAcademicHour = new TemplateAcademicHour();
-        dateTime = new RealmDateTime();
+        date = new Date();
         note = "";
         isCompleted = false;
         isCanceled = false;
     }
-    public AcademicHour() {
-
-    }
-    public AcademicHour(int id, @NotNull TemplateAcademicHour templateAcademicHour, @NotNull RealmDateTime dateTime, @NotNull String note, boolean isCompleted, boolean isCanceled) {
+    public AcademicHour(int id, @NotNull TemplateAcademicHour templateAcademicHour, @NotNull Date date, @NotNull String note, boolean isCompleted, boolean isCanceled) {
+        this();
         setId(id);
         setTemplateAcademicHour(templateAcademicHour);
-        setDateTime(dateTime);
+        setDate(date);
         setNote(note);
         setCompleted(isCompleted);
         setCanceled(isCanceled);
@@ -65,12 +64,12 @@ public class AcademicHour extends RealmObject {
     }
 
     @NotNull
-    public RealmDateTime getDateTime() {
-        return dateTime;
+    public Date getDate() {
+        return date;
     }
-    public AcademicHour setDateTime(@NotNull RealmDateTime dateTime) {
+    public AcademicHour setDate(@NotNull Date date) {
         // TODO setDateTime - проверка
-        this.dateTime = dateTime;
+        this.date = date;
         return this;
     }
 
@@ -107,7 +106,7 @@ public class AcademicHour extends RealmObject {
         return "AcademicHour{" +
                 "id=" + id +
                 ", templateAcademicHour=" + templateAcademicHour +
-                ", dateTime=" + dateTime +
+                ", date=" + date +
                 ", note='" + note + '\'' +
                 ", isCompleted=" + isCompleted +
                 ", isCanceled=" + isCanceled +

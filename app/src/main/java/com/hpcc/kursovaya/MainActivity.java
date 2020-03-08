@@ -5,9 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -24,9 +22,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -63,15 +61,10 @@ import org.joda.time.DateTime;
 import org.joda.time.Weeks;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Menu fuckingMenu;
@@ -116,12 +109,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        /*Speciality specialityRPZ = new Speciality(3, "РПЗ", 3);
-        DBManager.write(specialityRPZ);
+        /*Speciality specialityRPZ = new Speciality(1, "ІПЗ", 4);
+        Speciality specialityRP = new Speciality(2, "КІ", 4);
 
-        // TODO ошибка в считывание данных
-        Speciality qaw = DBManager.read(Speciality.class, ConstantEntity.NAME, "РПЗ");
-        //System.out.println(qaw.toString());*/
+        DBManager.write(specialityRPZ);
+        DBManager.write(specialityRP);
+
+        int size1 = DBManager.size(Speciality.class);
+
+        int sizeAll = DBManager.deleteAll(Speciality.class);
+
+        int size2 = DBManager.size(Speciality.class);*/
     }
 
     public void setActionBarTitle(String title){
@@ -277,26 +275,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void onClickAcceptReportDates(DialogInterface dialog, int which) {
-        final Spinner courseSpinner = genReport.findViewById(R.id.courseSpinner);
         final DatePicker pickerFrom = genReport.findViewById(R.id.dateFromPicker);
         final DatePicker pickerTo = genReport.findViewById(R.id.dateToPicker);
+        final Spinner courseSpinner = genReport.findViewById(R.id.courseSpinner);
         int fromYear = pickerFrom.getYear();
-        int fromMonth = pickerFrom.getMonth()+1;
+        int fromMonth = pickerFrom.getMonth();
         int fromDay = pickerFrom.getDayOfMonth();
 
         int toYear = pickerTo.getYear();
-        int toMonth = pickerTo.getMonth()+1;
+        int toMonth = pickerTo.getMonth();
         int toDay = pickerTo.getDayOfMonth();
         boolean isDatesCorrect = true;
         if(fromYear>toYear){
             isDatesCorrect = false;
         } else if(fromYear<=toYear && fromMonth>toMonth) {
             isDatesCorrect = false;
-        } else if(fromYear<=toYear && fromMonth<=toMonth && fromDay>toDay){
+        } else if(fromYear<=toYear && fromMonth<=toMonth && fromDay>=toDay){
             isDatesCorrect = false;
         }
         if(isDatesCorrect){
-            String[] groupsName = {"П-61", "Соплежуйки", "Ветродуйки", "Моржи", "Митинг", "Вирджиния", "П-67", "П-68", "П-69", "П-70"};
+             String[] groupsName = {"П-61", "Соплежуйки", "Ветродуйки", "Моржи", "Митинг", "Вирджиния", "П-67", "П-68", "П-69", "П-70"};
             String existstoragedir = getExternalFilesDir(null).getAbsolutePath() + "/report.pdf";
             File file = new File(existstoragedir);
 

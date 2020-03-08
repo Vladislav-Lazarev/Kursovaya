@@ -1,9 +1,10 @@
 package com.hpcc.kursovaya.dao.entity.setting;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
-import com.hpcc.kursovaya.dao.my_type.date_time.maks.RealmDateTime;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -13,22 +14,20 @@ public class BackupDB extends RealmObject {
     private int id;
     private String name;
     private String path;
-    private RealmDateTime dateTime;
+    private Date date;
 
-    {
+    public BackupDB() {
         id = 0;
         name = "";
         path = "";
-        dateTime = new RealmDateTime();
+        date = new Date();
     }
-    public BackupDB() {
-
-    }
-    public BackupDB(int id, @NotNull String name, @NotNull String path, @NotNull RealmDateTime dateTime) {
+    public BackupDB(int id, @NotNull String name, @NotNull String path, @NotNull Date date) {
+        this();
         setId(id);
         setName(name);
         setPath(path);
-        setRealmDateTime(dateTime);
+        setDate(date);
     }
 
     private void setId(int id){
@@ -65,12 +64,12 @@ public class BackupDB extends RealmObject {
         return this;
     }
 
-    public RealmDateTime getRealmDateTime() {
-        return dateTime;
+    public Date getDate() {
+        return date;
     }
-    public BackupDB setRealmDateTime(@NotNull RealmDateTime dateTime) {
+    public BackupDB setDate(@NotNull Date dateTime) {
         // TODO setRealmDateTime - проверка
-        this.dateTime = dateTime;
+        this.date = dateTime;
         return this;
     }
 
@@ -80,7 +79,7 @@ public class BackupDB extends RealmObject {
                 "id=" + id +
                 ", name=" + name +
                 ", path=" + path +
-                ", dateTime=" + dateTime +
+                ", date=" + date +
                 '}';
     }
 }

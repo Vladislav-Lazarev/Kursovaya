@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.schedule.lesson.template;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,15 +14,13 @@ public class TemplateScheduleDay extends RealmObject {
     private int dayOfWeek;// День недели
     private RealmList<TemplateLesson> templateLessonList;// Список пар на день
 
-    {
+    public TemplateScheduleDay() {
         id = 0;
         dayOfWeek = 0;
         templateLessonList = new RealmList<>();
     }
-    public TemplateScheduleDay() {
-
-    }
     public TemplateScheduleDay(int id, int dayOfWeek, @NotNull RealmList<TemplateLesson> templateLessonList) {
+        this();
         setId(id);
         setDayOfWeek(dayOfWeek);
         setTemplateLessonList(templateLessonList);

@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,16 +14,14 @@ public class Group extends RealmObject {
     private Speciality speciality;// Принадленость группы к специальности
     private Course course;// Номер курса группы
 
-    {
+    public Group() {
         id = 0;
         name = "";
         speciality = new Speciality();
         course = new Course();
     }
-    public Group() {
-
-    }
     public Group(int id, @NotNull String name, @NotNull Speciality speciality, @NotNull Course course) {
+        this();
         setId(id);
         setName(name);
         setSpecialty(speciality);

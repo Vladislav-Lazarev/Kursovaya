@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.schedule.call;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,15 +14,13 @@ public class CallScheduleDay extends RealmObject {
     private int dayOfWeek;// Номер дня недели
     private RealmList<CallLesson> callLessonList;// Расписание звонков на день
 
-    {
+    public CallScheduleDay() {
         id = 0;
         dayOfWeek = -1;
         callLessonList = new RealmList<>();
     }
-    public CallScheduleDay() {
-
-    }
     public CallScheduleDay(int id, int dayOfWeek, @NotNull RealmList<CallLesson> callLessonList) {
+        this();
         setId(id);
         setDayOfWeek(dayOfWeek);
         setCallLessonList(callLessonList);
@@ -65,6 +63,7 @@ public class CallScheduleDay extends RealmObject {
         return callLessonList;
     }
     public CallScheduleDay setCallLessonList(@NotNull RealmList<CallLesson> callLessonList) {
+        // TODO setCallLessonList - проверка
         try {
             if (callLessonList.size() < ConstantEntity.MIN_COUNT_LESSON ||
                     callLessonList.size() > ConstantEntity.MAX_COUNT_LESSON) {

@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -13,15 +13,13 @@ public class Speciality extends RealmObject {
     private String name;// Название(имя) специальности
     private int countCourse;// Количество проведения курсов в конкретной специальности
 
-    {
+    public Speciality() {
         id = 0;
         name = "";
         countCourse = 0;
     }
-    public Speciality() {
-
-    }
     public Speciality(int id, @NotNull String name, int countCourse) {
+        this();
         setId(id);
         setName(name);
         setCountCourse(countCourse);
