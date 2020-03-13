@@ -67,7 +67,6 @@ public class Subject extends RealmObject {
     }
     public Subject setSpecialityList(@NotNull RealmList<Speciality> specialityList) {
         // TODO setSpecialtyList - сделать проверку
-        // Привет
         this.specialityList = specialityList;
         return this;
     }
