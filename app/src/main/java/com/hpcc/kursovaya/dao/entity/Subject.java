@@ -76,7 +76,6 @@ public class Subject extends RealmObject {
     }
     public Subject setCountHours(int countHours) {
         // TODO setCountHours - сделать проверку
-
         this.countHours = countHours;
         return this;
     }
