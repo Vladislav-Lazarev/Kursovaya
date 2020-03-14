@@ -87,14 +87,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     new ScheduleFragment(), getResources().getString(R.string.scheduleTag)).commit();
             navigationView.setCheckedItem(R.id.nav_schedule);
         }
-
-        /*//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        Realm realm = Realm.getDefaultInstance();
-        Speciality specialityRPZ = new Speciality( 4, "РПЗ-121", 4);
-        DBManager.write(realm, specialityRPZ);
-
-        // TODO ошибка в считывание данных
-        Speciality qaw = DBManager.read(realm, Speciality.class, ConstantEntity.NAME, "РПЗ-121");*/
     }
 
     public void setActionBarTitle(String title){
