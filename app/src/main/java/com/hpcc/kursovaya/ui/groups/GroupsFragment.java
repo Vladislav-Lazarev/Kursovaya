@@ -13,19 +13,16 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.Course;
 import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import io.realm.Realm;
 
 public class GroupsFragment extends Fragment {
     private boolean isCreatedAlready = false;
     private View root;
-    private Realm realm;
+
+    private GroupListAdapter adapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -34,6 +31,7 @@ public class GroupsFragment extends Fragment {
             root = inflater.inflate(R.layout.fragment_groups, container, false);
             ListView listView = root.findViewById(R.id.groupLSV);
             // getActivity().setTitle("");
+
             FloatingActionButton button = root.findViewById(R.id.fab);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -43,28 +41,27 @@ public class GroupsFragment extends Fragment {
                 }
             });
 
-            realm = Realm.getDefaultInstance();
-
             //creating elements for listview
-            Group P61 = new Group(1, "П-61", new Speciality(2, "Йцу", 8), new Course().setNumber(3));
-            Group P62 = new Group(2, "П-611111", new Speciality(2, "Йцу", 8), new Course().setNumber(2));
-            Group P63 = new Group(3, "П-612222", new Speciality(3, "Пасв", 8), new Course().setNumber(1));
-
-            List<Group> groupList = new ArrayList<>();
-            groupList.add(P61);
-            groupList.add(P62);
-            groupList.add(P63);
-
-            GroupListAdapter adapter = new GroupListAdapter(getActivity(), R.layout.list_view_item_group, groupList);
+            List<Group> groupList = DBManager.readAll(Group.class);
+            adapter = new GroupListAdapter(getActivity(), R.layout.list_view_item_group, groupList);
             listView.setAdapter(adapter);
+
             isCreatedAlready=true;
         }
         setActionBarTitle();
+
+
+
         return root;
     }
 
     public void setActionBarTitle(){
         ((MainActivity)getActivity()).setActionBarTitle(getContext().getString(R.string.menu_groups));
         ((MainActivity) getActivity()).showOverflowMenu(false);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

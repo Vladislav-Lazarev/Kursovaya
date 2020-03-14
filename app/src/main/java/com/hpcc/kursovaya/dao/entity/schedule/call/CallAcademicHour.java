@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.schedule.call;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ public class CallAcademicHour extends RealmObject {
     private int id;// Индентификатор
     private Date startDate;// Начало пары
     private Date endDate;// Начало пары
-
+    
     public CallAcademicHour() {
         id = 0;
         startDate = new Date();
@@ -27,6 +27,9 @@ public class CallAcademicHour extends RealmObject {
         setEndDate(endDate);
     }
 
+    public int getId() {
+        return id;
+    }
     private void setId(int id){
         try{
             if (id < ConstantEntity.ONE){
@@ -38,9 +41,6 @@ public class CallAcademicHour extends RealmObject {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
         }
-    }
-    public int getId() {
-        return id;
     }
 
     @NotNull

@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.setting;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -67,9 +67,9 @@ public class BackupDB extends RealmObject {
     public Date getDate() {
         return date;
     }
-    public BackupDB setDate(@NotNull Date date) {
+    public BackupDB setDate(@NotNull Date dateTime) {
         // TODO setRealmDateTime - проверка
-        this.date = date;
+        this.date = dateTime;
         return this;
     }
 

@@ -1,10 +1,11 @@
 package com.hpcc.kursovaya.dao.entity.schedule.lesson;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.Subject;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
+
+import java.util.Date;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -51,12 +52,10 @@ public class LessonSchedule extends RealmObject {
         return this;
     }
 
-    public int countHours(DateTime start, DateTime end, Subject subject){
+    public int countHours(Date start, Date end, Subject subject){
         // TODO countHours - подсчет проведенных пар
-        DateTime startOther = DateTime.now();
-        DateTime endOther = DateTime.now();
-        startOther.withMillis(start.getMillis());
-        startOther.withMillis(endOther.getMillis());
+        Date startOther = start;
+        Date endOther = end;
 
         int result = 0;
         return result;
