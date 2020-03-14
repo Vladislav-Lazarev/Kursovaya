@@ -1,5 +1,6 @@
 package com.hpcc.kursovaya.ui.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,12 +16,14 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.ui.settings.specialities.SpecialitiesActivity;
+import com.hpcc.kursovaya.ui.templates.AddTemplateActivity;
 
 public class SettingsFragment extends Fragment{
     boolean isCreatedAlready = false;
     private View root;
     private final String TAG = "SettingsFragment";
-    private final String[] SETTINGS = { "Розклад двзінків", "Мова", "Про програму"};
+    private final String[] SETTINGS = { "Розклад дзвінків","Спеціальності", "Мова", "Про програму"};
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -35,6 +38,11 @@ public class SettingsFragment extends Fragment{
             lsv.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    switch (position){
+                        default:
+                            Intent specInt = new Intent(getActivity(), SpecialitiesActivity.class);
+                            startActivity(specInt);
+                    }
                     String selectedItem = SETTINGS[position];
                     Log.d(TAG, selectedItem);
                 }

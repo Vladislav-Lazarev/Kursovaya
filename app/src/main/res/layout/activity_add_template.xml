@@ -23,12 +23,15 @@
                 android:textColor="@color/appDefaultBlack"
                 android:textSize="20sp" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/create_template"
-                android:layout_width="16.78dp"
-                android:layout_height="12.58dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_path_161"
+                android:scaleType="centerInside"
                 android:layout_gravity="right"
-                android:background="@drawable/ic_path_161"/>
+                android:background="?selectableItemBackgroundBorderless"/>
         </androidx.appcompat.widget.Toolbar>
 
 
@@ -38,13 +41,16 @@
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.AppActionBarTheme">
 
-            <Button
+            <ImageButton
                 android:id="@+id/turnOff_editing"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_clear_24px"
                 android:layout_gravity="left"
+                android:scaleType="centerInside"
                 android:layout_marginStart="12dp"
-                android:background="@drawable/ic_clear_24px" />
+                android:background="?selectableItemBackgroundBorderless" />
 
 
             <Button
@@ -66,12 +72,15 @@
                 android:layout_marginEnd="12dp"
                 android:background="@drawable/ic_cancel_24px" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/delete_classes"
-                android:layout_width="12dp"
-                android:layout_height="15.5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="right"
-                android:background="@drawable/ic_delete_icon" />
+                android:src="@drawable/ic_delete_icon"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:background="?selectableItemBackgroundBorderless"/>
 
         </androidx.appcompat.widget.Toolbar>
 

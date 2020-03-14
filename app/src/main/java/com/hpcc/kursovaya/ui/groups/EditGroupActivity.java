@@ -41,7 +41,7 @@ public class EditGroupActivity extends AppCompatActivity {
         TextView textCont = (TextView)findViewById(R.id.toolbar_title);
         textCont.setText("Редагування групи");
 
-        Button addButton = (Button) findViewById(R.id.edit_group);
+        Button addButton = findViewById(R.id.edit_group);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

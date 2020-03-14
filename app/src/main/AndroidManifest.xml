@@ -3,7 +3,7 @@
     package="com.hpcc.kursovaya">
 
     <application
-        android:name=".dao.ApplicationRealm"
+        android:name=".dao.MyApplication"
 
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -24,6 +24,11 @@
             android:name=".ui.schedule.AddClass"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_edit_subject"/>
+        <receiver android:name=".AlarmClassReceiver">
+            <intent-filter>
+                <action android:name="class.action.DISPLAY_NOTIFICATION"/>
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".ui.report.GeneratedReportActivity"
             android:theme="@style/AppTheme.NoActionBar"
@@ -54,6 +59,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.templates.EditTemplateActivity"
+            android:label="@string/title_activity_add_template"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.settings.specialities.SpecialitiesActivity"
             android:label="@string/title_activity_add_template"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

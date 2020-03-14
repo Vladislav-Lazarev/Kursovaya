@@ -11,8 +11,8 @@
         <item>За 1 годину</item>
         <item>За 2 години</item>
         <item>За 3 години</item>
+        <item>За 16 годин</item>
         <item>За 1 добу</item>
-        <item>За 2 доби</item>
     </string-array>
 
     <string-array name="courses">
@@ -83,7 +83,14 @@
     <string name="week_upper_label">Верхня</string>
     <string name="week_down_label">Нижня</string>
 
+    <string name="dialog_edit_speciality">Редагувати спеціальність</string>
+    <string name="dialog_add_speciality">Додати спеціальність</string>
+    <string name="dialog_button_add">Додати</string>
+    <string name="specialty_list_label">Спеціальності</string>
+    <string name="specialty_cours_length">Кількість курсів:</string>
 
+
+    <string name="specialty_name_label">Назва спеціальності:</string>
     <string name="specialty_label">Спеціальність:</string>
     <string name="course_label">Курс:</string>
     <string name="groupName_label">Назва:</string>

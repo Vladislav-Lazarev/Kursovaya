@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/speciality_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/specialty_name_label"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="26dp"
+        android:layout_marginStart="15dp"/>
+    <EditText
+        android:id="@+id/speciality_name_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/sideBar"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="15dp"
+        android:layout_toEndOf="@id/speciality_name_label"
+        />
+    <TextView
+        android:id="@+id/courseLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/specialty_cours_length"
+        android:layout_below="@id/speciality_name_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_marginTop="26dp"
+        android:layout_marginStart="15dp"/>
+
+    <Spinner
+        android:id="@+id/courseSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/speciality_name_text"
+        android:layout_toEndOf="@id/courseLabel"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:entries="@array/courses"/>
+
+</RelativeLayout>

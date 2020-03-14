@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.subjects.AddSubjectActivity">
+    tools:context=".ui.settings.specialities.SpecialitiesActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -20,24 +20,19 @@
                 android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/specialty_list_label"
                 android:layout_gravity="center"
                 android:textColor="@color/appDefaultBlack"
                 android:textSize="20sp" />
 
-            <ImageButton
-                android:id="@+id/create_subject"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:adjustViewBounds="true"
-                android:src="@drawable/ic_path_161"
-                android:scaleType="centerInside"
-                android:layout_gravity="right"
-                android:background="?selectableItemBackgroundBorderless" />
         </androidx.appcompat.widget.Toolbar>
-
-
+        <View
+            android:id="@+id/toolbar_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@drawable/toolbar_shadow" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_add_subject" />
 
+<include layout="@layout/content_list_specialties"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

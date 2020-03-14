@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/listview_background">
+
+    <TextView
+        android:id="@+id/specialities_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/specialty_label"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/specialities_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/specialities_label"
+        android:text="@string/textStub"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp" />
+    <TextView
+        android:id="@+id/courses_quantity_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/specialty_cours_length"
+        android:textSize="16sp"
+        android:layout_below="@id/specialities_label"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/courses_quantity_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/courses_quantity_label"
+        android:text="@string/textStub"
+        android:layout_below="@id/specialities_text"
+        android:textColor="@color/appDefaultBlack"
+        android:paddingBottom="10dp"
+        android:textSize="16sp" />
+
+</RelativeLayout>

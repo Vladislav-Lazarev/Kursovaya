@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -55,7 +56,7 @@ public class AddSubjectActivity extends AppCompatActivity {
         TextView textCont = (TextView)findViewById(R.id.toolbar_title);
         textCont.setText("Додавання предмету");
 
-        Button addButton = (Button) findViewById(R.id.create_subject);
+        ImageButton addButton = findViewById(R.id.create_subject);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
