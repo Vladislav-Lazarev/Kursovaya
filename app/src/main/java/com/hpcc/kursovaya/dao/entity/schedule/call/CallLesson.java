@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.schedule.call;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +23,9 @@ public class CallLesson extends RealmObject {
         setCallAcademicHourList(callAcademicHourList);
     }
 
+    public int getId() {
+        return id;
+    }
     private void setId(int id){
         try{
             if (id < ConstantEntity.ONE){
@@ -34,9 +37,6 @@ public class CallLesson extends RealmObject {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
         }
-    }
-    public int getId() {
-        return id;
     }
 
     @NotNull

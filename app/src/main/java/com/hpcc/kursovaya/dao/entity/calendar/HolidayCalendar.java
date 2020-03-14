@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.calendar;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.schedule.call;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -63,6 +63,7 @@ public class CallScheduleDay extends RealmObject {
         return callLessonList;
     }
     public CallScheduleDay setCallLessonList(@NotNull RealmList<CallLesson> callLessonList) {
+        // TODO setCallLessonList - проверка
         try {
             if (callLessonList.size() < ConstantEntity.MIN_COUNT_LESSON ||
                     callLessonList.size() > ConstantEntity.MAX_COUNT_LESSON) {

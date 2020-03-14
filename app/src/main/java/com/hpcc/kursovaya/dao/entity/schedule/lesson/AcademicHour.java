@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.schedule.lesson;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 
 import org.jetbrains.annotations.NotNull;

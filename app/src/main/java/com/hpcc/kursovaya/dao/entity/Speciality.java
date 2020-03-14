@@ -1,8 +1,6 @@
 package com.hpcc.kursovaya.dao.entity;
 
-import android.util.Log;
-
-import com.hpcc.kursovaya.dao.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +27,6 @@ public class Speciality extends RealmObject {
 
     private void setId(int id) {
         try{
-            Log.println(Log.INFO, "Speciality", String.valueOf(id));
             if (id < ConstantEntity.ONE){
                 throw new Exception("Exception! setId()");
             }
@@ -58,8 +55,6 @@ public class Speciality extends RealmObject {
     }
     public Speciality setCountCourse(int countCourse) {
         try {
-            Log.println(Log.INFO, "Speciality", String.valueOf(countCourse));
-            System.out.println("setCountCourse " + countCourse);
             if (countCourse < ConstantEntity.MIN_COUNT_COURSE || countCourse > ConstantEntity.MAX_COUNT_COURSE) {
                 throw new Exception("Exception! setCountSemester()");
             }
@@ -77,12 +72,12 @@ public class Speciality extends RealmObject {
         return this.name.equals(speciality.name);
     }
 
-    /*@Override
+    @Override
     public String toString() {
         return "Specialty{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", countCourse=" + countCourse +
                 '}';
-    }*/
+    }
 }

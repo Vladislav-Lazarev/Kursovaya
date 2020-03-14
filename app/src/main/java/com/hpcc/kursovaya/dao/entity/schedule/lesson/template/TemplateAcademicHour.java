@@ -1,8 +1,8 @@
 package com.hpcc.kursovaya.dao.entity.schedule.lesson.template;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -70,6 +70,7 @@ public class TemplateAcademicHour extends RealmObject {
         return numberAcademicTwoHour;
     }
     public TemplateAcademicHour setNumberAcademicTwoHour(int numberAcademicTwoHour) {
+        // TODO setNumberAcademicTwoHour - проверка
         try {
             if (numberAcademicTwoHour < ConstantEntity.MIN_COUNT_ACADEMIC_HOUR ||
                     numberAcademicTwoHour > ConstantEntity.MAX_COUNT_ACADEMIC_HOUR) {

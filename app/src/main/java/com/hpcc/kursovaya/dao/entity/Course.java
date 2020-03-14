@@ -1,7 +1,7 @@
 package com.hpcc.kursovaya.dao.entity;
 
-import com.hpcc.kursovaya.dao.ConstantEntity;
-import com.hpcc.kursovaya.dao.my_type.pair_subject_list_group.Pair;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.my_type.Pair;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -68,6 +68,8 @@ public class Course extends RealmObject {
         this.pairList = pairList;
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     public int pairListSize() {
         return pairList.size();
     }
@@ -131,6 +133,8 @@ public class Course extends RealmObject {
     public void pairListClear() {
         pairList.clear();
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public String toString() {
