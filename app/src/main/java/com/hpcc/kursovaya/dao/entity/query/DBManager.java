@@ -1,11 +1,10 @@
 package com.hpcc.kursovaya.dao.entity.query;
 
-import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
-
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,197 +15,142 @@ import io.realm.RealmResults;
 
 public class DBManager {
     private static  final String TAG = "DBManager";
-    private static Realm realmDefault = Realm.getDefaultInstance();
+    private static Realm realm = Realm.getDefaultInstance();
+    private static List result = new ArrayList<>();
 
-    public static <T extends RealmObject> void write(final T model){
-        realmDefault.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.copyToRealmOrUpdate(model);
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                // Transaction was a success.
-                Log.v(TAG, "Success -> " + model.getClass().getSimpleName() + " was write: " + model);
+    public static <T extends RealmObject> int write(@NotNull final T model){
+        result.clear();
 
-                Log.println(Log.INFO, TAG,"Success -> " + model.getClass().getSimpleName() + " was write: " + model);
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                // Transaction failed and was automatically canceled.
-                Log.e(TAG, "Failed -> " + error.getMessage(), error);
+        try {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realm.copyToRealmOrUpdate(model);
 
-                Log.println(Log.ERROR, TAG, "Failed -> " + error.getMessage() + "\n" + error);
-            }
-        });
-    }
-    public static <T extends RealmObject> void writeAll(final T model){
-        realmDefault.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.insertOrUpdate(model);
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onSuccess() {
-                // Transaction was a success.
-                Log.v(TAG, "Success -> " + model.getClass().getSimpleName() + " was writeAll: " + model);
-
-                Log.println(Log.INFO, TAG,"Success -> " + model.getClass().getSimpleName() + " was writeAll: " + model);
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                // Transaction failed and was automatically canceled.
-                Log.e(TAG, "Failed -> " + error.getMessage(), error);
-
-                Log.println(Log.ERROR, TAG, "Failed -> " + error.getMessage() + "\n" + error);
-            }
-        });
-    }
-
-    public static <T extends RealmObject> int delete(final Class<T> clazz, final String fieldName, final String value){
-        final List<T> model = new ArrayList<>();
-        final List<Integer> sizeDelete = new ArrayList<>();
-
-        realmDefault.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                T firstModel = realm.where(clazz)
-                        .equalTo(fieldName, value)
-                        .findFirst();
-
-                if (firstModel == null){
-                    model.add(null);
-                    sizeDelete.add(ConstantEntity.ZERO);
-                } else {
-                    firstModel.deleteFromRealm();
-                    sizeDelete.add(ConstantEntity.ONE);
+                    result.add(ConstantEntity.ONE);
+                    Log.v(TAG, "Success -> " + model.getClass().getSimpleName() + " was write: " + model);
                 }
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                Log.v(TAG, "Success -> " + model.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was delete: " + model.get(ConstantEntity.ZERO));
+            });
+        } catch (Throwable ex) {
+                result.add(ConstantEntity.ZERO);
+                Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
+        }
 
-                Log.println(Log.INFO, TAG,"Success -> " + model.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was delete: " + model.get(ConstantEntity.ZERO));
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                Log.e(TAG, "Failed -> " + error.getMessage(), error);
-
-                Log.println(Log.ERROR, TAG, "Failed -> " + error.getMessage() + "\n" + error);
-            }
-        });
-
-        return sizeDelete.get(ConstantEntity.ZERO);
+        return (int)result.get(ConstantEntity.ZERO);
     }
-    public static <T extends RealmObject> int deleteAll(final Class<T> clazz){
-        final List<RealmResults<T>> model = new ArrayList<>();
+    public static <T extends RealmObject> int writeAll(@NotNull final List<T> model) {
+        result.clear();
 
-        realmDefault.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<T> allModel = realm.where(clazz).findAll();
-                model.add(allModel);
-                allModel.deleteAllFromRealm();
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                Log.v(TAG, "Success -> " + model.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was deleteAll: " + model.get(ConstantEntity.ZERO));
+        try {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realm.insertOrUpdate(model);
 
-                Log.println(Log.INFO, TAG,"Success -> " + model.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was deleteAll: " + model.get(ConstantEntity.ZERO));
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                Log.e(TAG, "Failed -> " + error.getMessage(), error);
+                    result.add(model.size());
+                    Log.v(TAG, "Success -> " + model.getClass().getSimpleName() + " was write: " + model);
+                }
+            });
+        } catch (Throwable ex) {
+            result.add(ConstantEntity.ZERO);
+            Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
+        }
 
-                Log.println(Log.ERROR, TAG, "Failed -> " + error.getMessage() + "\n" + error);
-            }
-        });
-
-        return model.get(ConstantEntity.ZERO).size();
+        return (int)result.get(ConstantEntity.ZERO);
     }
 
-    public static <T extends RealmObject> T read(final Class<T> clazz, final String fieldName, final String value){
-        final List<T> model = new ArrayList<>();
+    public static <T extends RealmObject> int delete(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final String value){
+        result.clear();
+        final T model;
 
-        realmDefault.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                model.add(realm.where(clazz)
-                        .equalTo(fieldName, value)
-                        .findFirst());
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                Log.v(TAG, "Success -> " + model.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + model.get(ConstantEntity.ZERO));
+        try {
+            model = realm.where(clazz)
+                    .equalTo(fieldName, value)
+                    .findFirst();
 
-                Log.println(Log.INFO, TAG,"Success -> " + model.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + model.get(ConstantEntity.ZERO));
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                Log.e(TAG, "Failed -> " + error.getMessage(), error);
+            Log.v(TAG, "Success -> " + model.getClass().getSimpleName() + " was delete: " + model.toString());
 
-                Log.println(Log.ERROR, TAG, "Failed -> " + error.getMessage() + "\n" + error);
-            }
-        });
+            result.add(ConstantEntity.ONE);
 
-        return model.get(ConstantEntity.ZERO);
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    model.deleteFromRealm();
+                }
+            });
+        } catch (Throwable ex) {
+            result.add(ConstantEntity.ZERO);
+            Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
+        }
+
+        return (int)result.get(ConstantEntity.ZERO);
     }
-    public static <T extends RealmObject> RealmResults<T> readAll(final Class<T> clazz){
-        final List<RealmResults<T>> model = new ArrayList<>();
+    public static <T extends RealmObject> int deleteAll(@NotNull final Class<T> clazz){
+        result.clear();
+        final RealmResults<T> model;
 
-        realmDefault.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                model.add(realm.where(clazz).findAll());
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                Log.v(TAG, "Success -> " + model.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was readAll: " + model.get(ConstantEntity.ZERO));
+        try {
+            model = realm.where(clazz)
+                    .findAll();
 
-                Log.println(Log.INFO, TAG,"Success -> " + model.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was readAll: " + model.get(ConstantEntity.ZERO));
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                Log.e(TAG, "Failed -> " + error.getMessage(), error);
+            Log.v(TAG, "Success -> " + model.getClass().getSimpleName() + " was deleteAll: " + model.toString());
 
-                Log.println(Log.ERROR, TAG, "Failed -> " + error.getMessage() + "\n" + error);
-            }
-        });
+            result.add(model.size());
 
-        return model.get(ConstantEntity.ZERO);
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    model.deleteAllFromRealm();
+                }
+            });
+        } catch (Throwable ex) {
+            result.add(ConstantEntity.ZERO);
+            Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
+        }
+
+        return (int)result.get(ConstantEntity.ZERO);
     }
 
-    public static <T extends RealmObject> int findMaxID(Class<T> clazz){
-        /*final Number maxID = realmDefault.where(clazz).max(ConstantEntity.ID);
-        if(maxID != null){
+    public static <T extends RealmObject> T read(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final String value){
+        result.clear();
+
+        try {
+            result.add(realm.where(clazz)
+                    .equalTo(fieldName, value)
+                    .findFirst());
+
+            Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantEntity.ZERO).toString());
+        } catch (Throwable ex) {
+            result.set(ConstantEntity.ZERO, null);
+
+            Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
+        }
+
+        return (T)result.get(ConstantEntity.ZERO);
+    }
+    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz){
+        result.clear();
+
+        try {
+            result.add(realm.where(clazz)
+                    .findAll());
+
+            Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantEntity.ZERO).toString());
+        } catch (Throwable ex) {
+            result.set(ConstantEntity.ZERO, null);
+
+            Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
+        }
+
+        return (RealmResults<T>) result.get(ConstantEntity.ZERO);
+    }
+
+    public static <T extends RealmObject> int findMaxID(@NotNull Class<T> clazz){
+        Number maxID = realm.where(clazz).max(ConstantEntity.ID);
+
+        if (maxID != null) {
             return maxID.intValue();
-        }*/
+        }
         return ConstantEntity.ZERO;
-    }
-
-    public static <T extends RealmObject> int size(final Class<T> clazz){
-        final List<Integer> size = new ArrayList<>();
-
-        realmDefault.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                size.add(realm.where(clazz).findAll().size());
-            }
-        });
-
-        return size.get(ConstantEntity.ZERO);
     }
 }

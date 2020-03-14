@@ -107,19 +107,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     new ScheduleFragment(), getResources().getString(R.string.scheduleTag)).commit();
             navigationView.setCheckedItem(R.id.nav_schedule);
         }
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        /*Speciality specialityRPZ = new Speciality(1, "ІПЗ", 4);
-        Speciality specialityRP = new Speciality(2, "КІ", 4);
-
-        DBManager.write(specialityRPZ);
-        DBManager.write(specialityRP);
-
-        int size1 = DBManager.size(Speciality.class);
-
-        int sizeAll = DBManager.deleteAll(Speciality.class);
-
-        int size2 = DBManager.size(Speciality.class);*/
     }
 
     public void setActionBarTitle(String title){

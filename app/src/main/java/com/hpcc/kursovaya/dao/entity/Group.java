@@ -1,6 +1,7 @@
 package com.hpcc.kursovaya.dao.entity;
 
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -8,21 +9,29 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class Group extends RealmObject {
+    private static int countObj;
+
+    static {
+        countObj = 0;
+    }
+
     @PrimaryKey
     private int id;// Индентификатор
     private String name;// Название(имя) группы
     private Speciality speciality;// Принадленость группы к специальности
-    private Course course;// Номер курса группы
+    private int course;// Номер курса группы
 
     public Group() {
         id = 0;
         name = "";
         speciality = new Speciality();
-        course = new Course();
+        course = 0;
     }
-    public Group(int id, @NotNull String name, @NotNull Speciality speciality, @NotNull Course course) {
+    public Group(@NotNull String name, @NotNull Speciality speciality, int course) {
         this();
-        setId(id);
+        int maxID = DBManager.findMaxID(this.getClass());
+
+        setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
         setName(name);
         setSpecialty(speciality);
         setCourse(course);
@@ -62,10 +71,10 @@ public class Group extends RealmObject {
         return this;
     }
 
-    public Course getCourse() {
+    public int getCourse() {
         return course;
     }
-    public Group setCourse(Course course) {
+    public Group setCourse(int course) {
         // TODO setName - сделать проверку
         this.course = course;
         return this;

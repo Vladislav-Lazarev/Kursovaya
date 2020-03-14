@@ -1,30 +1,31 @@
 package com.hpcc.kursovaya.dao.entity;
 
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
-import com.hpcc.kursovaya.dao.my_type.Pair;
+import com.hpcc.kursovaya.dao.my_type.PairSubjectGroup;
 
 import org.jetbrains.annotations.NotNull;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 public class Course extends RealmObject {
     @PrimaryKey
     private int id;// Индентификатор
     private int number;// Номер курса
-    private RealmList<Pair> pairList;
+    private RealmList<PairSubjectGroup> pairSubjectGroupList;
 
     public Course() {
         id = 0;
         number = 0;
-        pairList = new RealmList<>();
+        pairSubjectGroupList = new RealmList<>();
     }
-    public Course(int id, int number, @NotNull RealmList<Pair> pairList) {
+    public Course(int id, int number, @NotNull RealmList<PairSubjectGroup> pairSubjectGroupList) {
         this();
         setId(id);
         setNumber(number);
-        setPairList(pairList);
+        setPairSubjectGroupList(pairSubjectGroupList);
     }
 
     private void setId(int id){
@@ -60,37 +61,41 @@ public class Course extends RealmObject {
     }
 
     @NotNull
-    public RealmList<Pair> getPairList() {
-        return pairList;
+    public RealmList<PairSubjectGroup> getPairSubjectGroupList() {
+        return pairSubjectGroupList;
     }
-    public void setPairList(@NotNull RealmList<Pair> pairList) {
+    public void setPairSubjectGroupList(@NotNull RealmList<PairSubjectGroup> pairSubjectGroupList) {
         // TODO setPairSubjectListGroupList - сделать проверку
-        this.pairList = pairList;
+        this.pairSubjectGroupList = pairSubjectGroupList;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public int pairListSize() {
-        return pairList.size();
+        return pairSubjectGroupList.size();
     }
     public boolean isPairListEmpty() {
-        return pairList.isEmpty();
+        return pairSubjectGroupList.isEmpty();
     }
 
     public boolean containsPairListKey(Subject key) {
-        for(Pair pair:pairList){
-            if(pair.getSubject().equals(key)){
+        for(PairSubjectGroup pairSubjectGroup : pairSubjectGroupList){
+            if(pairSubjectGroup.getSubject().equals(key)){
                 return true;
             }
         }
 
         return false;
     }
+
     public boolean containsPairListValue(RealmList<Group> value) {
-        for(Pair pair:pairList){
-            boolean isSizeEqual = pair.getGroupList().size() == value.size();
-            for (int i = 0; i < pair.getGroupList().size() && isSizeEqual; i++) {
-                if(!pair.getGroupList().get(i).equals(value.get(i))){
+        RealmResults<Group> sortValue = value.sort(ConstantEntity.NAME);
+
+        for(PairSubjectGroup pairSubjectGroup : pairSubjectGroupList){
+            boolean isSizeEqual = pairSubjectGroup.getGroupList().size() == value.size();
+            RealmResults<Group> sort = pairSubjectGroup.getGroupList().sort(ConstantEntity.NAME);
+            for (int i = 0; i < sort.size() && isSizeEqual; i++) {
+                if(!pairSubjectGroup.getGroupList().get(i).equals(sortValue.get(i))){
                     return false;
                 }
             }
@@ -100,38 +105,38 @@ public class Course extends RealmObject {
     }
 
     public RealmList<Group> pairListGet( Subject key) {
-        for(Pair pair:pairList){
-            if(pair.getSubject().equals(key)){
-                return pair.getGroupList();
+        for(PairSubjectGroup pairSubjectGroup : pairSubjectGroupList){
+            if(pairSubjectGroup.getSubject().equals(key)){
+                return pairSubjectGroup.getGroupList();
             }
         }
 
         return null;
     }
 
-    public RealmList<Group> pairListPut( Pair pair) {
-        if (!containsPairListKey(pair.getSubject())){
-            pairList.add(pair);
+    public RealmList<Group> pairListPut( PairSubjectGroup pairSubjectGroup) {
+        if (!containsPairListKey(pairSubjectGroup.getSubject())){
+            pairSubjectGroupList.add(pairSubjectGroup);
         }
         else {
-            int index = pairList.indexOf(pair);
-            pairList.get(index).set(pair.getSubject(), pair.getGroupList());
+            int index = pairSubjectGroupList.indexOf(pairSubjectGroup);
+            pairSubjectGroupList.get(index).set(pairSubjectGroup.getSubject(), pairSubjectGroup.getGroupList());
         }
-        return pairListGet(pair.getSubject());
+        return pairListGet(pairSubjectGroup.getSubject());
     }
 
     public RealmList<Group> pairListRemove( Subject key) {
-        for (Pair pair : pairList){
-            if (key.equals(pair.getSubject())){
-                pairList.remove(pair);
-                return pair.getGroupList();
+        for (PairSubjectGroup pairSubjectGroup : pairSubjectGroupList){
+            if (key.equals(pairSubjectGroup.getSubject())){
+                pairSubjectGroupList.remove(pairSubjectGroup);
+                return pairSubjectGroup.getGroupList();
             }
         }
         return null;
     }
 
     public void pairListClear() {
-        pairList.clear();
+        pairSubjectGroupList.clear();
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -141,7 +146,7 @@ public class Course extends RealmObject {
         return "Course{" +
                 "id=" + id +
                 ", number=" + number +
-                ", pairSubjectListGroupList=" + pairList.toString() +
+                ", pairSubjectListGroupList=" + pairSubjectGroupList.toString() +
                 '}';
     }
 }

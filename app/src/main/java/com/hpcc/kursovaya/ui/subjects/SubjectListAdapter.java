@@ -36,11 +36,9 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Subject subject = new Subject(
-                1,
                 getItem(position).getName(),
-                getItem(position).getSpecialityList(),
-                getItem(position).getCountHours(),
-                getItem(position).getCourseList(),
+                getItem(position).getPairSpecialityCountHoursList(),
+                getItem(position).getCourse(),
                 getItem(position).getColor());
 
 
@@ -140,8 +138,8 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
        result.startAnimation(animation);
 
         holder.name.setText(subject.getName());
-        holder.speciality.setText(subject.getSpecialityList().first().getName());
-        holder.course.setText("Pidor"); // (Integer.toString(subject.getCourseList().get(1).getNumber()));
+        holder.speciality.setText(subject.getPairSpecialityCountHoursList().first().getSpeciality().getName());
+        holder.course.setText(String.valueOf(subject.getCourse())); // String.valueOf(subject.getCourse())
         return convertView;
     }
     //

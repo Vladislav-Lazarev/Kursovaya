@@ -13,14 +13,10 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.Course;
-import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import io.realm.RealmList;
 
 public class SubjectsFragment extends Fragment {
     boolean isCreatedAlready = false;
@@ -41,32 +37,12 @@ public class SubjectsFragment extends Fragment {
                 }
             });
 
-
-            Speciality specialityRPZ = new Speciality(1, "РПЗ", 8);
-
-            RealmList<Course> courses = new RealmList<>();
-
-            Subject clarnet = new Subject( 1, "Уроки гри на кларнеті",
-                    new RealmList<Speciality>(specialityRPZ), 78,
-                    courses, 0);
-
-            Subject web = new Subject( 2, "В гостях у Гордон",
-                    new RealmList<Speciality>(specialityRPZ), 78,
-                   courses, 0);
-
-            Subject metro = new Subject( 3, "Метро",
-                    new RealmList<Speciality>(specialityRPZ), 78,
-                    courses, 0);
-
-            List<Subject> subjects = new ArrayList<>();
-            subjects.add(clarnet);
-            subjects.add(web);
-            subjects.add(metro);
-
-            SubjectListAdapter adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjects);
+            List<Subject> subjectList = DBManager.readAll(Subject.class);
+            SubjectListAdapter adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
             listView.setAdapter(adapter);
             isCreatedAlready=true;
         }
+
         setActionBarTitle();
         return root;
     }
