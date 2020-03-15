@@ -56,9 +56,7 @@ public class AddSubjectActivity extends AppCompatActivity {
         }
     }
 
-    private ArrayList<CheckBox> checkBoxes = new ArrayList<>();
     private ArrayList<SpecialityWHours> specialityList = new ArrayList<>();
-    private ArrayList<EditText> hoursQuantity = new ArrayList<>();
 
     private Subject subjec;
 

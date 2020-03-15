@@ -1,10 +1,18 @@
 package com.hpcc.kursovaya.ui.subjects;
 
+import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
@@ -12,12 +20,37 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.Speciality;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class EditSubjectActivity extends AppCompatActivity {
     int pickDefaultColor;
     Button colorPickButton;
+
+    static class SpecialityWHours{
+        Speciality speciality;
+        EditText hourEdtxt;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            AddSubjectActivity.SpecialityWHours that = (AddSubjectActivity.SpecialityWHours) o;
+            return Objects.equals(speciality, that.speciality) &&
+                    Objects.equals(hourEdtxt, that.hourEdtxt);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(speciality, hourEdtxt);
+        }
+    }
+
+    private ArrayList<AddSubjectActivity.SpecialityWHours> specialityList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +90,78 @@ public class EditSubjectActivity extends AppCompatActivity {
             }
         });
         pickDefaultColor = getResources().getColor((R.color.sideBar));
+
+        LinearLayout parent = findViewById(R.id.spinnerSpeciality);
+
+        final ArrayList<Speciality> specialities = new ArrayList<>();
+        Speciality rpz = new Speciality("РПЗ", 4);
+        Speciality rpn = new Speciality("Дело Влада", 4);
+        Speciality ghost = new Speciality("Инженерия призрачного дела", 4);
+        Speciality ghost2 = new Speciality("Инженерия непризрачного дела", 4);
+        specialities.add(rpz);
+        specialities.add(rpn);
+        specialities.add(ghost);
+        specialities.add(ghost2);
+        for(int i = 0 ; i< specialities.size();i++){
+            LinearLayout specLayout = new LinearLayout(this);
+            specLayout.setOrientation(LinearLayout.HORIZONTAL);
+            specLayout.setWeightSum(10);
+
+            LinearLayout.LayoutParams LLParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            specLayout.setLayoutParams(LLParams);
+            final EditText et1 = new EditText(this);
+            CheckBox check1 = new CheckBox(this);
+            final Context cont = this;
+            final int getPos = i;
+            check1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    AddSubjectActivity.SpecialityWHours object = new AddSubjectActivity.SpecialityWHours();
+                    object.hourEdtxt = et1;
+                    object.speciality = specialities.get(getPos);
+                    if (isChecked){
+                        if(!specialityList.contains(object)) {
+                            specialityList.add(object);
+                            Log.d("AddSubjectActivity",object.speciality.getName()+" "+object.hourEdtxt.getText().toString());
+                            Log.d("AddSubjectActivity",Integer.toString(specialityList.size()));
+                        }
+                        et1.setEnabled(true);
+                    } else{
+                        if(specialityList.contains(object)){
+                            specialityList.remove(object);
+                            Log.d("AddSubjectActivity",object.speciality.getName()+" "+object.hourEdtxt.getText().toString());
+                            Log.d("AddSubjectActivity",Integer.toString(specialityList.size()));
+                        }
+                        et1.setEnabled(false);
+                    }
+                }
+            });
+            LinearLayout.LayoutParams checkBoxParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,2);
+            check1.setLayoutParams(checkBoxParams);
+            check1.setWidth(0);
+            check1.setButtonTintList(getResources().getColorStateList(R.color.sideBar));
+            TextView spec1 = new TextView(this);
+            LinearLayout.LayoutParams textViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,6);
+            spec1.setWidth(0);
+            spec1.setLayoutParams(textViewParams);
+            spec1.setText(specialities.get(i).getName());
+            spec1.setTextColor(getResources().getColor(R.color.appDefaultBlack));
+            spec1.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+
+            LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,2);
+            et1.setWidth(0);
+            et1.setLayoutParams(etParams);
+            et1.setHint("Введіть кількість годин");
+            et1.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+            et1.setEnabled(false);
+
+            specLayout.addView(check1);
+            specLayout.addView(spec1);
+            specLayout.addView(et1);
+
+            parent.addView(specLayout);
+
+        }
     }
 
     private void addSubject(){
