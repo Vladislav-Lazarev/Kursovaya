@@ -19,10 +19,14 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import java.util.List;
 
 public class GroupsFragment extends Fragment {
+    private final static int ACTIVITY_ADD = 1;
+    private final static int ACTIVITY_EDIT = 2;
+
     private boolean isCreatedAlready = false;
     private View root;
 
     private GroupListAdapter adapter;
+    private List<Group> groupList;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -37,20 +41,18 @@ public class GroupsFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), AddGroupActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent, ACTIVITY_ADD);
                 }
             });
 
             //creating elements for listview
-            List<Group> groupList = DBManager.readAll(Group.class);
+            groupList = DBManager.readAll(Group.class);
             adapter = new GroupListAdapter(getActivity(), R.layout.list_view_item_group, groupList);
             listView.setAdapter(adapter);
 
             isCreatedAlready=true;
         }
         setActionBarTitle();
-
-
 
         return root;
     }
@@ -63,5 +65,16 @@ public class GroupsFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        /*if(resultCode== Activity.RESULT_OK){
+            switch (requestCode){
+                case ACTIVITY_ADD:
+                    Group group = (Group) data.getSerializableExtra("newGroup");
+                    groupList.add(group);
+                    adapter.notifyDataSetChanged();
+                    break;
+                default:
+                    return;
+            }
+        }*/
     }
 }

@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,6 +27,7 @@ import io.realm.RealmResults;
 
 public class AddGroupActivity extends AppCompatActivity {
     private Group group = new Group();
+    private EditText groupEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,16 +66,24 @@ public class AddGroupActivity extends AppCompatActivity {
 
         Spinner spinnerCourse = (Spinner) findViewById(R.id.spinnerCourse);
         listenerSpinnerCourse(spinnerCourse);
+
+        groupEditText = findViewById(R.id.editTextGroupName);
     }
 
     private void addGroup(){
         //adding group logic
-        String groupName =  ((TextView) findViewById(R.id.editTextGroupName)).getText().toString();
+        group.setName(groupEditText.getText().toString());
 
-        Group newGroup = new Group(groupName, group.getSpecialty(), group.getCourse());
+        Group newGroup = new Group(group.getName(), group.getSpecialty(), group.getCourse());
 
         int result = DBManager.write(newGroup);
         Log.i("addGroup", "write result = " + result);
+/*
+
+        Intent intent = getIntent();
+        intent.putExtra("newGroup", newGroup);
+        setResult(Activity.RESULT_OK, intent);
+*/
 
         finish();
     }

@@ -25,12 +25,15 @@
             android:textColor="@color/appDefaultBlack"
             android:textSize="20sp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/edit_subject"
-            android:layout_width="16.78dp"
-            android:layout_height="12.58dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:adjustViewBounds="true"
             android:layout_gravity="right"
-            android:background="@drawable/ic_path_161"/>
+            android:src="@drawable/ic_path_161"
+            android:scaleType="centerInside"
+            android:background="?selectableItemBackgroundBorderless"/>
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>

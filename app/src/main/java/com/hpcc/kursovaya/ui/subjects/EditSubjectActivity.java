@@ -2,18 +2,16 @@ package com.hpcc.kursovaya.ui.subjects;
 
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.hpcc.kursovaya.R;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import com.hpcc.kursovaya.R;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -44,7 +42,7 @@ public class EditSubjectActivity extends AppCompatActivity {
         TextView textCont = (TextView)findViewById(R.id.toolbar_title);
         textCont.setText("Редагування предмету");
 
-        Button addButton = (Button) findViewById(R.id.edit_subject);
+        ImageButton addButton = findViewById(R.id.edit_subject);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

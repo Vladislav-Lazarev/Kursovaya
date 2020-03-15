@@ -37,7 +37,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
-import com.hpcc.kursovaya.ui.report.GeneratedReportActivity;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
 import com.hpcc.kursovaya.ui.settings.SettingsFragment;
 import com.hpcc.kursovaya.ui.subjects.SubjectsFragment;
@@ -61,6 +60,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Weeks;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Log.d("onCreate", "test");
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         toolbar1 = findViewById(R.id.toolbarEdit);

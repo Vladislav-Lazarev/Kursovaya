@@ -5,10 +5,12 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Group extends RealmObject {
+public class Group extends RealmObject implements Serializable {
     private static int countObj;
 
     static {
