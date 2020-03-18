@@ -22,7 +22,6 @@
         </provider>
         <activity
             android:name=".ui.schedule.AddClass"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_edit_subject"/>
         <receiver android:name=".AlarmClassReceiver">
             <intent-filter>
@@ -31,44 +30,36 @@
         </receiver>
         <activity
             android:name=".ui.report.GeneratedReportActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_edit_subject"/>
         <activity
             android:name=".ui.schedule.EditClass"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/edit_class"/>
         <activity
             android:name=".ui.subjects.EditSubjectActivity"
-            android:label="@string/title_activity_edit_subject"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_edit_subject" />
         <activity
             android:name=".ui.groups.EditGroupActivity"
-            android:label="@string/title_activity_edit_group"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_edit_group" />
         <activity
             android:name=".ui.subjects.AddSubjectActivity"
-            android:label="@string/title_activity_add_subject"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_add_subject" />
         <activity
             android:name=".ui.groups.AddGroupActivity"
-            android:label="@string/title_activity_add_group"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_add_group" />
         <activity
             android:name=".ui.templates.AddTemplateActivity"
-            android:label="@string/title_activity_add_template"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_add_template" />
         <activity
             android:name=".ui.templates.EditTemplateActivity"
-            android:label="@string/title_activity_add_template"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_add_template" />
         <activity
             android:name=".ui.settings.specialities.SpecialitiesActivity"
             android:label="@string/title_activity_add_template"
-            android:theme="@style/AppTheme.NoActionBar" />
+
+             />
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

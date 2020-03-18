@@ -148,6 +148,16 @@ public class Subject extends RealmObject implements Entity, Parcelable {
         return specialityCountHourMap.get(key);
     }
 
+    private Subject setSpecialityList(@NotNull RealmList<Speciality> specialityList) {
+        // TODO setSpecialityList
+        this.specialityList = specialityList;
+        return this;
+    }
+    private Subject setCountHourList(@NotNull RealmList<Integer> countHourList) {
+        // TODO setCountHourList
+        this.countHourList = countHourList;
+        return this;
+    }
     @Nullable
     public Integer put(@NotNull Speciality key, @NotNull Integer value) {
         specialityList.add(key);
@@ -163,10 +173,10 @@ public class Subject extends RealmObject implements Entity, Parcelable {
         return specialityCountHourMap.remove(key);
     }
 
-    public void putAll(@NotNull Map<? extends Speciality, ? extends Integer> m) {
-        this.specialityList.addAll(specialityCountHourMap.keySet());
-        this.countHourList.addAll(specialityCountHourMap.values());
-        specialityCountHourMap.putAll(m);
+    public void putAll(@NotNull Map<? extends Speciality, ? extends Integer> map) {
+        this.specialityList.addAll(map.keySet());
+        this.countHourList.addAll(map.values());
+        specialityCountHourMap.putAll(map);
     }
 
     public void clear() {

@@ -1,18 +1,11 @@
 package com.hpcc.kursovaya.ui.subjects;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,9 +14,9 @@ import androidx.annotation.Nullable;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 public class SubjectListAdapter extends ArrayAdapter<Subject> {
@@ -32,6 +25,8 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
     private int mResource;
     private Context mContext;
     private int lastPosition =-1;
+    private List<Subject> subjectList;
+    private SparseBooleanArray mSelectedItemsIds;
 
     @NonNull
     @Override
@@ -57,74 +52,6 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
             holder.course = (TextView) convertView.findViewById(R.id.course_label);
             holder.name = (TextView) convertView.findViewById(R.id.subjectName_label);
 
-            //setting onclick action on button
-            final Button button = (Button) convertView.findViewById(R.id.btn_lsvOptions);
-
-            button.setOnClickListener(new View.OnClickListener(){
-                public void onClick(View view){
-
-                    PopupMenu popupMenu = new PopupMenu(mContext,button);
-                    //enabling icons in menu
-                    try {
-                        Field[] fields = popupMenu.getClass().getDeclaredFields();
-                        for (Field field : fields) {
-                            if ("mPopup".equals(field.getName())) {
-                                field.setAccessible(true);
-                                Object menuPopupHelper = field.get(popupMenu);
-                                Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
-                                Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
-                                setForceIcons.invoke(menuPopupHelper, true);
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    popupMenu.getMenuInflater().inflate(R.menu.popup_subject_listview,popupMenu.getMenu());
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-
-                            switch (item.getItemId()){
-                                case R.id.edit_subject:
-                                    Intent intent = new Intent(mContext, EditSubjectActivity.class);
-                                    mContext.startActivity(intent);
-                                    return true;
-                                case R.id.edit_delete:
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                                    builder.setTitle(mContext.getString(R.string.delete_alert_header))
-                                            .setMessage(R.string.delete_alert_msg)
-                                            .setPositiveButton(R.string.delete_positive,
-                                                    new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int id) {
-                                                            dialog.cancel();
-                                                        }
-                                                    })
-                                            .setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.cancel();
-                                                }
-                                            });
-                                    final AlertDialog alert = builder.create();
-                                    alert.setOnShowListener(new DialogInterface.OnShowListener() {
-                                        @Override
-                                        public void onShow(DialogInterface arg0) {
-                                            alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(mContext.getResources().getColor(R.color.sideBar));
-                                            alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(mContext.getResources().getColor(R.color.sideBar));
-                                        }
-                                    });
-                                    alert.show();
-                                    return true;
-                                default:
-                                    return false;
-                            }
-                        }
-                    });
-                    popupMenu.show();
-                }
-            });
-            //increasing hit area
 
             result = convertView;
             convertView.setTag(holder);
@@ -135,22 +62,24 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
 
         lastPosition = position;
 
-       Animation animation = AnimationUtils.loadAnimation(mContext,(position>lastPosition) ? R.anim.load_down_anim:R.anim.load_up_anim);
-       result.startAnimation(animation);
+      /* Animation animation = AnimationUtils.loadAnimation(mContext,(position>lastPosition) ? R.anim.load_down_anim:R.anim.load_up_anim);
+       result.startAnimation(animation);*/
 
         holder.name.setText(subject.getName());
 
         StringBuilder str = new StringBuilder();
         List<Speciality> specList = subject.getSpecialityList();
         List<Integer> hourList = subject.getCountHourList();
-        int i = 0;
-        while (i < specList.size() - 1
-                && i < hourList.size() - 1){
-            str.append(specList.get(i).getName() + " - " + hourList.get(i) + "\n");
-            i++;
+        if (!(specList.size() == ConstantEntity.ZERO || hourList.size() == ConstantEntity.ZERO)) {
+            int i = 0;
+            while (i < specList.size() - 1
+                    && i < hourList.size() - 1){
+                str.append(specList.get(i).getName() + " - " + hourList.get(i) + "\n");
+                i++;
+            }
+            str.append("\t\t\t\tCrutch - " + specList.get(i).getName() + " - " + hourList.get(i));
+            holder.speciality.setText(str);
         }
-        str.append("\t\t\t\tCrutch - " + specList.get(i).getName() + " - " + hourList.get(i));
-        holder.speciality.setText(str);
 
         holder.course.setText(String.valueOf(subject.getNumberCourse()));
         return convertView;
@@ -168,6 +97,35 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
         super(context, resource, objects);
         mContext=context;
         mResource=resource;
+        subjectList = objects;
+        mSelectedItemsIds = new SparseBooleanArray();
+    }
+
+    @Override
+    public void remove(Subject object) {
+        subjectList.remove(object);
+        DBManager.delete(Subject.class, ConstantEntity.ID, object.getId());
+        notifyDataSetChanged();
+    }
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    public void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position, value);
+        else
+            mSelectedItemsIds.delete(position);
+        notifyDataSetChanged();
+    }
+
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    public SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
     }
     //
 }

@@ -49,7 +49,13 @@
     <string name="notification_label">Нагадування до початку:</string>
     <string name="repeat_for_next_weeks_label">Повторити на наступні тижні:</string>
     <string name="popup_delete">Видалити</string>
+    <string name="popup_delete_subject_title">Видалити предмети</string>
+    <string name="popup_delete_subject_content">Ви дійсно хочете видалити обрані предмети? Заняття з цих предметів будуть видалені з розкладу та шаблонів</string>
+    <string name="popup_delete_group_title">Видалити групи</string>
+    <string name="popup_delete_group_content">Ви дійсно хочете видалити обрані групи?</string>
     <string name="popup_delete_classes_template">Видалити заняття</string>
+    <string name="popup_delete_speciality">Видалити спеціальності</string>
+    <string name="popup_delete_speciality_content">Ви дійсно хочете видалити обрані спеціальності?</string>
     <string name="popup_delete_classes_content">Ви дійсно хочете видалити обрані заняття?</string>
     <string name="popup_complete_classes_template">Вичитані заняття</string>
     <string name="popup_complete_classes_content">Ви дійсно хочете позначити вичитаними обрані заняття?</string>
@@ -68,6 +74,7 @@
     <string name="popup_duration_short">1 год.</string>
     <string name="popup_duration_full">2 год.</string>
 
+    <string name="cab_select_text"> Обрано</string>
 
     <string name="menu_schedule">Розклад</string>
     <string name="menu_templates">Шаблони</string>

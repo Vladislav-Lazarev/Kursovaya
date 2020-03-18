@@ -1,20 +1,11 @@
 package com.hpcc.kursovaya.ui.groups;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Rect;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,9 +13,9 @@ import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 public class GroupListAdapter extends ArrayAdapter<Group> {
@@ -33,6 +24,9 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
     private Context mContext;
     private int mResource;
     private int lastPosition = -1;
+    private List<Group> groupList;
+    private SparseBooleanArray mSelectedItemsIds;
+
 
     static class ViewHolder {
         TextView speciality;
@@ -61,88 +55,6 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
             holder.course = convertView.findViewById(R.id.course_label);
             holder.name = convertView.findViewById(R.id.groupName_label);
 
-            //setting onclick action on button
-            final Button button = convertView.findViewById(R.id.btn_lsvOptions);
-
-            button.setOnClickListener(new View.OnClickListener(){
-                public void onClick(View view){
-
-                    PopupMenu popupMenu = new PopupMenu(mContext,button);
-                    //enabling icons in menu
-                    try {
-                        Field[] fields = popupMenu.getClass().getDeclaredFields();
-                        for (Field field : fields) {
-                            if ("mPopup".equals(field.getName())) {
-                                field.setAccessible(true);
-                                Object menuPopupHelper = field.get(popupMenu);
-                                Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
-                                Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
-                                setForceIcons.invoke(menuPopupHelper, true);
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    popupMenu.getMenuInflater().inflate(R.menu.popup_group_listview,popupMenu.getMenu());
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-
-                            switch (item.getItemId()){
-                                case R.id.edit_group:
-                                    Intent intent = new Intent(mContext, EditGroupActivity.class);
-                                    mContext.startActivity(intent);
-                                    return true;
-                                case R.id.edit_delete:
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                                    builder.setTitle(mContext.getString(R.string.delete_alert_header))
-                                            .setMessage(R.string.delete_alert_msg)
-                                            .setPositiveButton(R.string.delete_positive,
-                                                    new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int id) {
-                                                            dialog.cancel();
-                                                        }
-                                                    })
-                                            .setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.cancel();
-                                                }
-                                            });
-                                    final AlertDialog alert = builder.create();
-                                    alert.setOnShowListener(new DialogInterface.OnShowListener() {
-                                        @Override
-                                        public void onShow(DialogInterface arg0) {
-                                            alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(mContext.getResources().getColor(R.color.sideBar));
-                                            alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(mContext.getResources().getColor(R.color.sideBar));
-                                        }
-                                    });
-                                    alert.show();
-                                    return true;
-                                default:
-                                    return false;
-                            }
-                        }
-                    });
-                    popupMenu.show();
-                }
-            });
-
-            //increasing hit area
-            final View parentEl = (View) button.getParent();  // button: the view you want to enlarge hit area
-
-            parent.post( new Runnable() {
-                public void run() {
-                    final Rect rect = new Rect();
-                    button.getHitRect(rect);
-                    rect.top -= 2300;    // increase top hit area
-                    rect.left -= 2300;   // increase left hit area
-                    rect.bottom += 2300; // increase bottom hit area
-                    rect.right += 2300;  // increase right hit area
-                    parent.setTouchDelegate( new TouchDelegate( rect , button));
-                }
-            });
 
             result = convertView;
 
@@ -152,8 +64,8 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
             result = convertView;
         }
 
-        Animation animation = AnimationUtils.loadAnimation(mContext,(position>lastPosition) ? R.anim.load_down_anim: R.anim.load_up_anim);
-        result.startAnimation(animation);
+       /* Animation animation = AnimationUtils.loadAnimation(mContext,(position>lastPosition) ? R.anim.load_down_anim: R.anim.load_up_anim);
+        result.startAnimation(animation);*/
 
         lastPosition = position;
 
@@ -169,5 +81,34 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
         super(context, resource, objects);
         mContext=context;
         mResource=resource;
+        groupList = objects;
+        mSelectedItemsIds = new SparseBooleanArray();
+    }
+
+    @Override
+    public void remove(Group object) {
+        groupList.remove(object);
+        DBManager.delete(Group.class, ConstantEntity.ID, object.getId());
+        notifyDataSetChanged();
+    }
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    public void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position, value);
+        else
+            mSelectedItemsIds.delete(position);
+        notifyDataSetChanged();
+    }
+
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    public SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
     }
 }

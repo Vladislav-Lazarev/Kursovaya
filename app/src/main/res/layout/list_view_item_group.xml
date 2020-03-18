@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/listview_background">
+    android:background="?android:attr/activatedBackgroundIndicator">
 
     <TextView
         android:id="@+id/speciality_text"
@@ -66,15 +66,5 @@
         android:text="@string/textStub"
         android:textColor="@color/appDefaultBlack"
         android:textSize="16sp" />
-
-    <Button
-        android:id="@+id/btn_lsvOptions"
-        android:layout_width="8dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="20dp"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/ic_path_153"
-        android:focusable="false"/>
 
 </RelativeLayout>

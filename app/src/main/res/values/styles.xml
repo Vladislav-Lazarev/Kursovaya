@@ -3,24 +3,39 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="actionBarStyle">@style/AppTheme.AppActionBarTheme</item>
+        <item name="colorPrimaryDark">@color/sideBar</item>
+        <item name="colorAccent">@color/sideBarTransp</item>
         <item name="android:fontFamily">@font/pt_sans</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="actionModeStyle">@style/LStyled.ActionMode</item>
+        <item name="actionModeCloseButtonStyle">@style/myclosebutton</item>
+    </style>
+    <style name="myclosebutton" parent="Widget.AppCompat.Light.ActionButton.CloseMode">
+        <item name="android:tint">@color/appDefaultBlack</item> <!-- whatever color -->
+    </style>
+    <style name="AppTheme.NoActionBar">
 
     </style>
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/appDefaultBlack</item>
+    </style>
 
+    <style name="LStyled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="titleTextStyle">@style/titleColor</item>
+        <item name="background">@color/menuTextColor</item>
+    </style>
+
+    <style name="titleColor" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textColor">@color/appDefaultBlack</item>
+    </style>
     <style name="NumberPickerStyle">
         <item name="android:textSize">30sp</item>
     </style>
     <style name="AppTheme.AppActionBarTheme" parent="@style/Widget.AppCompat.Light.ActionBar">
-        <item name="background">@color/menuTextColor</item>
         <item name="colorPrimary">@color/menuTextColor</item>
-        <item name="colorPrimaryDark">@color/appDefaultBlack</item>
+        <item name="android:textColorSecondary">@color/appDefaultBlack</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

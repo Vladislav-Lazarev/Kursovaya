@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:background="@drawable/listview_background">
+    android:background="?android:attr/activatedBackgroundIndicator">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,14 +59,5 @@
         android:layout_marginTop="60dp"
         android:layout_marginStart="117dp"/>
 
-    <Button
-        android:id="@+id/btn_lsvOptions"
-        android:layout_width="8dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="10dp"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/ic_path_153"
-        android:focusable="false"/>
 
 </RelativeLayout>

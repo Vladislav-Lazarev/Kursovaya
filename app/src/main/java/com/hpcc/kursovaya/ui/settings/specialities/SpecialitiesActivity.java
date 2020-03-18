@@ -3,8 +3,13 @@ package com.hpcc.kursovaya.ui.settings.specialities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,11 +44,10 @@ public class SpecialitiesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_specialties);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_path_150));
-        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,6 +71,44 @@ public class SpecialitiesActivity extends AppCompatActivity {
         specialitiesList.addAll(DBManager.readAll(Speciality.class));
         adapter = new SpecialityListAdapter(this,R.layout.listview_item_specialties, specialitiesList);
         specialityLSV.setAdapter(adapter);
+        specialityLSV.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        specialityLSV.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                final int checkedCount = specialityLSV.getCheckedItemCount();
+                mode.setTitle(checkedCount +" "+getResources().getString(R.string.cab_select_text));
+                adapter.toggleSelection(position);
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                toolbar.setVisibility(View.GONE);
+                mode.getMenuInflater().inflate(R.menu.activity_listview, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.delete:
+                        prepareDeleteDialog(mode);
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                toolbar.setVisibility(View.VISIBLE);
+                adapter.removeSelection();
+            }
+        });
         specialityLSV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -74,6 +116,51 @@ public class SpecialitiesActivity extends AppCompatActivity {
                 onClickPrepareEditSpeciality(entry, position);
             }
         });
+
+    }
+
+    private void prepareDeleteDialog(final ActionMode mode) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.popup_delete_speciality);
+        builder.setMessage(R.string.popup_delete_speciality_content);
+        builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SparseBooleanArray selected = adapter
+                        .getSelectedIds();
+                for (int i = (selected.size() - 1); i >= 0; i--) {
+                    if (selected.valueAt(i)) {
+                        Speciality selecteditem = adapter
+                                .getItem(selected.keyAt(i));
+                        // Remove selected items following the ids
+                        adapter.remove(selecteditem);
+                    }
+                }
+                mode.finish();
+
+            }
+        });
+        builder.setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                mode.finish();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+            }
+        });
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout parent = (LinearLayout) positiveButton.getParent();
+        parent.setGravity(Gravity.CENTER_HORIZONTAL);
+        View leftSpacer = parent.getChildAt(1);
+        leftSpacer.setVisibility(View.GONE);
     }
 
     private void onClickPrepareEditSpeciality(final Speciality entry, final int position) {
@@ -160,6 +247,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
     }
 
     private void onClickAcceptAddGroup(DialogInterface dialog, int which) {
+        //не забудьте про добавление сущности в БД, ребзя
         EditText specText = addSpecialityView.findViewById(R.id.speciality_name_text);
         Spinner courseSpinner = addSpecialityView.findViewById(R.id.courseSpinner);
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
