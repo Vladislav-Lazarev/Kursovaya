@@ -12,11 +12,12 @@ public class ApplicationRealm extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Realm.init(this );
-        String namePath = getExternalFilesDir(null).getAbsolutePath()  + "/DB.realm";
+        Realm.init(this);
         File directory = new File(getExternalFilesDir(null).getAbsolutePath());
 
-        RealmConfiguration config = new RealmConfiguration.Builder().directory(directory).name("/DB.realm").build();
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                //.directory(directory)
+                .name("DB.realm").build();
         Realm.setDefaultConfiguration(config);
     }
 }

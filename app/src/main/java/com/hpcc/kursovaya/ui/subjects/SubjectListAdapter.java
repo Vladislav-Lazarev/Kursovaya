@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
 
 import java.lang.reflect.Field;
@@ -37,8 +38,8 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Subject subject = new Subject(
                 getItem(position).getName(),
-                getItem(position).getPairSpecialityCountHoursList(),
-                getItem(position).getCourse(),
+                getItem(position).getSpecialityCountHourMap(),
+                getItem(position).getNumberCourse(),
                 getItem(position).getColor());
 
 
@@ -138,13 +139,23 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
        result.startAnimation(animation);
 
         holder.name.setText(subject.getName());
-        holder.speciality.setText(subject.getPairSpecialityCountHoursList().first().getSpeciality().getName());
-        holder.course.setText(String.valueOf(subject.getCourse())); // String.valueOf(subject.getCourse())
+
+        StringBuilder str = new StringBuilder();
+        List<Speciality> specList = subject.getSpecialityList();
+        List<Integer> hourList = subject.getCountHourList();
+        int i = 0;
+        while (i < specList.size() - 1
+                && i < hourList.size() - 1){
+            str.append(specList.get(i).getName() + " - " + hourList.get(i) + "\n");
+            i++;
+        }
+        str.append("\t\t\t\tCrutch - " + specList.get(i).getName() + " - " + hourList.get(i));
+        holder.speciality.setText(str);
+
+        holder.course.setText(String.valueOf(subject.getNumberCourse()));
         return convertView;
     }
     //
-
-
 
     static class ViewHolder{
         TextView speciality;

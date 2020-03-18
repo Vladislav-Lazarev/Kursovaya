@@ -7,10 +7,14 @@ import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 public class DBManager {
@@ -59,14 +63,24 @@ public class DBManager {
         return (int)result.get(ConstantEntity.ZERO);
     }
 
-    public static <T extends RealmObject> int delete(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final String value){
+    public static <T extends RealmObject> int delete(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final Object value){
         result.clear();
         final T model;
 
         try {
-            model = realm.where(clazz)
-                    .equalTo(fieldName, value)
-                    .findFirst();
+            RealmQuery<T> query = realm.where(clazz);
+
+            Class<?> classObj = value.getClass();
+
+            if (String.class.equals(classObj)) {
+                query.equalTo(fieldName, (String) value);
+            } else if (Integer.class.equals(classObj)) {
+                query.equalTo(fieldName, (Integer) value);
+            } else if (Date.class.equals(classObj)) {
+                query.equalTo(fieldName, (Date) value);
+            }
+
+            model = query.findFirst();
 
             Log.v(TAG, "Success -> " + model.getClass().getSimpleName() + " was delete: " + model.toString());
 
@@ -111,13 +125,22 @@ public class DBManager {
         return (int)result.get(ConstantEntity.ZERO);
     }
 
-    public static <T extends RealmObject> T read(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final String value){
+    public static <T extends RealmObject> T read(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final Object value){
         result.clear();
 
         try {
-            result.add(realm.where(clazz)
-                    .equalTo(fieldName, value)
-                    .findFirst());
+            RealmQuery<T> query = realm.where(clazz);
+
+            Class<?> aClass = value.getClass();
+            if (Integer.class.equals(aClass)) {
+                query.equalTo(fieldName, (Integer) value);
+            } else if (Date.class.equals(aClass)) {
+                query.equalTo(fieldName, (Date) value);
+            } else if (String.class.equals(aClass)) {
+                query.equalTo(fieldName, (String) value);
+            }
+
+            result.add(query.findFirst());
 
             Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantEntity.ZERO).toString());
         } catch (Throwable ex) {
@@ -128,12 +151,12 @@ public class DBManager {
 
         return (T)result.get(ConstantEntity.ZERO);
     }
-    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz){
+    public static <T extends RealmObject> RealmList<T> readAll(@NotNull final Class<T> clazz){
         result.clear();
 
         try {
-            result.add(realm.where(clazz)
-                    .findAll());
+            result.add((realm.where(clazz)
+                    .findAll()));
 
             Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantEntity.ZERO).toString());
         } catch (Throwable ex) {
@@ -142,7 +165,9 @@ public class DBManager {
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
         }
 
-        return (RealmResults<T>) result.get(ConstantEntity.ZERO);
+        RealmList<T> realmList = new RealmList<>();
+        realmList.addAll(0, (Collection<? extends T>) result.get(ConstantEntity.ZERO));
+        return realmList;
     }
 
     public static <T extends RealmObject> int findMaxID(@NotNull Class<T> clazz){

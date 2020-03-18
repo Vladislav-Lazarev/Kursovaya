@@ -1,5 +1,7 @@
 package com.hpcc.kursovaya.ui.groups;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,8 +24,6 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import io.realm.RealmResults;
 
 public class AddGroupActivity extends AppCompatActivity {
     private Group group = new Group();
@@ -74,22 +74,20 @@ public class AddGroupActivity extends AppCompatActivity {
         //adding group logic
         group.setName(groupEditText.getText().toString());
 
-        Group newGroup = new Group(group.getName(), group.getSpecialty(), group.getCourse());
-
-        int result = DBManager.write(newGroup);
-        Log.i("addGroup", "write result = " + result);
-/*
+        Group newGroup = new Group(group.getName(), group.getSpecialty(), group.getNumberCourse());
+        DBManager.write(newGroup);
 
         Intent intent = getIntent();
         intent.putExtra("newGroup", newGroup);
         setResult(Activity.RESULT_OK, intent);
-*/
+        int result = DBManager.write(newGroup);
+        Log.i("addGroup", "write result = " + result);
 
         finish();
     }
 
     private List<String> readSpecialityList(){
-        RealmResults<Speciality> specialityList = DBManager.readAll(Speciality.class);
+        List<Speciality> specialityList = DBManager.readAll(Speciality.class);
         List<String> strSpecialityList = new ArrayList<>();
 
         for (Speciality speciality : specialityList){
@@ -122,7 +120,9 @@ public class AddGroupActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 String item = (String) parent.getItemAtPosition(selectedItemPosition);
-                group.setCourse(Integer.parseInt(item));
+
+                Log.d("listenerSpinnerCourse", item);
+                group.setNumberCourse(Integer.parseInt(item));
             }
             public void onNothingSelected(AdapterView<?> parent) {
             }

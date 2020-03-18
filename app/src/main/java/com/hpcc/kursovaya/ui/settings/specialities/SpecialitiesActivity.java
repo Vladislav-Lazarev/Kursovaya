@@ -3,7 +3,6 @@ package com.hpcc.kursovaya.ui.settings.specialities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,19 +19,21 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
+import java.util.List;
 
-import java.util.ArrayList;
+import io.realm.RealmList;
 
 
 public class SpecialitiesActivity extends AppCompatActivity {
-    private static final String TAG = "SpecialitiesActivity";
+    private static final String TAG = SpecialitiesActivity.class.getSimpleName();
     FloatingActionButton addSpeciality;
     ListView specialityLSV;
     SpecialityListAdapter adapter;
     private View addSpecialityView;
     private View editSpecialityView;
-    ArrayList<Speciality> specialitiesList = new ArrayList<>();
+    List<Speciality> specialitiesList = new RealmList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +63,8 @@ public class SpecialitiesActivity extends AppCompatActivity {
             }
         });
         specialityLSV = findViewById(R.id.specialitiesLSV);
-        Speciality specialityRPZ = new Speciality("РПЗ", 8);
-        Speciality specialityDAUNY = new Speciality("КПЗ", 8);
-        specialitiesList.add(specialityRPZ);
-        specialitiesList.add(specialityDAUNY);
 
+        specialitiesList.addAll(DBManager.readAll(Speciality.class));
         adapter = new SpecialityListAdapter(this,R.layout.listview_item_specialties, specialitiesList);
         specialityLSV.setAdapter(adapter);
         specialityLSV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -117,13 +115,13 @@ public class SpecialitiesActivity extends AppCompatActivity {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    private void onClickAcceptEditGroup(DialogInterface dialog, int which, Speciality entry, int position) {
+    private void onClickAcceptEditGroup(DialogInterface dialog, int which, Speciality speciality, int position) {
         EditText specText = editSpecialityView.findViewById(R.id.speciality_name_text);
         Spinner courseSpinner = editSpecialityView.findViewById(R.id.courseSpinner);
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString())*2;
-        entry.setName(specText.getText().toString());
-        entry.setCountCourse(countCourse);
-        specialitiesList.set(position,entry);
+        speciality.setName(specText.getText().toString());
+        speciality.setCountCourse(countCourse);
+        specialitiesList.set(position,speciality);
         adapter.notifyDataSetChanged();
     }
 
@@ -162,11 +160,11 @@ public class SpecialitiesActivity extends AppCompatActivity {
     }
 
     private void onClickAcceptAddGroup(DialogInterface dialog, int which) {
-        //не забудьте про добавление сущности в БД, ребзя
         EditText specText = addSpecialityView.findViewById(R.id.speciality_name_text);
         Spinner courseSpinner = addSpecialityView.findViewById(R.id.courseSpinner);
-        int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString())*2;
-        Speciality newSpeciality = new Speciality(specText.getText().toString(),countCourse*2);
+        int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
+        Speciality newSpeciality = new Speciality(specText.getText().toString(), countCourse);
+        DBManager.write(newSpeciality);
         specialitiesList.add(newSpeciality);
         adapter.notifyDataSetChanged();
     }

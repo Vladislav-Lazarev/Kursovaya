@@ -1,5 +1,6 @@
 package com.hpcc.kursovaya.ui.groups;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,7 +17,7 @@ import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
-import java.util.List;
+import io.realm.RealmList;
 
 public class GroupsFragment extends Fragment {
     private final static int ACTIVITY_ADD = 1;
@@ -26,7 +27,12 @@ public class GroupsFragment extends Fragment {
     private View root;
 
     private GroupListAdapter adapter;
-    private List<Group> groupList;
+    private RealmList<Group> groupList;
+
+    {
+        adapter = null;
+        groupList = new RealmList<>();
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -64,17 +70,17 @@ public class GroupsFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        /*if(resultCode== Activity.RESULT_OK){
+
+        if(resultCode== Activity.RESULT_OK){
             switch (requestCode){
                 case ACTIVITY_ADD:
-                    Group group = (Group) data.getSerializableExtra("newGroup");
+                    Group group = data.getParcelableExtra("newGroup");
                     groupList.add(group);
                     adapter.notifyDataSetChanged();
                     break;
                 default:
                     return;
             }
-        }*/
+        }
     }
 }

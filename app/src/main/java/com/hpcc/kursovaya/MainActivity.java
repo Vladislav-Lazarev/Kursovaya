@@ -68,7 +68,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Menu fuckingMenu;
-    private final String TAG = "MainActivity";
+    private final String TAG = MainActivity.class.getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
     private boolean isSelectMode = false;
     private DrawerLayout drawer;

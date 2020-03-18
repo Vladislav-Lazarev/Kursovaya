@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
-import com.hpcc.kursovaya.ui.templates.TemplateListAdapter;
 
 import java.util.List;
 
@@ -41,7 +40,7 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         String templateName = getItem(position).getName();
-        String courseQuantity = Integer.toString(getItem(position).getCountCourse()/2);
+        String courseQuantity = Integer.toString(getItem(position).getCountCourse());
 
         final View result;
         ViewHolder holder;

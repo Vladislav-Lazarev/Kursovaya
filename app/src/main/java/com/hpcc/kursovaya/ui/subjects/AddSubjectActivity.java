@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import io.realm.RealmResults;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class AddSubjectActivity extends AppCompatActivity {
@@ -182,7 +181,7 @@ public class AddSubjectActivity extends AppCompatActivity {
     }
 
     private List<String> readSpecialityList(){
-        RealmResults<Speciality> specialityList = DBManager.readAll(Speciality.class);
+        List<Speciality> specialityList = DBManager.readAll(Speciality.class);
         List<String> strSpecialityList = new ArrayList<>();
 
         for (Speciality speciality : specialityList){
@@ -226,7 +225,8 @@ public class AddSubjectActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 String item = (String) parent.getItemAtPosition(selectedItemPosition);
-                subjec.setCourse(Integer.parseInt(item));
+
+                subjec.setNumberCourse(Integer.parseInt(item));
             }
             public void onNothingSelected(AdapterView<?> parent) {
             }
