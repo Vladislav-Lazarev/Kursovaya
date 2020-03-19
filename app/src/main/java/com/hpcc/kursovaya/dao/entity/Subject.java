@@ -11,7 +11,7 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +21,7 @@ import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
-public class Subject extends RealmObject implements Entity, Parcelable {
+public class Subject extends RealmObject implements Entity<Subject>, Parcelable {
     private static final String TAG = Subject.class.getSimpleName();
     private static int countObj;
 
@@ -40,16 +40,25 @@ public class Subject extends RealmObject implements Entity, Parcelable {
     private int numberCourse;// Номер курса
     private int color;// Цвет дисциплины
 
+    {
+        id = 0;
+        name = "";
+        specialityList = new RealmList<>();
+        countHourList = new RealmList<>();
+        specialityCountHourMap = new LinkedHashMap<>();
+        numberCourse = 0;
+        color = 0;
+    }
     public Subject() {
         id = 0;
         name = "";
         specialityList = new RealmList<>();
         countHourList = new RealmList<>();
-        specialityCountHourMap = new HashMap<>();
+        specialityCountHourMap = new LinkedHashMap<>();
         numberCourse = 0;
         color = 0;
     }
-    public Subject(@NotNull String name, Map<Speciality, Integer> specialityCountHourMap, int numberCourse, int color) {
+    public Subject(@NotNull String name,@NotNull Map<Speciality, Integer> specialityCountHourMap, int numberCourse, int color) {
         this();
 
         setName(name);
@@ -64,6 +73,7 @@ public class Subject extends RealmObject implements Entity, Parcelable {
         name = in.readString();
         in.readList(specialityList, Speciality.class.getClassLoader());
         in.readList(countHourList, Integer.class.getClassLoader());
+        initMap();
         numberCourse = in.readInt();
         color = in.readInt();
     }
@@ -88,16 +98,15 @@ public class Subject extends RealmObject implements Entity, Parcelable {
     @Override
     public boolean hasEntity() {
         // TODO hasEntity
-        return !("".equals(name) && numberCourse < ConstantEntity.ONE && color < ConstantEntity.ZERO);
+        return !("".equals(name) || numberCourse < ConstantEntity.ONE /*|| color < ConstantEntity.ZERO*/);
     }
     @Override
-    public boolean newEntity() {
+    public Subject newEntity() {
         if (hasEntity()){
             int maxID = DBManager.findMaxID(this.getClass());
             setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
-            return true;
         }
-        return false;
+        return this;
     }
 
     private void setId(int id){
@@ -160,8 +169,13 @@ public class Subject extends RealmObject implements Entity, Parcelable {
     }
     @Nullable
     public Integer put(@NotNull Speciality key, @NotNull Integer value) {
-        specialityList.add(key);
-        countHourList.add(value);
+        if (!specialityList.contains(key)) {
+            specialityList.add(key);
+            countHourList.add(value);
+        } else {
+            int index = specialityList.indexOf(key);
+            countHourList.set(index, value);
+        }
         return specialityCountHourMap.put(key, value);
     }
 
@@ -173,16 +187,21 @@ public class Subject extends RealmObject implements Entity, Parcelable {
         return specialityCountHourMap.remove(key);
     }
 
-    public void putAll(@NotNull Map<? extends Speciality, ? extends Integer> map) {
+    private void setSpecialityCountHourMap(Map<Speciality, Integer> specialityCountHourMap) {
+        this.specialityCountHourMap = specialityCountHourMap;
+    }
+    public Subject putAll(@NotNull Map<? extends Speciality, ? extends Integer> map) {
         this.specialityList.addAll(map.keySet());
         this.countHourList.addAll(map.values());
         specialityCountHourMap.putAll(map);
+        return this;
     }
 
-    public void clear() {
+    public Subject clear() {
         specialityList.clear();
         countHourList.clear();
         specialityCountHourMap.clear();
+        return this;
     }
 
     @NotNull
@@ -253,6 +272,8 @@ public class Subject extends RealmObject implements Entity, Parcelable {
         dest.writeInt(color);
     }
 
+
+
     @Override
     public String toString() {
         return "Subject{" +
@@ -260,6 +281,7 @@ public class Subject extends RealmObject implements Entity, Parcelable {
                 ", name='" + name + '\'' +
                 ", specialityList=" + specialityList.toString() +
                 ", countHourList=" + countHourList.toString() +
+                ", specialityCountHourMap=" + specialityCountHourMap.toString() +
                 ", numberCourse=" + numberCourse +
                 ", color=" + color +
                 '}';

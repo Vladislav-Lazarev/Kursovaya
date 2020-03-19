@@ -16,7 +16,7 @@ public class ApplicationRealm extends Application {
         File directory = new File(getExternalFilesDir(null).getAbsolutePath());
 
         RealmConfiguration config = new RealmConfiguration.Builder()
-                .directory(directory)
+                //.directory(directory)
                 .name("DB.realm").build();
         Realm.setDefaultConfiguration(config);
     }

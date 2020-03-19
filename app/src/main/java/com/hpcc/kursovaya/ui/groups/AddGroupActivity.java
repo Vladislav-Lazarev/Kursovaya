@@ -3,10 +3,8 @@ package com.hpcc.kursovaya.ui.groups;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -21,9 +19,6 @@ import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AddGroupActivity extends AppCompatActivity {
     private Group group = new Group();
@@ -60,8 +55,9 @@ public class AddGroupActivity extends AppCompatActivity {
             }
         });
 
-        Spinner spinnerSpeciality = (Spinner) findViewById(R.id.spinnerSpeciality);
-        fillingSpinnerSpeciality(spinnerSpeciality);
+        Spinner spinnerSpeciality =
+                ConstantEntity.fillingSpinner(this, (Spinner) findViewById(R.id.spinnerSpeciality),
+                        ConstantEntity.readSpecialityList());
         listenerSpinnerSpeciality(spinnerSpeciality);
 
         Spinner spinnerCourse = (Spinner) findViewById(R.id.spinnerCourse);
@@ -71,36 +67,16 @@ public class AddGroupActivity extends AppCompatActivity {
     }
 
     private void addGroup(){
-        //adding group logic
-        group.setName(groupEditText.getText().toString());
+        group.setName(groupEditText.getText().toString())
+                .newEntity();
 
-        Group newGroup = new Group(group.getName(), group.getSpecialty(), group.getNumberCourse());
-        DBManager.write(newGroup);
-
-        Intent intent = getIntent();
-        intent.putExtra("newGroup", newGroup);
-        setResult(Activity.RESULT_OK, intent);
-        int result = DBManager.write(newGroup);
-        Log.i("addGroup", "write result = " + result);
-
-        finish();
-    }
-
-    private List<String> readSpecialityList(){
-        List<Speciality> specialityList = DBManager.readAll(Speciality.class);
-        List<String> strSpecialityList = new ArrayList<>();
-
-        for (Speciality speciality : specialityList){
-            strSpecialityList.add(speciality.getName());
+        if(DBManager.write(group) > ConstantEntity.ZERO) {
+            Intent intent = getIntent();
+            intent.putExtra("addGroup", group);
+            setResult(Activity.RESULT_OK, intent);
         }
 
-        return strSpecialityList;
-    }
-    private void fillingSpinnerSpeciality(Spinner spinner) {
-        spinner = (Spinner) findViewById(R.id.spinnerSpeciality);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, readSpecialityList());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        finish();
     }
 
     private void listenerSpinnerSpeciality(Spinner spinner) {
@@ -120,9 +96,8 @@ public class AddGroupActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 String item = (String) parent.getItemAtPosition(selectedItemPosition);
-
-                Log.d("listenerSpinnerCourse", item);
-                group.setNumberCourse(Integer.parseInt(item));
+                int course = Integer.parseInt(item);
+                group.setNumberCourse(course);
             }
             public void onNothingSelected(AdapterView<?> parent) {
             }

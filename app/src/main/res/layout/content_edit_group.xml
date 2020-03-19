@@ -54,7 +54,8 @@
         android:layout_below="@id/spinnerSpeciality"
         android:layout_marginStart="71dp"
         android:layout_marginTop="23dp"
-        android:layout_toEndOf="@id/editCourseLabel" />
+        android:layout_toEndOf="@id/editCourseLabel"
+        android:entries = "@array/courses"/>
 
     <EditText
         android:id="@+id/editTextGroupName"

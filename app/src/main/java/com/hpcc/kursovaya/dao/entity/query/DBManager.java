@@ -18,7 +18,7 @@ import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 public class DBManager {
-    private static  final String TAG = "DBManager";
+    private static  final String TAG = DBManager.class.getSimpleName();
     private static Realm realm = Realm.getDefaultInstance();
     private static List result = new ArrayList<>();
 
@@ -161,12 +161,11 @@ public class DBManager {
             Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantEntity.ZERO).toString());
         } catch (Throwable ex) {
             result.set(ConstantEntity.ZERO, null);
-
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
         }
 
         RealmList<T> realmList = new RealmList<>();
-        realmList.addAll(0, (Collection<? extends T>) result.get(ConstantEntity.ZERO));
+        realmList.addAll((Collection<? extends T>) result.get(ConstantEntity.ZERO));
         return realmList;
     }
 

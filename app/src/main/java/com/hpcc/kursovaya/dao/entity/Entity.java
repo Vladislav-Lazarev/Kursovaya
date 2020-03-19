@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity;
 
-public interface Entity {
+public interface Entity<T> {
     boolean hasEntity();
-    boolean newEntity();
+    T newEntity();
 }

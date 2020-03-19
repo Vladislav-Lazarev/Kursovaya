@@ -27,13 +27,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import io.realm.RealmList;
 
 public class GroupsFragment extends Fragment {
-    private final static int ACTIVITY_ADD = 1;
-    private final static int ACTIVITY_EDIT = 2;
 
     private boolean isCreatedAlready = false;
     private View root;
@@ -41,17 +40,13 @@ public class GroupsFragment extends Fragment {
     private GroupListAdapter adapter;
     private RealmList<Group> groupList;
 
-    {
-        adapter = null;
-        groupList = new RealmList<>();
-    }
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         if(!isCreatedAlready) {
             root = inflater.inflate(R.layout.fragment_groups, container, false);
             listView = root.findViewById(R.id.groupLSV);
+
             // getActivity().setTitle("");
             final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
             FloatingActionButton button = root.findViewById(R.id.fab);
@@ -59,7 +54,7 @@ public class GroupsFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), AddGroupActivity.class);
-                    startActivityForResult(intent, ACTIVITY_ADD);
+                    startActivityForResult(intent, ConstantEntity.ACTIVITY_ADD);
                 }
             });
 
@@ -107,19 +102,53 @@ public class GroupsFragment extends Fragment {
                     adapter.removeSelection();
                 }
             });
+
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Group entry = (Group) parent.getItemAtPosition(position);
+
                     Intent intent = new Intent(getActivity(), EditGroupActivity.class);
-                    //put your extras here
-                    startActivityForResult(intent, ACTIVITY_EDIT);
+                    intent.putExtra("posOldGroup", position);
+                    intent.putExtra("editGroup", entry);
+
+                    startActivityForResult(intent, ConstantEntity.ACTIVITY_EDIT);
                 }
             });
         }
+        isCreatedAlready=true;
         setActionBarTitle();
-
         return root;
+    }
+
+    public void setActionBarTitle(){
+        ((MainActivity)getActivity()).setActionBarTitle(getContext().getString(R.string.menu_groups));
+        ((MainActivity) getActivity()).showOverflowMenu(false);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(resultCode== Activity.RESULT_OK){
+            Group group;
+            switch (requestCode){
+                case ConstantEntity.ACTIVITY_ADD:
+                    group = data.getParcelableExtra("addGroup");
+
+                    groupList.add(group);
+                    adapter.notifyDataSetChanged();
+                    break;
+                case ConstantEntity.ACTIVITY_EDIT:
+                    group = data.getParcelableExtra("editGroup");
+                    int posOldGroup = data.getIntExtra("posOldGroup",0);
+
+                    groupList.set(posOldGroup, group);
+                    adapter.notifyDataSetChanged();
+                    return;
+                default:
+                    return;
+            }
+        }
     }
 
     private void prepareDeleteDialog(final ActionMode mode) {
@@ -164,26 +193,5 @@ public class GroupsFragment extends Fragment {
         parent.setGravity(Gravity.CENTER_HORIZONTAL);
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
-    }
-
-    public void setActionBarTitle(){
-        ((MainActivity)getActivity()).setActionBarTitle(getContext().getString(R.string.menu_groups));
-        ((MainActivity) getActivity()).showOverflowMenu(false);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if(resultCode== Activity.RESULT_OK){
-            switch (requestCode){
-                case ACTIVITY_ADD:
-                    Group group = data.getParcelableExtra("newGroup");
-                    groupList.add(group);
-                    adapter.notifyDataSetChanged();
-                    break;
-                default:
-                    return;
-            }
-        }
     }
 }

@@ -1,18 +1,21 @@
 package com.hpcc.kursovaya.ui.subjects;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
@@ -21,36 +24,25 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.entity.Subject;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import io.realm.RealmList;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class EditSubjectActivity extends AppCompatActivity {
-    int pickDefaultColor;
-    Button colorPickButton;
+    private static final String TAG = EditSubjectActivity.class.getSimpleName();
 
-    static class SpecialityWHours{
-        Speciality speciality;
-        EditText hourEdtxt;
+    private int pickDefaultColor;
+    private Button colorPickButton;
+    private EditText subjectEditText;
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            AddSubjectActivity.SpecialityWHours that = (AddSubjectActivity.SpecialityWHours) o;
-            return Objects.equals(speciality, that.speciality) &&
-                    Objects.equals(hourEdtxt, that.hourEdtxt);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(speciality, hourEdtxt);
-        }
-    }
-
-    private ArrayList<AddSubjectActivity.SpecialityWHours> specialityList = new ArrayList<>();
+    private Map<Speciality, EditText> map = new LinkedHashMap<>();
+    private Subject subject = new Subject();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,13 +67,9 @@ public class EditSubjectActivity extends AppCompatActivity {
         TextView textCont = (TextView)findViewById(R.id.toolbar_title);
         textCont.setText("Редагування предмету");
 
-        ImageButton addButton = findViewById(R.id.edit_subject);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addSubject();
-            }
-        });
+        Intent intent = getIntent();
+        subject = intent.getParcelableExtra("editSubject");
+
         colorPickButton = (Button) findViewById(R.id.pickColorBtn);
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,82 +77,94 @@ public class EditSubjectActivity extends AppCompatActivity {
                 openColorPicker();
             }
         });
-        pickDefaultColor = getResources().getColor((R.color.sideBar));
+        pickDefaultColor = getResources().getColor(R.color.sideBar);
 
         LinearLayout parent = findViewById(R.id.spinnerSpeciality);
 
-        final ArrayList<Speciality> specialities = new ArrayList<>();
-        Speciality rpz = new Speciality("РПЗ", 4);
-        Speciality rpn = new Speciality("Дело Влада", 4);
-        Speciality ghost = new Speciality("Инженерия призрачного дела", 4);
-        Speciality ghost2 = new Speciality("Инженерия непризрачного дела", 4);
-        specialities.add(rpz);
-        specialities.add(rpn);
-        specialities.add(ghost);
-        specialities.add(ghost2);
-        for(int i = 0 ; i< specialities.size();i++){
+        final RealmList<Speciality> specialityList = DBManager.readAll(Speciality.class);
+        for(int i = 0 ; i< specialityList.size();i++){
             LinearLayout specLayout = new LinearLayout(this);
             specLayout.setOrientation(LinearLayout.HORIZONTAL);
             specLayout.setWeightSum(10);
 
             LinearLayout.LayoutParams LLParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             specLayout.setLayoutParams(LLParams);
-            final EditText et1 = new EditText(this);
-            CheckBox check1 = new CheckBox(this);
-            final Context cont = this;
-            final int getPos = i;
-            check1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            final EditText hourEditTxt = new EditText(this);
+            CheckBox checkSpecHour = new CheckBox(this);
+
+            final Speciality speciality = specialityList.get(i);
+            if (subject.containsKey(speciality)){
+                checkSpecHour.setChecked(true);
+                hourEditTxt.setText(String.valueOf(subject.get(speciality)));
+                subject.getSpecialityCountHourMap().remove(speciality);
+            }
+            checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    AddSubjectActivity.SpecialityWHours object = new AddSubjectActivity.SpecialityWHours();
-                    object.hourEdtxt = et1;
-                    object.speciality = specialities.get(getPos);
                     if (isChecked){
-                        if(!specialityList.contains(object)) {
-                            specialityList.add(object);
-                            Log.d("AddSubjectActivity",object.speciality.getName()+" "+object.hourEdtxt.getText().toString());
-                            Log.d("AddSubjectActivity",Integer.toString(specialityList.size()));
-                        }
-                        et1.setEnabled(true);
+                        map.put(speciality, hourEditTxt);
+                        hourEditTxt.setEnabled(true);
                     } else{
-                        if(specialityList.contains(object)){
-                            specialityList.remove(object);
-                            Log.d("AddSubjectActivity",object.speciality.getName()+" "+object.hourEdtxt.getText().toString());
-                            Log.d("AddSubjectActivity",Integer.toString(specialityList.size()));
-                        }
-                        et1.setEnabled(false);
+                        map.remove(speciality);
+                        hourEditTxt.setEnabled(false);
                     }
+                    Log.d(TAG, map.toString());
                 }
             });
+
             LinearLayout.LayoutParams checkBoxParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,2);
-            check1.setLayoutParams(checkBoxParams);
-            check1.setWidth(0);
-            check1.setButtonTintList(getResources().getColorStateList(R.color.sideBar));
-            TextView spec1 = new TextView(this);
+            checkSpecHour.setLayoutParams(checkBoxParams);
+            checkSpecHour.setWidth(0);
+            checkSpecHour.setButtonTintList(getResources().getColorStateList(R.color.sideBar));
+            TextView specUI = new TextView(this);
             LinearLayout.LayoutParams textViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,6);
-            spec1.setWidth(0);
-            spec1.setLayoutParams(textViewParams);
-            spec1.setText(specialities.get(i).getName());
-            spec1.setTextColor(getResources().getColor(R.color.appDefaultBlack));
-            spec1.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+            specUI.setWidth(0);
+            specUI.setLayoutParams(textViewParams);
+            specUI.setText(specialityList.get(i).getName());
+            specUI.setTextColor(getResources().getColor(R.color.appDefaultBlack));
+            specUI.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
 
             LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,2);
-            et1.setWidth(0);
-            et1.setLayoutParams(etParams);
-            et1.setHint("Введіть кількість годин");
-            et1.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
-            et1.setEnabled(false);
+            hourEditTxt.setWidth(0);
+            hourEditTxt.setLayoutParams(etParams);
+            hourEditTxt.setHint("Введіть кількість годин");
+            hourEditTxt.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+            hourEditTxt.setEnabled(false);
 
-            specLayout.addView(check1);
-            specLayout.addView(spec1);
-            specLayout.addView(et1);
+            specLayout.addView(checkSpecHour);
+            specLayout.addView(specUI);
+            specLayout.addView(hourEditTxt);
 
             parent.addView(specLayout);
 
+            Spinner spinnerCourse = (Spinner) findViewById(R.id.spinnerCourse);
+            listenerSpinnerCourse(spinnerCourse);
+            spinnerCourse.setSelection(subject.getNumberCourse() - ConstantEntity.ONE);
+
+            subjectEditText = findViewById(R.id.editTextSubjectName);
+            subjectEditText.setText(subject.getName());
+
+            ImageButton editButton = findViewById(R.id.edit_subject);
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    editSubject();
+                }
+            });
         }
     }
 
-    private void addSubject(){
+    private void editSubject(){
+        subject.setName(subjectEditText.getText().toString())
+                .putAll(ConstantEntity.convertMapEditTextToMapInt(map))
+                .setColor(pickDefaultColor)
+                .newEntity();
+
+        if(DBManager.write(subject) > ConstantEntity.ZERO) {
+            Intent intent = getIntent();
+            intent.putExtra("editSubject", subject);
+            setResult(Activity.RESULT_OK, intent);
+        }
         finish();
     }
 
@@ -177,6 +177,8 @@ public class EditSubjectActivity extends AppCompatActivity {
 
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
+                color = (subject.getColor() != ConstantEntity.ZERO)? subject.getColor() : color;
+
                 pickDefaultColor = color;
                 colorPickButton = (Button) findViewById(R.id.pickColorBtn);
                 GradientDrawable background = (GradientDrawable) colorPickButton.getBackground();
@@ -187,4 +189,16 @@ public class EditSubjectActivity extends AppCompatActivity {
         colorPicker.show();
     }
 
+    private void listenerSpinnerCourse(Spinner spinner) {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent,
+                                       View itemSelected, int selectedItemPosition, long selectedId) {
+                String item = (String) parent.getItemAtPosition(selectedItemPosition);
+                int course = Integer.parseInt(item);
+                subject.setNumberCourse(course);
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
 }

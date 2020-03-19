@@ -33,6 +33,15 @@ import io.realm.RealmList;
 
 public class SpecialitiesActivity extends AppCompatActivity {
     private static final String TAG = SpecialitiesActivity.class.getSimpleName();
+
+    static void setSpinnerString(Spinner spin, String str) {
+        for(int i= 0; i < spin.getAdapter().getCount(); i++) {
+            if(spin.getAdapter().getItem(i).toString().contains(str)) {
+                spin.setSelection(i);
+            }
+        }
+    }
+
     FloatingActionButton addSpeciality;
     ListView specialityLSV;
     SpecialityListAdapter adapter;
@@ -119,6 +128,105 @@ public class SpecialitiesActivity extends AppCompatActivity {
 
     }
 
+    private void onClickPrepareAddSpeciality() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.dialog_add_speciality);
+        builder.setPositiveButton(R.string.dialog_button_add, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onClickAcceptAddGroup(dialog, which);
+            }
+        });
+        builder.setCancelable(false);
+        builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        addSpecialityView = getLayoutInflater().inflate(R.layout.dialog_speciality, null);
+        builder.setView(addSpecialityView);
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+            }
+        });
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout parent = (LinearLayout) positiveButton.getParent();
+        parent.setGravity(Gravity.CENTER_HORIZONTAL);
+        View leftSpacer = parent.getChildAt(1);
+        leftSpacer.setVisibility(View.GONE);
+    }
+    private void onClickAcceptAddGroup(DialogInterface dialog, int which) {
+        EditText specText = addSpecialityView.findViewById(R.id.speciality_name_text);
+        Spinner courseSpinner = addSpecialityView.findViewById(R.id.courseSpinner);
+        int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
+
+        Speciality newSpeciality = new Speciality(specText.getText().toString(), countCourse);
+        DBManager.write(newSpeciality);
+
+        specialitiesList.add(newSpeciality);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void onClickPrepareEditSpeciality(final Speciality entry, final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.dialog_edit_speciality);
+        builder.setPositiveButton(R.string.popup_edit, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onClickAcceptEditGroup(dialog, which, entry, position);
+            }
+        });
+        builder.setCancelable(false);
+        builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        editSpecialityView = getLayoutInflater().inflate(R.layout.dialog_speciality, null);
+        builder.setView(editSpecialityView);
+
+        EditText specText = editSpecialityView.findViewById(R.id.speciality_name_text);
+        specText.setText(entry.getName());
+
+        Spinner courseSpinner = editSpecialityView.findViewById(R.id.courseSpinner);
+        setSpinnerString(courseSpinner, String.valueOf(entry.getCountCourse()));
+
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+            }
+        });
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout parent = (LinearLayout) positiveButton.getParent();
+        parent.setGravity(Gravity.CENTER_HORIZONTAL);
+        View leftSpacer = parent.getChildAt(1);
+        leftSpacer.setVisibility(View.GONE);
+    }
+    private void onClickAcceptEditGroup(DialogInterface dialog, int which, Speciality speciality, int position) {
+        EditText specText = editSpecialityView.findViewById(R.id.speciality_name_text);
+        String strSpeciality = specText.getText().toString();
+        Spinner courseSpinner = editSpecialityView.findViewById(R.id.courseSpinner);
+        int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
+
+        speciality.setName(strSpeciality)
+                .setCountCourse(countCourse);
+        DBManager.write(speciality);
+
+        specialitiesList.set(position, speciality);
+        adapter.notifyDataSetChanged();
+    }
+
     private void prepareDeleteDialog(final ActionMode mode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.popup_delete_speciality);
@@ -161,99 +269,5 @@ public class SpecialitiesActivity extends AppCompatActivity {
         parent.setGravity(Gravity.CENTER_HORIZONTAL);
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
-    }
-
-    private void onClickPrepareEditSpeciality(final Speciality entry, final int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.dialog_edit_speciality);
-        builder.setPositiveButton(R.string.popup_edit, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onClickAcceptEditGroup(dialog, which, entry, position);
-            }
-        });
-        builder.setCancelable(false);
-        builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        editSpecialityView = getLayoutInflater().inflate(R.layout.dialog_speciality, null);
-        builder.setView(editSpecialityView);
-        EditText specText = editSpecialityView.findViewById(R.id.speciality_name_text);
-        specText.setText(entry.getName());
-        Spinner courseSpinner = editSpecialityView.findViewById(R.id.courseSpinner);
-        //please fix speciality entity!! coursecount is 0!
-        courseSpinner.setSelection((entry.getCountCourse()/2)-1);
-        final AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface arg0) {
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
-            }
-        });
-        dialog.show();
-        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        LinearLayout parent = (LinearLayout) positiveButton.getParent();
-        parent.setGravity(Gravity.CENTER_HORIZONTAL);
-        View leftSpacer = parent.getChildAt(1);
-        leftSpacer.setVisibility(View.GONE);
-    }
-
-    private void onClickAcceptEditGroup(DialogInterface dialog, int which, Speciality speciality, int position) {
-        EditText specText = editSpecialityView.findViewById(R.id.speciality_name_text);
-        Spinner courseSpinner = editSpecialityView.findViewById(R.id.courseSpinner);
-        int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString())*2;
-        speciality.setName(specText.getText().toString());
-        speciality.setCountCourse(countCourse);
-        specialitiesList.set(position,speciality);
-        adapter.notifyDataSetChanged();
-    }
-
-    private void onClickPrepareAddSpeciality() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.dialog_add_speciality);
-        builder.setPositiveButton(R.string.dialog_button_add, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onClickAcceptAddGroup(dialog, which);
-            }
-        });
-        builder.setCancelable(false);
-        builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        addSpecialityView = getLayoutInflater().inflate(R.layout.dialog_speciality, null);
-        builder.setView(addSpecialityView);
-        final AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface arg0) {
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
-            }
-        });
-        dialog.show();
-        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        LinearLayout parent = (LinearLayout) positiveButton.getParent();
-        parent.setGravity(Gravity.CENTER_HORIZONTAL);
-        View leftSpacer = parent.getChildAt(1);
-        leftSpacer.setVisibility(View.GONE);
-    }
-
-    private void onClickAcceptAddGroup(DialogInterface dialog, int which) {
-        //не забудьте про добавление сущности в БД, ребзя
-        EditText specText = addSpecialityView.findViewById(R.id.speciality_name_text);
-        Spinner courseSpinner = addSpecialityView.findViewById(R.id.courseSpinner);
-        int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
-        Speciality newSpeciality = new Speciality(specText.getText().toString(), countCourse);
-        DBManager.write(newSpeciality);
-        specialitiesList.add(newSpeciality);
-        adapter.notifyDataSetChanged();
     }
 }

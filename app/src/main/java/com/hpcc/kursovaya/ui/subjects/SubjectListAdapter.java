@@ -20,7 +20,7 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import java.util.List;
 
 public class SubjectListAdapter extends ArrayAdapter<Subject> {
-    private static final String TAG = "SubjectListAdapter";
+    private static final String TAG = SubjectListAdapter.class.getSimpleName();
 
     private int mResource;
     private Context mContext;
@@ -40,7 +40,6 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
 
         final View result;
         ViewHolder holder;
-
 
         if(convertView==null){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -70,16 +69,15 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
         StringBuilder str = new StringBuilder();
         List<Speciality> specList = subject.getSpecialityList();
         List<Integer> hourList = subject.getCountHourList();
-        if (!(specList.size() == ConstantEntity.ZERO || hourList.size() == ConstantEntity.ZERO)) {
-            int i = 0;
-            while (i < specList.size() - 1
-                    && i < hourList.size() - 1){
-                str.append(specList.get(i).getName() + " - " + hourList.get(i) + "\n");
-                i++;
-            }
-            str.append("\t\t\t\tCrutch - " + specList.get(i).getName() + " - " + hourList.get(i));
-            holder.speciality.setText(str);
+        int i = 0;
+        final int oneValue = 1;
+        while (i < specList.size() - oneValue
+                && i < hourList.size() - oneValue) {
+            str.append(specList.get(i).getName() + " - " + hourList.get(i) + "\n");
+            i++;
         }
+        str.append("\t\t\t" + specList.get(i).getName() + " - " + hourList.get(i));
+        holder.speciality.setText(str.toString());
 
         holder.course.setText(String.valueOf(subject.getNumberCourse()));
         return convertView;

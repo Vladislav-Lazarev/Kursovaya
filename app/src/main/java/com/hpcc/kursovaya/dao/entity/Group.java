@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Group extends RealmObject implements Entity, Parcelable {
+public class Group extends RealmObject implements Entity<Group>, Parcelable {
+    private static final String TAG = Group.class.getSimpleName();
     private static int countObj;
 
     static {
@@ -60,16 +61,15 @@ public class Group extends RealmObject implements Entity, Parcelable {
 
     @Override
     public boolean hasEntity() {
-        return !("".equals(name) && speciality.getId() < ConstantEntity.ONE && numberCourse == ConstantEntity.ZERO);
+        return !("".equals(name) || speciality.getId() < ConstantEntity.ONE || numberCourse == ConstantEntity.ZERO);
     }
     @Override
-    public boolean newEntity() {
+    public Group newEntity() {
         if (hasEntity()){
             int maxID = DBManager.findMaxID(this.getClass());
             setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
-            return true;
         }
-        return false;
+        return this;
     }
 
     private void setId(int id) {

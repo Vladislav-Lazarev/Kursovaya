@@ -1,5 +1,6 @@
 package com.hpcc.kursovaya.ui.subjects;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,21 +26,19 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
-import com.hpcc.kursovaya.ui.groups.EditGroupActivity;
 
-import java.util.List;
+import io.realm.RealmList;
 
 public class SubjectsFragment extends Fragment {
-    private static final int ACTIVITY_ADD = 1;
-    private static final int ACTIVITY_EDIT = 2;
+
     boolean isCreatedAlready = false;
     private View root;
     private ListView listView;
     private SubjectListAdapter adapter;
-
+    private RealmList<Subject> subjectList;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -56,8 +55,9 @@ public class SubjectsFragment extends Fragment {
                 }
             });
 
-            List<Subject> subjectList = DBManager.readAll(Subject.class);
+            subjectList = DBManager.readAll(Subject.class);
             adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
+
             listView.setAdapter(adapter);
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
             listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -97,21 +97,53 @@ public class SubjectsFragment extends Fragment {
                     adapter.removeSelection();
                 }
             });
+
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Group entry = (Group) parent.getItemAtPosition(position);
-                    Intent intent = new Intent(getActivity(), EditGroupActivity.class);
-                    //put your extras here
-                    startActivityForResult(intent, ACTIVITY_EDIT);
+                    Subject entry = (Subject) parent.getItemAtPosition(position);
+
+                    Intent intent = new Intent(getActivity(), EditSubjectActivity.class);
+                    intent.putExtra("posOldSubject", position);
+                    intent.putExtra("editSubject", entry);
+
+                    startActivityForResult(intent, ConstantEntity.ACTIVITY_EDIT);
                 }
             });
-            isCreatedAlready=true;
-
         }
-
+        isCreatedAlready=true;
         setActionBarTitle();
         return root;
+    }
+
+    public void setActionBarTitle(){
+        ((MainActivity) getActivity()).setActionBarTitle(getContext().getString(R.string.menu_subjects));
+        ((MainActivity) getActivity()).showOverflowMenu(false);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(resultCode== Activity.RESULT_OK){
+            Subject subject;
+            switch (requestCode){
+                case ConstantEntity.ACTIVITY_ADD:
+                    subject = data.getParcelableExtra("addSubject");
+
+                    subjectList.add(subject);
+                    adapter.notifyDataSetChanged();
+                    break;
+                case ConstantEntity.ACTIVITY_EDIT:
+                    subject = data.getParcelableExtra("editSubject");
+                    int posOldGroup = data.getIntExtra("posOldSubject",0);
+
+                    subjectList.set(posOldGroup, subject);
+                    adapter.notifyDataSetChanged();
+                    return;
+                default:
+                    return;
+            }
+        }
     }
 
     private void prepareDeleteDialog(final ActionMode mode) {
@@ -156,9 +188,5 @@ public class SubjectsFragment extends Fragment {
         parent.setGravity(Gravity.CENTER_HORIZONTAL);
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
-    }
-    public void setActionBarTitle(){
-        ((MainActivity) getActivity()).setActionBarTitle(getContext().getString(R.string.menu_subjects));
-        ((MainActivity) getActivity()).showOverflowMenu(false);
     }
 }

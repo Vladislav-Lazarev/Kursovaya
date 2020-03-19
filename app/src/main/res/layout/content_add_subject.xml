@@ -60,7 +60,8 @@
         android:layout_below="@id/spinnerSpeciality"
         android:layout_marginStart="71dp"
         android:layout_marginTop="23dp"
-        android:layout_toEndOf="@id/addCourseLabel" />
+        android:layout_toEndOf="@id/addCourseLabel"
+        android:entries="@array/courses"/>
 
     <EditText
         android:id="@+id/editTextSubjectName"

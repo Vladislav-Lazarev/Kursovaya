@@ -1,27 +1,33 @@
 package com.hpcc.kursovaya.ui.groups;
 
-import android.graphics.drawable.GradientDrawable;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.hpcc.kursovaya.R;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-import yuku.ambilwarna.AmbilWarnaDialog;
+import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 public class EditGroupActivity extends AppCompatActivity {
-
+    private Group group = new Group();
+    private EditText groupEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_group);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -41,20 +47,66 @@ public class EditGroupActivity extends AppCompatActivity {
         TextView textCont = (TextView)findViewById(R.id.toolbar_title);
         textCont.setText("Редагування групи");
 
-        Button addButton = findViewById(R.id.edit_group);
-        addButton.setOnClickListener(new View.OnClickListener() {
+        Intent intent = getIntent();
+        group = intent.getParcelableExtra("editGroup");
+
+        Spinner spinnerSpeciality =
+                ConstantEntity.fillingSpinner(this, (Spinner) findViewById(R.id.spinnerSpeciality),
+                        ConstantEntity.readSpecialityList());
+        listenerSpinnerSpeciality(spinnerSpeciality);
+        ConstantEntity.setSpinnerText(spinnerSpeciality, group.getSpecialty().getName());
+
+        Spinner spinnerCourse = findViewById(R.id.spinnerCourse);
+        listenerSpinnerCourse(spinnerCourse);
+        spinnerCourse.setSelection(group.getNumberCourse() - ConstantEntity.ONE);
+
+        groupEditText = findViewById(R.id.editTextGroupName);
+        groupEditText.setText(group.getName());
+
+        ImageButton editButton = findViewById(R.id.edit_group);
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editGroup();
             }
         });
-
-
     }
 
     private void editGroup(){
-        //adding group logic
+        group.setName(groupEditText.getText().toString())
+                .newEntity();
+
+        if(DBManager.write(group) > ConstantEntity.ZERO) {
+            Intent intent = getIntent();
+            intent.putExtra("editGroup", group);
+            setResult(Activity.RESULT_OK, intent);
+        }
+
         finish();
     }
 
+    private void listenerSpinnerSpeciality(Spinner spinner) {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent,
+                                       View itemSelected, int selectedItemPosition, long selectedId) {
+                String item = (String) parent.getItemAtPosition(selectedItemPosition);
+                Speciality speciality = DBManager.read(Speciality.class, ConstantEntity.NAME, item);
+                group.setSpecialty(speciality);
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+    private void listenerSpinnerCourse(Spinner spinner) {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent,
+                                       View itemSelected, int selectedItemPosition, long selectedId) {
+                String item = (String) parent.getItemAtPosition(selectedItemPosition);
+                group.setNumberCourse(Integer.parseInt(item));
+                Log.d("listenerSpinnerCourse", item);
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
 }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Speciality extends RealmObject implements Entity, Parcelable {
+public class Speciality extends RealmObject implements Entity<Speciality>, Parcelable {
     private static int countObj;
 
     static {
@@ -33,7 +33,6 @@ public class Speciality extends RealmObject implements Entity, Parcelable {
 
         setName(name);
         setCountCourse(countCourse);
-
         newEntity();
     }
     protected Speciality(Parcel in) {
@@ -56,16 +55,16 @@ public class Speciality extends RealmObject implements Entity, Parcelable {
 
     @Override
     public boolean hasEntity() {
-        return !("".equals(name) && countCourse == 0);
+        return !("".equals(name) || countCourse == 0);
     }
+
     @Override
-    public boolean newEntity() {
+    public Speciality newEntity() {
         if (hasEntity()){
             int maxID = DBManager.findMaxID(this.getClass());
             setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
-            return true;
         }
-        return false;
+        return this;
     }
 
     private void setId(int id) {
@@ -84,10 +83,11 @@ public class Speciality extends RealmObject implements Entity, Parcelable {
         return id;
     }
 
+    @NotNull
     public String getName() {
         return name;
     }
-    public Speciality setName(String name) {
+    public Speciality setName(@NotNull String name) {
         // TODO setName - проверка
         this.name = name;
         return this;
@@ -97,9 +97,6 @@ public class Speciality extends RealmObject implements Entity, Parcelable {
         return countCourse;
     }
     public Speciality setCountCourse(int countCourse) {
-        if (countCourse < ConstantEntity.MIN_COUNT_COURSE || countCourse > ConstantEntity.MAX_COUNT_COURSE) {
-            throw new RuntimeException("Exception! setCountSemester() countCourse = " + countCourse);
-        }
         this.countCourse = countCourse;
         return this;
     }
