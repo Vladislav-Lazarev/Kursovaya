@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.dao.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
@@ -12,6 +13,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class Speciality extends RealmObject implements Entity<Speciality>, Parcelable {
+    private static final String TAG = Speciality.class.getSimpleName();
     private static int countObj;
 
     static {
@@ -33,7 +35,7 @@ public class Speciality extends RealmObject implements Entity<Speciality>, Parce
 
         setName(name);
         setCountCourse(countCourse);
-        newEntity();
+
     }
     protected Speciality(Parcel in) {
         id = in.readInt();
@@ -54,30 +56,34 @@ public class Speciality extends RealmObject implements Entity<Speciality>, Parce
     };
 
     @Override
-    public boolean hasEntity() {
-        return !("".equals(name) || countCourse == 0);
+    public boolean isEntity() {
+        return !("".equals(name) || countCourse == ConstantEntity.ZERO || id == ConstantEntity.ZERO);
     }
 
     @Override
-    public Speciality newEntity() {
-        if (hasEntity()){
-            int maxID = DBManager.findMaxID(this.getClass());
-            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
+    public Speciality newEntity() throws Exception {
+        if (isEntity()){
+            try {
+                setName(name);
+                setCountCourse(countCourse);
+
+                int maxID = DBManager.findMaxID(this.getClass());
+                setId((maxID > ConstantEntity.ZERO) ? ++maxID : ++countObj);
+            }
+            catch (RuntimeException ex){
+                String error = "Failed -> " + ex.getMessage();
+                throw new Exception(error, ex);
+            }
         }
         return this;
     }
 
     private void setId(int id) {
-        try{
-            if (id < ConstantEntity.ONE){
-                throw new Exception("Exception! setId()");
-            }
-            this.id = id;
+        if (id < ConstantEntity.ONE){
+            Log.e(TAG, "Failed -> setId(id = " + id + ")");
+            throw new RuntimeException("setId(id = "+ id + ")");
         }
-        catch (Exception ex){
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
-        }
+        this.id = id;
     }
     public int getId() {
         return id;
@@ -88,7 +94,10 @@ public class Speciality extends RealmObject implements Entity<Speciality>, Parce
         return name;
     }
     public Speciality setName(@NotNull String name) {
-        // TODO setName - проверка
+        if("".equals(name)){
+            Log.e(TAG, "Failed -> setName(name = " + name +")");
+            throw new RuntimeException("setName(name = " + name +")");
+        }
         this.name = name;
         return this;
     }
@@ -97,6 +106,10 @@ public class Speciality extends RealmObject implements Entity<Speciality>, Parce
         return countCourse;
     }
     public Speciality setCountCourse(int countCourse) {
+        if(countCourse < ConstantEntity.ONE){
+            Log.e(TAG, "Failed -> setCountCourse(countCourse = " + countCourse + ")");
+            throw new RuntimeException("setCountCourse(countCourse = " + countCourse + ")");
+        }
         this.countCourse = countCourse;
         return this;
     }

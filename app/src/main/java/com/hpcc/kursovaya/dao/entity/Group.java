@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.dao.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
@@ -33,9 +34,7 @@ public class Group extends RealmObject implements Entity<Group>, Parcelable {
     }
     public Group(@NotNull String name, @NotNull Speciality speciality, int numberCourse) {
         this();
-        int maxID = DBManager.findMaxID(this.getClass());
 
-        setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
         setName(name);
         setSpecialty(speciality);
         setNumberCourse(numberCourse);
@@ -60,29 +59,34 @@ public class Group extends RealmObject implements Entity<Group>, Parcelable {
     };
 
     @Override
-    public boolean hasEntity() {
-        return !("".equals(name) || speciality.getId() < ConstantEntity.ONE || numberCourse == ConstantEntity.ZERO);
+    public boolean isEntity() {
+        return !("".equals(name) || !speciality.isEntity() || numberCourse == ConstantEntity.ZERO || id == ConstantEntity.ZERO);
     }
     @Override
-    public Group newEntity() {
-        if (hasEntity()){
-            int maxID = DBManager.findMaxID(this.getClass());
-            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
+    public Group newEntity() throws Exception {
+        if (isEntity()){
+            try{
+                setName(name);
+                setSpecialty(speciality);
+                setNumberCourse(numberCourse);
+
+                int maxID = DBManager.findMaxID(this.getClass());
+                setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
+            }
+            catch (RuntimeException ex){
+                String error = "Failed -> " + ex.getMessage();
+                throw new Exception(error,ex);
+            }
         }
         return this;
     }
 
     private void setId(int id) {
-        try{
-            if (id < ConstantEntity.ONE){
-                throw new Exception("Exception! setId()");
-            }
-            this.id = id;
+        if (id < ConstantEntity.ONE){
+            Log.e(TAG, "Failed -> setId(id = " + id + ")");
+            throw new RuntimeException("setId(id = "+ id + ")");
         }
-        catch (Exception ex){
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
-        }
+        this.id = id;
     }
     public int getId() {
         return id;
@@ -91,8 +95,11 @@ public class Group extends RealmObject implements Entity<Group>, Parcelable {
     public String getName() {
         return name;
     }
-    public Group setName(String name) {
-        // TODO setName - сделать проверку
+    public Group setName(@NotNull String name) {
+        if("".equals(name)){
+            Log.e(TAG, "Failed -> setName(name = " + name +")");
+            throw new RuntimeException("setName(name = " + name +")");
+        }
         this.name = name;
         return this;
     }
@@ -100,8 +107,11 @@ public class Group extends RealmObject implements Entity<Group>, Parcelable {
     public Speciality getSpecialty() {
         return speciality;
     }
-    public Group setSpecialty(Speciality speciality) {
-        // TODO setName - сделать проверку
+    public Group setSpecialty(@NotNull Speciality speciality) {
+        if(!speciality.isEntity()){
+            Log.e(TAG, "Failed -> setSpeciality("+speciality.toString()+")");
+            throw new RuntimeException("setSpeciality("+speciality.toString()+")");
+        }
         this.speciality = speciality;
         return this;
     }
@@ -110,7 +120,10 @@ public class Group extends RealmObject implements Entity<Group>, Parcelable {
         return numberCourse;
     }
     public Group setNumberCourse(int numberCourse) {
-        // TODO setName - сделать проверку
+        if(numberCourse < ConstantEntity.ONE){
+            Log.e(TAG, "Failed -> setNumberCourse(numberCourse = " + numberCourse + ")");
+            throw new RuntimeException("setNumberCourse(numberCourse = " + numberCourse + ")");
+        }
         this.numberCourse = numberCourse;
         return this;
     }

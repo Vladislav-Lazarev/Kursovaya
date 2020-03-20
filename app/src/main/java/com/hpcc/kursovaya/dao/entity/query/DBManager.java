@@ -3,6 +3,7 @@ package com.hpcc.kursovaya.dao.entity.query;
 import android.util.Log;
 
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.my_type.Order;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +17,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class DBManager {
     private static  final String TAG = DBManager.class.getSimpleName();
@@ -151,12 +153,35 @@ public class DBManager {
 
         return (T)result.get(ConstantEntity.ZERO);
     }
-    public static <T extends RealmObject> RealmList<T> readAll(@NotNull final Class<T> clazz){
+    public static <T extends RealmObject> RealmList<T> readAll(@NotNull final Class<T> clazz, @NotNull final String fieldNameSort){
         result.clear();
 
         try {
             result.add((realm.where(clazz)
-                    .findAll()));
+                    .findAll().sort(fieldNameSort, Sort.ASCENDING)));
+
+            Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantEntity.ZERO).toString());
+        } catch (Throwable ex) {
+            result.set(ConstantEntity.ZERO, null);
+            Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
+        }
+
+        RealmList<T> realmList = new RealmList<>();
+        realmList.addAll((Collection<? extends T>) result.get(ConstantEntity.ZERO));
+        return realmList;
+    }
+
+    public static <T extends RealmObject> RealmList<T> readAll(@NotNull final Class<T> clazz, @NotNull final String fieldNameSort, Order order){
+        result.clear();
+
+        try {
+            if(order == Order.ASC){
+                result.add((realm.where(clazz)
+                        .findAll().sort(fieldNameSort, Sort.ASCENDING)));
+            }else{
+                result.add((realm.where(clazz)
+                        .findAll().sort(fieldNameSort, Sort.DESCENDING)));
+            }
 
             Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantEntity.ZERO).toString());
         } catch (Throwable ex) {

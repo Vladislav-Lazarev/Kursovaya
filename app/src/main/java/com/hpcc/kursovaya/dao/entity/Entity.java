@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity;
 
 public interface Entity<T> {
-    boolean hasEntity();
-    T newEntity();
+    boolean isEntity();
+    T newEntity() throws Exception;
 }

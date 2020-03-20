@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.dao.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -62,11 +63,9 @@ public class Subject extends RealmObject implements Entity<Subject>, Parcelable 
         this();
 
         setName(name);
-        putAll(specialityCountHourMap);
+        putAllSpecialityCountHourMap(specialityCountHourMap);
         setNumberCourse(numberCourse);
         setColor(color);
-
-        newEntity();
     }
     protected Subject(Parcel in) {
         id = in.readInt();
@@ -96,30 +95,48 @@ public class Subject extends RealmObject implements Entity<Subject>, Parcelable 
     };
 
     @Override
-    public boolean hasEntity() {
-        // TODO hasEntity
-        return !("".equals(name) || numberCourse < ConstantEntity.ONE /*|| color < ConstantEntity.ZERO*/);
+    public boolean isEntity() {
+        boolean isMapCorrect = true;
+        if(specialityCountHourMap.isEmpty()){
+            isMapCorrect = false;
+        }
+        else {
+            for (Map.Entry<Speciality, Integer> entry : specialityCountHourMap.entrySet()) {
+                if (!entry.getKey().isEntity() || entry.getValue() < ConstantEntity.ONE) {
+                    isMapCorrect = false;
+                }
+            }
+        }
+
+        return !("".equals(name) || numberCourse < ConstantEntity.ONE || color < ConstantEntity.ZERO || isMapCorrect);
     }
     @Override
-    public Subject newEntity() {
-        if (hasEntity()){
-            int maxID = DBManager.findMaxID(this.getClass());
-            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
+    public Subject newEntity() throws Exception {
+        if (isEntity()){
+            try {
+                setName(name);
+                setNumberCourse(numberCourse);
+                setSpecialityList(specialityList);
+                setCountHourList(countHourList);
+                setColor(color);
+
+                int maxID = DBManager.findMaxID(this.getClass());
+                setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
+
+            }catch (RuntimeException ex){
+                String error = "Failed -> " + ex.getMessage();
+                throw new Exception(error,ex);
+            }
         }
         return this;
     }
 
     private void setId(int id){
-        try{
-            if (id < ConstantEntity.ONE){
-                throw new Exception("Exception! setId()");
-            }
-            this.id = id;
+        if (id < ConstantEntity.ONE){
+            Log.e(TAG, "Failed -> setId(id = " + id + ")");
+            throw new RuntimeException("setId(id = "+ id + ")");
         }
-        catch (Exception ex){
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
-        }
+        this.id = id;
     }
     public int getId() {
         return id;
@@ -130,22 +147,19 @@ public class Subject extends RealmObject implements Entity<Subject>, Parcelable 
         return name;
     }
     public Subject setName(@NotNull String name) {
-        // TODO setName - сделать проверку
+        if("".equals(name)){
+            Log.e(TAG, "Failed -> setName(name = " + name +")");
+            throw new RuntimeException("setName(name = " + name +")");
+        }
         this.name = name;
         return this;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    public int size() {
+    public int sizeSpecialtyCountHourMap() {
         return specialityCountHourMap.size();
     }
 
-    public boolean isEmpty() {
-        return specialityCountHourMap.isEmpty();
-    }
-
-    public boolean containsKey(@NotNull Object key) {
+    public boolean containsKeySpecialityCountHourMap(@NotNull Object key) {
         return specialityCountHourMap.containsKey(key);
     }
     public boolean containsValue(@NotNull Object value) {
@@ -153,22 +167,54 @@ public class Subject extends RealmObject implements Entity<Subject>, Parcelable 
     }
 
     @Nullable
-    public Integer get(@NotNull Object key) {
+    public Integer getSpecialityCountHourMap(@NotNull Object key) {
         return specialityCountHourMap.get(key);
     }
 
     private Subject setSpecialityList(@NotNull RealmList<Speciality> specialityList) {
-        // TODO setSpecialityList
+        if(specialityList.isEmpty()){
+            Log.e(TAG, "Failed -> specialityList is empty");
+            throw new RuntimeException("specialityList is empty");
+        }else{
+            for (Speciality speciality:specialityList){
+                if(!speciality.isEntity()){
+                    Log.e(TAG, "Failed -> " + speciality.toString());
+                    throw new RuntimeException(speciality.toString());
+                }
+            }
+        }
+
         this.specialityList = specialityList;
         return this;
     }
     private Subject setCountHourList(@NotNull RealmList<Integer> countHourList) {
-        // TODO setCountHourList
+        if(countHourList.isEmpty()){
+            Log.e(TAG, "Failed -> countHourList is empty");
+            throw new RuntimeException("countHourList is empty");
+        }else{
+            for(Integer countHour:countHourList){
+                if(countHour < ConstantEntity.ONE){
+                    Log.e(TAG, "Failed -> countHour = " + countHour);
+                    throw new RuntimeException("countHour = " + countHour);
+                }
+            }
+        }
+
         this.countHourList = countHourList;
         return this;
     }
     @Nullable
-    public Integer put(@NotNull Speciality key, @NotNull Integer value) {
+    public Integer putSpecialityCountHourMap(@NotNull Speciality key, @NotNull Integer value) {
+        if(!key.isEntity()){
+            Log.e(TAG, "Failed -> " + key.toString());
+            throw new RuntimeException(key.toString());
+        }
+
+        if(value < ConstantEntity.ONE){
+            Log.e(TAG, "Failed -> countHour = " + value);
+            throw new RuntimeException("countHour = " + value);
+        }
+
         if (!specialityList.contains(key)) {
             specialityList.add(key);
             countHourList.add(value);
@@ -180,17 +226,26 @@ public class Subject extends RealmObject implements Entity<Subject>, Parcelable 
     }
 
     @Nullable
-    public Integer remove(@NotNull Object key) {
-        int result = specialityList.indexOf(key);
-        specialityList.remove(result);
-        countHourList.remove(result);
+    public Integer removeSpecialityCountHourMap(@NotNull Object key) {
+        int index = specialityList.indexOf(key);
+        specialityList.remove(index);
+        countHourList.remove(index);
         return specialityCountHourMap.remove(key);
     }
 
-    private void setSpecialityCountHourMap(Map<Speciality, Integer> specialityCountHourMap) {
-        this.specialityCountHourMap = specialityCountHourMap;
-    }
-    public Subject putAll(@NotNull Map<? extends Speciality, ? extends Integer> map) {
+    public Subject putAllSpecialityCountHourMap(@NotNull Map<Speciality, Integer> map) {
+        if(map.isEmpty()){
+            Log.e(TAG, "Failed -> map is empty");
+            throw new RuntimeException("map is empty");
+        }else{
+            for(Map.Entry<Speciality, Integer> entry:map.entrySet()){
+                if(!entry.getKey().isEntity() || entry.getValue() < ConstantEntity.ONE){
+                    Log.e(TAG, "Failed -> " + entry.getKey().toString() + ", countHour = " + entry.getValue());
+                    throw new RuntimeException(entry.getKey().toString() + ", countHour = " + entry.getValue());
+                }
+            }
+        }
+
         this.specialityList.addAll(map.keySet());
         this.countHourList.addAll(map.values());
         specialityCountHourMap.putAll(map);
@@ -232,13 +287,14 @@ public class Subject extends RealmObject implements Entity<Subject>, Parcelable 
         return specialityCountHourMap.entrySet();
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     public int getNumberCourse() {
         return numberCourse;
     }
     public Subject setNumberCourse(int numberCourse) {
-        // TODO setCourse
+        if(numberCourse < ConstantEntity.ONE){
+            Log.e(TAG, "Failed -> setNumberCourse(numberCourse = " + numberCourse + ")");
+            throw new RuntimeException("setNumberCourse(numberCourse = " + numberCourse + ")");
+        }
         this.numberCourse = numberCourse;
         return this;
     }
@@ -247,7 +303,10 @@ public class Subject extends RealmObject implements Entity<Subject>, Parcelable 
         return color;
     }
     public Subject setColor(int color) {
-        // TODO setColor - проверку
+        if(color < ConstantEntity.ZERO){
+            Log.e(TAG, "Failed -> setColor(color = " + color + ")");
+            throw new RuntimeException("setColor(color = " + color + ")");
+        }
         this.color = color;
         return this;
     }
