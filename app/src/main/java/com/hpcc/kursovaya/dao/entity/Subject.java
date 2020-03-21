@@ -167,7 +167,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
 
     @Nullable
     public Integer putSpecialityCountHour(@NotNull Speciality key, @NotNull Integer value) {
-        if(!key.isEntity()){
+        if(key.getId() < ConstantEntity.ONE){
             Log.e(TAG, "Failed -> " + key.toString());
             throw new RuntimeException(key.toString());
         }
@@ -201,7 +201,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
             throw new RuntimeException("map is empty");
         }else{
             for(Map.Entry<Speciality, Integer> entry:map.entrySet()){
-                if(!entry.getKey().isEntity() || entry.getValue() < ConstantEntity.ONE){
+                if(entry.getKey().getId() < ConstantEntity.ONE || entry.getValue() < ConstantEntity.ONE){
                     Log.e(TAG, "Failed -> " + entry.getKey().toString() + ", countHour = " + entry.getValue());
                     throw new RuntimeException(entry.getKey().toString() + ", countHour = " + entry.getValue());
                 }
@@ -248,7 +248,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
             throw new RuntimeException("specialityList is empty");
         }else{
             for (Speciality speciality: specialityList){
-                if(!speciality.isEntity()){
+                if(speciality.getId() < ConstantEntity.ONE){
                     Log.e(TAG, "Failed -> " + speciality.toString());
                     throw new RuntimeException(speciality.toString());
                 }
