@@ -40,6 +40,11 @@ public class GroupsFragment extends Fragment {
     private GroupListAdapter adapter;
     private RealmList<Group> groupList;
 
+    {
+        adapter = null;
+        groupList = new RealmList<>();
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -118,6 +123,7 @@ public class GroupsFragment extends Fragment {
         }
         isCreatedAlready=true;
         setActionBarTitle();
+
         return root;
     }
 
@@ -195,4 +201,5 @@ public class GroupsFragment extends Fragment {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
+
 }

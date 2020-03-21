@@ -157,4 +157,5 @@
 
     <string name="firstHalfCoupleHeader">1</string>
     <string name="secondHalfCoupleHeader">2</string>
+    <string name="subjectName_hint">Назва предмету</string>
 </resources>

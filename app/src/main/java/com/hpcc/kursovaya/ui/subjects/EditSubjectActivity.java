@@ -71,7 +71,10 @@ public class EditSubjectActivity extends AppCompatActivity {
         subject = intent.getParcelableExtra("editSubject");
 
         colorPickButton = (Button) findViewById(R.id.pickColorBtn);
-        colorPickButton.setHighlightColor(subject.getColor());
+        GradientDrawable background = (GradientDrawable) colorPickButton.getBackground();
+        background.setColor(subject.getColor());
+        Log.d(TAG, Integer.toString(getResources().getColor((R.color.sideBar))));
+        Log.d(TAG,"Subject default color"+ Integer.toString(subject.getColor()));
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,11 +95,13 @@ public class EditSubjectActivity extends AppCompatActivity {
             specLayout.setLayoutParams(LLParams);
             final EditText hourEditTxt = new EditText(this);
             CheckBox checkSpecHour = new CheckBox(this);
+            hourEditTxt.setEnabled(false);
 
             final Speciality speciality = specialityList.get(i);
             if (subject.containsKeySpecialityCountHour(speciality)){
                 checkSpecHour.setChecked(true);
                 hourEditTxt.setEnabled(true);
+                hourEditTxt.setText(Integer.toString(subject.getSpecialityCountHour(speciality)));
                 hourEditTxt.setText(String.valueOf(subject.getSpecialityCountHour(speciality)));
             }
             checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -130,7 +135,6 @@ public class EditSubjectActivity extends AppCompatActivity {
             hourEditTxt.setLayoutParams(etParams);
             hourEditTxt.setHint("Введіть кількість годин");
             hourEditTxt.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
-            hourEditTxt.setEnabled(false);
 
             specLayout.addView(checkSpecHour);
             specLayout.addView(specUI);

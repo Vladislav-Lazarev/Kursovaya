@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="23dp"
-        android:layout_below="@id/editSpecialityLabel"/>
+        android:layout_below="@id/spinnerSpeciality"/>
 
     <TextView
         android:id="@+id/editSubjectNameLabel"
@@ -54,23 +54,25 @@
 
     <Spinner
         android:id="@+id/spinnerCourse"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/spinnerSpeciality"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="15dp"
         android:layout_marginStart="59dp"
-        android:layout_marginTop="50dp"
         android:layout_toEndOf="@id/editCourseLabel"
         android:entries="@array/courses" />
 
     <EditText
         android:id="@+id/editTextSubjectName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/spinnerCourse"
         android:layout_marginStart="49dp"
         android:layout_marginTop="9dp"
+        android:layout_marginEnd="15dp"
         android:layout_toEndOf="@id/editCourseLabel"
-        android:hint="@string/groupName_hint"
+        android:hint="@string/subjectName_hint"
         android:inputType="text"
         android:textSize="16sp" />
 

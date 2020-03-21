@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.ui.subjects;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -69,8 +70,11 @@ public class AddSubjectActivity extends AppCompatActivity {
         textCont.setText("Додавання предмету");
 
         colorPickButton = (Button) findViewById(R.id.pickColorBtn);
-        colorPickButton.setHighlightColor(getResources().getColor((R.color.sideBar)));
-        subject.setColor(colorPickButton.getHighlightColor());
+        GradientDrawable background = (GradientDrawable) colorPickButton.getBackground();
+        background.setColor(Color.RED);
+        subject.setColor(Color.RED);
+        Log.d(TAG, Integer.toString(Color.RED));
+        Log.d(TAG,"Subject default color"+ Integer.toString(subject.getColor()));
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,6 +171,7 @@ public class AddSubjectActivity extends AppCompatActivity {
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
                 subject.setColor(color);
+                Log.d(TAG,"Subject changed color"+ Integer.toString(subject.getColor()));
                 colorPickButton = (Button) findViewById(R.id.pickColorBtn);
                 GradientDrawable background = (GradientDrawable) colorPickButton.getBackground();
                 background.setColor(color);
