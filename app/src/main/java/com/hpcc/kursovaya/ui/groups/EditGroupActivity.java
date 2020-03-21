@@ -74,7 +74,7 @@ public class EditGroupActivity extends AppCompatActivity {
 
     private void editGroup(){
         group.setName(groupEditText.getText().toString())
-                .newEntity();
+                .createEntity();
 
         if(DBManager.write(group) > ConstantEntity.ZERO) {
             Intent intent = getIntent();

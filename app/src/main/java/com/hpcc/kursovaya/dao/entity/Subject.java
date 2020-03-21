@@ -71,14 +71,15 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         setNumberCourse(numberCourse);
         setColor(color);
         initMap();
-        newEntity();
+
+        createEntity();
     }
     protected Subject(Parcel in) {
         id = in.readInt();
         name = in.readString();
         in.readList(specialityList, Speciality.class.getClassLoader());
         in.readList(countHourList, Integer.class.getClassLoader());
-        numberCourse = (int) in.readValue(Integer.class.getClassLoader());
+        numberCourse = in.readInt();
         color = in.readInt();
         initMap();
     }
@@ -102,25 +103,14 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     };
 
     @Override
-    public boolean isEntity() {
-        initMap();
-        boolean isMapCorrect = true;
-        if(specialityCountHourMap.isEmpty()){
-            isMapCorrect = false;
-        }
-        else {
-            for (Map.Entry<Speciality, Integer> entry : specialityCountHourMap.entrySet()) {
-                if (!entry.getKey().isEntity() || entry.getValue() < ConstantEntity.ONE) {
-                    isMapCorrect = false;
-                }
-            }
-        }
+    public Subject createEntity() {
+        if (id < ConstantEntity.ZERO){
+            initMap();
+            setName(name);
+            setSpecialityCountHourMap(specialityCountHourMap);
+            setNumberCourse(numberCourse);
+            setColor(color);
 
-        return !("".equals(name) || numberCourse < ConstantEntity.ONE || color < ConstantEntity.ZERO || isMapCorrect);
-    }
-    @Override
-    public Subject newEntity() {
-        if (isEntity()){
             int maxID = DBManager.findMaxID(this.getClass());
             setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
         }

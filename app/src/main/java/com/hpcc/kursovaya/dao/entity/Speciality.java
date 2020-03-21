@@ -74,7 +74,8 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
 
         setName(name);
         setCountCourse(countCourse);
-        newEntity();
+
+        createEntity();
     }
     protected Speciality(Parcel in) {
         id = in.readInt();
@@ -95,13 +96,11 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
     };
 
     @Override
-    public boolean isEntity() {
-        return !("".equals(name) || countCourse == 0);
-    }
+    public Speciality createEntity() {
+        if (id < ConstantEntity.ZERO){
+            setName(name);
+            setCountCourse(countCourse);
 
-    @Override
-    public Speciality newEntity() {
-        if (isEntity()){
             int maxID = DBManager.findMaxID(this.getClass());
             setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
         }

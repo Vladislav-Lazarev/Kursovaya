@@ -97,7 +97,7 @@ public class EditSubjectActivity extends AppCompatActivity {
             if (subject.containsKeySpecialityCountHour(speciality)){
                 checkSpecHour.setChecked(true);
                 hourEditTxt.setEnabled(true);
-                hourEditTxt.setText(subject.getSpecialityCountHour(speciality));
+                hourEditTxt.setText(String.valueOf(subject.getSpecialityCountHour(speciality)));
             }
             checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -158,13 +158,12 @@ public class EditSubjectActivity extends AppCompatActivity {
     private void editSubject(){
         subject.setName(subjectEditText.getText().toString())
                 .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map))
-                .newEntity();
+                .createEntity();
+        Log.d(TAG, "editSubject = " + subject);
 
-        if(DBManager.write(subject) > ConstantEntity.ZERO) {
-            Intent intent = getIntent();
-            intent.putExtra("editSubject", subject);
-            setResult(Activity.RESULT_OK, intent);
-        }
+        Intent intent = getIntent();
+        intent.putExtra("editSubject", subject);
+        setResult(Activity.RESULT_OK, intent);
         finish();
     }
 

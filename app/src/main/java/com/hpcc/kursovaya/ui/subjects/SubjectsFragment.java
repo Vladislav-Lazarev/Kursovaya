@@ -126,10 +126,11 @@ public class SubjectsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if(resultCode== Activity.RESULT_OK){
-            Subject subject;
+            Subject subject = null;
             switch (requestCode){
                 case ConstantEntity.ACTIVITY_ADD:
                     subject = data.getParcelableExtra("addSubject");
+                    DBManager.write(subject);
 
                     subjectList.add(subject);
                     adapter.notifyDataSetChanged();
@@ -137,6 +138,7 @@ public class SubjectsFragment extends Fragment {
                 case ConstantEntity.ACTIVITY_EDIT:
                     int posOldSubject = data.getIntExtra("posOldSubject",0);
                     subject = data.getParcelableExtra("editSubject");
+                    DBManager.write(subject);
 
                     subjectList.set(posOldSubject, subject);
                     adapter.notifyDataSetChanged();

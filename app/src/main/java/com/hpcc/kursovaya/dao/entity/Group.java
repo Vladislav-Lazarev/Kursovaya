@@ -45,6 +45,8 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
         setName(name);
         setSpecialty(speciality);
         setNumberCourse(numberCourse);
+
+        createEntity();
     }
     protected Group(Parcel in) {
         id = in.readInt();
@@ -66,12 +68,12 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     };
 
     @Override
-    public boolean isEntity() {
-        return !("".equals(name) || speciality.getId() < ConstantEntity.ONE || numberCourse == ConstantEntity.ZERO);
-    }
-    @Override
-    public Group newEntity() {
-        if (isEntity()){
+    public Group createEntity() {
+        if (id < ConstantEntity.ZERO){
+            setName(name);
+            setSpecialty(speciality);
+            setNumberCourse(numberCourse);
+
             int maxID = DBManager.findMaxID(this.getClass());
             setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
         }
@@ -105,7 +107,7 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
         return speciality;
     }
     public Group setSpecialty(@NotNull Speciality speciality) {
-        if(!speciality.isEntity()){
+        if(speciality.getId() < ConstantEntity.ONE){
             Log.e(TAG, "Failed -> setSpeciality("+speciality.toString()+")");
             throw new RuntimeException("setSpeciality("+speciality.toString()+")");
         }

@@ -68,7 +68,7 @@ public class AddGroupActivity extends AppCompatActivity {
 
     private void addGroup(){
         group.setName(groupEditText.getText().toString())
-                .newEntity();
+                .createEntity();
 
         if(DBManager.write(group) > ConstantEntity.ZERO) {
             Intent intent = getIntent();
