@@ -1,12 +1,20 @@
 package com.hpcc.kursovaya.ui.templates;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.Group;
+
+import java.util.ArrayList;
 
 
 public class AddTemplateActivity extends TemplateActivity {
@@ -17,34 +25,83 @@ public class AddTemplateActivity extends TemplateActivity {
         super();
     }
 
+    /*
+    * Пишу на русском, чтобы было понятнее
+    *
+    * Реалм это однопоточное нечто. Он просит, чтобы объекты созданные в одном потоке не использовались в другом потоке.
+    * Да, это правильно, потокобезопасность и прочее. Но нам это не очень подходит.
+    * Я хотел написать адаптер для AutoCompleteTextView, чтобы можно было получить выбранный объект лишь по одному методу.
+    * Но у реалма были на это другие планы.
+    * Таким образом придется лепить костыль из стрингового массива и нахождения групы в листе реалма.
+    * У такого подхода есть неоспоримый плюс - мы стопудово работаем именно с той группой, которая есть в базе.
+    *
+    * Раскраску для клеток сделаю тогда, когда будет объект с которым смогу работать
+    * */
+
     @Override
     protected AlertDialog.Builder getClassDialogBuilder(final int classDay,final int classHour){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
-        /*        if(выражение на проверку пустоты в клеточке шаблона) {
-           builder.setTitle(R.string.popup_edit_class);
-        }
-        else {
-
-                     builder.setTitle(R.string.popup_add_class);
-        }*/
-        builder.setTitle(R.string.popup_add_class);
-        builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
+        classView = getLayoutInflater().inflate(R.layout.dialog_add_new_class_template,null);
+        AutoCompleteTextView suggestEditText = classView.findViewById(R.id.groupNameSuggestET);
+        suggestEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onClickAcceptClass(dialog,which,classDay,classHour);
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String groupName = (String) adapterView.getItemAtPosition(i);
+                for(Group group: groupList){
+                    if(group.getName().equals(groupName)){
+                        //выбранная група
+                        selectedGroup = group;
+                    }
+                }
             }
         });
+        ArrayList<String> groupNames = new ArrayList<>();
+        for(Group group: groupList) {
+            groupNames.add(group.getName());
+
+        }
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, groupNames);
+        //GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto,groupList);
+        suggestEditText.setAdapter(adapter);
+        //заполнять спиннер нужно в зависимости от курса и специальности группы, но по дефолту можно тупо все предметы залить туда
+        Spinner subjectSpinner = classView.findViewById(R.id.spinnerSubject);
+        RadioButton oneHourRB = classView.findViewById(R.id.popup_duration_rgroup_short);
+        RadioButton twoHourRB = classView.findViewById(R.id.popup_duration_rgroup_full);
+        if(classes[classDay][classHour].getBtn().getText().equals("")) {
+            builder.setTitle(R.string.popup_add_class);
+            builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    onClickAcceptClass(dialog,which,classDay,classHour);
+                }
+            });
+        }
+        else {
+            builder.setTitle(R.string.popup_edit_class);
+            //данные получай с объекта, а не с кнопки - это пример
+            suggestEditText.setText(classes[classDay][classHour].getBtn().getText());
+            builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    onClickAcceptEditClass(dialog,which,classDay,classHour);
+                }
+            });
+        }
+
         builder.setNegativeButton(R.string.popup_cancel,new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 onClickCancelClass(dialog,which,classDay,classHour);
             }
         });
-        classView = getLayoutInflater().inflate(R.layout.dialog_add_new_class_template,null);
         builder.setView(classView);
         return builder;
     }
+
+
+
 
     @Override
     protected AlertDialog.Builder getConfirmDialogBuilder(){
@@ -86,11 +143,20 @@ public class AddTemplateActivity extends TemplateActivity {
 
   @Override
     protected void onClickAcceptClass(DialogInterface dialog, int which,int classDay,int classHour) {
-      AutoCompleteTextView groupName = classView.findViewById(R.id.groupNameSuggestET);
+      //здесь обработчик кнопки принять
+        AutoCompleteTextView groupName = classView.findViewById(R.id.groupNameSuggestET);
       String displayedGroupName = groupName.getText().toString();
       Log.d(TAG, classDay + " " + classHour);
       Log.d(TAG, displayedGroupName);
       super.classes[classDay][classHour].getBtn().setText(displayedGroupName);
   }
+    private void onClickAcceptEditClass(DialogInterface dialog, int which, int classDay, int classHour) {
+        //тоже самое но для редактирования
+        AutoCompleteTextView groupName = classView.findViewById(R.id.groupNameSuggestET);
+        String displayedGroupName = groupName.getText().toString();
+        Log.d(TAG, classDay + " " + classHour);
+        Log.d(TAG, displayedGroupName);
+        classes[classDay][classHour].getBtn().setText(displayedGroupName);
+    }
 
 }

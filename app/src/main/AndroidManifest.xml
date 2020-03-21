@@ -48,9 +48,11 @@
             android:label="@string/title_activity_add_group" />
         <activity
             android:name=".ui.settings.specialities.SpecialitiesActivity"
-            android:label="@string/title_activity_add_template"
+            android:label="@string/title_activity_add_template" />
+        <activity
+            android:name=".ui.templates.AddTemplateActivity"
+            android:label="@string/title_activity_add_template" />
 
-             />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">

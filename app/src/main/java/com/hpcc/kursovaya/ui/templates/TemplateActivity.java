@@ -16,18 +16,24 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.ArrayList;
+
+import io.realm.RealmList;
 
 public class TemplateActivity extends AppCompatActivity {
     protected ClassesButtonWrapper[][] classes = new ClassesButtonWrapper[7][10];
     private final String TAG = "TemplateActivity";
     protected ArrayList<ClassesButtonWrapper> selectedButtons = new ArrayList<>();
     private boolean isSelectMode = false;
+    protected Group selectedGroup;
     private Toolbar toolbar;
     private Toolbar toolbar1;
     protected View classView;
-
+    protected RealmList<Group> groupList;
 
 
     protected void onCreate(Bundle savedInstanceState){
@@ -35,6 +41,8 @@ public class TemplateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_template);
         toolbar = findViewById(R.id.toolbar);
         toolbar1 = findViewById(R.id.toolbarEdit);
+        //creating elements for listview
+        groupList = DBManager.readAll(Group.class, ConstantEntity.ID);
         final ImageButton cancelSelect = toolbar1.findViewById(R.id.turnOff_editing);
         cancelSelect.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +80,11 @@ public class TemplateActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 if(!isSelectMode) {
-                                    addClass(classDay, classHour);
+                                    if(classes[classDay][classHour].getBtn().getText()!=""){
+                                        editClass(classDay,classHour);
+                                    } else {
+                                        addClass(classDay, classHour);
+                                    }
                                 } else if(!classes[classDay][classHour].getBtn().getText().equals("") && !classes[classDay][classHour].isSelected()){
                                     classes[classDay][classHour].getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.sideBarTransp));
                                     classes[classDay][classHour].setSelected(true);
@@ -211,7 +223,27 @@ public class TemplateActivity extends AppCompatActivity {
         return builder;
     }
 
+
+
     private void addClass(final int classDay,final int classHour){
+
+        final AlertDialog dialog = getClassDialogBuilder(classDay,classHour).create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+            }
+        });
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout parent = (LinearLayout) positiveButton.getParent();
+        parent.setGravity(Gravity.CENTER_HORIZONTAL);
+        View leftSpacer = parent.getChildAt(1);
+        leftSpacer.setVisibility(View.GONE);
+    }
+
+    private void editClass(final int classDay,final int classHour){
 
         final AlertDialog dialog = getClassDialogBuilder(classDay,classHour).create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
