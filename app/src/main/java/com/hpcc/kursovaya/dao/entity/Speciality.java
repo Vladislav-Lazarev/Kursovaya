@@ -4,20 +4,59 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Speciality extends RealmObject implements Entity<Speciality>, Parcelable {
+public class Speciality extends RealmObject implements EntityI<Speciality>, Parcelable, Cloneable {
     private static final String TAG = Speciality.class.getSimpleName();
     private static int countObj;
 
     static {
         countObj = 0;
+    }
+
+    public static void deleteAllLinks(@NotNull Speciality speciality){
+        // Удаление специальности в дисциплине
+        List<Subject> list = DBManager.readAll(Subject.class, ConstantEntity.ID);
+        ArrayList<Subject> subjectArrayList = new ArrayList<>(list);
+        Log.d("deleteAllLinks", "list = " + list.toString());
+        Log.d("deleteAllLinks", "subjectArrayList = " + subjectArrayList.toString());
+        for (Subject subject : subjectArrayList){
+            Log.d("deleteAllLinks", "subject = " + subject.toString());
+            if (subject.initMap().containsKeySpecialityCountHour(speciality)){
+                Subject modifiedSubject = new Subject();
+                subject.removeSpecialityCountHour(speciality);
+                try {
+                    modifiedSubject = subject.clone();
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+
+                DBManager.delete(Subject.class, ConstantEntity.ID, subject.getId());
+                DBManager.write(modifiedSubject);
+            }
+        }
+
+        // Удаление групп по специальности
+        for (Group group : DBManager.readAll(Group.class, ConstantEntity.ID)){
+            if (speciality.equals(group.getSpecialty())){
+                DBManager.delete(Group.class, ConstantEntity.ID, group.getId());
+            }
+        }
+
+        // Удаление специальности
+        DBManager.delete(Speciality.class, ConstantEntity.ID, speciality.getId());
     }
 
     @PrimaryKey
@@ -35,12 +74,12 @@ public class Speciality extends RealmObject implements Entity<Speciality>, Parce
 
         setName(name);
         setCountCourse(countCourse);
-
+        newEntity();
     }
     protected Speciality(Parcel in) {
         id = in.readInt();
         name = in.readString();
-        in.readInt();
+        countCourse = in.readInt();
     }
 
     public static final Creator<Speciality> CREATOR = new Creator<Speciality>() {
@@ -57,23 +96,14 @@ public class Speciality extends RealmObject implements Entity<Speciality>, Parce
 
     @Override
     public boolean isEntity() {
-        return !("".equals(name) || countCourse == ConstantEntity.ZERO || id == ConstantEntity.ZERO);
+        return !("".equals(name) || countCourse == 0);
     }
 
     @Override
-    public Speciality newEntity() throws Exception {
+    public Speciality newEntity() {
         if (isEntity()){
-            try {
-                setName(name);
-                setCountCourse(countCourse);
-
-                int maxID = DBManager.findMaxID(this.getClass());
-                setId((maxID > ConstantEntity.ZERO) ? ++maxID : ++countObj);
-            }
-            catch (RuntimeException ex){
-                String error = "Failed -> " + ex.getMessage();
-                throw new Exception(error, ex);
-            }
+            int maxID = DBManager.findMaxID(this.getClass());
+            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
         }
         return this;
     }
@@ -115,9 +145,23 @@ public class Speciality extends RealmObject implements Entity<Speciality>, Parce
     }
 
     @Override
-    public boolean equals(@NotNull Object obj) {
-        Speciality speciality = (Speciality)obj;
-        return this.name.equals(speciality.name);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Speciality that = (Speciality) o;
+        return countCourse == that.countCourse &&
+                name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, countCourse);
+    }
+
+    @NonNull
+    @Override
+    public Speciality clone() throws CloneNotSupportedException {
+        return (Speciality) super.clone();
     }
 
     @Override

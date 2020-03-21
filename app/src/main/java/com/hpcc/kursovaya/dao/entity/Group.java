@@ -4,15 +4,19 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Group extends RealmObject implements Entity<Group>, Parcelable {
+public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cloneable {
     private static final String TAG = Group.class.getSimpleName();
     private static int countObj;
 
@@ -26,11 +30,14 @@ public class Group extends RealmObject implements Entity<Group>, Parcelable {
     private Speciality speciality;// Принадленость группы к специальности
     private int numberCourse;// Номер курса группы
 
-    public Group() {
+    {
         id = 0;
         name = "";
         speciality = new Speciality();
         numberCourse = 0;
+    }
+    public Group() {
+
     }
     public Group(@NotNull String name, @NotNull Speciality speciality, int numberCourse) {
         this();
@@ -60,23 +67,13 @@ public class Group extends RealmObject implements Entity<Group>, Parcelable {
 
     @Override
     public boolean isEntity() {
-        return !("".equals(name) || !speciality.isEntity() || numberCourse == ConstantEntity.ZERO || id == ConstantEntity.ZERO);
+        return !("".equals(name) || speciality.getId() < ConstantEntity.ONE || numberCourse == ConstantEntity.ZERO);
     }
     @Override
-    public Group newEntity() throws Exception {
+    public Group newEntity() {
         if (isEntity()){
-            try{
-                setName(name);
-                setSpecialty(speciality);
-                setNumberCourse(numberCourse);
-
-                int maxID = DBManager.findMaxID(this.getClass());
-                setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
-            }
-            catch (RuntimeException ex){
-                String error = "Failed -> " + ex.getMessage();
-                throw new Exception(error,ex);
-            }
+            int maxID = DBManager.findMaxID(this.getClass());
+            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
         }
         return this;
     }
@@ -129,9 +126,24 @@ public class Group extends RealmObject implements Entity<Group>, Parcelable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        Group group = (Group)obj;
-        return this.name.equals(group.name);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Group group = (Group) o;
+        return numberCourse == group.numberCourse &&
+                name.equals(group.name) &&
+                speciality.equals(group.speciality);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, speciality, numberCourse);
+    }
+
+    @NonNull
+    @Override
+    public Group clone() throws CloneNotSupportedException {
+        return (Group) super.clone();
     }
 
     @Override

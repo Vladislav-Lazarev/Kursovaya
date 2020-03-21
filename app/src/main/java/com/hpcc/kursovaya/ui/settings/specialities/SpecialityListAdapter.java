@@ -12,10 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.List;
 
@@ -77,12 +74,7 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
     @Override
     public void remove(Speciality object) {
         specialityList.remove(object);
-        for (Group group : DBManager.readAll(Group.class)){
-            if (object.equals(group.getSpecialty())){
-                DBManager.delete(Group.class, ConstantEntity.ID, group.getId());
-            }
-        }
-        DBManager.delete(Speciality.class, ConstantEntity.ID, object.getId());
+        Speciality.deleteAllLinks(object);
         notifyDataSetChanged();
     }
     public void toggleSelection(int position) {

@@ -28,7 +28,7 @@ import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import io.realm.RealmList;
@@ -36,11 +36,11 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class AddSubjectActivity extends AppCompatActivity {
     private static final String TAG = AddSubjectActivity.class.getSimpleName();
-    private int pickDefaultColor;
+
     private Button colorPickButton;
     private EditText subjectEditText;
 
-    private Map<Speciality, EditText> map = new HashMap<>();
+    private Map<Speciality, EditText> map = new LinkedHashMap<>();
     private Subject subject = new Subject();
 
     @Override
@@ -69,17 +69,18 @@ public class AddSubjectActivity extends AppCompatActivity {
         textCont.setText("Додавання предмету");
 
         colorPickButton = (Button) findViewById(R.id.pickColorBtn);
+        colorPickButton.setHighlightColor(getResources().getColor((R.color.sideBar)));
+        subject.setColor(colorPickButton.getHighlightColor());
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openColorPicker();
             }
         });
-        pickDefaultColor = getResources().getColor((R.color.sideBar));
 
         LinearLayout parent = findViewById(R.id.spinnerSpeciality);
 
-        final RealmList<Speciality> specialityList = DBManager.readAll(Speciality.class);
+        final RealmList<Speciality> specialityList = DBManager.readAll(Speciality.class, ConstantEntity.ID);
         for(int i = 0 ; i< specialityList.size();i++){
             LinearLayout specLayout = new LinearLayout(this);
             specLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -93,13 +94,12 @@ public class AddSubjectActivity extends AppCompatActivity {
             checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked){
+                    if (isChecked) {
                         map.put(speciality, hourEditTxt);
-                        hourEditTxt.setEnabled(true);
-                    } else{
+                    } else {
                         map.remove(speciality);
-                        hourEditTxt.setEnabled(false);
                     }
+                    hourEditTxt.setEnabled(isChecked);
                     Log.d(TAG, map.toString());
                 }
             });
@@ -108,6 +108,7 @@ public class AddSubjectActivity extends AppCompatActivity {
             checkSpecHour.setLayoutParams(checkBoxParams);
             checkSpecHour.setWidth(0);
             checkSpecHour.setButtonTintList(getResources().getColorStateList(R.color.sideBar));
+
             TextView specUI = new TextView(this);
             LinearLayout.LayoutParams textViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,6);
             specUI.setWidth(0);
@@ -146,9 +147,9 @@ public class AddSubjectActivity extends AppCompatActivity {
 
     private void addSubject(){
         subject.setName(subjectEditText.getText().toString())
-                .putAll(ConstantEntity.convertMapEditTextToMapInt(map))
-                .setColor(pickDefaultColor)
+                .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map))
                 .newEntity();
+        Log.d(TAG, "addSubject = " + subject);
 
         if(DBManager.write(subject) > ConstantEntity.ZERO) {
             Intent intent = getIntent();
@@ -160,7 +161,7 @@ public class AddSubjectActivity extends AppCompatActivity {
     }
 
     public void openColorPicker(){
-        AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(this, pickDefaultColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+        AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(this, subject.getColor(), new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {
 
@@ -168,7 +169,7 @@ public class AddSubjectActivity extends AppCompatActivity {
 
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
-                pickDefaultColor = color;
+                subject.setColor(color);
                 colorPickButton = (Button) findViewById(R.id.pickColorBtn);
                 GradientDrawable background = (GradientDrawable) colorPickButton.getBackground();
                 background.setColor(color);

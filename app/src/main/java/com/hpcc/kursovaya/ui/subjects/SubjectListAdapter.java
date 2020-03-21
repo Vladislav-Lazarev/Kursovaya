@@ -18,6 +18,7 @@ import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.List;
+import java.util.Map;
 
 public class SubjectListAdapter extends ArrayAdapter<Subject> {
     private static final String TAG = SubjectListAdapter.class.getSimpleName();
@@ -33,7 +34,7 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Subject subject = new Subject(
                 getItem(position).getName(),
-                getItem(position).getSpecialityCountHourMap(),
+                getItem(position).initMap().getSpecialityCountHourMap(),
                 getItem(position).getNumberCourse(),
                 getItem(position).getColor());
 
@@ -65,20 +66,14 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
        result.startAnimation(animation);*/
 
         holder.name.setText(subject.getName());
-
-        StringBuilder str = new StringBuilder();
-        List<Speciality> specList = subject.getSpecialityList();
-        List<Integer> hourList = subject.getCountHourList();
-        int i = 0;
-        final int oneValue = 1;
-        while (i < specList.size() - oneValue
-                && i < hourList.size() - oneValue) {
-            str.append(specList.get(i).getName() + " - " + hourList.get(i) + "\n");
-            i++;
+        if (!subject.isEmptySpecialtyCountHour()){
+            StringBuilder str = new StringBuilder();
+            for (Map.Entry<Speciality, Integer> set : subject.getSpecialityCountHourMap().entrySet()) {
+                str.append("\t\t\t\t" + set.getKey().getName() + " - " + set.getValue() + "\n");
+            }
+            str.deleteCharAt(str.length() - ConstantEntity.ONE);
+            holder.speciality.setText(str.toString());
         }
-        str.append("\t\t\t" + specList.get(i).getName() + " - " + hourList.get(i));
-        holder.speciality.setText(str.toString());
-
         holder.course.setText(String.valueOf(subject.getNumberCourse()));
         return convertView;
     }

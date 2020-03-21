@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Gravity;
@@ -51,13 +52,12 @@ public class SubjectsFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), AddSubjectActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent, ConstantEntity.ACTIVITY_ADD);
                 }
             });
 
-            subjectList = DBManager.readAll(Subject.class);
+            subjectList = DBManager.readAll(Subject.class, ConstantEntity.ID);
             adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
-
             listView.setAdapter(adapter);
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
             listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -103,6 +103,7 @@ public class SubjectsFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Subject entry = (Subject) parent.getItemAtPosition(position);
 
+                    Log.d("TAG", "entry = " + entry.toString());
                     Intent intent = new Intent(getActivity(), EditSubjectActivity.class);
                     intent.putExtra("posOldSubject", position);
                     intent.putExtra("editSubject", entry);
@@ -132,15 +133,16 @@ public class SubjectsFragment extends Fragment {
 
                     subjectList.add(subject);
                     adapter.notifyDataSetChanged();
-                    break;
+                    return;
                 case ConstantEntity.ACTIVITY_EDIT:
+                    int posOldSubject = data.getIntExtra("posOldSubject",0);
                     subject = data.getParcelableExtra("editSubject");
-                    int posOldGroup = data.getIntExtra("posOldSubject",0);
 
-                    subjectList.set(posOldGroup, subject);
+                    subjectList.set(posOldSubject, subject);
                     adapter.notifyDataSetChanged();
                     return;
                 default:
+
                     return;
             }
         }

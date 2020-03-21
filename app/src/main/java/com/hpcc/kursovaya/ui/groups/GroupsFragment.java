@@ -59,7 +59,7 @@ public class GroupsFragment extends Fragment {
             });
 
             //creating elements for listview
-            groupList = DBManager.readAll(Group.class);
+            groupList = DBManager.readAll(Group.class, ConstantEntity.ID);
             adapter = new GroupListAdapter(getActivity(), R.layout.list_view_item_group, groupList);
             listView.setAdapter(adapter);
 
@@ -137,15 +137,16 @@ public class GroupsFragment extends Fragment {
 
                     groupList.add(group);
                     adapter.notifyDataSetChanged();
-                    break;
+                    return;
                 case ConstantEntity.ACTIVITY_EDIT:
-                    group = data.getParcelableExtra("editGroup");
                     int posOldGroup = data.getIntExtra("posOldGroup",0);
+                    group = data.getParcelableExtra("editGroup");
 
                     groupList.set(posOldGroup, group);
                     adapter.notifyDataSetChanged();
                     return;
                 default:
+
                     return;
             }
         }

@@ -17,7 +17,9 @@ public class ApplicationRealm extends Application {
 
         RealmConfiguration config = new RealmConfiguration.Builder()
                 //.directory(directory)
-                .name("DB.realm").build();
+                .name("DB.realm")
+                .deleteRealmIfMigrationNeeded()
+                .build();
         Realm.setDefaultConfiguration(config);
     }
 }

@@ -28,7 +28,7 @@ import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import io.realm.RealmList;
@@ -37,16 +37,16 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 public class EditSubjectActivity extends AppCompatActivity {
     private static final String TAG = EditSubjectActivity.class.getSimpleName();
 
-    private int pickDefaultColor;
     private Button colorPickButton;
     private EditText subjectEditText;
 
-    private Map<Speciality, EditText> map = new LinkedHashMap<>();
+    private Map<Speciality, EditText> map = new HashMap<>();
     private Subject subject = new Subject();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_edit_subject);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,18 +71,19 @@ public class EditSubjectActivity extends AppCompatActivity {
         subject = intent.getParcelableExtra("editSubject");
 
         colorPickButton = (Button) findViewById(R.id.pickColorBtn);
+        colorPickButton.setHighlightColor(subject.getColor());
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openColorPicker();
             }
         });
-        pickDefaultColor = getResources().getColor(R.color.sideBar);
 
         LinearLayout parent = findViewById(R.id.spinnerSpeciality);
 
-        final RealmList<Speciality> specialityList = DBManager.readAll(Speciality.class);
-        for(int i = 0 ; i< specialityList.size();i++){
+        final RealmList<Speciality> specialityList = DBManager.readAll(Speciality.class, ConstantEntity.ID);
+        Log.d(TAG, "specialityList = " + specialityList.toString());
+        for(int i = 0 ; i < specialityList.size();i++){
             LinearLayout specLayout = new LinearLayout(this);
             specLayout.setOrientation(LinearLayout.HORIZONTAL);
             specLayout.setWeightSum(10);
@@ -93,21 +94,20 @@ public class EditSubjectActivity extends AppCompatActivity {
             CheckBox checkSpecHour = new CheckBox(this);
 
             final Speciality speciality = specialityList.get(i);
-            if (subject.containsKey(speciality)){
+            if (subject.containsKeySpecialityCountHour(speciality)){
                 checkSpecHour.setChecked(true);
-                hourEditTxt.setText(String.valueOf(subject.get(speciality)));
-                subject.getSpecialityCountHourMap().remove(speciality);
+                hourEditTxt.setEnabled(true);
+                hourEditTxt.setText(subject.getSpecialityCountHour(speciality));
             }
             checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked){
+                    if (isChecked) {
                         map.put(speciality, hourEditTxt);
-                        hourEditTxt.setEnabled(true);
-                    } else{
+                    } else {
                         map.remove(speciality);
-                        hourEditTxt.setEnabled(false);
                     }
+                    hourEditTxt.setEnabled(isChecked);
                     Log.d(TAG, map.toString());
                 }
             });
@@ -116,6 +116,7 @@ public class EditSubjectActivity extends AppCompatActivity {
             checkSpecHour.setLayoutParams(checkBoxParams);
             checkSpecHour.setWidth(0);
             checkSpecHour.setButtonTintList(getResources().getColorStateList(R.color.sideBar));
+
             TextView specUI = new TextView(this);
             LinearLayout.LayoutParams textViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,6);
             specUI.setWidth(0);
@@ -156,8 +157,7 @@ public class EditSubjectActivity extends AppCompatActivity {
 
     private void editSubject(){
         subject.setName(subjectEditText.getText().toString())
-                .putAll(ConstantEntity.convertMapEditTextToMapInt(map))
-                .setColor(pickDefaultColor)
+                .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map))
                 .newEntity();
 
         if(DBManager.write(subject) > ConstantEntity.ZERO) {
@@ -169,7 +169,7 @@ public class EditSubjectActivity extends AppCompatActivity {
     }
 
     public void openColorPicker(){
-        AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(this, pickDefaultColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+        AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(this, subject.getColor(), new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {
 
@@ -177,9 +177,7 @@ public class EditSubjectActivity extends AppCompatActivity {
 
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
-                color = (subject.getColor() != ConstantEntity.ZERO)? subject.getColor() : color;
-
-                pickDefaultColor = color;
+                subject.setColor(color);
                 colorPickButton = (Button) findViewById(R.id.pickColorBtn);
                 GradientDrawable background = (GradientDrawable) colorPickButton.getBackground();
                 background.setColor(color);

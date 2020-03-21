@@ -183,7 +183,7 @@ public class DBManager {
                         .findAll().sort(fieldNameSort, Sort.DESCENDING)));
             }
 
-            Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantEntity.ZERO).toString());
+            Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was readAll: " + result.get(ConstantEntity.ZERO).toString());
         } catch (Throwable ex) {
             result.set(ConstantEntity.ZERO, null);
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
