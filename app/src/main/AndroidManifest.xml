@@ -47,12 +47,6 @@
             android:name=".ui.groups.AddGroupActivity"
             android:label="@string/title_activity_add_group" />
         <activity
-            android:name=".ui.templates.AddTemplateActivity"
-            android:label="@string/title_activity_add_template" />
-        <activity
-            android:name=".ui.templates.EditTemplateActivity"
-            android:label="@string/title_activity_add_template" />
-        <activity
             android:name=".ui.settings.specialities.SpecialitiesActivity"
             android:label="@string/title_activity_add_template"
 

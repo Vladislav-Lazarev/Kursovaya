@@ -104,7 +104,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
 
     @Override
     public Subject createEntity() {
-        if (id < ConstantEntity.ZERO){
+        if (id < ConstantEntity.ONE){
             initMap();
             setName(name);
             setSpecialityCountHourMap(specialityCountHourMap);

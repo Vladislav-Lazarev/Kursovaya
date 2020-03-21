@@ -3,6 +3,7 @@ package com.hpcc.kursovaya.ui.settings.specialities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Gravity;
@@ -219,6 +220,10 @@ public class SpecialitiesActivity extends AppCompatActivity {
         String strSpeciality = specText.getText().toString();
         Spinner courseSpinner = editSpecialityView.findViewById(R.id.courseSpinner);
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
+
+        Log.d(TAG, "speciality = " + speciality);
+        Log.d(TAG, "strSpeciality = " + strSpeciality);
+        Log.d(TAG, "countCourse = " + countCourse);
 
         speciality.setName(strSpeciality)
                 .setCountCourse(countCourse);

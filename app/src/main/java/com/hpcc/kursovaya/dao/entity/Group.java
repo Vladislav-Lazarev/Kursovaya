@@ -69,7 +69,7 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
 
     @Override
     public Group createEntity() {
-        if (id < ConstantEntity.ZERO){
+        if (id < ConstantEntity.ONE){
             setName(name);
             setSpecialty(speciality);
             setNumberCourse(numberCourse);

@@ -21,6 +21,13 @@ public class AddTemplateActivity extends TemplateActivity {
     protected AlertDialog.Builder getClassDialogBuilder(final int classDay,final int classHour){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
+        /*        if(выражение на проверку пустоты в клеточке шаблона) {
+           builder.setTitle(R.string.popup_edit_class);
+        }
+        else {
+
+                     builder.setTitle(R.string.popup_add_class);
+        }*/
         builder.setTitle(R.string.popup_add_class);
         builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
             @Override

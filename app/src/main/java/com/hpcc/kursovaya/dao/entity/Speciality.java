@@ -97,7 +97,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
 
     @Override
     public Speciality createEntity() {
-        if (id < ConstantEntity.ZERO){
+        if (id < ConstantEntity.ONE){
             setName(name);
             setCountCourse(countCourse);
 

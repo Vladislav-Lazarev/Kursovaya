@@ -7,17 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.ui.settings.specialities.SpecialitiesActivity;
-import com.hpcc.kursovaya.ui.templates.AddTemplateActivity;
 
 public class SettingsFragment extends Fragment{
     boolean isCreatedAlready = false;

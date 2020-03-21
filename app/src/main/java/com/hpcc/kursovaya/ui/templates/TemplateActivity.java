@@ -2,18 +2,13 @@ package com.hpcc.kursovaya.ui.templates;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,7 +35,7 @@ public class TemplateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_template);
         toolbar = findViewById(R.id.toolbar);
         toolbar1 = findViewById(R.id.toolbarEdit);
-        final Button cancelSelect = toolbar1.findViewById(R.id.turnOff_editing);
+        final ImageButton cancelSelect = toolbar1.findViewById(R.id.turnOff_editing);
         cancelSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,7 +50,7 @@ public class TemplateActivity extends AppCompatActivity {
                 }
             }
         });
-        Button deleteClasses = toolbar1.findViewById(R.id.delete_classes);
+        ImageButton deleteClasses = toolbar1.findViewById(R.id.delete_classes);
         deleteClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,7 +121,7 @@ public class TemplateActivity extends AppCompatActivity {
         ab.setDisplayShowTitleEnabled(false);
 
         setHeader();
-        Button addButton = (Button) findViewById(R.id.create_template);
+        ImageButton addButton = findViewById(R.id.create_template);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

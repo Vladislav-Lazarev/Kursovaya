@@ -140,6 +140,7 @@ public class GroupsFragment extends Fragment {
             switch (requestCode){
                 case ConstantEntity.ACTIVITY_ADD:
                     group = data.getParcelableExtra("addGroup");
+                    DBManager.write(group);
 
                     groupList.add(group);
                     adapter.notifyDataSetChanged();
@@ -147,6 +148,7 @@ public class GroupsFragment extends Fragment {
                 case ConstantEntity.ACTIVITY_EDIT:
                     int posOldGroup = data.getIntExtra("posOldGroup",0);
                     group = data.getParcelableExtra("editGroup");
+                    DBManager.write(group);
 
                     groupList.set(posOldGroup, group);
                     adapter.notifyDataSetChanged();
