@@ -22,23 +22,17 @@ import java.util.List;
 public class GroupAutoCompleteAdapter extends ArrayAdapter<Group> implements Filterable {
     private final String TAG = "GroupACAdapter";
     private final Context context;
-    private List<Group> items;
-    private List<Group> itemsAll = new ArrayList<>();
-    private List<Group> suggestions;
+    private ArrayList<Group> items;
+    private ArrayList<Group> itemsAll;
     private int viewResourceId;
 
 
     public GroupAutoCompleteAdapter(Context context, int viewResourceId, List<Group> items){
         super(context, viewResourceId, items);
-        this.items = items;
-        for(Group group : items) {
-            itemsAll.add(group);
-        }
-        Log.d(TAG, Integer.toString(itemsAll.size()));
-        /*this.itemsAll.clear();
-        this.itemsAll.addAll(items);*/
+        this.items =(ArrayList<Group>) items;
+        this.itemsAll = (ArrayList<Group>) ((ArrayList<Group>) items).clone();
+        Log.d(TAG,"items size"+items.size());
         this.context = context;
-        this.suggestions = new ArrayList<Group>();
         this.viewResourceId = viewResourceId;
     }
 
@@ -50,10 +44,10 @@ public class GroupAutoCompleteAdapter extends ArrayAdapter<Group> implements Fil
         }
        Group group = items.get(position);
         if (group != null) {
-            TextView customerNameLabel = (TextView) v.findViewById(R.id.groupNameLabel);
-            if (customerNameLabel != null) {
-                Log.i(TAG, "getView Customer Name:"+group.getName());
-                customerNameLabel.setText(group.getName());
+            TextView groupNameLabel = (TextView) v.findViewById(R.id.groupNameLabel);
+            if (groupNameLabel != null) {
+                Log.d(TAG,"performFilteringAtTheStart"+group.getName());
+                groupNameLabel.setText(group.getName());
             }
         }
         return v;
@@ -63,36 +57,36 @@ public class GroupAutoCompleteAdapter extends ArrayAdapter<Group> implements Fil
     Filter nameFilter = new Filter() {
         @Override
         public String convertResultToString(Object resultValue) {
-            String str = ((Group)(resultValue)).getName();
-            return str;
+            return ((Group)(resultValue)).getName();
         }
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            if(constraint != null) {
-                suggestions.clear();
+            FilterResults results = new FilterResults();
+            if(constraint!=null) {
+                ArrayList<Group> suggestions = new ArrayList<>();
                 for (Group group : itemsAll) {
-                    if(group.getName().toLowerCase().startsWith(constraint.toString().toLowerCase())){
+                    if (group.getName().toLowerCase().startsWith(constraint.toString().toLowerCase())) {
                         suggestions.add(group);
                     }
                 }
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = suggestions;
-                filterResults.count = suggestions.size();
-                return filterResults;
-            } else {
-                return new FilterResults();
+
+
+                results.values = suggestions;
+                results.count = suggestions.size();
             }
+            return results;
         }
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            ArrayList<Group> filteredList = (ArrayList<Group>) results.values;
-            if(results != null && results.count > 0) {
-                clear();
-                for (Group c : filteredList) {
-                    add(c);
-                }
-                notifyDataSetChanged();
+            clear();
+            if (results != null && results.count > 0) {
+                Log.d(TAG,"publishResults ok"+results.count);
+                addAll((ArrayList<Group>) results.values);
+            } else {
+                Log.d(TAG,"publishResults not ok");
+                addAll(items);
             }
+            notifyDataSetChanged();
         }
     };
 

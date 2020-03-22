@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.ArrayList;
 
@@ -25,35 +25,20 @@ public class AddTemplateActivity extends TemplateActivity {
         super();
     }
 
-    /*
-    * Пишу на русском, чтобы было понятнее
-    *
-    * Реалм это однопоточное нечто. Он просит, чтобы объекты созданные в одном потоке не использовались в другом потоке.
-    * Да, это правильно, потокобезопасность и прочее. Но нам это не очень подходит.
-    * Я хотел написать адаптер для AutoCompleteTextView, чтобы можно было получить выбранный объект лишь по одному методу.
-    * Но у реалма были на это другие планы.
-    * Таким образом придется лепить костыль из стрингового массива и нахождения групы в листе реалма.
-    * У такого подхода есть неоспоримый плюс - мы стопудово работаем именно с той группой, которая есть в базе.
-    *
-    * Раскраску для клеток сделаю тогда, когда будет объект с которым смогу работать
-    * */
 
     @Override
     protected AlertDialog.Builder getClassDialogBuilder(final int classDay,final int classHour){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         classView = getLayoutInflater().inflate(R.layout.dialog_add_new_class_template,null);
+        Spinner subjectSpinner = classView.findViewById(R.id.spinnerSubject);
         AutoCompleteTextView suggestEditText = classView.findViewById(R.id.groupNameSuggestET);
         suggestEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String groupName = (String) adapterView.getItemAtPosition(i);
-                for(Group group: groupList){
-                    if(group.getName().equals(groupName)){
-                        //выбранная група
-                        selectedGroup = group;
-                    }
-                }
+                selectedGroup = (Group) adapterView.getItemAtPosition(i);
+                //это обработчик нажатия на выдачу из AutoCompleteTextView
+                //здесь ты можешь заполнить спиннер предметов
             }
         });
         ArrayList<String> groupNames = new ArrayList<>();
@@ -61,12 +46,12 @@ public class AddTemplateActivity extends TemplateActivity {
             groupNames.add(group.getName());
 
         }
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, groupNames);
-        //GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto,groupList);
+        //ArrayAdapter<String> adapter =
+               // new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, groupNames);
+        GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto, DBManager.copyObjectFromRealm(groupList));
         suggestEditText.setAdapter(adapter);
         //заполнять спиннер нужно в зависимости от курса и специальности группы, но по дефолту можно тупо все предметы залить туда
-        Spinner subjectSpinner = classView.findViewById(R.id.spinnerSubject);
+
         RadioButton oneHourRB = classView.findViewById(R.id.popup_duration_rgroup_short);
         RadioButton twoHourRB = classView.findViewById(R.id.popup_duration_rgroup_full);
         if(classes[classDay][classHour].getBtn().getText().equals("")) {
@@ -82,6 +67,7 @@ public class AddTemplateActivity extends TemplateActivity {
             builder.setTitle(R.string.popup_edit_class);
             //данные получай с объекта, а не с кнопки - это пример
             suggestEditText.setText(classes[classDay][classHour].getBtn().getText());
+            //также заполни здесь спиннер предметов и выдели один из радиобатоннов
             builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

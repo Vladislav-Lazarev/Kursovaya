@@ -22,7 +22,7 @@
         </provider>
         <activity
             android:name=".ui.schedule.AddClass"
-            android:label="@string/title_activity_edit_subject"/>
+            android:label="@string/title_activity_add_class"/>
         <receiver android:name=".AlarmClassReceiver">
             <intent-filter>
                 <action android:name="class.action.DISPLAY_NOTIFICATION"/>
@@ -30,7 +30,7 @@
         </receiver>
         <activity
             android:name=".ui.report.GeneratedReportActivity"
-            android:label="@string/title_activity_edit_subject"/>
+            android:label="@string/title_activity_genreport"/>
         <activity
             android:name=".ui.schedule.EditClass"
             android:label="@string/edit_class"/>
@@ -48,10 +48,14 @@
             android:label="@string/title_activity_add_group" />
         <activity
             android:name=".ui.settings.specialities.SpecialitiesActivity"
-            android:label="@string/title_activity_add_template" />
+            android:label="@string/title_activity_speciality" />
         <activity
             android:name=".ui.templates.AddTemplateActivity"
             android:label="@string/title_activity_add_template" />
+
+        <activity
+            android:name=".ui.templates.EditTemplateActivity"
+            android:label="@string/title_activity_edit_template" />
 
         <activity
             android:name=".MainActivity"

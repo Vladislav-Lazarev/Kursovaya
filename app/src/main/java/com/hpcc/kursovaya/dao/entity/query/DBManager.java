@@ -202,4 +202,13 @@ public class DBManager {
         }
         return ConstantEntity.ZERO;
     }
+
+    public static <T extends RealmObject> T copyObjectFromRealm(T obj){
+        T newObj = realm.copyFromRealm(obj);
+        return newObj;
+    }
+    public static <T extends RealmObject> ArrayList<T> copyObjectFromRealm(List<T> obj){
+        List<T> newObj = realm.copyFromRealm(obj);
+        return new ArrayList<>(newObj);
+    }
 }

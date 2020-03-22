@@ -158,4 +158,8 @@
     <string name="firstHalfCoupleHeader">1</string>
     <string name="secondHalfCoupleHeader">2</string>
     <string name="subjectName_hint">Назва предмету</string>
+    <string name="title_activity_edit_template">EditTemplateActivity</string>
+    <string name="title_activity_speciality">SpecialitiesActivity</string>
+    <string name="title_activity_genreport">GenReportActivty</string>
+    <string name="title_activity_add_class">AddClassActivty</string>
 </resources>

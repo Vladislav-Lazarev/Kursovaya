@@ -4,10 +4,17 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
+
+import java.util.ArrayList;
 
 public class EditTemplateActivity extends TemplateActivity {
     private final String TAG = "EditTemplateActivity";
@@ -19,28 +26,68 @@ public class EditTemplateActivity extends TemplateActivity {
     @Override
     protected AlertDialog.Builder getClassDialogBuilder(final int classDay, final int classHour){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-/*        if(выражение на проверку пустоты в клеточке шаблона) {
-            builder.setTitle(R.string.popup_add_class);
-        }
-        else {
-                    builder.setTitle(R.string.popup_edit_class);
-        }*/
-        builder.setTitle(R.string.popup_edit_class);
-        builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
+        builder.setCancelable(false);
+        classView = getLayoutInflater().inflate(R.layout.dialog_add_new_class_template,null);
+        Spinner subjectSpinner = classView.findViewById(R.id.spinnerSubject);
+        AutoCompleteTextView suggestEditText = classView.findViewById(R.id.groupNameSuggestET);
+        suggestEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onClickAcceptClass(dialog,which,classDay,classHour);
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedGroup = (Group) adapterView.getItemAtPosition(i);
+                //это обработчик нажатия на выдачу из AutoCompleteTextView
+                //здесь ты можешь заполнить спиннер предметов
             }
         });
+        ArrayList<String> groupNames = new ArrayList<>();
+        for(Group group: groupList) {
+            groupNames.add(group.getName());
+
+        }
+        //ArrayAdapter<String> adapter =
+        // new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, groupNames);
+        GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto, DBManager.copyObjectFromRealm(groupList));
+        suggestEditText.setAdapter(adapter);
+        //заполнять спиннер нужно в зависимости от курса и специальности группы, но по дефолту можно тупо все предметы залить туда
+
+        RadioButton oneHourRB = classView.findViewById(R.id.popup_duration_rgroup_short);
+        RadioButton twoHourRB = classView.findViewById(R.id.popup_duration_rgroup_full);
+        if(classes[classDay][classHour].getBtn().getText().equals("")) {
+            builder.setTitle(R.string.popup_add_class);
+            builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    onClickAcceptClass(dialog,which,classDay,classHour);
+                }
+            });
+        }
+        else {
+            builder.setTitle(R.string.popup_edit_class);
+            //данные получай с объекта, а не с кнопки - это пример
+            suggestEditText.setText(classes[classDay][classHour].getBtn().getText());
+            //также заполни здесь спиннер предметов и выдели один из радиобатоннов
+            builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    onClickAcceptEditClass(dialog,which,classDay,classHour);
+                }
+            });
+        }
         builder.setNegativeButton(R.string.popup_cancel,new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 onClickCancelClass(dialog,which,classDay,classHour);
             }
         });
-        classView = getLayoutInflater().inflate(R.layout.dialog_add_new_class_template,null);
         builder.setView(classView);
         return builder;
+    }
+
+    private void onClickAcceptEditClass(DialogInterface dialog, int which, int classDay, int classHour) {
+        AutoCompleteTextView groupName = classView.findViewById(R.id.groupNameSuggestET);
+        String displayedGroupName = groupName.getText().toString();
+        Log.d(TAG, classDay + " " + classHour);
+        Log.d(TAG, displayedGroupName);
+        classes[classDay][classHour].getBtn().setText(displayedGroupName);
     }
 
     @Override
