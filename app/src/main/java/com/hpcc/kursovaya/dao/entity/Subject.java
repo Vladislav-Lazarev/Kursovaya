@@ -3,6 +3,7 @@ package com.hpcc.kursovaya.dao.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,10 +13,8 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -26,42 +25,52 @@ import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
-public class Subject extends RealmObject implements EntityI<Subject>, Parcelable, Cloneable {
+public class Subject extends RealmObject implements EntityI, Parcelable, Cloneable {
     private static final String TAG = Subject.class.getSimpleName();
-    private static int countObj;
 
-    static {
-        countObj = 0;
+    protected static Pair<RealmList<Integer>, RealmList<Integer>> convert(Pair<RealmList<Integer>, RealmList<Integer>> pairResult,
+                                                                           Map<Speciality, Integer> map) {
+        int i = 0;
+        pairResult.first.clear();
+        pairResult.second.clear();
+        for (Map.Entry<Speciality, Integer> entry : map.entrySet()) {
+            pairResult.first.add(i, entry.getKey().getId());
+            pairResult.second.add(i, entry.getValue());
+            i++;
+        }
+        return pairResult;
+    }
+    protected static Map<Speciality, Integer> convert(Map<Speciality, Integer> mapResult,
+                                                      Pair<RealmList<Integer>, RealmList<Integer>> pair) {
+        mapResult.clear();
+        for (int i = 0; i < pair.first.size() && i < pair.second.size(); i++){
+            mapResult.put(DBManager.read(Speciality.class, ConstantEntity.ID, pair.first.get(i)), pair.second.get(i));
+        }
+        return mapResult;
     }
 
     @PrimaryKey
-    private int id;// Индентификатор
+    private int id;// ID subject
     @Required
-    private String name;// Название дисциплины
-    private RealmList<Speciality> specialityList;
-    private RealmList<Integer> countHourList;
+    private String name;// Name subject
+    private RealmList<Integer> idSpecialityList;// Speciality ID List
+    private RealmList<Integer> countHourList;// Load (hours) for speciality
     @Ignore
-    private Map<Speciality, Integer> specialityCountHourMap;
-    private int numberCourse;// Номер курса
-    private int color;// Цвет дисциплины
+    private Map<Speciality, Integer> specialityCountHourMap;// Auxiliary field for Speciality ID List and Load (hours) for speciality
+    private int numberCourse;// Number course
+    private int color;// Color subject
 
     {
         id = 0;
         name = "";
-        specialityList = new RealmList<>();
+        idSpecialityList = new RealmList<>();
         countHourList = new RealmList<>();
         specialityCountHourMap = new LinkedHashMap<>();
         numberCourse = 0;
         color = 0;
     }
     public Subject() {
-        id = 0;
-        name = "";
-        specialityList = new RealmList<>();
-        countHourList = new RealmList<>();
-        specialityCountHourMap = new LinkedHashMap<>();
-        numberCourse = 0;
-        color = 0;
+
     }
     public Subject(@NotNull String name,@NotNull Map<Speciality, Integer> specialityCountHourMap, int numberCourse, int color) {
         this();
@@ -70,62 +79,22 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         setSpecialityCountHourMap(specialityCountHourMap);
         setNumberCourse(numberCourse);
         setColor(color);
-        initMap();
+    }
 
-        createEntity();
-    }
-    protected Subject(Parcel in) {
-        id = in.readInt();
-        name = in.readString();
-        in.readList(specialityList, Speciality.class.getClassLoader());
-        in.readList(countHourList, Integer.class.getClassLoader());
-        numberCourse = in.readInt();
-        color = in.readInt();
-        initMap();
-    }
     public Subject initMap(){
-        for (int i = 0; i < specialityList.size() && i < countHourList.size(); i++){
-            specialityCountHourMap.put(specialityList.get(i), countHourList.get(i));
-        }
+        specialityCountHourMap = convert(specialityCountHourMap, new Pair<>(idSpecialityList, countHourList));
         return this;
     }
 
-    public static final Creator<Subject> CREATOR = new Creator<Subject>() {
-        @Override
-        public Subject createFromParcel(Parcel in) {
-            return new Subject(in);
-        }
-
-        @Override
-        public Subject[] newArray(int size) {
-            return new Subject[size];
-        }
-    };
-
-    @Override
-    public Subject createEntity() {
-        if (id < ConstantEntity.ONE){
-            initMap();
-            setName(name);
-            setSpecialityCountHourMap(specialityCountHourMap);
-            setNumberCourse(numberCourse);
-            setColor(color);
-
-            int maxID = DBManager.findMaxID(this.getClass());
-            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
-        }
-        return this;
+    public int getId() {
+        return id;
     }
-
     private void setId(int id){
         if (id < ConstantEntity.ONE){
             Log.e(TAG, "Failed -> setId(id = " + id + ")");
             throw new RuntimeException("setId(id = "+ id + ")");
         }
         this.id = id;
-    }
-    public int getId() {
-        return id;
     }
 
     @NotNull
@@ -141,19 +110,14 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         return this;
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     public int sizeSpecialtyCountHour() {
         return specialityCountHourMap.size();
     }
-
     public boolean isEmptySpecialtyCountHour() {
         return specialityCountHourMap.isEmpty();
     }
 
     public boolean containsKeySpecialityCountHour(@NotNull Speciality key) {
-        Log.d(TAG, "Speciality key) = " + key.toString());
-        Log.d(TAG, "specialityCountHourMap.containsKey(key) = " + specialityCountHourMap.containsKey(key));
         return specialityCountHourMap.containsKey(key);
     }
     public boolean containsValueSpecialityCountHour(@NotNull Integer value) {
@@ -177,20 +141,19 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
             throw new RuntimeException("countHour = " + value);
         }
 
-        if (!specialityList.contains(key)) {
-            specialityList.add(key);
+        if (!idSpecialityList.contains(key.getId())) {
+            idSpecialityList.add(key.getId());
             countHourList.add(value);
         } else {
-            int index = specialityList.indexOf(key.getId());
+            int index = idSpecialityList.indexOf(key.getId());
             countHourList.set(index, value);
         }
         return specialityCountHourMap.put(key, value);
     }
-
     @Nullable
     public Integer removeSpecialityCountHour(@NotNull Speciality key) {
-        int index = specialityList.indexOf(key);
-        specialityList.remove(index);
+        int index = idSpecialityList.indexOf(key.getId());
+        idSpecialityList.remove(index);
         countHourList.remove(index);
         return specialityCountHourMap.remove(key);
     }
@@ -208,15 +171,17 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
             }
         }
 
-        this.specialityList.addAll(map.keySet());
-        this.countHourList.addAll(map.values());
         specialityCountHourMap.putAll(map);
+        Pair<RealmList<Integer>, RealmList<Integer>> pair =
+                convert(new Pair<>(idSpecialityList, countHourList), map);
+
+        idSpecialityList.addAll(pair.first);
+        countHourList.addAll(pair.second);
         return this;
     }
-
     public Subject clearSpecialityCountHour() {
-        specialityList.clear();
-        countHourList.clear();
+        idSpecialityList.deleteAllFromRealm();
+        countHourList.deleteAllFromRealm();
         specialityCountHourMap.clear();
         return this;
     }
@@ -225,37 +190,37 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     public Set<Speciality> keySetSpecialityCountHour() {
         return specialityCountHourMap.keySet();
     }
-
     @Nullable
     public Collection<Integer> valuesSpecialityCountHour() {
         return specialityCountHourMap.values();
     }
-
     @Nullable
     public Set<Map.Entry<Speciality, Integer>> entrySetSpecialityCountHour() {
         return specialityCountHourMap.entrySet();
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     @NotNull
     public RealmList<Speciality> getSpecialityList() {
+        RealmList<Speciality> specialityList = new RealmList<>();
+        for (int idSpeciality : idSpecialityList) {
+            specialityList.add(DBManager.read(Speciality.class, ConstantEntity.ID, idSpeciality));
+        }
         return specialityList;
     }
-    private Subject setSpecialityList(@NotNull List<Speciality> specialityList) {
-        if(specialityList.isEmpty()){
+    private Subject setIdSpecialityList(@NotNull RealmList<Integer> idSpecialityList) {
+        if(idSpecialityList.isEmpty()){
             Log.e(TAG, "Failed -> specialityList is empty");
             throw new RuntimeException("specialityList is empty");
         }else{
-            for (Speciality speciality: specialityList){
-                if(speciality.getId() < ConstantEntity.ONE){
-                    Log.e(TAG, "Failed -> " + speciality.toString());
-                    throw new RuntimeException(speciality.toString());
+            for (int id: idSpecialityList){
+                if(id < ConstantEntity.ONE){
+                    Log.e(TAG, "Failed -> " + idSpecialityList.toString());
+                    throw new RuntimeException(idSpecialityList.toString());
                 }
             }
         }
-        this.specialityList.clear();
-        this.specialityList.addAll(specialityList);
+
+        this.idSpecialityList = idSpecialityList;
         return this;
     }
 
@@ -263,7 +228,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     public RealmList<Integer> getCountHourList() {
         return countHourList;
     }
-    private Subject setCountHourList(@NotNull List<Integer> countHourList) {
+    private Subject setCountHourList(@NotNull RealmList<Integer> countHourList) {
         if(countHourList.isEmpty()){
             Log.e(TAG, "Failed -> countHourList is empty");
             throw new RuntimeException("countHourList is empty");
@@ -275,8 +240,8 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
                 }
             }
         }
-        this.countHourList.clear();
-        this.countHourList.addAll(countHourList);
+
+        this.countHourList =countHourList;
         return this;
     }
 
@@ -285,9 +250,11 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         return specialityCountHourMap;
     }
     public Subject setSpecialityCountHourMap(@NotNull Map<Speciality, Integer> specialityCountHourMap) {
-        setSpecialityList(new ArrayList<>(specialityCountHourMap.keySet()));
-        setCountHourList(new ArrayList<>(specialityCountHourMap.values()));
         this.specialityCountHourMap = specialityCountHourMap;
+        Pair<RealmList<Integer>, RealmList<Integer>> pair =
+                convert(new Pair<>(idSpecialityList, countHourList), this.specialityCountHourMap);
+        this.idSpecialityList = pair.first;
+        this.countHourList = pair.second;
         return this;
     }
 
@@ -321,20 +288,70 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         return numberCourse == subject.numberCourse &&
                 color == subject.color &&
                 name.equals(subject.name) &&
-                specialityList.equals(subject.specialityList) &&
+                idSpecialityList.equals(subject.idSpecialityList) &&
                 countHourList.equals(subject.countHourList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, specialityList, countHourList, numberCourse, color);
+        return Objects.hash(name, idSpecialityList, countHourList, numberCourse, color);
     }
-
-    @NonNull
     @Override
-    public Subject clone() throws CloneNotSupportedException {
-        return (Subject) super.clone();
+    public String toString() {
+        return "Subject{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", idSpecialityList=" + idSpecialityList.toString() +
+                ", countHourList=" + countHourList.toString() +
+                ", specialityCountHourMap=" + specialityCountHourMap.toString() +
+                ", numberCourse=" + numberCourse +
+                ", color=" + color +
+                '}';
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // EntityI<Group>
+    private static int countObj = 0;
+    @Override
+    public boolean createEntity() {
+        if (id < ConstantEntity.ONE){
+            try {
+                setName(name);
+                setSpecialityCountHourMap(initMap().specialityCountHourMap);
+                setNumberCourse(numberCourse);
+                setColor(color);
+            } catch (RuntimeException ex) {
+                return false;
+            }
+
+            int maxID = DBManager.findMaxID(this.getClass());
+            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
+        }
+        return true;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Parcelable
+    protected Subject(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        in.readList(idSpecialityList, Integer.class.getClassLoader());
+        in.readList(countHourList, Integer.class.getClassLoader());
+        numberCourse = in.readInt();
+        color = in.readInt();
+        initMap();
+    }
+    public static final Creator<Subject> CREATOR = new Creator<Subject>() {
+        @Override
+        public Subject createFromParcel(Parcel in) {
+            return new Subject(in);
+        }
+
+        @Override
+        public Subject[] newArray(int size) {
+            return new Subject[size];
+        }
+    };
 
     @Override
     public int describeContents() {
@@ -344,22 +361,17 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
         dest.writeString(name);
-        dest.writeList(specialityList);
+        dest.writeList(idSpecialityList);
         dest.writeList(countHourList);
         dest.writeInt(numberCourse);
         dest.writeInt(color);
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    // Cloneable
+    @NonNull
     @Override
-    public String toString() {
-        return "Subject{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", specialityList=" + specialityList.toString() +
-                ", countHourList=" + countHourList.toString() +
-                ", specialityCountHourMap=" + specialityCountHourMap.toString() +
-                ", numberCourse=" + numberCourse +
-                ", color=" + color +
-                '}';
+    public Subject clone() throws CloneNotSupportedException {
+        return (Subject) super.clone();
     }
 }

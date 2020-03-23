@@ -3,17 +3,14 @@ package com.hpcc.kursovaya.dao.entity.query;
 import android.util.Log;
 
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
-import com.hpcc.kursovaya.dao.entity.my_type.Order;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -65,33 +62,31 @@ public class DBManager {
         return (int)result.get(ConstantEntity.ZERO);
     }
 
-    public static <T extends RealmObject> int delete(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final Object value){
+    public static <T extends RealmObject, V> int delete(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final V value){
         result.clear();
-        final T model;
 
         try {
-            RealmQuery<T> query = realm.where(clazz);
-
-            Class<?> classObj = value.getClass();
-
-            if (String.class.equals(classObj)) {
-                query.equalTo(fieldName, (String) value);
-            } else if (Integer.class.equals(classObj)) {
+            final RealmQuery<T> query = realm.where(clazz);
+            if (value instanceof Integer) {
                 query.equalTo(fieldName, (Integer) value);
-            } else if (Date.class.equals(classObj)) {
+            } else if (value instanceof String) {
+                query.equalTo(fieldName, (String) value);
+            } else if (value instanceof Date) {
                 query.equalTo(fieldName, (Date) value);
+            } else {
+                throw new Exception("Error type!");
             }
-
-            model = query.findFirst();
-
-            Log.v(TAG, "Success -> " + model.getClass().getSimpleName() + " was delete: " + model.toString());
-
-            result.add(ConstantEntity.ONE);
 
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    model.deleteFromRealm();
+                    final T model = query.findFirst();
+                    final T deleteModel = copyObjectFromRealm(model);
+                    if (model != null) {
+                        model.deleteFromRealm();
+                        result.add(ConstantEntity.ONE);
+                    }
+                    Log.v(TAG, "Success -> " + deleteModel.getClass().getSimpleName() + " was delete: " + deleteModel.toString());
                 }
             });
         } catch (Throwable ex) {
@@ -102,22 +97,38 @@ public class DBManager {
         return (int)result.get(ConstantEntity.ZERO);
     }
     public static <T extends RealmObject> int deleteAll(@NotNull final Class<T> clazz){
+        return deleteAll(clazz, null, null);
+    }
+    public static <T extends RealmObject, V> int deleteAll(@NotNull final Class<T> clazz, final String fieldName, final V value){
         result.clear();
-        final RealmResults<T> model;
 
         try {
-            model = realm.where(clazz)
-                    .findAll();
+            final RealmQuery<T> query = realm.where(clazz);
 
-            Log.v(TAG, "Success -> " + model.getClass().getSimpleName() + " was deleteAll: " + model.toString());
-
-            result.add(model.size());
+            if (fieldName != null) {
+                if (value instanceof Integer) {
+                    query.equalTo(fieldName, (Integer) value);
+                } else if (value instanceof String) {
+                    query.equalTo(fieldName, (String) value);
+                } else if (value instanceof Date) {
+                    query.equalTo(fieldName, (Date) value);
+                } else {
+                    throw new Exception("Error type!");
+                }
+            }
 
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    model.deleteAllFromRealm();
+                    final RealmResults<T> model = query.findAll();
+                    final List<T> deleteModel = copyObjectFromRealm(model);
+                    if (model != null || model.size() > ConstantEntity.ZERO) {
+                        model.deleteAllFromRealm();
+                        result.add(deleteModel.size());
+                    }
+                    Log.v(TAG, "Success -> " + deleteModel.getClass().getSimpleName() + " was deleteAll: " + deleteModel.toString());
                 }
+
             });
         } catch (Throwable ex) {
             result.add(ConstantEntity.ZERO);
@@ -127,71 +138,84 @@ public class DBManager {
         return (int)result.get(ConstantEntity.ZERO);
     }
 
-    public static <T extends RealmObject> T read(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final Object value){
+    public static <T extends RealmObject, V> T read(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final V value){
         result.clear();
 
         try {
-            RealmQuery<T> query = realm.where(clazz);
+            final RealmQuery<T> query = realm.where(clazz);
 
-            Class<?> aClass = value.getClass();
-            if (Integer.class.equals(aClass)) {
-                query.equalTo(fieldName, (Integer) value);
-            } else if (Date.class.equals(aClass)) {
-                query.equalTo(fieldName, (Date) value);
-            } else if (String.class.equals(aClass)) {
-                query.equalTo(fieldName, (String) value);
+            if (fieldName != null) {
+                if (value instanceof Integer) {
+                    query.equalTo(fieldName, (Integer) value);
+                } else if (value instanceof String) {
+                    query.equalTo(fieldName, (String) value);
+                } else if (value instanceof Date) {
+                    query.equalTo(fieldName, (Date) value);
+                } else {
+                    throw new Exception("Error type!");
+                }
             }
 
             result.add(query.findFirst());
-
             Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantEntity.ZERO).toString());
         } catch (Throwable ex) {
-            result.set(ConstantEntity.ZERO, null);
-
+            result.add(null);
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
         }
 
         return (T)result.get(ConstantEntity.ZERO);
     }
-    public static <T extends RealmObject> RealmList<T> readAll(@NotNull final Class<T> clazz, @NotNull final String fieldNameSort){
-        result.clear();
-
-        try {
-            result.add((realm.where(clazz)
-                    .findAll().sort(fieldNameSort, Sort.ASCENDING)));
-
-            Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantEntity.ZERO).toString());
-        } catch (Throwable ex) {
-            result.set(ConstantEntity.ZERO, null);
-            Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
-        }
-
-        RealmList<T> realmList = new RealmList<>();
-        realmList.addAll((Collection<? extends T>) result.get(ConstantEntity.ZERO));
-        return realmList;
+    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz){
+        return readAll(clazz, null, null, null, null);
+    }
+    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz, final String nameSort){
+        return readAll(clazz, nameSort, Sort.ASCENDING);
+    }
+    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz, @NotNull final String nameSort, @NotNull Sort sort){
+        return readAll(clazz, null, null, nameSort, sort);
     }
 
-    public static <T extends RealmObject> RealmList<T> readAll(@NotNull final Class<T> clazz, @NotNull final String fieldNameSort, Order order){
+    public static <T extends RealmObject, V> RealmResults<T> readAll(@NotNull final Class<T> clazz,
+                                                                     @NotNull final String fieldName, @NotNull V value) {
+        return readAll(clazz, fieldName, value, null);
+    }
+    public static <T extends RealmObject, V> RealmResults<T> readAll(@NotNull final Class<T> clazz,
+                                                                     @NotNull final String fieldName, @NotNull V value,
+                                                                     final String nameSort) {
+        return readAll(clazz, fieldName, value, nameSort, Sort.ASCENDING);
+    }
+    public static <T extends RealmObject, V> RealmResults<T> readAll(@NotNull final Class<T> clazz,
+                                                                  final String fieldName, V value,
+                                                                  final String nameSort, Sort sort){
         result.clear();
 
         try {
-            if(order == Order.ASC){
-                result.add((realm.where(clazz)
-                        .findAll().sort(fieldNameSort, Sort.ASCENDING)));
-            }else{
-                result.add((realm.where(clazz)
-                        .findAll().sort(fieldNameSort, Sort.DESCENDING)));
+            final RealmQuery<T> query = realm.where(clazz);
+            if (fieldName != null) {
+                if (value instanceof Integer) {
+                    query.equalTo(fieldName, (Integer) value);
+                } else if (value instanceof String) {
+                    query.equalTo(fieldName, (String) value);
+                } else if (value instanceof Date) {
+                    query.equalTo(fieldName, (Date) value);
+                } else {
+                    throw new Exception("Error type!");
+                }
             }
 
+            RealmResults<T> model = query.findAll();
+            if (nameSort != null){
+                model = model.sort(nameSort, sort);
+            }
+
+            result.add(model);
             Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was readAll: " + result.get(ConstantEntity.ZERO).toString());
         } catch (Throwable ex) {
-            result.set(ConstantEntity.ZERO, null);
+            result.add(null);
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
         }
 
-        RealmList<T> realmList = new RealmList<>();
-        realmList.addAll((Collection<? extends T>) result.get(ConstantEntity.ZERO));
-        return realmList;
+        return (RealmResults<T>) result.get(ConstantEntity.ZERO);
     }
 
     public static <T extends RealmObject> int findMaxID(@NotNull Class<T> clazz){
@@ -204,11 +228,9 @@ public class DBManager {
     }
 
     public static <T extends RealmObject> T copyObjectFromRealm(T obj){
-        T newObj = realm.copyFromRealm(obj);
-        return newObj;
+        return realm.copyFromRealm(obj);
     }
-    public static <T extends RealmObject> ArrayList<T> copyObjectFromRealm(List<T> obj){
-        List<T> newObj = realm.copyFromRealm(obj);
-        return new ArrayList<>(newObj);
+    public static <T extends RealmObject> List<T> copyObjectFromRealm(List<T> obj){
+        return realm.copyFromRealm(obj);
     }
 }

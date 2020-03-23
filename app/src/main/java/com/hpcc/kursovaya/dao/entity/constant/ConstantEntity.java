@@ -42,11 +42,11 @@ public class ConstantEntity {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public final static int ACTIVITY_ADD = 1;
-    public final static int ACTIVITY_EDIT = 2;
+    public static final int ACTIVITY_ADD = 1;
+    public static final int ACTIVITY_EDIT = 2;
 
     public static List<String> readSpecialityList(){
-        List<Speciality> specialityList = DBManager.readAll(Speciality.class, ConstantEntity.ID);
+        List<Speciality> specialityList = DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class, ConstantEntity.ID));
         List<String> strSpecialityList = new ArrayList<>();
 
         for (Speciality speciality : specialityList){

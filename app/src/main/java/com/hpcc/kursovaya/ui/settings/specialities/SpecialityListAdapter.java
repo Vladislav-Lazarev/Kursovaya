@@ -73,8 +73,8 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
 
     @Override
     public void remove(Speciality object) {
+        object.deleteAllLinks();
         specialityList.remove(object);
-        Speciality.deleteAllLinks(object);
         notifyDataSetChanged();
     }
     public void toggleSelection(int position) {

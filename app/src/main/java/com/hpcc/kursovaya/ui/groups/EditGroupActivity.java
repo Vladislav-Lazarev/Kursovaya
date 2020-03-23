@@ -22,6 +22,7 @@ import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 public class EditGroupActivity extends AppCompatActivity {
+    private static final String TAG = EditGroupActivity.class.getSimpleName();
     private Group group = new Group();
     private EditText groupEditText;
 
@@ -73,12 +74,16 @@ public class EditGroupActivity extends AppCompatActivity {
     }
 
     private void editGroup(){
-        group.setName(groupEditText.getText().toString())
-                .createEntity();
+        group.setName(groupEditText.getText().toString());
 
-        Intent intent = getIntent();
-        intent.putExtra("editGroup", group);
-        setResult(Activity.RESULT_OK, intent);
+        if (group.createEntity()){
+            Intent intent = getIntent();
+            intent.putExtra("editGroup", group);
+            setResult(Activity.RESULT_OK, intent);
+        } else {
+            // Оповещение о ее неправильности
+            Log.d(TAG, "editGroup = " + group);
+        }
 
         finish();
     }

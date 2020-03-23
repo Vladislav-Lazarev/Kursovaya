@@ -30,6 +30,8 @@ import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
+import java.util.List;
+
 import io.realm.RealmList;
 
 public class GroupsFragment extends Fragment {
@@ -38,7 +40,7 @@ public class GroupsFragment extends Fragment {
     private View root;
     private ListView listView;
     private GroupListAdapter adapter;
-    private RealmList<Group> groupList;
+    private List<Group> groupList;
 
     {
         adapter = null;
@@ -64,7 +66,7 @@ public class GroupsFragment extends Fragment {
             });
 
             //creating elements for listview
-            groupList = DBManager.readAll(Group.class, ConstantEntity.ID);
+            groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
             adapter = new GroupListAdapter(getActivity(), R.layout.list_view_item_group, groupList);
             listView.setAdapter(adapter);
 
@@ -143,20 +145,16 @@ public class GroupsFragment extends Fragment {
                     DBManager.write(group);
 
                     groupList.add(group);
-                    adapter.notifyDataSetChanged();
-                    return;
+                    break;
                 case ConstantEntity.ACTIVITY_EDIT:
                     int posOldGroup = data.getIntExtra("posOldGroup",0);
                     group = data.getParcelableExtra("editGroup");
                     DBManager.write(group);
 
                     groupList.set(posOldGroup, group);
-                    adapter.notifyDataSetChanged();
-                    return;
-                default:
-
-                    return;
+                    break;
             }
+            adapter.notifyDataSetChanged();
         }
     }
 

@@ -30,9 +30,9 @@ import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import io.realm.RealmList;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class AddSubjectActivity extends AppCompatActivity {
@@ -84,7 +84,8 @@ public class AddSubjectActivity extends AppCompatActivity {
 
         LinearLayout parent = findViewById(R.id.spinnerSpeciality);
 
-        final RealmList<Speciality> specialityList = DBManager.readAll(Speciality.class, ConstantEntity.ID);
+        final List<Speciality> specialityList = DBManager.copyObjectFromRealm(
+                DBManager.readAll(Speciality.class, ConstantEntity.ID));
         for(int i = 0 ; i< specialityList.size();i++){
             LinearLayout specLayout = new LinearLayout(this);
             specLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -151,13 +152,17 @@ public class AddSubjectActivity extends AppCompatActivity {
 
     private void addSubject(){
         subject.setName(subjectEditText.getText().toString())
-                .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map))
-                .createEntity();
-        Log.d(TAG, "addSubject = " + subject);
+                .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map));
 
-        Intent intent = getIntent();
-        intent.putExtra("addSubject", subject);
-        setResult(Activity.RESULT_OK, intent);
+        if (subject.createEntity()){
+            Intent intent = getIntent();
+            intent.putExtra("addSubject", subject);
+            setResult(Activity.RESULT_OK, intent);
+        } else {
+            // Оповещение о ее неправильности
+            Log.d(TAG, "addSubject = " + subject);
+        }
+
         finish();
     }
 

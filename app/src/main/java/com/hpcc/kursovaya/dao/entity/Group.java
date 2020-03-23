@@ -16,24 +16,19 @@ import java.util.Objects;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cloneable {
+public class Group extends RealmObject implements EntityI, Parcelable, Cloneable {
     private static final String TAG = Group.class.getSimpleName();
-    private static int countObj;
-
-    static {
-        countObj = 0;
-    }
 
     @PrimaryKey
-    private int id;// Индентификатор
-    private String name;// Название(имя) группы
-    private Speciality speciality;// Принадленость группы к специальности
-    private int numberCourse;// Номер курса группы
+    private int id;// ID group
+    private String name;// Name group
+    private int idSpeciality;// ID speciality
+    private int numberCourse;// Number course group
 
     {
         id = 0;
         name = "";
-        speciality = new Speciality();
+        idSpeciality = 0;
         numberCourse = 0;
     }
     public Group() {
@@ -45,50 +40,17 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
         setName(name);
         setSpecialty(speciality);
         setNumberCourse(numberCourse);
-
-        createEntity();
-    }
-    protected Group(Parcel in) {
-        id = in.readInt();
-        name = in.readString();
-        speciality = in.readParcelable(Speciality.class.getClassLoader());
-        numberCourse = in.readInt();
     }
 
-    public static final Creator<Group> CREATOR = new Creator<Group>() {
-        @Override
-        public Group createFromParcel(Parcel in) {
-            return new Group(in);
-        }
-
-        @Override
-        public Group[] newArray(int size) {
-            return new Group[size];
-        }
-    };
-
-    @Override
-    public Group createEntity() {
-        if (id < ConstantEntity.ONE){
-            setName(name);
-            setSpecialty(speciality);
-            setNumberCourse(numberCourse);
-
-            int maxID = DBManager.findMaxID(this.getClass());
-            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
-        }
-        return this;
+    public int getId() {
+        return id;
     }
-
     private void setId(int id) {
         if (id < ConstantEntity.ONE){
             Log.e(TAG, "Failed -> setId(id = " + id + ")");
             throw new RuntimeException("setId(id = "+ id + ")");
         }
         this.id = id;
-    }
-    public int getId() {
-        return id;
     }
 
     public String getName() {
@@ -104,14 +66,15 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     }
 
     public Speciality getSpecialty() {
-        return speciality;
+        return DBManager.read(Speciality.class, ConstantEntity.ID, idSpeciality);
     }
     public Group setSpecialty(@NotNull Speciality speciality) {
         if(speciality.getId() < ConstantEntity.ONE){
             Log.e(TAG, "Failed -> setSpeciality("+speciality.toString()+")");
             throw new RuntimeException("setSpeciality("+speciality.toString()+")");
         }
-        this.speciality = speciality;
+
+        this.idSpeciality = speciality.getId();
         return this;
     }
 
@@ -134,19 +97,63 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
         Group group = (Group) o;
         return numberCourse == group.numberCourse &&
                 name.equals(group.name) &&
-                speciality.equals(group.speciality);
+                idSpeciality == group.idSpeciality;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, speciality, numberCourse);
+        return Objects.hash(name, idSpeciality, numberCourse);
     }
 
-    @NonNull
     @Override
-    public Group clone() throws CloneNotSupportedException {
-        return (Group) super.clone();
+    public String toString() {
+        return "Group{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", idSpeciality=" + idSpeciality +
+                ", numberCourse=" + numberCourse +
+                '}';
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // EntityI<Group>
+    private static int countObj = 0;
+    @Override
+    public boolean createEntity() {
+        if (id < ConstantEntity.ONE){
+            try {
+                setName(name);
+                setSpecialty(DBManager.read(Speciality.class, ConstantEntity.ID, idSpeciality));
+                setNumberCourse(numberCourse);
+            } catch (RuntimeException ex) {
+                return false;
+            }
+
+            int maxID = DBManager.findMaxID(this.getClass());
+            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
+        }
+        return true;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Parcelable
+    protected Group(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        idSpeciality = in.readInt();
+        numberCourse = in.readInt();
+    }
+    public static final Creator<Group> CREATOR = new Creator<Group>() {
+        @Override
+        public Group createFromParcel(Parcel in) {
+            return new Group(in);
+        }
+
+        @Override
+        public Group[] newArray(int size) {
+            return new Group[size];
+        }
+    };
 
     @Override
     public int describeContents() {
@@ -156,17 +163,15 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
         dest.writeString(name);
-        dest.writeParcelable(speciality, flags);
+        dest.writeInt(idSpeciality);
         dest.writeInt(numberCourse);
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    // Cloneable
+    @NonNull
     @Override
-    public String toString() {
-        return "Group{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", specialty=" + speciality +
-                ", numberCourse=" + numberCourse +
-                '}';
+    public Group clone() throws CloneNotSupportedException {
+        return (Group) super.clone();
     }
 }

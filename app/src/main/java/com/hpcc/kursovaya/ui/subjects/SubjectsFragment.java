@@ -31,7 +31,7 @@ import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
-import io.realm.RealmList;
+import java.util.List;
 
 public class SubjectsFragment extends Fragment {
 
@@ -39,7 +39,7 @@ public class SubjectsFragment extends Fragment {
     private View root;
     private ListView listView;
     private SubjectListAdapter adapter;
-    private RealmList<Subject> subjectList;
+    private List<Subject> subjectList;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -56,7 +56,7 @@ public class SubjectsFragment extends Fragment {
                 }
             });
 
-            subjectList = DBManager.readAll(Subject.class, ConstantEntity.ID);
+            subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
             adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
             listView.setAdapter(adapter);
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -126,27 +126,23 @@ public class SubjectsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if(resultCode== Activity.RESULT_OK){
-            Subject subject = null;
+            Subject subject;
             switch (requestCode){
                 case ConstantEntity.ACTIVITY_ADD:
                     subject = data.getParcelableExtra("addSubject");
                     DBManager.write(subject);
 
                     subjectList.add(subject);
-                    adapter.notifyDataSetChanged();
-                    return;
+                    break;
                 case ConstantEntity.ACTIVITY_EDIT:
                     int posOldSubject = data.getIntExtra("posOldSubject",0);
                     subject = data.getParcelableExtra("editSubject");
                     DBManager.write(subject);
 
                     subjectList.set(posOldSubject, subject);
-                    adapter.notifyDataSetChanged();
-                    return;
-                default:
-
-                    return;
+                    break;
             }
+            adapter.notifyDataSetChanged();
         }
     }
 

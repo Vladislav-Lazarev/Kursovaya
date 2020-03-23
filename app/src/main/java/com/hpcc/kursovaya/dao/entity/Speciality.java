@@ -11,111 +11,66 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Speciality extends RealmObject implements EntityI<Speciality>, Parcelable, Cloneable {
+public class Speciality extends RealmObject implements EntityI, Parcelable, Cloneable {
     private static final String TAG = Speciality.class.getSimpleName();
-    private static int countObj;
 
-    static {
-        countObj = 0;
-    }
-
-    public static void deleteAllLinks(@NotNull Speciality speciality){
+    public void deleteAllLinks(){
         // Удаление специальности в дисциплине
-        List<Subject> list = DBManager.readAll(Subject.class, ConstantEntity.ID);
-        ArrayList<Subject> subjectArrayList = new ArrayList<>(list);
-        Log.d("deleteAllLinks", "list = " + list.toString());
-        Log.d("deleteAllLinks", "subjectArrayList = " + subjectArrayList.toString());
-        for (Subject subject : subjectArrayList){
-            Log.d("deleteAllLinks", "subject = " + subject.toString());
-            if (subject.initMap().containsKeySpecialityCountHour(speciality)){
-                Subject modifiedSubject = new Subject();
-                subject.removeSpecialityCountHour(speciality);
-                try {
-                    modifiedSubject = subject.clone();
-                } catch (CloneNotSupportedException e) {
-                    e.printStackTrace();
+        List<Subject> subjectList = DBManager.copyObjectFromRealm(
+                DBManager.readAll(Subject.class));
+        for (Subject subject : subjectList) {
+            if (subject.initMap().containsKeySpecialityCountHour(this)){
+                if (subject.getSpecialityCountHourMap().size() == ConstantEntity.ONE) {
+                    DBManager.delete(Subject.class, ConstantEntity.ID, subject.getId());
+                } else {
+                    subject.removeSpecialityCountHour(this);
+                    DBManager.write(subject);
                 }
-
-                DBManager.delete(Subject.class, ConstantEntity.ID, subject.getId());
-                DBManager.write(modifiedSubject);
             }
         }
 
         // Удаление групп по специальности
-        for (Group group : DBManager.readAll(Group.class, ConstantEntity.ID)){
-            if (speciality.equals(group.getSpecialty())){
-                DBManager.delete(Group.class, ConstantEntity.ID, group.getId());
-            }
-        }
+        DBManager.deleteAll(Group.class, "idSpeciality", id);
 
         // Удаление специальности
-        DBManager.delete(Speciality.class, ConstantEntity.ID, speciality.getId());
+        DBManager.delete(Speciality.class, ConstantEntity.ID, id);
     }
 
     @PrimaryKey
-    private int id;// Индентификатор
-    private String name;// Название(имя) специальности
-    private int countCourse;// Количество проведения курсов в конкретной специальности
+    private int id;// ID speciality
+    private String name;// Name speciality
+    private int countCourse;// The number of courses in a particular specialty
 
-    public Speciality() {
+    {
         id = 0;
         name = "";
         countCourse = 0;
+    }
+    public Speciality() {
+
     }
     public Speciality(@NotNull String name, int countCourse) {
         this();
 
         setName(name);
         setCountCourse(countCourse);
-
-        createEntity();
-    }
-    protected Speciality(Parcel in) {
-        id = in.readInt();
-        name = in.readString();
-        countCourse = in.readInt();
     }
 
-    public static final Creator<Speciality> CREATOR = new Creator<Speciality>() {
-        @Override
-        public Speciality createFromParcel(Parcel in) {
-            return new Speciality(in);
-        }
-
-        @Override
-        public Speciality[] newArray(int size) {
-            return new Speciality[size];
-        }
-    };
-
-    @Override
-    public Speciality createEntity() {
-        if (id < ConstantEntity.ONE){
-            setName(name);
-            setCountCourse(countCourse);
-
-            int maxID = DBManager.findMaxID(this.getClass());
-            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
-        }
-        return this;
+    public int getId() {
+        return id;
     }
-
     private void setId(int id) {
         if (id < ConstantEntity.ONE){
             Log.e(TAG, "Failed -> setId(id = " + id + ")");
             throw new RuntimeException("setId(id = "+ id + ")");
         }
         this.id = id;
-    }
-    public int getId() {
-        return id;
     }
 
     @NotNull
@@ -157,11 +112,52 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         return Objects.hash(name, countCourse);
     }
 
-    @NonNull
     @Override
-    public Speciality clone() throws CloneNotSupportedException {
-        return (Speciality) super.clone();
+    public String toString() {
+        return "Specialty{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", countCourse=" + countCourse +
+                '}';
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // EntityI<Speciality>
+    private static int countObj = 0;
+    @Override
+    public boolean createEntity() {
+        if (id < ConstantEntity.ONE){
+            try {
+                setName(name);
+                setCountCourse(countCourse);
+            } catch (RuntimeException ex) {
+                return false;
+            }
+
+            int maxID = DBManager.findMaxID(this.getClass());
+            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
+        }
+        return true;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Parcelable
+    protected Speciality(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        countCourse = in.readInt();
+    }
+    public static final Creator<Speciality> CREATOR = new Creator<Speciality>() {
+        @Override
+        public Speciality createFromParcel(Parcel in) {
+            return new Speciality(in);
+        }
+
+        @Override
+        public Speciality[] newArray(int size) {
+            return new Speciality[size];
+        }
+    };
 
     @Override
     public int describeContents() {
@@ -173,13 +169,12 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         dest.writeString(name);
         dest.writeInt(countCourse);
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    // Cloneable
+    @NonNull
     @Override
-    public String toString() {
-        return "Specialty{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", countCourse=" + countCourse +
-                '}';
+    public Speciality clone() throws CloneNotSupportedException {
+        return (Speciality) super.clone();
     }
 }

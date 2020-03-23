@@ -3,6 +3,7 @@ package com.hpcc.kursovaya.ui.groups;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -19,8 +20,10 @@ import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.ui.subjects.AddSubjectActivity;
 
 public class AddGroupActivity extends AppCompatActivity {
+    private static final String TAG = AddSubjectActivity.class.getSimpleName();
     private Group group = new Group();
     private EditText groupEditText;
 
@@ -67,13 +70,16 @@ public class AddGroupActivity extends AppCompatActivity {
     }
 
     private void addGroup(){
-        group.setName(groupEditText.getText().toString())
-                .createEntity();
+        group.setName(groupEditText.getText().toString());
 
-        Intent intent = getIntent();
-        intent.putExtra("addGroup", group);
-        setResult(Activity.RESULT_OK, intent);
-
+        if (group.createEntity()){
+            Intent intent = getIntent();
+            intent.putExtra("addGroup", group);
+            setResult(Activity.RESULT_OK, intent);
+        } else {
+            // Оповещение о ее неправильности
+            Log.d(TAG, "addGroup = " + group);
+        }
         finish();
     }
 

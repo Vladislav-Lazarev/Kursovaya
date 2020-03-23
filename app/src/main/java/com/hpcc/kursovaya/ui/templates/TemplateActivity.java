@@ -17,12 +17,10 @@ import androidx.appcompat.widget.Toolbar;
 import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.ArrayList;
-
-import io.realm.RealmList;
+import java.util.List;
 
 public class TemplateActivity extends AppCompatActivity {
     protected ClassesButtonWrapper[][] classes = new ClassesButtonWrapper[7][10];
@@ -33,7 +31,7 @@ public class TemplateActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Toolbar toolbar1;
     protected View classView;
-    protected RealmList<Group> groupList;
+    protected List<Group> groupList;
 
 
     protected void onCreate(Bundle savedInstanceState){
@@ -42,7 +40,7 @@ public class TemplateActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbar1 = findViewById(R.id.toolbarEdit);
         //creating elements for listview
-        groupList = DBManager.readAll(Group.class, ConstantEntity.ID);
+        groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
         final ImageButton cancelSelect = toolbar1.findViewById(R.id.turnOff_editing);
         cancelSelect.setOnClickListener(new View.OnClickListener() {
             @Override

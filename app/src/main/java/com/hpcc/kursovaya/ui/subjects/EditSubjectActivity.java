@@ -29,9 +29,9 @@ import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import io.realm.RealmList;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class EditSubjectActivity extends AppCompatActivity {
@@ -84,7 +84,8 @@ public class EditSubjectActivity extends AppCompatActivity {
 
         LinearLayout parent = findViewById(R.id.spinnerSpeciality);
 
-        final RealmList<Speciality> specialityList = DBManager.readAll(Speciality.class, ConstantEntity.ID);
+        final List<Speciality> specialityList = DBManager.copyObjectFromRealm(
+                DBManager.readAll(Speciality.class, ConstantEntity.ID));
         Log.d(TAG, "specialityList = " + specialityList.toString());
         for(int i = 0 ; i < specialityList.size();i++){
             LinearLayout specLayout = new LinearLayout(this);
@@ -97,25 +98,13 @@ public class EditSubjectActivity extends AppCompatActivity {
             CheckBox checkSpecHour = new CheckBox(this);
             hourEditTxt.setEnabled(false);
 
-            final Speciality speciality = specialityList.get(i);
-            if (subject.containsKeySpecialityCountHour(speciality)){
+            final Speciality finalSpeciality = specialityList.get(i);
+            if (subject.containsKeySpecialityCountHour(finalSpeciality)){
                 checkSpecHour.setChecked(true);
                 hourEditTxt.setEnabled(true);
-                hourEditTxt.setText(Integer.toString(subject.getSpecialityCountHour(speciality)));
-                hourEditTxt.setText(String.valueOf(subject.getSpecialityCountHour(speciality)));
+                hourEditTxt.setText(String.valueOf(subject.getSpecialityCountHour(finalSpeciality)));
             }
-            checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        map.put(speciality, hourEditTxt);
-                    } else {
-                        map.remove(speciality);
-                    }
-                    hourEditTxt.setEnabled(isChecked);
-                    Log.d(TAG, map.toString());
-                }
-            });
+            fillingCheckBox(checkSpecHour, finalSpeciality, hourEditTxt);
 
             LinearLayout.LayoutParams checkBoxParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,2);
             checkSpecHour.setLayoutParams(checkBoxParams);
@@ -159,15 +148,35 @@ public class EditSubjectActivity extends AppCompatActivity {
         }
     }
 
+    private void fillingCheckBox(CheckBox checkSpecHour, Speciality finalSpeciality, EditText hourEditTxt) {
+        checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    map.put(finalSpeciality, hourEditTxt);
+                } else {
+                    map.remove(finalSpeciality);
+                }
+                hourEditTxt.setEnabled(isChecked);
+                Log.d(TAG,"Filling out = " + map.toString());
+            }
+        });
+    }
+
     private void editSubject(){
         subject.setName(subjectEditText.getText().toString())
-                .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map))
-                .createEntity();
+                .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map));
         Log.d(TAG, "editSubject = " + subject);
 
-        Intent intent = getIntent();
-        intent.putExtra("editSubject", subject);
-        setResult(Activity.RESULT_OK, intent);
+        if (subject.createEntity()){
+            Intent intent = getIntent();
+            intent.putExtra("editSubject", subject);
+            setResult(Activity.RESULT_OK, intent);
+        } else {
+            // Оповещение о ее неправильности
+            Log.d(TAG, "editSubject = " + subject);
+        }
+
         finish();
     }
 
