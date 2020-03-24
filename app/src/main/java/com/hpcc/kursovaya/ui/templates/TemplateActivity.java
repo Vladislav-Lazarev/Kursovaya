@@ -88,11 +88,11 @@ public class TemplateActivity extends AppCompatActivity {
                                         addClass(classDay, classHour);
                                     }
                                 } else if(!buttonWrapperList.get(classHour).getBtn().getText().equals("") && !buttonWrapperList.get(classHour).isSelected()){
-                                    buttonWrapperList.get(classHour).getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.sideBarTransp));
+                                    buttonWrapperList.get(classHour).setSelectBackground();
                                     buttonWrapperList.get(classHour).setSelected(true);
                                     selectedButtons.add(buttonWrapperList.get(classHour));
                                 } else{
-                                    buttonWrapperList.get(classHour).getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.menuTextColor));
+                                    buttonWrapperList.get(classHour).setUnselectBackground();
                                     selectedButtons.remove(buttonWrapperList.get(classHour));
                                     if(selectedButtons.size()==0){
                                         cancelSelect.performClick();
@@ -105,7 +105,7 @@ public class TemplateActivity extends AppCompatActivity {
                             @Override
                             public boolean onLongClick(View v) {
                                 if(!isSelectMode && !buttonWrapperList.get(classHour).getBtn().getText().equals("")) {
-                                    buttonWrapperList.get(classHour).getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.sideBarTransp));
+                                    buttonWrapperList.get(classHour).setSelectBackground();
                                     selectedButtons.add(buttonWrapperList.get(classHour));
                                     buttonWrapperList.get(classHour).setSelected(true);
                                     isSelectMode = true;
