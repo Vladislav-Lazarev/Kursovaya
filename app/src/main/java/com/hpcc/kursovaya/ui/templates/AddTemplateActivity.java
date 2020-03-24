@@ -132,6 +132,7 @@ public class AddTemplateActivity extends TemplateActivity {
       //здесь обработчик кнопки принять
         AutoCompleteTextView groupName = classView.findViewById(R.id.groupNameSuggestET);
       String displayedGroupName = groupName.getText().toString();
+
       Log.d(TAG, classDay + " " + classHour);
       Log.d(TAG, displayedGroupName);
       super.classes.get(classDay).get(classHour).getBtn().setText(displayedGroupName);

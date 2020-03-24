@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import io.realm.RealmObject;
+import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cloneable {
@@ -116,21 +117,8 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     }
 
     public List<Subject> toSubjectList(){
-        List<Subject> result = new ArrayList<>();
-        // TODO Реалтзовать readAll что бы можно было сортиорвать по множеству занчений
-        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantEntity.NUMBER_COURSE, this.numberCourse));
-        int idlePassage = 0;
-        for (Subject subject : subjectList) {
-            if (idlePassage++ > ConstantEntity.TWO){
-                break;
-            }
-            if (subject.initMap().containsKeySpecialityCountHour(this.getSpecialty()) &&
-                    subject.getNumberCourse() == this.numberCourse) {
-                result.add(subject);
-                --idlePassage;
-            }
-        }
-        return result;
+        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantEntity.NUMBER_COURSE, this.numberCourse, ConstantEntity.NAME,Sort.ASCENDING));
+        return subjectList;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

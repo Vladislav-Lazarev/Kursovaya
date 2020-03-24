@@ -2,17 +2,20 @@ package com.hpcc.kursovaya.ClassesButton;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.widget.Button;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.LessonSchedule;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
 
 public class ClassesButtonWrapper {
     private Button btn;
     private Context context;
     private Drawable drawableDef;
 
-    private LessonSchedule lesson;
+
+    private AcademicHour academicHour;
+
     private int selectColorList = R.color.sideBarTransp;
     private boolean isSelected = false;
 
@@ -53,13 +56,14 @@ public class ClassesButtonWrapper {
         btn.setText("");
         isSelected=false;
     }
-
-    public LessonSchedule getLesson() {
-        return lesson;
+    public AcademicHour getAcademicHour() {
+        return academicHour;
     }
 
-    public void setLesson(LessonSchedule lesson) {
-        this.lesson = lesson;
+    public void setAcademicHour(AcademicHour academicHour) {
+        this.academicHour = academicHour;
+        GradientDrawable background = (GradientDrawable) btn.getBackground();
+        background.setColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
     }
 
     public boolean isSelected() {
