@@ -20,16 +20,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroupAutoCompleteAdapter extends ArrayAdapter<Group> implements Filterable {
-    private final String TAG = "GroupACAdapter";
-    private final Context context;
-    private ArrayList<Group> items;
-    private ArrayList<Group> itemsAll;
-    private int viewResourceId;
+    private final static String TAG = GroupAutoCompleteAdapter.class.getSimpleName();
 
+    private final Context context;
+    private List<Group> items;
+    private List<Group> itemsAll;
+    private int viewResourceId;
 
     public GroupAutoCompleteAdapter(Context context, int viewResourceId, List<Group> items){
         super(context, viewResourceId, items);
-        this.items =(ArrayList<Group>) items;
+        this.items = items;
         this.itemsAll = (ArrayList<Group>) ((ArrayList<Group>) items).clone();
         Log.d(TAG,"items size"+items.size());
         this.context = context;

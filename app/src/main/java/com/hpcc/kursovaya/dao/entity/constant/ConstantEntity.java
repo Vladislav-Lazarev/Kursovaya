@@ -6,9 +6,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.hpcc.kursovaya.dao.entity.Speciality;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +22,7 @@ public class ConstantEntity {
     // QUERY
     public static final String ID = "id";
     public static final String NAME = "name";
-    public static final String NUMBER = "number";
+    public static final String NUMBER_COURSE = "numberCourse";
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -45,16 +43,6 @@ public class ConstantEntity {
     public static final int ACTIVITY_ADD = 1;
     public static final int ACTIVITY_EDIT = 2;
 
-    public static List<String> readSpecialityList(){
-        List<Speciality> specialityList = DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class, ConstantEntity.ID));
-        List<String> strSpecialityList = new ArrayList<>();
-
-        for (Speciality speciality : specialityList){
-            strSpecialityList.add(speciality.getName());
-        }
-
-        return strSpecialityList;
-    }
     public static Map<Speciality, Integer> convertMapEditTextToMapInt(Map<Speciality, EditText> mapEdit){
         Map<Speciality, Integer> mapInt = new LinkedHashMap<>();
         for (Map.Entry<Speciality, EditText> set : mapEdit.entrySet()){

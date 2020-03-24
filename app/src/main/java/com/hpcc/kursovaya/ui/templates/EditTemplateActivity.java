@@ -51,7 +51,7 @@ public class EditTemplateActivity extends TemplateActivity {
 
         RadioButton oneHourRB = classView.findViewById(R.id.popup_duration_rgroup_short);
         RadioButton twoHourRB = classView.findViewById(R.id.popup_duration_rgroup_full);
-        if(classes[classDay][classHour].getBtn().getText().equals("")) {
+        if(super.classes.get(classDay).get(classHour).getBtn().getText().equals("")) {
             builder.setTitle(R.string.popup_add_class);
             builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
                 @Override
@@ -63,7 +63,7 @@ public class EditTemplateActivity extends TemplateActivity {
         else {
             builder.setTitle(R.string.popup_edit_class);
             //данные получай с объекта, а не с кнопки - это пример
-            suggestEditText.setText(classes[classDay][classHour].getBtn().getText());
+            suggestEditText.setText(super.classes.get(classDay).get(classHour).getBtn().getText());
             //также заполни здесь спиннер предметов и выдели один из радиобатоннов
             builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
                 @Override
@@ -87,7 +87,7 @@ public class EditTemplateActivity extends TemplateActivity {
         String displayedGroupName = groupName.getText().toString();
         Log.d(TAG, classDay + " " + classHour);
         Log.d(TAG, displayedGroupName);
-        classes[classDay][classHour].getBtn().setText(displayedGroupName);
+        super.classes.get(classDay).get(classHour).getBtn().setText(displayedGroupName);
     }
 
     @Override
@@ -133,6 +133,6 @@ public class EditTemplateActivity extends TemplateActivity {
         String displayedGroupName = groupName.getText().toString();
         Log.d(TAG, classDay + " " + classHour);
         Log.d(TAG, displayedGroupName);
-        super.classes[classDay][classHour].getBtn().setText(displayedGroupName);
+        super.classes.get(classDay).get(classHour).getBtn().setText(displayedGroupName);
     }
 }

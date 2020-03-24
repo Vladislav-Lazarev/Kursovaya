@@ -11,36 +11,15 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Speciality extends RealmObject implements EntityI, Parcelable, Cloneable {
+public class Speciality extends RealmObject implements EntityI<Speciality>, Parcelable, Cloneable {
     private static final String TAG = Speciality.class.getSimpleName();
-
-    public void deleteAllLinks(){
-        // Удаление специальности в дисциплине
-        List<Subject> subjectList = DBManager.copyObjectFromRealm(
-                DBManager.readAll(Subject.class));
-        for (Subject subject : subjectList) {
-            if (subject.initMap().containsKeySpecialityCountHour(this)){
-                if (subject.getSpecialityCountHourMap().size() == ConstantEntity.ONE) {
-                    DBManager.delete(Subject.class, ConstantEntity.ID, subject.getId());
-                } else {
-                    subject.removeSpecialityCountHour(this);
-                    DBManager.write(subject);
-                }
-            }
-        }
-
-        // Удаление групп по специальности
-        DBManager.deleteAll(Group.class, "idSpeciality", id);
-
-        // Удаление специальности
-        DBManager.delete(Speciality.class, ConstantEntity.ID, id);
-    }
 
     @PrimaryKey
     private int id;// ID speciality
@@ -120,9 +99,30 @@ public class Speciality extends RealmObject implements EntityI, Parcelable, Clon
                 ", countCourse=" + countCourse +
                 '}';
     }
+
+    public void deleteAllLinks(){
+        // Удаление специальности в дисциплине
+        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+        for (Subject subject : subjectList) {
+            if (subject.initMap().containsKeySpecialityCountHour(this)){
+                if (subject.getSpecialityCountHourMap().size() == ConstantEntity.ONE) {
+                    DBManager.delete(Subject.class, ConstantEntity.ID, subject.getId());
+                } else {
+                    subject.removeSpecialityCountHour(this);
+                    DBManager.write(subject);
+                }
+            }
+        }
+
+        // Удаление групп по специальности
+        DBManager.deleteAll(Group.class, "idSpeciality", id);
+
+        // Удаление специальности
+        DBManager.delete(Speciality.class, ConstantEntity.ID, id);
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    // EntityI<Speciality>
+    // EntityI
     private static int countObj = 0;
     @Override
     public boolean createEntity() {
@@ -139,6 +139,28 @@ public class Speciality extends RealmObject implements EntityI, Parcelable, Clon
         }
         return true;
     }
+
+    @Override
+    public List<String> entityToNameList() {
+        List<Speciality> specialityList = DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class));
+        List<String> result = new ArrayList<>();
+
+        for (Speciality speciality : specialityList){
+            result.add(speciality.getName());
+        }
+        return result;
+    }
+
+    @Override
+    public List<String> entityToNameList(List<Speciality> entityList) {
+        List<String> result = new ArrayList<>();
+
+        for (Speciality speciality : entityList){
+            result.add(speciality.getName());
+        }
+        return result;
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Parcelable

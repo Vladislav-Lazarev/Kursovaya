@@ -59,8 +59,8 @@ public class AddGroupActivity extends AppCompatActivity {
         });
 
         Spinner spinnerSpeciality =
-                ConstantEntity.fillingSpinner(this, (Spinner) findViewById(R.id.spinnerSpeciality),
-                        ConstantEntity.readSpecialityList());
+                ConstantEntity.fillingSpinner(this, findViewById(R.id.spinnerSpeciality),
+                        new Speciality().entityToNameList());
         listenerSpinnerSpeciality(spinnerSpeciality);
 
         Spinner spinnerCourse = (Spinner) findViewById(R.id.spinnerCourse);

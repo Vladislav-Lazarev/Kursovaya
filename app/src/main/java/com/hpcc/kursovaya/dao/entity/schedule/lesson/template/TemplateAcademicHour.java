@@ -1,35 +1,52 @@
 package com.hpcc.kursovaya.dao.entity.schedule.lesson.template;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
+
+import com.hpcc.kursovaya.dao.entity.EntityI;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class TemplateAcademicHour extends RealmObject {
-    @PrimaryKey
-    private int id;// Индентификатор
-    private Subject subject;// Дисциплина на полупаре
-    private Group group;// Группа на полупаре
-    private int numberAcademicTwoHour;// Номер полупары(1 или 2 полупара)
+public class TemplateAcademicHour extends RealmObject implements EntityI, Parcelable, Cloneable{
+    private static final String TAG = TemplateAcademicHour.class.getSimpleName();
 
-    public TemplateAcademicHour() {
+    @PrimaryKey
+    private int id;// ID template for half pair
+    private int idSubject;// ID subject
+    private int idGroup;// ID group
+    private int numberHalfPair;// Number half pair (1 or 2)
+
+    {
         id = 0;
-        group = new Group();
-        subject = new Subject();
-        numberAcademicTwoHour = 0;
+        idSubject = 0;
+        idGroup = 0;
+        numberHalfPair = 0;
     }
-    public TemplateAcademicHour(int id, @NotNull Subject subject, @NotNull Group group, int numberAcademicTwoHour) {
-        this();
-        setId(id);
+    public TemplateAcademicHour() {
+
+    }
+    public TemplateAcademicHour(@NotNull Subject subject, @NotNull Group group, int numberHalfPair) {
         setSubject(subject);
         setGroup(group);
-        setNumberAcademicTwoHour(numberAcademicTwoHour);
+        setNumberHalfPair(numberHalfPair);
     }
 
+    public int getId() {
+        return id;
+    }
     private void setId(int id){
         try{
             if (id < ConstantEntity.ONE){
@@ -42,45 +59,44 @@ public class TemplateAcademicHour extends RealmObject {
             ex.printStackTrace();
         }
     }
-    public int getId() {
-        return id;
-    }
 
     @NotNull
     public Subject getSubject() {
-        return subject;
+        return DBManager.read(Subject.class, ConstantEntity.ID, idSubject);
     }
     public TemplateAcademicHour setSubject(@NotNull Subject subject) {
-        // TODO setSubject - проверка
-        this.subject = subject;
+        if(subject.getId() < ConstantEntity.ONE){
+            Log.e(TAG, "Failed -> setSubject(" + subject.toString() + ")");
+            throw new RuntimeException("setSubject(" + subject.toString() + ")");
+        }
+
+        this.idSubject = subject.getId();
         return this;
     }
 
     @NotNull
     public Group getGroup() {
-        return group;
+        return DBManager.read(Group.class, ConstantEntity.ID, idGroup);
     }
     public TemplateAcademicHour setGroup(@NotNull Group group) {
-        // TODO setGroup - проверка
-        this.group = group;
+        if(group.getId() < ConstantEntity.ONE){
+            Log.e(TAG, "Failed -> setGroup(" + group.toString() + ")");
+            throw new RuntimeException("setGroup(" + group.toString() + ")");
+        }
+
+        this.idGroup = group.getId();
         return this;
     }
 
-    public int getNumberAcademicTwoHour() {
-        return numberAcademicTwoHour;
+    public int getNumberHalfPair() {
+        return numberHalfPair;
     }
-    public TemplateAcademicHour setNumberAcademicTwoHour(int numberAcademicTwoHour) {
-        // TODO setNumberAcademicTwoHour - проверка
-        try {
-            if (numberAcademicTwoHour < ConstantEntity.MIN_COUNT_ACADEMIC_HOUR ||
-                    numberAcademicTwoHour > ConstantEntity.MAX_COUNT_ACADEMIC_HOUR) {
-                throw new Exception("Exception! setNumberAcademicTwoHour()");
-            }
-            this.numberAcademicTwoHour = numberAcademicTwoHour;
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
+    public TemplateAcademicHour setNumberHalfPair(int numberHalfPair) {
+        if (numberHalfPair < ConstantEntity.MIN_COUNT_ACADEMIC_HOUR ||
+                numberHalfPair > ConstantEntity.MAX_COUNT_ACADEMIC_HOUR) {
+            throw new RuntimeException("Exception! setNumberAcademicTwoHour()");
         }
+        this.numberHalfPair = numberHalfPair;
         return this;
     }
 
@@ -88,9 +104,75 @@ public class TemplateAcademicHour extends RealmObject {
     public String toString() {
         return "TemplateAcademicHour{" +
                 "id=" + id +
-                ", discipline=" + subject +
-                ", group=" + group +
-                ", numberAcademicTwoHour=" + numberAcademicTwoHour +
+                ", idSubject=" + idSubject +
+                ", idGroup=" + idGroup +
+                ", numberHalfPair=" + numberHalfPair +
                 '}';
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // EntityI
+    private static int countObj = 0;
+    @Override
+    public boolean createEntity() {
+        if (id < ConstantEntity.ONE){
+            try {
+                setSubject(getSubject());
+                setGroup(getGroup());
+                setNumberHalfPair(numberHalfPair);
+            } catch (RuntimeException ex) {
+                return false;
+            }
+
+            int maxID = DBManager.findMaxID(this.getClass());
+            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
+        }
+        return true;
+    }
+
+    @Override
+    public Pair<List<String>, List<String>> entityToNameList() {
+        Pair<List<String>, List<String>> result = Pair.create(new Subject().entityToNameList(),
+                new Group().entityToNameList());
+        return result;
+    }
+
+    // Parcelable
+    protected TemplateAcademicHour(Parcel in) {
+        id = in.readInt();
+        idSubject = in.readInt();
+        idGroup = in.readInt();
+        numberHalfPair = in.readInt();
+    }
+    public static final Creator<TemplateAcademicHour> CREATOR = new Creator<TemplateAcademicHour>() {
+        @Override
+        public TemplateAcademicHour createFromParcel(Parcel in) {
+            return new TemplateAcademicHour(in);
+        }
+
+        @Override
+        public TemplateAcademicHour[] newArray(int size) {
+            return new TemplateAcademicHour[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(idSubject);
+        dest.writeInt(idGroup);
+        dest.writeInt(numberHalfPair);
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Cloneable
+    @NonNull
+    @Override
+    public TemplateAcademicHour clone() throws CloneNotSupportedException {
+        return (TemplateAcademicHour) super.clone();
     }
 }

@@ -17,21 +17,23 @@ import androidx.appcompat.widget.Toolbar;
 import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TemplateActivity extends AppCompatActivity {
-    protected ClassesButtonWrapper[][] classes = new ClassesButtonWrapper[7][10];
-    private final String TAG = "TemplateActivity";
-    protected ArrayList<ClassesButtonWrapper> selectedButtons = new ArrayList<>();
+    private final static String TAG = TemplateActivity.class.getSimpleName();
+
+    protected List<List<ClassesButtonWrapper>> classes = new ArrayList<>();// new ClassesButtonWrapper[ConstantEntity.MAX_COUNT_WEEK][ConstantEntity.MAX_COUNT_ACADEMIC_HOUR * ConstantEntity.MAX_COUNT_LESSON];
+    protected List<ClassesButtonWrapper> selectedButtons = new ArrayList<>();
     private boolean isSelectMode = false;
-    protected Group selectedGroup;
     private Toolbar toolbar;
     private Toolbar toolbar1;
     protected View classView;
     protected List<Group> groupList;
+    protected Group selectedGroup;
 
 
     protected void onCreate(Bundle savedInstanceState){
@@ -66,43 +68,46 @@ public class TemplateActivity extends AppCompatActivity {
         toolbar1.setVisibility(View.GONE);
         Thread t = new Thread(){
             public void run(){
-                for(int i = 0; i<7; i++){
-                    for(int j=0; j<10; j++){
+                for (int i = 0; i < ConstantEntity.MAX_COUNT_WEEK; i++){
+                    List<ClassesButtonWrapper> buttonWrapperList = new ArrayList<>();
+                    for (int j = 0; j < ConstantEntity.MAX_COUNT_ACADEMIC_HOUR * ConstantEntity.MAX_COUNT_LESSON; j++){
                         StringBuilder className = new StringBuilder("class");
                         className.append(j).append(i);
                         final int classDay = i;
                         final int classHour = j;
-                        int classRes = getResources().getIdentifier(className.toString(),"id",getPackageName());
-                        classes[i][j] = new ClassesButtonWrapper((Button)findViewById(classRes),getApplicationContext());
-                        classes[i][j].getBtn().setOnClickListener(new View.OnClickListener() {
+                        int classRes = getResources().getIdentifier(className.toString(), ConstantEntity.ID, getPackageName());
+                        buttonWrapperList.add(new ClassesButtonWrapper((Button)findViewById(classRes),getApplicationContext()));
+
+                        buttonWrapperList.get(j).getBtn().setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 if(!isSelectMode) {
-                                    if(classes[classDay][classHour].getBtn().getText()!=""){
+                                    if (buttonWrapperList.get(classHour).getBtn().getText()!=""){
                                         editClass(classDay,classHour);
                                     } else {
                                         addClass(classDay, classHour);
                                     }
-                                } else if(!classes[classDay][classHour].getBtn().getText().equals("") && !classes[classDay][classHour].isSelected()){
-                                    classes[classDay][classHour].getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.sideBarTransp));
-                                    classes[classDay][classHour].setSelected(true);
-                                    selectedButtons.add(classes[classDay][classHour]);
+                                } else if(!buttonWrapperList.get(classHour).getBtn().getText().equals("") && !buttonWrapperList.get(classHour).isSelected()){
+                                    buttonWrapperList.get(classHour).getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.sideBarTransp));
+                                    buttonWrapperList.get(classHour).setSelected(true);
+                                    selectedButtons.add(buttonWrapperList.get(classHour));
                                 } else{
-                                    classes[classDay][classHour].getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.menuTextColor));
-                                    selectedButtons.remove(classes[classDay][classHour]);
+                                    buttonWrapperList.get(classHour).getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.menuTextColor));
+                                    selectedButtons.remove(buttonWrapperList.get(classHour));
                                     if(selectedButtons.size()==0){
                                         cancelSelect.performClick();
                                     }
                                 }
                             }
                         });
-                        classes[i][j].getBtn().setOnLongClickListener(new View.OnLongClickListener() {
+
+                        buttonWrapperList.get(j).getBtn().setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View v) {
-                                if(!isSelectMode && !classes[classDay][classHour].getBtn().getText().equals("")) {
-                                    classes[classDay][classHour].getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.sideBarTransp));
-                                    selectedButtons.add(classes[classDay][classHour]);
-                                    classes[classDay][classHour].setSelected(true);
+                                if(!isSelectMode && !buttonWrapperList.get(classHour).getBtn().getText().equals("")) {
+                                    buttonWrapperList.get(classHour).getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.sideBarTransp));
+                                    selectedButtons.add(buttonWrapperList.get(classHour));
+                                    buttonWrapperList.get(classHour).setSelected(true);
                                     isSelectMode = true;
                                     toolbar.setVisibility(View.GONE);
                                     toolbar1.setVisibility(View.VISIBLE);
@@ -112,9 +117,9 @@ public class TemplateActivity extends AppCompatActivity {
                             }
                         });
                     }
+                    classes.add(buttonWrapperList);
                 }
             }
-
         };
         t.start();
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_path_150));

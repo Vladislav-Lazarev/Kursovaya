@@ -13,8 +13,10 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -25,7 +27,7 @@ import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
-public class Subject extends RealmObject implements EntityI, Parcelable, Cloneable {
+public class Subject extends RealmObject implements EntityI<Subject>, Parcelable, Cloneable {
     private static final String TAG = Subject.class.getSimpleName();
 
     protected static Pair<RealmList<Integer>, RealmList<Integer>> convert(Pair<RealmList<Integer>, RealmList<Integer>> pairResult,
@@ -73,8 +75,6 @@ public class Subject extends RealmObject implements EntityI, Parcelable, Cloneab
 
     }
     public Subject(@NotNull String name,@NotNull Map<Speciality, Integer> specialityCountHourMap, int numberCourse, int color) {
-        this();
-
         setName(name);
         setSpecialityCountHourMap(specialityCountHourMap);
         setNumberCourse(numberCourse);
@@ -310,7 +310,7 @@ public class Subject extends RealmObject implements EntityI, Parcelable, Cloneab
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    // EntityI<Group>
+    // EntityI
     private static int countObj = 0;
     @Override
     public boolean createEntity() {
@@ -329,6 +329,28 @@ public class Subject extends RealmObject implements EntityI, Parcelable, Cloneab
         }
         return true;
     }
+
+    @Override
+    public List<String> entityToNameList() {
+        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+        List<String> result = new ArrayList<>();
+
+        for (Subject subject : subjectList){
+            result.add(subject.getName());
+        }
+        return result;
+    }
+
+    @Override
+    public List<String> entityToNameList(List<Subject> entityList) {
+        List<String> result = new ArrayList<>();
+
+        for (Subject subject : entityList){
+            result.add(subject.getName());
+        }
+        return result;
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Parcelable

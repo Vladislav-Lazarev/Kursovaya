@@ -53,7 +53,7 @@ public class EditGroupActivity extends AppCompatActivity {
 
         Spinner spinnerSpeciality =
                 ConstantEntity.fillingSpinner(this, (Spinner) findViewById(R.id.spinnerSpeciality),
-                        ConstantEntity.readSpecialityList());
+                        new Speciality().entityToNameList());
         listenerSpinnerSpeciality(spinnerSpeciality);
         ConstantEntity.setSpinnerText(spinnerSpeciality, group.getSpecialty().getName());
 

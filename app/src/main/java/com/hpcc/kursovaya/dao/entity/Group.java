@@ -11,12 +11,14 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Group extends RealmObject implements EntityI, Parcelable, Cloneable {
+public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cloneable {
     private static final String TAG = Group.class.getSimpleName();
 
     @PrimaryKey
@@ -35,8 +37,6 @@ public class Group extends RealmObject implements EntityI, Parcelable, Cloneable
 
     }
     public Group(@NotNull String name, @NotNull Speciality speciality, int numberCourse) {
-        this();
-
         setName(name);
         setSpecialty(speciality);
         setNumberCourse(numberCourse);
@@ -114,9 +114,28 @@ public class Group extends RealmObject implements EntityI, Parcelable, Cloneable
                 ", numberCourse=" + numberCourse +
                 '}';
     }
+
+    public List<Subject> toSubjectList(){
+        List<Subject> result = new ArrayList<>();
+        // TODO Реалтзовать readAll что бы можно было сортиорвать по множеству занчений
+        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantEntity.NUMBER_COURSE, this.numberCourse));
+        int idlePassage = 0;
+        for (Subject subject : subjectList) {
+            if (idlePassage++ > ConstantEntity.TWO){
+                break;
+            }
+            if (subject.initMap().containsKeySpecialityCountHour(this.getSpecialty()) &&
+                    subject.getNumberCourse() == this.numberCourse) {
+                result.add(subject);
+                --idlePassage;
+            }
+        }
+        return result;
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    // EntityI<Group>
+    // EntityI
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     private static int countObj = 0;
     @Override
     public boolean createEntity() {
@@ -134,7 +153,27 @@ public class Group extends RealmObject implements EntityI, Parcelable, Cloneable
         }
         return true;
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public List<String> entityToNameList() {
+        List<Group> groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
+        List<String> result = new ArrayList<>();
+
+        for (Group group : groupList){
+            result.add(group.getName());
+        }
+        return result;
+    }
+
+    @Override
+    public List<String> entityToNameList(List<Group> entityList) {
+        List<String> result = new ArrayList<>();
+
+        for (Group group : entityList){
+            result.add(group.getName());
+        }
+        return result;
+    }
 
     // Parcelable
     protected Group(Parcel in) {
