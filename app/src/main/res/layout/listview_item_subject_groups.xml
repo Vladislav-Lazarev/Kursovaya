@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/activatedBackgroundIndicator">
+
+    <TextView
+        android:id="@+id/groupNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/groupName_label"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/groupNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textStub"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/groupNameLabel"
+        android:layout_marginStart="95dp"/>
+
+    <TextView
+        android:id="@+id/specialityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/specialty_label"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/groupNameLabel"
+        android:layout_marginStart="6dp"/>
+    <TextView
+        android:id="@+id/specialityText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textStub"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/specialityLabel"
+        android:layout_below="@id/groupNameText"
+        android:layout_marginStart="40dp"/>
+    <TextView
+        android:id="@+id/totalHoursLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/totalHoursLabel"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/specialityLabel"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/totalHoursText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textStub"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/totalHoursLabel"
+        android:layout_below="@id/specialityText"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:id="@+id/readHoursLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/readHoursLabel"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/totalHoursLabel"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/readHoursText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textStub"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/readHoursLabel"
+        android:layout_below="@id/totalHoursText"
+        android:layout_marginStart="25dp"/>
+
+    <TextView
+        android:id="@+id/canceledHoursLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/canceledLabel"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/readHoursLabel"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/canceledHoursText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textStub"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@id/canceledHoursLabel"
+        android:layout_below="@id/readHoursText"
+        android:layout_marginStart="55dp"/>
+</RelativeLayout>
