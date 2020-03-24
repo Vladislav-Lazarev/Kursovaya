@@ -1,6 +1,7 @@
 package com.hpcc.kursovaya.ui.templates;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +16,6 @@ import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,8 +31,9 @@ public class AddTemplateActivity extends TemplateActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
 
+        final Context context = this;
         classView = getLayoutInflater().inflate(R.layout.dialog_add_new_class_template,null);
-        Spinner subjectSpinner = classView.findViewById(R.id.spinnerSubject);
+        final Spinner subjectSpinner = classView.findViewById(R.id.spinnerSubject);
         AutoCompleteTextView suggestEditText = classView.findViewById(R.id.groupNameSuggestET);
 
         suggestEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -41,17 +42,12 @@ public class AddTemplateActivity extends TemplateActivity {
                 selectedGroup = (Group) adapterView.getItemAtPosition(i);
                 List<Subject> subjectList = selectedGroup.toSubjectList();
                 List<String> stringList = new Subject().entityToNameList(subjectList);
-                ConstantEntity.fillingSpinner(this, subjectSpinner, stringList);
+                ConstantEntity.fillingSpinner(context, subjectSpinner, stringList);
 
                 //это обработчик нажатия на выдачу из AutoCompleteTextView
                 //здесь ты можешь заполнить спиннер предметов
             }
         });
-        ArrayList<String> groupNames = new ArrayList<>();
-        for(Group group: groupList) {
-            groupNames.add(group.getName());
-
-        }
         //ArrayAdapter<String> adapter =
                // new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, groupNames);
         GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto, groupList);
