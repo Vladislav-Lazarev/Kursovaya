@@ -5,18 +5,18 @@ import android.graphics.drawable.Drawable;
 import android.widget.Button;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.LessonSchedule;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateLesson;
 
-public class ClassesButtonWrapper {
+public class TemplateClassesButtonWrapper {
     private Button btn;
     private Context context;
     private Drawable drawableDef;
 
-    private LessonSchedule lesson;
+    private TemplateLesson lesson;
     private int selectColorList = R.color.sideBarTransp;
     private boolean isSelected = false;
 
-    public ClassesButtonWrapper(Button btn, Context context){
+    public TemplateClassesButtonWrapper(Button btn, Context context){
         this.btn = btn;
         this.context= context;
         drawableDef = btn.getBackground();
@@ -54,11 +54,11 @@ public class ClassesButtonWrapper {
         isSelected=false;
     }
 
-    public LessonSchedule getLesson() {
+    public TemplateLesson getLesson() {
         return lesson;
     }
 
-    public void setLesson(LessonSchedule lesson) {
+    public void setLesson(TemplateLesson lesson) {
         this.lesson = lesson;
     }
 

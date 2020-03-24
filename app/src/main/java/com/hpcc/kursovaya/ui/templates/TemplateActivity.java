@@ -14,7 +14,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
+import com.hpcc.kursovaya.ClassesButton.TemplateClassesButtonWrapper;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
@@ -26,8 +26,8 @@ import java.util.List;
 public class TemplateActivity extends AppCompatActivity {
     private final static String TAG = TemplateActivity.class.getSimpleName();
 
-    protected List<List<ClassesButtonWrapper>> classes = new ArrayList<>();// new ClassesButtonWrapper[ConstantEntity.MAX_COUNT_WEEK][ConstantEntity.MAX_COUNT_ACADEMIC_HOUR * ConstantEntity.MAX_COUNT_LESSON];
-    protected List<ClassesButtonWrapper> selectedButtons = new ArrayList<>();
+    protected List<List<TemplateClassesButtonWrapper>> classes = new ArrayList<>();// new ClassesButtonWrapper[ConstantEntity.MAX_COUNT_WEEK][ConstantEntity.MAX_COUNT_ACADEMIC_HOUR * ConstantEntity.MAX_COUNT_LESSON];
+    protected List<TemplateClassesButtonWrapper> selectedButtons = new ArrayList<>();
     private boolean isSelectMode = false;
     private Toolbar toolbar;
     private Toolbar toolbar1;
@@ -51,7 +51,7 @@ public class TemplateActivity extends AppCompatActivity {
                 toolbar1.setVisibility(View.GONE);
                 toolbar.setVisibility(View.VISIBLE);
                 if(selectedButtons.size()!=0) {
-                    for (ClassesButtonWrapper b: selectedButtons) {
+                    for (TemplateClassesButtonWrapper b: selectedButtons) {
                         b.getBtn().setBackgroundTintList(getResources().getColorStateList(android.R.color.transparent));
                     }
                     selectedButtons.clear();
@@ -69,20 +69,20 @@ public class TemplateActivity extends AppCompatActivity {
         Thread t = new Thread(){
             public void run(){
                 for (int i = 0; i < ConstantEntity.MAX_COUNT_WEEK; i++){
-                    List<ClassesButtonWrapper> buttonWrapperList = new ArrayList<>();
+                    final List<TemplateClassesButtonWrapper> buttonWrapperList = new ArrayList<>();
                     for (int j = 0; j < ConstantEntity.MAX_COUNT_ACADEMIC_HOUR * ConstantEntity.MAX_COUNT_LESSON; j++){
                         StringBuilder className = new StringBuilder("class");
                         className.append(j).append(i);
                         final int classDay = i;
                         final int classHour = j;
                         int classRes = getResources().getIdentifier(className.toString(), ConstantEntity.ID, getPackageName());
-                        buttonWrapperList.add(new ClassesButtonWrapper((Button)findViewById(classRes),getApplicationContext()));
+                        buttonWrapperList.add(new TemplateClassesButtonWrapper((Button)findViewById(classRes),getApplicationContext()));
 
                         buttonWrapperList.get(j).getBtn().setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 if(!isSelectMode) {
-                                    if (buttonWrapperList.get(classHour).getBtn().getText()!=""){
+                                    if (buttonWrapperList.get(classDay).getBtn().getText()!=""){
                                         editClass(classDay,classHour);
                                     } else {
                                         addClass(classDay, classHour);
@@ -193,7 +193,7 @@ public class TemplateActivity extends AppCompatActivity {
     }
 
     private void onDeleteClassesAcceptClick() {
-        for (ClassesButtonWrapper b : selectedButtons) {
+        for (TemplateClassesButtonWrapper b : selectedButtons) {
             b.getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.menuTextColor));
             b.setSelected(false);
             b.getBtn().setText("");

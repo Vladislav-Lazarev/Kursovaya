@@ -48,8 +48,7 @@ public class AddTemplateActivity extends TemplateActivity {
                 //здесь ты можешь заполнить спиннер предметов
             }
         });
-        //ArrayAdapter<String> adapter =
-               // new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, groupNames);
+
         GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto, groupList);
         suggestEditText.setAdapter(adapter);
         //заполнять спиннер нужно в зависимости от курса и специальности группы, но по дефолту можно тупо все предметы залить туда
