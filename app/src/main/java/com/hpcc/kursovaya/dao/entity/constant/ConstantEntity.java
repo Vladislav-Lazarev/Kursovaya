@@ -29,6 +29,7 @@ public class ConstantEntity {
     public static final String ID = "id";
     public static final String NAME = "name";
     public static final String NUMBER_COURSE = "numberCourse";
+    public static final String COUNT_COURSE = "countCourse";
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

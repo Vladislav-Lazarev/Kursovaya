@@ -21,6 +21,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cloneable {
     private static final String TAG = Group.class.getSimpleName();
+    private static int countObj = 0;
 
     @PrimaryKey
     private int id;// ID group
@@ -120,11 +121,7 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
         List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantEntity.NUMBER_COURSE, this.numberCourse, ConstantEntity.NAME,Sort.ASCENDING));
         return subjectList;
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    // EntityI
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    private static int countObj = 0;
     @Override
     public boolean createEntity() {
         if (id < ConstantEntity.ONE){
@@ -144,7 +141,7 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
 
     @Override
     public List<String> entityToNameList() {
-        List<Group> groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
+        List<Group> groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantEntity.NUMBER_COURSE));
         List<String> result = new ArrayList<>();
 
         for (Group group : groupList){

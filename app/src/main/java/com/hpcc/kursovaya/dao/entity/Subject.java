@@ -332,7 +332,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
 
     @Override
     public List<String> entityToNameList() {
-        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantEntity.NUMBER_COURSE));
         List<String> result = new ArrayList<>();
 
         for (Subject subject : subjectList){
