@@ -175,4 +175,5 @@
     <string name="thirdLessonLable">3 пара</string>
     <string name="fourthLessonLable">4 пара</string>
     <string name="fifthLessonLable">5 пара</string>
+    <string name="hourLabelText">Час початку</string>
 </resources>

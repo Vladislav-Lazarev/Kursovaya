@@ -57,7 +57,7 @@ public class AlarmListAdapter extends ArrayAdapter<int[]> {
 
         String hourTimeLabel = new String();
         String minuteTimeLabel = new String();
-           if(timeAlarms[position][0]<10){
+        if(timeAlarms[position][0]<10){
                hourTimeLabel = "0";
            }
         hourTimeLabel +=String.valueOf(timeAlarms[position][0]);

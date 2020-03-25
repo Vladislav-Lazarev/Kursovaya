@@ -1,11 +1,14 @@
 package com.hpcc.kursovaya.ui.settings.alarms;
 
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TimePicker;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +16,12 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class AlarmsActivity extends AppCompatActivity {
     private static final String TAG = AppCompatActivity.class.getSimpleName();
@@ -26,6 +35,13 @@ public class AlarmsActivity extends AppCompatActivity {
 
     ListView alarmFifthLesson = null;
 
+    AlarmListAdapter firstLessonAdapter = null;
+    AlarmListAdapter secondLessonAdapter = null;
+    AlarmListAdapter thirdLessonAdapter = null;
+    AlarmListAdapter fourthLessonAdapter = null;
+    AlarmListAdapter fifthLessonAdapter = null;
+
+    int choosedPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,36 +54,146 @@ public class AlarmsActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //What to do on back clicked
+                String existstoragedir = getExternalFilesDir(null).getAbsolutePath() + "/alarms.dat";
+                File file = new File(existstoragedir);
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    FileOutputStream fos = new FileOutputStream(file.getAbsoluteFile());
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+                    oos.writeObject(ConstantEntity.timeArray);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 finish();
             }
         });
         alarmFirstLesson= findViewById(R.id.alarmFirstLessonLSV);
-        AlarmListAdapter firstLessonAdapter = new AlarmListAdapter(this,R.layout.listview_item_alarm, ConstantEntity.timeArray[0]);
+        firstLessonAdapter = new AlarmListAdapter(this,R.layout.listview_item_alarm, ConstantEntity.timeArray[0]);
         alarmFirstLesson.setAdapter(firstLessonAdapter);
         setListViewHeightBasedOnChildren(alarmFirstLesson);
+        alarmFirstLesson.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
+                choosedPosition = position;
+                firstLessonOnClick(hourMinute[0],hourMinute[1]);
+            }
+        });
         alarmSecondLesson = findViewById(R.id.alarmSecondLessonLSV);
-        AlarmListAdapter secondLessonAdapter = new AlarmListAdapter(this,R.layout.listview_item_alarm, ConstantEntity.timeArray[1]);
+        secondLessonAdapter = new AlarmListAdapter(this,R.layout.listview_item_alarm, ConstantEntity.timeArray[1]);
         alarmSecondLesson.setAdapter(secondLessonAdapter);
         setListViewHeightBasedOnChildren(alarmSecondLesson);
+        alarmSecondLesson.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
+                choosedPosition = position;
+                secondLessonOnClick(hourMinute[0],hourMinute[1]);
+            }
+        });
         alarmThirdLesson = findViewById(R.id.alarmThirdLessonLSV);
-        AlarmListAdapter thirdLessonAdapter = new AlarmListAdapter(this,R.layout.listview_item_alarm, ConstantEntity.timeArray[2]);
+        thirdLessonAdapter = new AlarmListAdapter(this,R.layout.listview_item_alarm, ConstantEntity.timeArray[2]);
         alarmThirdLesson.setAdapter(thirdLessonAdapter);
         setListViewHeightBasedOnChildren(alarmThirdLesson);
+        alarmThirdLesson.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
+                choosedPosition = position;
+                thirdLessonOnClick(hourMinute[0],hourMinute[1]);
+            }
+        });
         alarmFourthLesson = findViewById(R.id.alarmFourthLessonLSV);
-        AlarmListAdapter fourthLessonAdapter = new AlarmListAdapter(this,R.layout.listview_item_alarm, ConstantEntity.timeArray[3]);
+        fourthLessonAdapter = new AlarmListAdapter(this,R.layout.listview_item_alarm, ConstantEntity.timeArray[3]);
         alarmFourthLesson.setAdapter(fourthLessonAdapter);
         setListViewHeightBasedOnChildren(alarmFourthLesson);
+        alarmFourthLesson.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
+                choosedPosition = position;
+                fourthLessonOnClick(hourMinute[0],hourMinute[1]);
+            }
+        });
         alarmFifthLesson = findViewById(R.id.alarmFifthLessonLSV);
-        AlarmListAdapter fifthLessonAdapter = new AlarmListAdapter(this,R.layout.listview_item_alarm, ConstantEntity.timeArray[4]);
+        fifthLessonAdapter = new AlarmListAdapter(this,R.layout.listview_item_alarm, ConstantEntity.timeArray[4]);
         alarmFifthLesson.setAdapter(fifthLessonAdapter);
         setListViewHeightBasedOnChildren(alarmFifthLesson);
+        alarmFifthLesson.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
+                choosedPosition = position;
+                fifthLessonOnClick(hourMinute[0],hourMinute[1]);
+            }
+        });
         ActionBar ab = getSupportActionBar();
         ab.setDisplayShowTitleEnabled(false);
 
 
     }
 
+    private void fifthLessonOnClick(int hour, int minute) {
+        new TimePickerDialog(AlarmsActivity.this, fifthLessonClick,hour,minute,true).show();
+    }
+
+    private void fourthLessonOnClick(int hour, int minute) {
+        new TimePickerDialog(AlarmsActivity.this, fourthLessonClick,hour,minute,true).show();
+    }
+
+    private void thirdLessonOnClick(int hour, int minute) {
+        new TimePickerDialog(AlarmsActivity.this, thirdLessonClick,hour,minute,true).show();
+    }
+
+    private void secondLessonOnClick(int hour, int minute) {
+        new TimePickerDialog(AlarmsActivity.this, secondLessonClick,hour,minute,true).show();
+    }
+
+    private void firstLessonOnClick(int hour, int minute) {
+        new TimePickerDialog(AlarmsActivity.this, firstLessonClick,hour,minute,true).show();
+    }
+    TimePickerDialog.OnTimeSetListener firstLessonClick=new TimePickerDialog.OnTimeSetListener() {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            ConstantEntity.timeArray[0][choosedPosition][0] = hourOfDay;
+            ConstantEntity.timeArray[0][choosedPosition][1] = minute;
+            firstLessonAdapter.notifyDataSetChanged();
+        }
+    };
+    TimePickerDialog.OnTimeSetListener secondLessonClick=new TimePickerDialog.OnTimeSetListener() {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            ConstantEntity.timeArray[1][choosedPosition][0] = hourOfDay;
+            ConstantEntity.timeArray[1][choosedPosition][1] = minute;
+            secondLessonAdapter.notifyDataSetChanged();
+        }
+    };
+    TimePickerDialog.OnTimeSetListener thirdLessonClick=new TimePickerDialog.OnTimeSetListener() {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            ConstantEntity.timeArray[2][choosedPosition][0] = hourOfDay;
+            ConstantEntity.timeArray[2][choosedPosition][1] = minute;
+            thirdLessonAdapter.notifyDataSetChanged();
+        }
+    };
+
+    TimePickerDialog.OnTimeSetListener fourthLessonClick=new TimePickerDialog.OnTimeSetListener() {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            ConstantEntity.timeArray[3][choosedPosition][0] = hourOfDay;
+            ConstantEntity.timeArray[3][choosedPosition][1] = minute;
+            fourthLessonAdapter.notifyDataSetChanged();
+        }
+    };
+    TimePickerDialog.OnTimeSetListener fifthLessonClick=new TimePickerDialog.OnTimeSetListener() {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            ConstantEntity.timeArray[4][choosedPosition][0] = hourOfDay;
+            ConstantEntity.timeArray[4][choosedPosition][1] = minute;
+            fifthLessonAdapter.notifyDataSetChanged();
+        }
+    };
     public static void setListViewHeightBasedOnChildren
             (ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();

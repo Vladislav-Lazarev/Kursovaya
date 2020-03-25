@@ -9,9 +9,10 @@
         android:id ="@+id/hoursLabel"
         android:layout_height="36dp"
         android:layout_width="0dp"
-        android:layout_columnWeight="0.2"
+        android:layout_columnWeight="0.3"
         android:textColor="@color/appDefaultBlack"
-        android:layout_gravity="fill"
+        android:text="@string/hourLabelText"
+        android:textAlignment="center"
         android:background="@drawable/grid"
         />
 
@@ -26,7 +27,7 @@
     </androidx.viewpager.widget.ViewPager>
     <GridLayout android:layout_width="0dp" android:layout_height="0dp"
         android:rowCount="5"
-        android:layout_columnWeight="0.2"
+        android:layout_columnWeight="0.3"
         android:layout_rowWeight="1.88"
         android:columnCount="1"
         android:layout_gravity="fill">
@@ -50,16 +51,16 @@
                 android:text="@string/firstCoupleHeader"
                 android:layout_gravity="center_horizontal|center_vertical"
                 />
+
             <TextView
                 android:id="@+id/firstHalfFirstCoupleHeader"
                 android:layout_width="wrap_content"
-                android:textColor="@color/appDefaultBlack"
                 android:layout_height="wrap_content"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:text="@string/firstHalfCoupleHeader"
+                android:text="@string/firstCoupleHeader"
                 android:layout_gravity="center_horizontal|center_vertical"
-                />
+                android:textColor="@color/appDefaultBlack" />
             <TextView
                 android:id="@+id/secondHalfFirstCoupleHeader"
                 android:layout_width="wrap_content"

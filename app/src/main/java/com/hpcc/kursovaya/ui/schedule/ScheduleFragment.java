@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,6 +14,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewPagerAdapter;
 
 import org.joda.time.DateTime;
@@ -22,6 +24,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 
 public class ScheduleFragment extends Fragment {
+    private static final String TAG = ScheduleFragment.class.getSimpleName();
     private String title;
     private ViewPager pager;
     private View root;
@@ -30,9 +33,12 @@ public class ScheduleFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        if(!isCreatedAlready) {
+        Log.d("ScheduleFragment", "onCreateView is called");
+
+       // if(!isCreatedAlready) {
 
             root = inflater.inflate(R.layout.fragment_schedule, container, false);
+
             pager = root.findViewById(R.id.pager);
             pagerAdapter = new WeekViewPagerAdapter(getChildFragmentManager());
             pager.setAdapter(pagerAdapter);
@@ -101,14 +107,61 @@ public class ScheduleFragment extends Fragment {
                 e.printStackTrace();
             }
             isCreatedAlready = true;
-        }
+       // }
+
+        setCoupleHeaders();
         setActionBarTitle();
         return root;
+    }
+
+    public void setCoupleHeaders(){
+        TextView firstHalfFirstCoupleHeader = root.findViewById(R.id.firstHalfFirstCoupleHeader);
+        firstHalfFirstCoupleHeader.setText(getCoupleHeader(0,0));
+        TextView secondHalfFirstCoupleHeader = root.findViewById(R.id.secondHalfFirstCoupleHeader);
+        secondHalfFirstCoupleHeader.setText(getCoupleHeader(0,1));
+
+        TextView firstHalfSecondCoupleHeader = root.findViewById(R.id.firstHalfSecondCoupleHeader);
+        firstHalfSecondCoupleHeader.setText(getCoupleHeader(1,0));
+        TextView secondHalfSecondCoupleHeader = root.findViewById(R.id.secondHalfSecondCoupleHeader);
+        secondHalfSecondCoupleHeader.setText(getCoupleHeader(1,1));
+
+        TextView firstHalfThirdCoupleHeader = root.findViewById(R.id.firstHalfThirdCoupleHeader);
+        firstHalfThirdCoupleHeader.setText(getCoupleHeader(2,0));
+        TextView secondHalfThirdCoupleHeader = root.findViewById(R.id.secondHalfThirdCoupleHeader);
+        secondHalfThirdCoupleHeader.setText(getCoupleHeader(2,1));
+
+        TextView firstHalfFourthCoupleHeader = root.findViewById(R.id.firstHalfFourthCoupleHeader);
+        firstHalfFourthCoupleHeader.setText(getCoupleHeader(3,0));
+        TextView secondHalfFourthCoupleHeader = root.findViewById(R.id.secondHalfFourthCoupleHeader);
+        secondHalfFourthCoupleHeader.setText(getCoupleHeader(3,1));
+
+        TextView firstHalfFifthCoupleHeader = root.findViewById(R.id.firstHalfFifthCoupleHeader);
+        firstHalfFifthCoupleHeader.setText(getCoupleHeader(4,0));
+        TextView secondHalfFifthCoupleHeader = root.findViewById(R.id.secondHalfFifthCoupleHeader);
+        Log.d(TAG, getCoupleHeader(4,1));
+        secondHalfFifthCoupleHeader.setText(getCoupleHeader(4,1));
+    }
+
+    private String getCoupleHeader(int couple,int half){
+        StringBuilder hourTimeLabel = new StringBuilder();
+        StringBuilder minuteTimeLabel = new StringBuilder();
+        if(ConstantEntity.timeArray[couple][half][0]<10){
+            hourTimeLabel.append("0");
+        }
+        hourTimeLabel.append(ConstantEntity.timeArray[couple][half][0]);
+        if(ConstantEntity.timeArray[couple][half][1]<10){
+            minuteTimeLabel.append("0");
+        }
+        minuteTimeLabel.append(ConstantEntity.timeArray[couple][half][1]);
+        StringBuilder result = new StringBuilder(hourTimeLabel);
+        result.append(":").append(minuteTimeLabel);
+        return result.toString();
     }
 
     public void setCurrentWeek(int weekDiffernce){
         pager.setCurrentItem(weekDiffernce,false);
     }
+
 
     public void setActionBarTitle(){
         ((MainActivity) getActivity()).setActionBarTitle(title);

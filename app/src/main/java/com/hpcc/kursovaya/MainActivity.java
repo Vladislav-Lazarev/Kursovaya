@@ -36,6 +36,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
 import com.hpcc.kursovaya.ui.settings.SettingsFragment;
@@ -62,9 +63,11 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Menu fuckingMenu;
@@ -83,8 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //Log.d("onCreate", "test");
+        deserializeAlarms();
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         toolbar1 = findViewById(R.id.toolbarEdit);
@@ -111,6 +113,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private void deserializeAlarms() {
+        String existstoragedir = getExternalFilesDir(null).getAbsolutePath() + "/alarms.dat";
+        File file = new File(existstoragedir);
+        FileInputStream fis = null;
+        ObjectInputStream iis = null;
+        int timeArrayRecover[][][] = ConstantEntity.timeArray.clone();
+        try {
+            if(!file.exists()) {
+                file.createNewFile();
+            }
+            fis = new FileInputStream(file.getAbsolutePath());
+            iis = new ObjectInputStream(fis);
+            ConstantEntity.timeArray = (int[][][]) iis.readObject();
+
+        } catch (IOException | ClassNotFoundException e) {
+            Log.d(TAG,e.toString());
+            ConstantEntity.timeArray = timeArrayRecover;
+        }
+    }
+
     public void setActionBarTitle(String title){
         TextView textCont = (TextView)findViewById(R.id.toolbar_title);
         textCont.setText(title);
@@ -134,7 +156,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Fragment oldFragment1 = manager.findFragmentByTag(specTag1);
                 if (oldFragment1 != null) {
                     transaction.replace(R.id.nav_host_fragment,oldFragment1);
-                    ((ScheduleFragment)oldFragment1).setActionBarTitle();// transaction.addToBackStack(null);
+                    ((ScheduleFragment)oldFragment1).setActionBarTitle();
+                    ((ScheduleFragment)oldFragment1).setCoupleHeaders();// transaction.addToBackStack(null);
                 } else {
                     transaction.add(R.id.nav_host_fragment, new ScheduleFragment());
                 }
