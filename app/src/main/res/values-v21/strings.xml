@@ -20,7 +20,7 @@
         <item>За 2 доби</item>
     </string-array>
 
-    <string name="app_name">Kursovaya</string>
+    <string name="app_name">Щоденник викладача</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="scheduleTag">Schedule</string>
     <string name="templatesTag">Templates</string>
