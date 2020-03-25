@@ -66,7 +66,7 @@ public class GroupsFragment extends Fragment {
             });
 
             //creating elements for listview
-            groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
+            groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantEntity.NUMBER_COURSE));
             adapter = new GroupListAdapter(getActivity(), R.layout.list_view_item_group, groupList);
             listView.setAdapter(adapter);
 

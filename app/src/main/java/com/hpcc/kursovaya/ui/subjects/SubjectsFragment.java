@@ -56,7 +56,7 @@ public class SubjectsFragment extends Fragment {
                 }
             });
 
-            subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+            subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantEntity.NUMBER_COURSE));
             adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
             listView.setAdapter(adapter);
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);

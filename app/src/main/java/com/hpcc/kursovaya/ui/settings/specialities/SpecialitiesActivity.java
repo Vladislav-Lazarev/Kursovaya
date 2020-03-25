@@ -25,6 +25,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.List;
@@ -76,8 +77,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
         });
         specialityLSV = findViewById(R.id.specialitiesLSV);
 
-        specialitiesList = DBManager.copyObjectFromRealm(
-                DBManager.readAll(Speciality.class));
+        specialitiesList =DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class, ConstantEntity.COUNT_COURSE));
         adapter = new SpecialityListAdapter(this,R.layout.listview_item_specialties, specialitiesList);
         specialityLSV.setAdapter(adapter);
         specialityLSV.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);

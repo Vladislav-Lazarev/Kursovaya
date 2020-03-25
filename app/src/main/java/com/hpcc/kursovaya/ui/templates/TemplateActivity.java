@@ -42,7 +42,7 @@ public class TemplateActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbar1 = findViewById(R.id.toolbarEdit);
         //creating elements for listview
-        groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
+        groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantEntity.NUMBER_COURSE));
         final ImageButton cancelSelect = toolbar1.findViewById(R.id.turnOff_editing);
         cancelSelect.setOnClickListener(new View.OnClickListener() {
             @Override
