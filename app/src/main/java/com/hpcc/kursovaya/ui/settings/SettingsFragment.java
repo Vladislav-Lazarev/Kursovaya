@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.ui.settings.alarms.AlarmsActivity;
 import com.hpcc.kursovaya.ui.settings.specialities.SpecialitiesActivity;
 
 public class SettingsFragment extends Fragment{
@@ -38,6 +39,10 @@ public class SettingsFragment extends Fragment{
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     switch (position){
+                        case 0:
+                            Intent alarmInt = new Intent(getActivity(), AlarmsActivity.class);
+                            startActivity(alarmInt);
+                            break;
                         default:
                             Intent specInt = new Intent(getActivity(), SpecialitiesActivity.class);
                             startActivity(specInt);

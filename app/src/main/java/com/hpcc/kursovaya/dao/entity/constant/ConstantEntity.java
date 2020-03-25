@@ -13,6 +13,12 @@ import java.util.Map;
 
 public class ConstantEntity {
 
+    public static int[][][] timeArray = { {{8,0},{8,50}},
+                                          {{9,45},{10,35}},
+                                          {{11,55},{12,45}},
+                                          {{13,40},{14,30}},
+                                          {{15,25},{16,20}} };
+
     public static final int ZERO = 0;
     public static final int ONE = 1;
     public static final int TWO = 2;

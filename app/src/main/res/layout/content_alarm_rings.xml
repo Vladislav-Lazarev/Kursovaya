@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.settings.alarms.AlarmsActivity"
+    tools:showIn="@layout/activity_alarm_rings">
+<ScrollView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/firstLessonHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/firstLessonLable"
+            android:textSize="15sp"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="10dp" />
+        <View
+            android:id="@+id/firstLesson_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_below="@id/firstLessonHeader"
+            android:background="@drawable/lesson_header_shadow" />
+
+        <ListView
+            android:id="@+id/alarmFirstLessonLSV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/firstLesson_shadow"
+            android:layout_marginTop="10dp"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/secondLessonHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/secondLessonLable"
+            android:textSize="15sp"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/alarmFirstLessonLSV"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="10dp" />
+        <View
+            android:id="@+id/secondLesson_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_below="@id/secondLessonHeader"
+            android:background="@drawable/lesson_header_shadow" />
+        <ListView
+            android:id="@+id/alarmSecondLessonLSV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/secondLesson_shadow"
+            android:layout_marginTop="10dp"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/thirdLessonHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/thirdLessonLable"
+            android:textSize="15sp"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/alarmSecondLessonLSV"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="10dp" />
+        <View
+            android:id="@+id/thirdLesson_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_below="@id/thirdLessonHeader"
+            android:background="@drawable/lesson_header_shadow" />
+        <ListView
+            android:id="@+id/alarmThirdLessonLSV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/thirdLesson_shadow"
+            android:layout_marginTop="10dp"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/fourthLessonHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fourthLessonLable"
+            android:textSize="15sp"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/alarmThirdLessonLSV"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="10dp" />
+        <View
+            android:id="@+id/fourthLesson_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_below="@id/fourthLessonHeader"
+            android:background="@drawable/lesson_header_shadow" />
+        <ListView
+            android:id="@+id/alarmFourthLessonLSV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fourthLesson_shadow"
+            android:layout_marginTop="10dp"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/fifthLessonHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fifthLessonLable"
+            android:textSize="15sp"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/alarmFourthLessonLSV"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="10dp" />
+        <View
+            android:id="@+id/fifthLesson_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_below="@id/fifthLessonHeader"
+            android:background="@drawable/lesson_header_shadow" />
+        <ListView
+            android:id="@+id/alarmFifthLessonLSV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fifthLesson_shadow"
+            android:layout_marginTop="10dp"
+            android:focusable="true"/>
+    </RelativeLayout>
+
+</ScrollView>
+
+</RelativeLayout>

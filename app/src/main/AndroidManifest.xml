@@ -52,7 +52,8 @@
         <activity
             android:name=".ui.templates.AddTemplateActivity"
             android:label="@string/title_activity_add_template" />
-
+        <activity android:name=".ui.settings.alarms.AlarmsActivity"
+            android:label="AlarmsActivity"/>
         <activity
             android:name=".ui.templates.EditTemplateActivity"
             android:label="@string/title_activity_edit_template" />

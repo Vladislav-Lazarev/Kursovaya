@@ -162,4 +162,17 @@
     <string name="title_activity_speciality">SpecialitiesActivity</string>
     <string name="title_activity_genreport">GenReportActivty</string>
     <string name="title_activity_add_class">AddClassActivty</string>
+    <string name="subject_group_list">Групи:</string>
+    <string name="totalHoursLabel">Годин за планом:</string>
+    <string name="readHoursLabel">Вичитано годин:</string>
+    <string name="canceledLabel">Знято годин:</string>
+    <string name="hourLabel">година</string>
+    <string name="hourTimeLabel">ЧЧ</string>
+    <string name="timeDivider">:</string>
+    <string name="minuteTimeLabel">ММ</string>
+    <string name="firstLessonLable">1 пара</string>
+    <string name="secondLessonLable">2 пара</string>
+    <string name="thirdLessonLable">3 пара</string>
+    <string name="fourthLessonLable">4 пара</string>
+    <string name="fifthLessonLable">5 пара</string>
 </resources>
