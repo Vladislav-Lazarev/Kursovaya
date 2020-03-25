@@ -111,6 +111,7 @@ public class SubjectsFragment extends Fragment {
                     startActivityForResult(intent, ConstantEntity.ACTIVITY_EDIT);
                 }
             });
+            listView.setItemsCanFocus(false);
         }
         isCreatedAlready=true;
         setActionBarTitle();
