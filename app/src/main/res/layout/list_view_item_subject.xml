@@ -56,6 +56,7 @@
         android:layout_below="@id/courseName"
         android:textColor="@color/appDefaultBlack"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginStart="13dp"/>
 
     <TextView
@@ -68,6 +69,7 @@
         android:layout_toEndOf="@id/groupName"
         android:layout_below="@id/course_label"
         android:textColor="@color/appDefaultBlack"
+        android:layout_marginBottom="10dp"
         android:textSize="16sp" />
 
     <ImageButton
