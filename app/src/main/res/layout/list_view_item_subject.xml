@@ -15,34 +15,34 @@
 
     <TextView
         android:id="@+id/speciality_label"
-        android:layout_width="140dp"
+        android:layout_width="218dp"
         android:layout_height="wrap_content"
-        android:text="@string/textStub"
-        android:textSize="16sp"
-        android:layout_toEndOf="@id/specialityName"
-        android:textColor="@color/appDefaultBlack"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="12dp"/>
+        android:layout_toEndOf="@id/specialityName"
+        android:text="@string/textStub"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/courseName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/course_label"
-        android:layout_marginTop="10dp"
         android:layout_below="@id/speciality_label"
-        android:textSize="16sp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="9dp"
+        android:text="@string/course_label"
         android:textColor="@color/appDefaultBlack"
-        android:layout_marginStart="13dp"/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/course_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/speciality_label"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="9dp"
         android:layout_toEndOf="@id/courseName"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="74dp"
         android:text="@string/textStub"
         android:textColor="@color/appDefaultBlack"
         android:textSize="16sp" />
@@ -51,25 +51,25 @@
         android:id="@+id/groupName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/subjectName_label"
-        android:textSize="16sp"
         android:layout_below="@id/courseName"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="6dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginStart="13dp"/>
+        android:text="@string/subjectName_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/subjectName_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="67dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/textStub"
-        android:layout_toEndOf="@id/groupName"
         android:layout_below="@id/course_label"
-        android:textColor="@color/appDefaultBlack"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="6dp"
         android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@id/groupName"
+        android:text="@string/textStub"
+        android:textColor="@color/appDefaultBlack"
         android:textSize="16sp" />
 
     <ImageButton

@@ -154,7 +154,7 @@ public class AddSubjectActivity extends AppCompatActivity {
         subject.setName(subjectEditText.getText().toString())
                 .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map));
 
-        if (subject.createEntity()){
+        if (subject.isEntity()){
             Intent intent = getIntent();
             intent.putExtra("addSubject", subject);
             setResult(Activity.RESULT_OK, intent);

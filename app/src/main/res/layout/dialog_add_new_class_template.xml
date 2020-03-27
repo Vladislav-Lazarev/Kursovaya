@@ -69,7 +69,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/popup_duration_short"
-            android:checked="true"
             />
         <RadioButton
             android:id="@+id/popup_duration_rgroup_full"
@@ -79,7 +78,4 @@
             android:text="@string/popup_duration_full"
             />
     </RadioGroup>
-
-
-
 </RelativeLayout>

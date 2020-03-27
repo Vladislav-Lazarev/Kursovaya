@@ -76,7 +76,7 @@ public class EditGroupActivity extends AppCompatActivity {
     private void editGroup(){
         group.setName(groupEditText.getText().toString());
 
-        if (group.createEntity()){
+        if (group.isEntity()){
             Intent intent = getIntent();
             intent.putExtra("editGroup", group);
             setResult(Activity.RESULT_OK, intent);

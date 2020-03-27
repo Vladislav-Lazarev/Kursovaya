@@ -16,12 +16,10 @@ import java.util.List;
 import java.util.Objects;
 
 import io.realm.RealmObject;
-import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cloneable {
     private static final String TAG = Group.class.getSimpleName();
-    private static int countObj = 0;
 
     @PrimaryKey
     private int id;// ID group
@@ -85,8 +83,8 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     }
     public Group setNumberCourse(int numberCourse) {
         if(numberCourse < ConstantEntity.ONE){
-            Log.e(TAG, "Failed -> setNumberCourse(numberCourse = " + numberCourse + ")");
-            throw new RuntimeException("setNumberCourse(numberCourse = " + numberCourse + ")");
+            Log.e(TAG, "Failed -> setCountCourse(countCourse = " + numberCourse + ")");
+            throw new RuntimeException("setCountCourse(countCourse = " + numberCourse + ")");
         }
         this.numberCourse = numberCourse;
         return this;
@@ -117,13 +115,51 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
                 '}';
     }
 
-    public List<Subject> toSubjectList(){
-        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantEntity.NUMBER_COURSE, this.numberCourse, ConstantEntity.NAME,Sort.ASCENDING));
-        return subjectList;
+    public List<Subject> toSubjectList(int countCourse){
+        return toSubjectList(countCourse, null);
     }
+    public List<Subject> toSubjectList(Speciality speciality){
+        return toSubjectList(null, speciality);
+    }
+    public List<Subject> toSubjectList(Integer countCourse, Speciality speciality){
+        // TODO Реалтзовать readAll что бы можно было сортиорвать по множеству занчений
+        List<Subject> result = new ArrayList<>();
+        List<Subject> subjectList = null;
 
+        if (countCourse != null && speciality == null){
+            result = DBManager.copyObjectFromRealm(
+                    DBManager.readAll(Subject.class, ConstantEntity.NUMBER_COURSE, this.numberCourse, ConstantEntity.NAME));
+            return result;
+        }
+
+        if (countCourse != null){
+            subjectList = DBManager.copyObjectFromRealm(
+                    DBManager.readAll(Subject.class, ConstantEntity.NUMBER_COURSE, this.numberCourse, ConstantEntity.NAME));
+        }
+
+        if (speciality != null){
+            int idlePassage = 0;
+            for (Subject subject : subjectList){
+                idlePassage--;
+                if (subject.initMap().containsKeySpecialityCountHour(speciality)){
+                    result.add(subject);
+                    idlePassage = result.size();
+                }
+                if (idlePassage < result.size()){
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // EntityI
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    private static int countObj = 0;
     @Override
-    public boolean createEntity() {
+    public boolean isEntity() {
         if (id < ConstantEntity.ONE){
             try {
                 setName(name);
@@ -141,7 +177,7 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
 
     @Override
     public List<String> entityToNameList() {
-        List<Group> groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantEntity.NUMBER_COURSE));
+        List<Group> groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantEntity.COUNT_COURSE));
         List<String> result = new ArrayList<>();
 
         for (Group group : groupList){

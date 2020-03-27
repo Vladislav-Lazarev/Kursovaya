@@ -34,6 +34,7 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import java.util.List;
 
 public class SubjectsFragment extends Fragment {
+    private static final String TAG = SubjectsFragment.class.getSimpleName();
 
     boolean isCreatedAlready = false;
     private View root;
@@ -56,7 +57,8 @@ public class SubjectsFragment extends Fragment {
                 }
             });
 
-            subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantEntity.NUMBER_COURSE));
+            subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+            Log.d(TAG, "DBManager.copyObjectFromRealm = " + subjectList.toString());
             adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
             listView.setAdapter(adapter);
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -131,6 +133,7 @@ public class SubjectsFragment extends Fragment {
             switch (requestCode){
                 case ConstantEntity.ACTIVITY_ADD:
                     subject = data.getParcelableExtra("addSubject");
+                    Log.d(TAG, "addSubject = " + subject.toString());
                     DBManager.write(subject);
 
                     subjectList.add(subject);
@@ -138,6 +141,7 @@ public class SubjectsFragment extends Fragment {
                 case ConstantEntity.ACTIVITY_EDIT:
                     int posOldSubject = data.getIntExtra("posOldSubject",0);
                     subject = data.getParcelableExtra("editSubject");
+                    Log.d(TAG, "editSubject = " + subject.toString());
                     DBManager.write(subject);
 
                     subjectList.set(posOldSubject, subject);

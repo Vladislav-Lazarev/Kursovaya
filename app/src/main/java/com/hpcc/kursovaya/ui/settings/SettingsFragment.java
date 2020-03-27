@@ -22,7 +22,7 @@ import com.hpcc.kursovaya.ui.settings.specialities.SpecialitiesActivity;
 public class SettingsFragment extends Fragment{
     boolean isCreatedAlready = false;
     private View root;
-    private final String TAG = "SettingsFragment";
+    private final String TAG = SettingsFragment.class.getSimpleName();
     private final String[] SETTINGS = { "Розклад дзвінків","Спеціальності", "Мова", "Про програму"};
 
     public View onCreateView(@NonNull LayoutInflater inflater,

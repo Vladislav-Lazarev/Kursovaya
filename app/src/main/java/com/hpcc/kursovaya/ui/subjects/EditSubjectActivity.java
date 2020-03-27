@@ -168,7 +168,7 @@ public class EditSubjectActivity extends AppCompatActivity {
                 .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map));
         Log.d(TAG, "editSubject = " + subject);
 
-        if (subject.createEntity()){
+        if (subject.isEntity()){
             Intent intent = getIntent();
             intent.putExtra("editSubject", subject);
             setResult(Activity.RESULT_OK, intent);

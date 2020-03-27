@@ -102,7 +102,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
 
     public void deleteAllLinks(){
         // Удаление специальности в дисциплине
-        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantEntity.COUNT_COURSE));
+        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
         for (Subject subject : subjectList) {
             if (subject.initMap().containsKeySpecialityCountHour(this)){
                 if (subject.getSpecialityCountHourMap().size() == ConstantEntity.ONE) {
@@ -113,6 +113,8 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
                 }
             }
         }
+
+        List<Subject> check = DBManager.readAll(Subject.class);
 
         // Удаление групп по специальности
         DBManager.deleteAll(Group.class, "idSpeciality", id);
@@ -125,7 +127,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
     // EntityI
     private static int countObj = 0;
     @Override
-    public boolean createEntity() {
+    public boolean isEntity() {
         if (id < ConstantEntity.ONE){
             try {
                 setName(name);

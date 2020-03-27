@@ -69,7 +69,7 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
         if (!subject.isEmptySpecialtyCountHour()){
             StringBuilder str = new StringBuilder();
             for (Map.Entry<Speciality, Integer> set : subject.getSpecialityCountHourMap().entrySet()) {
-                str.append("\t\t\t\t" + set.getKey().getName() + " - " + set.getValue() + "\n");
+                str.append(set.getKey().getName() + " - " + set.getValue() + "год.\n");
             }
             str.deleteCharAt(str.length() - ConstantEntity.ONE);
             holder.speciality.setText(str.toString());
@@ -77,7 +77,6 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
         holder.course.setText(String.valueOf(subject.getNumberCourse()));
         return convertView;
     }
-    //
 
     static class ViewHolder{
         TextView speciality;

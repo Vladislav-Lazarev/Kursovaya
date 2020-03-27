@@ -30,21 +30,16 @@ import io.realm.annotations.Required;
 public class Subject extends RealmObject implements EntityI<Subject>, Parcelable, Cloneable {
     private static final String TAG = Subject.class.getSimpleName();
 
-    protected static Pair<RealmList<Integer>, RealmList<Integer>> convert(Pair<RealmList<Integer>, RealmList<Integer>> pairResult,
-                                                                           Map<Speciality, Integer> map) {
-        int i = 0;
-        pairResult.first.clear();
-        pairResult.second.clear();
+    protected static Pair<RealmList<Integer>, RealmList<Integer>> convert(Map<Speciality, Integer> map) {
+        Pair<RealmList<Integer>, RealmList<Integer>> pairResult = Pair.create(new RealmList<>(), new RealmList<>());
         for (Map.Entry<Speciality, Integer> entry : map.entrySet()) {
-            pairResult.first.add(i, entry.getKey().getId());
-            pairResult.second.add(i, entry.getValue());
-            i++;
+            pairResult.first.add(entry.getKey().getId());
+            pairResult.second.add(entry.getValue());
         }
         return pairResult;
     }
-    protected static Map<Speciality, Integer> convert(Map<Speciality, Integer> mapResult,
-                                                      Pair<RealmList<Integer>, RealmList<Integer>> pair) {
-        mapResult.clear();
+    protected static Map<Speciality, Integer> convert(Pair<RealmList<Integer>, RealmList<Integer>> pair) {
+        Map<Speciality, Integer> mapResult = new LinkedHashMap<>();
         for (int i = 0; i < pair.first.size() && i < pair.second.size(); i++){
             mapResult.put(DBManager.read(Speciality.class, ConstantEntity.ID, pair.first.get(i)), pair.second.get(i));
         }
@@ -82,7 +77,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     }
 
     public Subject initMap(){
-        specialityCountHourMap = convert(specialityCountHourMap, new Pair<>(idSpecialityList, countHourList));
+        specialityCountHourMap = convert(new Pair<>(idSpecialityList, countHourList));
         return this;
     }
 
@@ -155,6 +150,11 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         int index = idSpecialityList.indexOf(key.getId());
         idSpecialityList.remove(index);
         countHourList.remove(index);
+        /*Realm realm = DBManager.getRealm();
+        realm.executeTransaction(realmTrans -> {
+                idSpecialityList.remove(index);
+                countHourList.remove(index);
+        });*/
         return specialityCountHourMap.remove(key);
     }
 
@@ -172,8 +172,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         }
 
         specialityCountHourMap.putAll(map);
-        Pair<RealmList<Integer>, RealmList<Integer>> pair =
-                convert(new Pair<>(idSpecialityList, countHourList), map);
+        Pair<RealmList<Integer>, RealmList<Integer>> pair = convert(map);
 
         idSpecialityList.addAll(pair.first);
         countHourList.addAll(pair.second);
@@ -251,8 +250,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     }
     public Subject setSpecialityCountHourMap(@NotNull Map<Speciality, Integer> specialityCountHourMap) {
         this.specialityCountHourMap = specialityCountHourMap;
-        Pair<RealmList<Integer>, RealmList<Integer>> pair =
-                convert(new Pair<>(idSpecialityList, countHourList), this.specialityCountHourMap);
+        Pair<RealmList<Integer>, RealmList<Integer>> pair = convert(this.specialityCountHourMap);
         this.idSpecialityList = pair.first;
         this.countHourList = pair.second;
         return this;
@@ -313,7 +311,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     // EntityI
     private static int countObj = 0;
     @Override
-    public boolean createEntity() {
+    public boolean isEntity() {
         if (id < ConstantEntity.ONE){
             try {
                 setName(name);
@@ -332,7 +330,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
 
     @Override
     public List<String> entityToNameList() {
-        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantEntity.NUMBER_COURSE));
+        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
         List<String> result = new ArrayList<>();
 
         for (Subject subject : subjectList){
