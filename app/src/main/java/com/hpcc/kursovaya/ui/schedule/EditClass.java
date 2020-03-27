@@ -1,18 +1,17 @@
 package com.hpcc.kursovaya.ui.schedule;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.hpcc.kursovaya.R;
 
@@ -45,7 +44,7 @@ public class EditClass extends AppCompatActivity {
         });
         ActionBar ab = getSupportActionBar();
         ab.setDisplayShowTitleEnabled(false);
-        Button btnAdd = findViewById(R.id.edit_class);
+        ImageButton btnAdd = findViewById(R.id.edit_class);
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

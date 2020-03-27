@@ -38,6 +38,10 @@
     <string name="action_importTemplates">Імпортувати шаблони</string>
     <string name="action_report">Сформувати звіт</string>
     <string name="popup_Follow">Перейти</string>
+    <string name="template_activity_close_alert_title">Ви дійсно хочете вийти?</string>
+    <string name="template_activity_close_alert_content">Всі внесені дані будуть втрачені</string>
+
+
     <string name="popup_choose_date_report">Оберіть період звіту</string>
     <string name="popup_gen_report">Згенерувати звіт</string>
     <string name="popup_dates_wrong">Введений діпазон дат невірний, повторіть введення!</string>

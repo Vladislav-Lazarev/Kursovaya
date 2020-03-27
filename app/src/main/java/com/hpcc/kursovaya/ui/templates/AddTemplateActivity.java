@@ -130,7 +130,7 @@ public class AddTemplateActivity extends TemplateActivity {
   @Override
   protected void onClickAcceptClass(DialogInterface dialog, int which,int classDay,int classHour) {
       //здесь обработчик кнопки принять
-        AutoCompleteTextView groupName = classView.findViewById(R.id.groupNameSuggestET);
+      AutoCompleteTextView groupName = classView.findViewById(R.id.groupNameSuggestET);
       String displayedGroupName = groupName.getText().toString();
 
       Log.d(TAG, classDay + " " + classHour);

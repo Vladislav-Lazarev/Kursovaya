@@ -124,13 +124,7 @@ public class TemplateActivity extends AppCompatActivity {
         t.start();
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_path_150));
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //What to do on back clicked
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> prepareCloseAlertDialog());
 
         ActionBar ab = getSupportActionBar();
         ab.setDisplayShowTitleEnabled(false);
@@ -150,6 +144,28 @@ public class TemplateActivity extends AppCompatActivity {
             Log.e(TAG,ex.toString());
         }
     }
+
+    private void prepareCloseAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.template_activity_close_alert_title);
+        builder.setMessage(R.string.template_activity_close_alert_content);
+        builder.setPositiveButton(R.string.delete_positive, (dialog, which) -> {onCloseActivityAcceptClick(); });
+        builder.setNegativeButton(R.string.delete_negative, (dialog, which) -> dialog.cancel());
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener((arg0)-> {dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));});
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout parent = (LinearLayout) positiveButton.getParent();
+        parent.setGravity(Gravity.CENTER_HORIZONTAL);
+        View leftSpacer = parent.getChildAt(1);
+        leftSpacer.setVisibility(View.GONE);
+    }
+
+    protected void onCloseActivityAcceptClick() {
+        finish();
+    }
+
     @Override
     public void onBackPressed() {
         if(!isSelectMode){
@@ -164,12 +180,7 @@ public class TemplateActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.popup_delete_classes_template);
         builder.setMessage(R.string.popup_delete_classes_content);
-        builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onDeleteClassesAcceptClick();
-            }
-        });
+        builder.setPositiveButton(R.string.delete_positive, (dialog, which) -> onDeleteClassesAcceptClick());
         builder.setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

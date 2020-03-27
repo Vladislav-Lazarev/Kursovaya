@@ -66,6 +66,7 @@ public class TemplateClassesButtonWrapper {
         this.templateAcademicHour = templateAcademicHour;
         GradientDrawable background = (GradientDrawable) btn.getBackground();
         background.setColor(templateAcademicHour.getSubject().getColor());
+        btn.setText(templateAcademicHour.getSubject().getName());
     }
     public boolean isSelected() {
         return isSelected;
