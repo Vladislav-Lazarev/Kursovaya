@@ -6,12 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private View actionDatePicker;
     private View importTemplates;
     private View genReport;
+    private long mLastClickTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,14 +250,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         builder.setPositiveButton(R.string.popup_gen_report, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                onClickAcceptReportDates(dialog, which);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                onClickAcceptReportDates(dialog, which);
         }
         });
         builder.setCancelable(false);
         builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-               dialog.cancel();
+                dialog.cancel();
             }
         });
         genReport = getLayoutInflater().inflate(R.layout.dialog_choose_report_period, null);
@@ -443,49 +447,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         builder.setPositiveButton(R.string.popup_import,new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                onClickAcceptImportTemplates(dialog,which);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                onClickAcceptImportTemplates(dialog,which);
             }
         });
         builder.setNegativeButton(R.string.popup_cancel,new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                onClickCancelmportTemplates(dialog,which);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                onClickCancelmportTemplates(dialog,which);
             }
         });
         importTemplates = getLayoutInflater().inflate(R.layout.dialog_import_templates,null);
-        final Spinner spinnerSemester = importTemplates.findViewById(R.id.periodSemestrSpinner);
         final TextView periodFromLabel = importTemplates.findViewById(R.id.periodFromLabel);
         final TextView periodToLabel = importTemplates.findViewById(R.id.periodToLabel);
         final DatePicker pickerFrom = importTemplates.findViewById(R.id.dateFromPicker);
         final DatePicker pickerTo = importTemplates.findViewById(R.id.dateToPicker);
-        Spinner spinnerRange = importTemplates.findViewById(R.id.periodSpinner);
-        spinnerRange.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
-                    case 0:
-                        spinnerSemester.setVisibility(View.VISIBLE);
-                        periodFromLabel.setVisibility(View.GONE);
-                        periodToLabel.setVisibility(View.GONE);
-                        pickerFrom.setVisibility(View.GONE);
-                        pickerTo.setVisibility(View.GONE);
-                        break;
-                    case 1:
-                        spinnerSemester.setVisibility(View.GONE);
-                        periodFromLabel.setVisibility(View.VISIBLE);
-                        periodToLabel.setVisibility(View.VISIBLE);
-                        pickerFrom.setVisibility(View.VISIBLE);
-                        pickerTo.setVisibility(View.VISIBLE);
-                        break;
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        spinnerRange.setSelection(0);
         builder.setView(importTemplates);
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -516,13 +497,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         builder.setPositiveButton(R.string.popup_Follow,new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                onClickAcceptDatePicker(dialog,which);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                onClickAcceptDatePicker(dialog,which);
             }
         });
         builder.setNegativeButton(R.string.popup_cancel,new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                onClickCancelDatePicker(dialog,which);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                onClickCancelDatePicker(dialog,which);
             }
         });
         actionDatePicker = getLayoutInflater().inflate(R.layout.dialog_choose_date, null);

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -39,6 +40,8 @@ public class EditSubjectActivity extends AppCompatActivity {
 
     private Button colorPickButton;
     private EditText subjectEditText;
+    private long mLastClickTime = 0;
+
 
     private Map<Speciality, EditText> map = new HashMap<>();
     private Subject subject = new Subject();
@@ -56,7 +59,10 @@ public class EditSubjectActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //What to do on back clicked
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 finish();
             }
         });
@@ -78,6 +84,10 @@ public class EditSubjectActivity extends AppCompatActivity {
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 openColorPicker();
             }
         });
@@ -100,6 +110,7 @@ public class EditSubjectActivity extends AppCompatActivity {
 
             final Speciality finalSpeciality = specialityList.get(i);
             if (subject.containsKeySpecialityCountHour(finalSpeciality)){
+                map.put(finalSpeciality, hourEditTxt);
                 checkSpecHour.setChecked(true);
                 hourEditTxt.setEnabled(true);
                 hourEditTxt.setText(String.valueOf(subject.getSpecialityCountHour(finalSpeciality)));
@@ -142,6 +153,10 @@ public class EditSubjectActivity extends AppCompatActivity {
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     editSubject();
                 }
             });
@@ -166,6 +181,9 @@ public class EditSubjectActivity extends AppCompatActivity {
     private void editSubject(){
         subject.setName(subjectEditText.getText().toString())
                 .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map));
+        for(Map.Entry<Speciality, EditText> ebala : map.entrySet() ){
+            Log.d(TAG, ebala.getKey().toString() +" "+ebala.getValue().getText().toString());
+        }
         Log.d(TAG, "editSubject = " + subject);
 
         if (subject.isEntity()){
@@ -211,4 +229,5 @@ public class EditSubjectActivity extends AppCompatActivity {
             }
         });
     }
+
 }

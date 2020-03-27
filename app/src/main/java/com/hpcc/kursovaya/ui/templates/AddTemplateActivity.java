@@ -13,10 +13,6 @@ import android.widget.TextView;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
-
-import java.util.List;
 
 
 public class AddTemplateActivity extends TemplateActivity {
@@ -40,9 +36,9 @@ public class AddTemplateActivity extends TemplateActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedGroup = (Group) adapterView.getItemAtPosition(i);
-                List<Subject> subjectList = selectedGroup.toSubjectList();
-                List<String> stringList = new Subject().entityToNameList(subjectList);
-                ConstantEntity.fillingSpinner(context, subjectSpinner, stringList);
+                //List<Subject> subjectList = selectedGroup.toSubjectList();
+               // List<String> stringList = new Subject().entityToNameList(subjectList);
+              //  ConstantEntity.fillingSpinner(context, subjectSpinner, stringList);
 
                 //это обработчик нажатия на выдачу из AutoCompleteTextView
                 //здесь ты можешь заполнить спиннер предметов

@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.ui.settings.alarms;
 
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -40,6 +41,7 @@ public class AlarmsActivity extends AppCompatActivity {
     AlarmListAdapter thirdLessonAdapter = null;
     AlarmListAdapter fourthLessonAdapter = null;
     AlarmListAdapter fifthLessonAdapter = null;
+    private long mLastClickTime = 0;
 
     int choosedPosition = 0;
 
@@ -52,9 +54,13 @@ public class AlarmsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                String existstoragedir = getExternalFilesDir(null).getAbsolutePath() + "/alarms.dat";
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                String existstoragedir = getExternalFilesDir(null).getAbsolutePath() + "/alarms.dat";
                 File file = new File(existstoragedir);
                 try {
                     file.createNewFile();
@@ -80,7 +86,10 @@ public class AlarmsActivity extends AppCompatActivity {
         alarmFirstLesson.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
                 choosedPosition = position;
                 firstLessonOnClick(hourMinute[0],hourMinute[1]);
             }
@@ -92,7 +101,10 @@ public class AlarmsActivity extends AppCompatActivity {
         alarmSecondLesson.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
                 choosedPosition = position;
                 secondLessonOnClick(hourMinute[0],hourMinute[1]);
             }
@@ -104,7 +116,10 @@ public class AlarmsActivity extends AppCompatActivity {
         alarmThirdLesson.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
                 choosedPosition = position;
                 thirdLessonOnClick(hourMinute[0],hourMinute[1]);
             }
@@ -116,7 +131,10 @@ public class AlarmsActivity extends AppCompatActivity {
         alarmFourthLesson.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
                 choosedPosition = position;
                 fourthLessonOnClick(hourMinute[0],hourMinute[1]);
             }
@@ -128,7 +146,10 @@ public class AlarmsActivity extends AppCompatActivity {
         alarmFifthLesson.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                int[] hourMinute = (int[]) parent.getItemAtPosition(position);
                 choosedPosition = position;
                 fifthLessonOnClick(hourMinute[0],hourMinute[1]);
             }
@@ -220,4 +241,5 @@ public class AlarmsActivity extends AppCompatActivity {
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
+
 }

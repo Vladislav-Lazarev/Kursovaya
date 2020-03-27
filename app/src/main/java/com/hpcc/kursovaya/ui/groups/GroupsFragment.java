@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Gravity;
@@ -41,6 +42,8 @@ public class GroupsFragment extends Fragment {
     private ListView listView;
     private GroupListAdapter adapter;
     private List<Group> groupList;
+
+    private long mLastClickTime = 0;
 
     {
         adapter = null;
@@ -113,6 +116,10 @@ public class GroupsFragment extends Fragment {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     Group entry = (Group) parent.getItemAtPosition(position);
 
                     Intent intent = new Intent(getActivity(), EditGroupActivity.class);
@@ -165,6 +172,10 @@ public class GroupsFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 SparseBooleanArray selected = adapter
                         .getSelectedIds();
                 for (int i = (selected.size() - 1); i >= 0; i--) {

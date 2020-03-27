@@ -1,24 +1,23 @@
 package com.hpcc.kursovaya.ui.schedule;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.AlarmClassReceiver;
 import com.hpcc.kursovaya.R;
@@ -40,6 +39,7 @@ public class AddClass extends AppCompatActivity implements AdapterView.OnItemSel
     boolean notificationBefore = false;
     Spinner notificationBeforeContent;
     EditText classSummary;
+    private long mLastClickTime = 0;
 
 
     @Override
@@ -57,7 +57,10 @@ public class AddClass extends AppCompatActivity implements AdapterView.OnItemSel
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //What to do on back clicked
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 setResult(1);
                 finish();
             }
@@ -71,6 +74,10 @@ public class AddClass extends AppCompatActivity implements AdapterView.OnItemSel
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 addClass();
             }
         });

@@ -30,6 +30,8 @@ public class ScheduleFragment extends Fragment {
     private View root;
     private WeekViewPagerAdapter pagerAdapter;
     boolean isCreatedAlready = false;
+    private long mLastClickTime = 0;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -164,8 +166,8 @@ public class ScheduleFragment extends Fragment {
 
 
     public void setActionBarTitle(){
+        Log.d(TAG, "setActionBar title in schedule called");
         ((MainActivity) getActivity()).setActionBarTitle(title);
         ((MainActivity) getActivity()).showOverflowMenu(true);
     }
-
 }

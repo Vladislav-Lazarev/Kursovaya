@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -41,6 +42,7 @@ public class SubjectsFragment extends Fragment {
     private ListView listView;
     private SubjectListAdapter adapter;
     private List<Subject> subjectList;
+    private long mLastClickTime = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +54,10 @@ public class SubjectsFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     Intent intent = new Intent(getActivity(), AddSubjectActivity.class);
                     startActivityForResult(intent, ConstantEntity.ACTIVITY_ADD);
                 }
@@ -103,6 +109,10 @@ public class SubjectsFragment extends Fragment {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     Subject entry = (Subject) parent.getItemAtPosition(position);
 
                     Log.d("TAG", "entry = " + entry.toString());
@@ -158,6 +168,10 @@ public class SubjectsFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 SparseBooleanArray selected = adapter
                         .getSelectedIds();
                 for (int i = (selected.size() - 1); i >= 0; i--) {
@@ -194,4 +208,5 @@ public class SubjectsFragment extends Fragment {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
+
 }

@@ -3,6 +3,7 @@ package com.hpcc.kursovaya.ui.settings.specialities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -47,6 +48,8 @@ public class SpecialitiesActivity extends AppCompatActivity {
     private View editSpecialityView;
     List<Speciality> specialitiesList;
     Speciality speciality;
+    private long mLastClickTime = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +62,10 @@ public class SpecialitiesActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //What to do on back clicked
-                finish();
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                finish();
             }
         });
 
@@ -71,7 +76,10 @@ public class SpecialitiesActivity extends AppCompatActivity {
         addSpeciality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickPrepareAddSpeciality();
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                onClickPrepareAddSpeciality();
             }
         });
         specialityLSV = findViewById(R.id.specialitiesLSV);
@@ -103,6 +111,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                mLastClickTime = SystemClock.elapsedRealtime();
                 switch (item.getItemId()) {
                     case R.id.delete:
                         prepareDeleteDialog(mode);
@@ -121,7 +130,10 @@ public class SpecialitiesActivity extends AppCompatActivity {
         specialityLSV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Speciality entry = (Speciality) parent.getItemAtPosition(position);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                Speciality entry = (Speciality) parent.getItemAtPosition(position);
                 onClickPrepareEditSpeciality(entry, position);
             }
         });
@@ -134,13 +146,17 @@ public class SpecialitiesActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.dialog_button_add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                onClickAcceptAddGroup(dialog, which);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                onClickAcceptAddGroup(dialog, which);
             }
         });
         builder.setCancelable(false);
         builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 dialog.cancel();
             }
         });
@@ -184,7 +200,10 @@ public class SpecialitiesActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.popup_edit, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                onClickAcceptEditGroup(dialog, which, entry, position);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                onClickAcceptEditGroup(dialog, which, entry, position);
             }
         });
         builder.setCancelable(false);
@@ -243,7 +262,10 @@ public class SpecialitiesActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                SparseBooleanArray selected = adapter
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                SparseBooleanArray selected = adapter
                         .getSelectedIds();
                 for (int i = (selected.size() - 1); i >= 0; i--) {
                     if (selected.valueAt(i)) {
@@ -279,4 +301,6 @@ public class SpecialitiesActivity extends AppCompatActivity {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
+
+
 }

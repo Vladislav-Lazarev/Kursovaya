@@ -7,8 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,7 +34,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
@@ -62,6 +61,8 @@ public class WeekViewFragment extends Fragment {
     public void setWeekFromCurrent(int weekFromCurrent) {
         this.weekFromCurrent = weekFromCurrent;
     }
+
+    private long mLastClickTime = 0;
 
 
     public static WeekViewFragment newInstance(int weekFromCurrent) {
@@ -189,6 +190,10 @@ public class WeekViewFragment extends Fragment {
         cancelSelectCompleted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 ((MainActivity) getActivity()).setSelectMode(false);
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarCompleted.setVisibility(View.GONE);
@@ -202,6 +207,10 @@ public class WeekViewFragment extends Fragment {
         toolbarCanceled.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 ((MainActivity) getActivity()).setSelectMode(false);
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarCanceled.setVisibility(View.GONE);
@@ -218,6 +227,10 @@ public class WeekViewFragment extends Fragment {
             cancelSelect.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     cancelOnClick(toolbar,toolbar1);
                 }
             });
@@ -227,6 +240,10 @@ public class WeekViewFragment extends Fragment {
         completedClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 prepareCompletedClassesDialog();
             }
         });
@@ -234,6 +251,10 @@ public class WeekViewFragment extends Fragment {
         cancelCompletedClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 prepareCancelCompletedClassesDialog();
             }
         });
@@ -241,6 +262,10 @@ public class WeekViewFragment extends Fragment {
         cancelledClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 prepareCancelledClassesDialog();
             }
         });
@@ -248,12 +273,20 @@ public class WeekViewFragment extends Fragment {
         uncancelledClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 prepareUncancelledClasses();
             }
         });
         deleteClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 prepareDeleteDialog();
             }
         });
@@ -272,6 +305,10 @@ public class WeekViewFragment extends Fragment {
                         classes[i][j].getBtn().setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                                    return;
+                                }
+                                mLastClickTime = SystemClock.elapsedRealtime();
                                 if(!((MainActivity) getActivity()).isSelectMode()) {
                                     Intent intent;
                                     if(classes[classDay][classHour].getBtn().getText().equals("")) {
@@ -360,6 +397,10 @@ public class WeekViewFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 //onDeleteClassesAcceptClick();
             }
         });
@@ -392,6 +433,7 @@ public class WeekViewFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 //onDeleteClassesAcceptClick();
             }
         });
@@ -424,6 +466,10 @@ public class WeekViewFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 //onDeleteClassesAcceptClick();
             }
         });
@@ -456,7 +502,11 @@ public class WeekViewFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-               // onDeleteClassesAcceptClick();
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                // onDeleteClassesAcceptClick();
             }
         });
         builder.setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
@@ -488,6 +538,10 @@ public class WeekViewFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 onDeleteClassesAcceptClick();
             }
         });

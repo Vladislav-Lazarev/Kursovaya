@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.ui.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ public class SettingsFragment extends Fragment{
     private View root;
     private final String TAG = SettingsFragment.class.getSimpleName();
     private final String[] SETTINGS = { "Розклад дзвінків","Спеціальності", "Мова", "Про програму"};
+    private long mLastClickTime = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -38,6 +40,10 @@ public class SettingsFragment extends Fragment{
             lsv.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     switch (position){
                         case 0:
                             Intent alarmInt = new Intent(getActivity(), AlarmsActivity.class);

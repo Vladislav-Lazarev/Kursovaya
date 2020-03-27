@@ -11,6 +11,8 @@
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="actionModeStyle">@style/LStyled.ActionMode</item>
         <item name="actionModeCloseButtonStyle">@style/myclosebutton</item>
+        <item name="android:windowEnableSplitTouch">false</item>
+        <item name="android:splitMotionEvents">false</item>
     </style>
     <style name="myclosebutton" parent="Widget.AppCompat.Light.ActionButton.CloseMode">
         <item name="android:tint">@color/appDefaultBlack</item> <!-- whatever color -->

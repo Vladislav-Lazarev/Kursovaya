@@ -77,6 +77,7 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
         holder.course.setText(String.valueOf(subject.getNumberCourse()));
         return convertView;
     }
+    //
 
     static class ViewHolder{
         TextView speciality;

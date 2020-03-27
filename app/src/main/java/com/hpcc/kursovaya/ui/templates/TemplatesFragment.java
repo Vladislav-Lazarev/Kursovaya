@@ -2,9 +2,8 @@ package com.hpcc.kursovaya.ui.templates;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -21,6 +20,8 @@ import java.util.ArrayList;
 public class TemplatesFragment extends Fragment {
     boolean isCreatedAlready = false;
     private View root;
+    private long mLastClickTime = 0;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -33,7 +34,10 @@ public class TemplatesFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), AddTemplateActivity.class);
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();                    Intent intent = new Intent(getActivity(), AddTemplateActivity.class);
                     startActivity(intent);
                 }
             });

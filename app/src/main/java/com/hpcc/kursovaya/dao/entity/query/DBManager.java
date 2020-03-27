@@ -71,6 +71,7 @@ public class DBManager {
 
         try {
             final RealmQuery<T> query = realm.where(clazz);
+
             if (value instanceof Integer) {
                 query.equalTo(fieldName, (Integer) value);
             } else if (value instanceof String) {
@@ -89,6 +90,10 @@ public class DBManager {
                     if (model != null) {
                         model.deleteFromRealm();
                         result.add(ConstantEntity.ONE);
+                        Log.v(TAG, "Success -> " + clazz.getSimpleName() + " was delete: " + deleteModel.toString());
+                    } else {
+                        result.add(ConstantEntity.ZERO);
+                        Log.e(TAG, "Failed -> object " + clazz.getSimpleName() + " with field = " + fieldName  + " not find");
                     }
                     Log.v(TAG, "Success -> " + deleteModel.getClass().getSimpleName() + " was delete: " + deleteModel.toString());
                 }
@@ -195,6 +200,7 @@ public class DBManager {
 
         try {
             final RealmQuery<T> query = realm.where(clazz);
+
             if (fieldName != null) {
                 if (value instanceof Integer) {
                     query.equalTo(fieldName, (Integer) value);

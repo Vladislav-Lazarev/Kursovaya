@@ -3,6 +3,7 @@ package com.hpcc.kursovaya.ui.templates;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -34,6 +35,7 @@ public class TemplateActivity extends AppCompatActivity {
     protected View classView;
     protected List<Group> groupList;
     protected Group selectedGroup;
+    private long mLastClickTime = 0;
 
 
     protected void onCreate(Bundle savedInstanceState){
@@ -47,7 +49,10 @@ public class TemplateActivity extends AppCompatActivity {
         cancelSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isSelectMode = false;
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                isSelectMode = false;
                 toolbar1.setVisibility(View.GONE);
                 toolbar.setVisibility(View.VISIBLE);
                 if(selectedButtons.size()!=0) {
@@ -62,6 +67,10 @@ public class TemplateActivity extends AppCompatActivity {
         deleteClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 prepareDeleteDialog();
             }
         });
@@ -81,7 +90,10 @@ public class TemplateActivity extends AppCompatActivity {
                         buttonWrapperList.get(j).getBtn().setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if(!isSelectMode) {
+                                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                                    return;
+                                }
+                                mLastClickTime = SystemClock.elapsedRealtime();                                if(!isSelectMode) {
                                     if (buttonWrapperList.get(classDay).getBtn().getText()!=""){
                                         editClass(classDay,classHour);
                                     } else {
@@ -124,7 +136,12 @@ public class TemplateActivity extends AppCompatActivity {
         t.start();
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_path_150));
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> prepareCloseAlertDialog());
+        toolbar.setNavigationOnClickListener(v -> {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
+            prepareCloseAlertDialog();});
 
         ActionBar ab = getSupportActionBar();
         ab.setDisplayShowTitleEnabled(false);
@@ -134,7 +151,10 @@ public class TemplateActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                confirmButton();
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                confirmButton();
             }
         });
         try {
@@ -149,8 +169,13 @@ public class TemplateActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.template_activity_close_alert_title);
         builder.setMessage(R.string.template_activity_close_alert_content);
-        builder.setPositiveButton(R.string.delete_positive, (dialog, which) -> {onCloseActivityAcceptClick(); });
-        builder.setNegativeButton(R.string.delete_negative, (dialog, which) -> dialog.cancel());
+        builder.setPositiveButton(R.string.delete_positive, (dialog, which) -> {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();            onCloseActivityAcceptClick(); });
+        builder.setNegativeButton(R.string.delete_negative, (dialog, which) -> {
+            dialog.cancel();});
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener((arg0)-> {dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));});
@@ -180,7 +205,12 @@ public class TemplateActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.popup_delete_classes_template);
         builder.setMessage(R.string.popup_delete_classes_content);
-        builder.setPositiveButton(R.string.delete_positive, (dialog, which) -> onDeleteClassesAcceptClick());
+        builder.setPositiveButton(R.string.delete_positive, (dialog, which) ->{
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                return;
+            }
+        mLastClickTime = SystemClock.elapsedRealtime();
+        onDeleteClassesAcceptClick();});
         builder.setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -223,7 +253,10 @@ public class TemplateActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                onClickAcceptClass(dialog,which,classDay,classHour);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                onClickAcceptClass(dialog,which,classDay,classHour);
             }
         });
         builder.setNegativeButton(R.string.popup_cancel,new DialogInterface.OnClickListener(){
@@ -312,4 +345,6 @@ public class TemplateActivity extends AppCompatActivity {
     protected void onClickCancelTemplate(DialogInterface dialog, int which) {
         dialog.cancel();
     }
+
+
 }

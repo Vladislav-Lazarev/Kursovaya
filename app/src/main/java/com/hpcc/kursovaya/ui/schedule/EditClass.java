@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.ui.schedule;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -23,6 +24,8 @@ public class EditClass extends AppCompatActivity {
     boolean notificationBefore = false;
     Spinner notificationBeforeContent;
     EditText classSummary;
+    private long mLastClickTime = 0;
+
 
 
     @Override
@@ -37,8 +40,10 @@ public class EditClass extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //What to do on back clicked
-                setResult(1);
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                setResult(1);
                 finish();
             }
         });
@@ -48,7 +53,10 @@ public class EditClass extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editClass();
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();                editClass();
             }
         });
         TextView textCont = (TextView)findViewById(R.id.toolbar_title);
@@ -65,4 +73,5 @@ public class EditClass extends AppCompatActivity {
         setResult(0,intent);
         finish();
     }
+
 }
