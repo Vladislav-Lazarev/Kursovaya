@@ -62,6 +62,7 @@ public class ConstantEntity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, stringList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         return spinner;
     }
     public static boolean setSpinnerText(Spinner spin, String str) {

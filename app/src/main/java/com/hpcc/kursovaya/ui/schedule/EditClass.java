@@ -43,7 +43,8 @@ public class EditClass extends AppCompatActivity {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
                     return;
                 }
-                mLastClickTime = SystemClock.elapsedRealtime();                setResult(1);
+                mLastClickTime = SystemClock.elapsedRealtime();
+                setResult(1);
                 finish();
             }
         });

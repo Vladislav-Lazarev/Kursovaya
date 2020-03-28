@@ -3,6 +3,7 @@ package com.hpcc.kursovaya.ui.templates;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,7 +32,9 @@ public class AddTemplateActivity extends TemplateActivity {
         classView = getLayoutInflater().inflate(R.layout.dialog_add_new_class_template,null);
         final Spinner subjectSpinner = classView.findViewById(R.id.spinnerSubject);
         AutoCompleteTextView suggestEditText = classView.findViewById(R.id.groupNameSuggestET);
-
+        suggestEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            Log.d(TAG, suggestEditText.getText().toString());
+        });
         suggestEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -131,6 +134,8 @@ public class AddTemplateActivity extends TemplateActivity {
 
       Log.d(TAG, classDay + " " + classHour);
       Log.d(TAG, displayedGroupName);
+      classes.get(classDay).get(classHour).getBtn().setBackgroundColor(Color.RED);
+      classes.get(classDay).get(classHour).setBackgroundChanged(true);
       super.classes.get(classDay).get(classHour).getBtn().setText(displayedGroupName);
   }
   private void onClickAcceptEditClass(DialogInterface dialog, int which, int classDay, int classHour) {

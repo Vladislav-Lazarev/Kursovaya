@@ -52,12 +52,13 @@ public class TemplateActivity extends AppCompatActivity {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
                     return;
                 }
-                mLastClickTime = SystemClock.elapsedRealtime();                isSelectMode = false;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 toolbar1.setVisibility(View.GONE);
                 toolbar.setVisibility(View.VISIBLE);
+                isSelectMode = false;
                 if(selectedButtons.size()!=0) {
                     for (TemplateClassesButtonWrapper b: selectedButtons) {
-                        b.getBtn().setBackgroundTintList(getResources().getColorStateList(android.R.color.transparent));
+                        b.setUnselectBackground();
                     }
                     selectedButtons.clear();
                 }
@@ -234,13 +235,14 @@ public class TemplateActivity extends AppCompatActivity {
     }
 
     private void onDeleteClassesAcceptClick() {
+        Log.d(TAG, "onDeleteClassesAcceptClick"+selectedButtons.size());
         for (TemplateClassesButtonWrapper b : selectedButtons) {
-            b.getBtn().setBackgroundTintList(getResources().getColorStateList(R.color.menuTextColor));
-            b.setSelected(false);
-            b.getBtn().setText("");
-            b.getBtn().setBackground(getResources().getDrawable(R.drawable.hover_add));
+            b.clearButtonContent();
         }
         selectedButtons.clear();
+        toolbar1.setVisibility(View.GONE);
+        toolbar.setVisibility(View.VISIBLE);
+        isSelectMode = false;
     }
 
     protected void setHeader(){
@@ -256,7 +258,8 @@ public class TemplateActivity extends AppCompatActivity {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
                     return;
                 }
-                mLastClickTime = SystemClock.elapsedRealtime();                onClickAcceptClass(dialog,which,classDay,classHour);
+                mLastClickTime = SystemClock.elapsedRealtime();
+                onClickAcceptClass(dialog,which,classDay,classHour);
             }
         });
         builder.setNegativeButton(R.string.popup_cancel,new DialogInterface.OnClickListener(){

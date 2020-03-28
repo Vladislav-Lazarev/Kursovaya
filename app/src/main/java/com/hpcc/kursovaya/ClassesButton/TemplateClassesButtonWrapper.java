@@ -2,7 +2,6 @@ package com.hpcc.kursovaya.ClassesButton;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.widget.Button;
 
 import com.hpcc.kursovaya.R;
@@ -18,6 +17,16 @@ public class TemplateClassesButtonWrapper {
 
     private int selectColorList = R.color.sideBarTransp;
     private boolean isSelected = false;
+    private boolean isBackgroundChanged = false;
+
+
+    public boolean isBackgroundChanged() {
+        return isBackgroundChanged;
+    }
+
+    public void setBackgroundChanged(boolean backgroundChanged) {
+        isBackgroundChanged = backgroundChanged;
+    }
 
     public TemplateClassesButtonWrapper(Button btn, Context context){
         this.btn = btn;
@@ -45,13 +54,18 @@ public class TemplateClassesButtonWrapper {
     }
 
     public void setUnselectBackground(){
-        btn.setBackground(drawableDef);
+        if(isBackgroundChanged) {
+            btn.setBackgroundColor(templateAcademicHour.getSubject().getColor());
+        } else {
+            btn.setBackground(drawableDef);
+        }
         isSelected = false;
     }
 
     public void clearButtonContent(){
         drawableDef = context.getResources().getDrawable(R.drawable.hover_add);
         btn.setBackground(drawableDef);
+        isBackgroundChanged = false;
         //clear entity
         btn.setText("");
         isSelected=false;
@@ -64,9 +78,9 @@ public class TemplateClassesButtonWrapper {
 
     public void setTemplateAcademicHour(TemplateAcademicHour templateAcademicHour) {
         this.templateAcademicHour = templateAcademicHour;
-        GradientDrawable background = (GradientDrawable) btn.getBackground();
-        background.setColor(templateAcademicHour.getSubject().getColor());
-        btn.setText(templateAcademicHour.getSubject().getName());
+        btn.setBackgroundColor(templateAcademicHour.getSubject().getColor());
+        btn.setText(templateAcademicHour.getGroup().getName());
+        isBackgroundChanged = true;
     }
     public boolean isSelected() {
         return isSelected;

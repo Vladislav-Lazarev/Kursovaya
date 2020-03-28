@@ -180,4 +180,5 @@
     <string name="fourthLessonLable">4 пара</string>
     <string name="fifthLessonLable">5 пара</string>
     <string name="hourLabelText">Час початку</string>
+    <string name="auto_complete_text_view_hint">Введіть назву та оберіть її у списку</string>
 </resources>

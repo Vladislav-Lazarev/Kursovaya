@@ -17,6 +17,8 @@
         android:backgroundTint="@color/sideBar"
         android:textSize="16sp"
         android:completionThreshold="1"
+        android:hint="@string/auto_complete_text_view_hint"
+        android:focusedByDefault="false"
         android:textColor="@color/appDefaultBlack"
         android:layout_marginTop="15dp"
         android:layout_marginStart="44dp"
