@@ -126,9 +126,15 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
 
     // EntityI
     private static int countObj = 0;
+
     @Override
     public boolean isEntity() {
-        if (id < ConstantEntity.ONE){
+        return id > ConstantEntity.ZERO;
+    }
+
+    @Override
+    public boolean createEntity() {
+        if (!isEntity()){
             try {
                 setName(name);
                 setCountCourse(countCourse);

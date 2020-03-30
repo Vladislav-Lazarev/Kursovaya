@@ -33,7 +33,7 @@ public class EditTemplateActivity extends TemplateActivity {
         suggestEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedGroup = (Group) adapterView.getItemAtPosition(i);
+                Group pressedGroup = (Group) adapterView.getItemAtPosition(i);
                 //это обработчик нажатия на выдачу из AutoCompleteTextView
                 //здесь ты можешь заполнить спиннер предметов
             }
@@ -45,6 +45,7 @@ public class EditTemplateActivity extends TemplateActivity {
         }
         //ArrayAdapter<String> adapter =
         // new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, groupNames);
+        groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
         GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto, DBManager.copyObjectFromRealm(groupList));
         suggestEditText.setAdapter(adapter);
         //заполнять спиннер нужно в зависимости от курса и специальности группы, но по дефолту можно тупо все предметы залить туда

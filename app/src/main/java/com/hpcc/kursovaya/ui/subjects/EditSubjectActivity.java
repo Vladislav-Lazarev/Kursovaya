@@ -186,7 +186,7 @@ public class EditSubjectActivity extends AppCompatActivity {
         }
         Log.d(TAG, "editSubject = " + subject);
 
-        if (subject.isEntity()){
+        if (subject.createEntity()){
             Intent intent = getIntent();
             intent.putExtra("editSubject", subject);
             setResult(Activity.RESULT_OK, intent);

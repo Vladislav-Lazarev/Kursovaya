@@ -184,7 +184,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
 
         speciality = new Speciality(strSpeciality, countCourse);
-        if (speciality.isEntity()){
+        if (speciality.createEntity()){
             DBManager.write(speciality);
             specialitiesList.add(speciality);
         } else {
@@ -245,7 +245,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
 
         speciality = specialitiesList.get(position);
         speciality.setName(strSpeciality).setCountCourse(countCourse);
-        if (speciality.isEntity()){
+        if (speciality.createEntity()){
             DBManager.write(speciality);
             specialitiesList.set(position, speciality);
         } else {

@@ -82,7 +82,7 @@ public class AddGroupActivity extends AppCompatActivity {
     private void addGroup(){
         group.setName(groupEditText.getText().toString());
 
-        if (group.isEntity()){
+        if (group.createEntity()){
             Intent intent = getIntent();
             intent.putExtra("addGroup", group);
             setResult(Activity.RESULT_OK, intent);

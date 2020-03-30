@@ -150,11 +150,6 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         int index = idSpecialityList.indexOf(key.getId());
         idSpecialityList.remove(index);
         countHourList.remove(index);
-        /*Realm realm = DBManager.getRealm();
-        realm.executeTransaction(realmTrans -> {
-                idSpecialityList.remove(index);
-                countHourList.remove(index);
-        });*/
         return specialityCountHourMap.remove(key);
     }
 
@@ -310,9 +305,15 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
 
     // EntityI
     private static int countObj = 0;
+
     @Override
     public boolean isEntity() {
-        if (id < ConstantEntity.ONE){
+        return id > ConstantEntity.ZERO;
+    }
+
+    @Override
+    public boolean createEntity() {
+        if (!isEntity()){
             try {
                 setName(name);
                 setSpecialityCountHourMap(initMap().specialityCountHourMap);

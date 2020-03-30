@@ -5,20 +5,15 @@ import android.graphics.drawable.Drawable;
 import android.widget.Button;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 
 public class TemplateClassesButtonWrapper {
     private Button btn;
     private Context context;
     private Drawable drawableDef;
-
-
-    private TemplateAcademicHour templateAcademicHour;
-
-    private int selectColorList = R.color.sideBarTransp;
-    private boolean isSelected = false;
     private boolean isBackgroundChanged = false;
-
 
     public boolean isBackgroundChanged() {
         return isBackgroundChanged;
@@ -27,6 +22,11 @@ public class TemplateClassesButtonWrapper {
     public void setBackgroundChanged(boolean backgroundChanged) {
         isBackgroundChanged = backgroundChanged;
     }
+
+    private TemplateAcademicHour templateAcademicHour;
+
+    private int selectColorList = R.color.sideBarTransp;
+    private boolean isSelected = false;
 
     public TemplateClassesButtonWrapper(Button btn, Context context){
         this.btn = btn;
@@ -64,9 +64,10 @@ public class TemplateClassesButtonWrapper {
 
     public void clearButtonContent(){
         drawableDef = context.getResources().getDrawable(R.drawable.hover_add);
+        DBManager.delete(TemplateAcademicHour.class, ConstantEntity.ID, templateAcademicHour.getId());
+        templateAcademicHour = null;
         btn.setBackground(drawableDef);
         isBackgroundChanged = false;
-        //clear entity
         btn.setText("");
         isSelected=false;
     }

@@ -1,59 +1,99 @@
 package com.hpcc.kursovaya.dao.entity.schedule.lesson.template;
 
 import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class TemplateScheduleWeek extends RealmObject {
+    private static final String TAG = TemplateScheduleWeek.class.getSimpleName();
+
+    protected static RealmList<Integer> convert(List<TemplateAcademicHour> templateScheduleDayList) {
+        RealmList<Integer> result = new RealmList<>();
+
+        for (TemplateAcademicHour templateAcademicHour : templateScheduleDayList){
+            result.add(templateAcademicHour.getId());
+        }
+        return result;
+    }
+    protected static List<List<TemplateAcademicHour>> convert(RealmList<Integer> idScheduleDayList) {
+        List<List<TemplateAcademicHour>> result = new RealmList<>();
+        List<TemplateAcademicHour> list = new RealmList<>();
+        int i = 0;
+
+        for (Integer id : idScheduleDayList){
+            if (i++ == ConstantEntity.MAX_COUNT_LESSON * 2){
+                result.add(list);
+                list.clear();
+                i = 0;
+            }
+            list.add(DBManager.read(TemplateAcademicHour.class, ConstantEntity.ID, id));
+        }
+
+        if (list.size() != ConstantEntity.MAX_COUNT_WEEK) {
+            throw new RuntimeException("Exception convert = " + list.size());
+        }
+        return result;
+    }
+
     @PrimaryKey
-    private int id;// Индентификатор
-    private RealmList<TemplateScheduleDay> templateScheduleDayList;// Список дней, неделя, 7 дней
+    private int id;
+    private RealmList<Integer> idScheduleDayList;
 
     public TemplateScheduleWeek() {
         id = 0;
-        templateScheduleDayList = new RealmList<>();
+        idScheduleDayList = new RealmList<>();
     }
-    public TemplateScheduleWeek(int id, @NotNull RealmList<TemplateScheduleDay> templateScheduleDayList) {
-        this();
-        setId(id);
+    public TemplateScheduleWeek(@NotNull List<TemplateAcademicHour> templateScheduleDayList) {
         setTemplateScheduleDayList(templateScheduleDayList);
     }
 
     private void setId(int id){
-        try{
-            if (id < ConstantEntity.ONE){
-                throw new Exception("Exception! setId()");
-            }
-            this.id = id;
+        if (id < ConstantEntity.ONE){
+            throw new RuntimeException("Exception! setId()");
         }
-        catch (Exception ex){
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
-        }
+        this.id = id;
     }
     public int getId() {
         return id;
     }
 
-    @NotNull
-    public RealmList<TemplateScheduleDay> getTemplateScheduleDayList() {
-        return templateScheduleDayList;
+    /*public void clear() {
+        idScheduleDayList.clear();
     }
-    public TemplateScheduleWeek setTemplateScheduleDayList(@NotNull RealmList<TemplateScheduleDay> templateScheduleDayList) {
-        try {
-            if (templateScheduleDayList.size() < ConstantEntity.MIN_COUNT_WEEK ||
-                    templateScheduleDayList.size() > ConstantEntity.MAX_COUNT_WEEK) {
-                throw new Exception("Exception! setTemplateScheduleDayList()");
-            }
-            this.templateScheduleDayList = templateScheduleDayList;
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
+
+    public boolean addAll(int index, @NonNull Collection<? extends RealmList<Integer>> c) {
+        return idScheduleDayList.addAll(index, c);
+    }
+
+    @Nullable
+    public RealmList<Integer> get(int location) {
+        return idScheduleDayList.get(location);
+    }
+
+    public int size() {
+        return idScheduleDayList.size();
+    }
+
+    public boolean isEmpty() {
+        return idScheduleDayList.isEmpty();
+    }*/
+
+    @NotNull
+    public List<List<TemplateAcademicHour>> getTemplateScheduleDayList() {
+        return convert(idScheduleDayList);
+    }
+    public TemplateScheduleWeek setTemplateScheduleDayList(@NotNull List<TemplateAcademicHour> templateScheduleDayList) {
+        if (templateScheduleDayList.size() > ConstantEntity.ZERO) {
+            throw new RuntimeException("Exception! setTemplateScheduleDayList()");
         }
+        this.idScheduleDayList = convert(templateScheduleDayList);
         return this;
     }
 
@@ -61,7 +101,7 @@ public class TemplateScheduleWeek extends RealmObject {
     public String toString() {
         return "TemplateScheduleWeek{" +
                 "id=" + id +
-                ", templateScheduleDayList=" + templateScheduleDayList.toString() +
+                ", idScheduleDayList=" + idScheduleDayList.toString() +
                 '}';
     }
 }

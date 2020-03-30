@@ -112,7 +112,7 @@ public class NewEntity implements Parcelable, Cloneable {
         hoursDeducted = in.readInt();
         hoursCanceled = in.readInt();
     }
-    public static final Parcelable.Creator<NewEntity> CREATOR = new Parcelable.Creator<NewEntity>() {
+    public static final Creator<NewEntity> CREATOR = new Creator<NewEntity>() {
         @Override
         public NewEntity createFromParcel(Parcel in) {
             return new NewEntity(in);

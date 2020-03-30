@@ -158,9 +158,15 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     // EntityI
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     private static int countObj = 0;
+
     @Override
     public boolean isEntity() {
-        if (id < ConstantEntity.ONE){
+        return id > ConstantEntity.ZERO;
+    }
+
+    @Override
+    public boolean createEntity() {
+        if (!isEntity()){
             try {
                 setName(name);
                 setSpecialty(DBManager.read(Speciality.class, ConstantEntity.ID, idSpeciality));
