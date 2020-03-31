@@ -116,6 +116,7 @@ public class TemplatesFragment extends Fragment {
                     startActivityForResult(intent, ConstantEntity.ACTIVITY_EDIT);
                 }
             });
+            listView.setItemsCanFocus(false);
             isCreatedAlready =true;
         }
         setActionBarTitle();
