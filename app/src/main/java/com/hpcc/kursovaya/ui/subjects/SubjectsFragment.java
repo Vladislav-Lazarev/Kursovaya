@@ -105,7 +105,6 @@ public class SubjectsFragment extends Fragment {
                     adapter.removeSelection();
                 }
             });
-
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -123,6 +122,8 @@ public class SubjectsFragment extends Fragment {
                     startActivityForResult(intent, ConstantEntity.ACTIVITY_EDIT);
                 }
             });
+
+
             listView.setItemsCanFocus(false);
         }
         isCreatedAlready=true;

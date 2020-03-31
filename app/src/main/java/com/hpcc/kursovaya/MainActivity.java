@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 toolbarCompleteClasses.setVisibility(View.VISIBLE);
                 return true;
             case R.id.action_checkCanceled:
-                isSelectMode=false;
+                isSelectMode=true;
                 toolbar.setVisibility(View.GONE);
                 toolbarCanceledClasses.setVisibility(View.VISIBLE);
                 return true;

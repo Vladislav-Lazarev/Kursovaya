@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -44,7 +45,7 @@ public class WeekViewFragment extends Fragment {
     private int weekFromCurrent;
     private DateTime firstDayOfWeek;
     private TextView[] dayHeaders;
-    private static Button cancelSelect;
+    private static ImageButton cancelSelect;
     private ClassesButtonWrapper[][] classes = new ClassesButtonWrapper[7][10];
     private static ArrayList<ClassesButtonWrapper> selectedButtons = new ArrayList<>();
 
@@ -186,7 +187,7 @@ public class WeekViewFragment extends Fragment {
         final Toolbar toolbar1 = ((MainActivity)getActivity()).getToolbar1();
         final Toolbar toolbarCompleted = ((MainActivity)getActivity()).getToolbarCompleteClasses();
         final Toolbar toolbarCanceled = ((MainActivity) getActivity()).getToolbarCanceledClasses();
-        Button cancelSelectCompleted = toolbarCompleted.findViewById(R.id.turnOff_complete);
+        ImageButton cancelSelectCompleted = toolbarCompleted.findViewById(R.id.turnOff_complete);
         cancelSelectCompleted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,8 +204,8 @@ public class WeekViewFragment extends Fragment {
                 selectedButtons.clear();
             }
         });
-
-        toolbarCanceled.setOnClickListener(new View.OnClickListener() {
+        ImageButton turnOffCanceled = toolbarCanceled.findViewById(R.id.turnOff_cancel);
+        turnOffCanceled.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
@@ -235,8 +236,8 @@ public class WeekViewFragment extends Fragment {
                 }
             });
         }
-        Button deleteClasses = toolbar1.findViewById(R.id.delete_classes);
-        Button completedClasses = toolbarCompleted.findViewById(R.id.completed_classes);
+        ImageButton deleteClasses = toolbar1.findViewById(R.id.delete_classes);
+        ImageButton completedClasses = toolbarCompleted.findViewById(R.id.completed_classes);
         completedClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -247,7 +248,7 @@ public class WeekViewFragment extends Fragment {
                 prepareCompletedClassesDialog();
             }
         });
-        Button cancelCompletedClasses = toolbarCompleted.findViewById(R.id.uncompleted_classes);
+        ImageButton cancelCompletedClasses = toolbarCompleted.findViewById(R.id.uncompleted_classes);
         cancelCompletedClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -258,7 +259,7 @@ public class WeekViewFragment extends Fragment {
                 prepareCancelCompletedClassesDialog();
             }
         });
-        Button cancelledClasses = toolbarCanceled.findViewById(R.id.canceled_classes);
+        ImageButton cancelledClasses = toolbarCanceled.findViewById(R.id.canceled_classes);
         cancelledClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -269,7 +270,7 @@ public class WeekViewFragment extends Fragment {
                 prepareCancelledClassesDialog();
             }
         });
-        Button uncancelledClasses = toolbarCanceled.findViewById(R.id.uncancelled_classes);
+        ImageButton uncancelledClasses = toolbarCanceled.findViewById(R.id.uncancelled_classes);
         uncancelledClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -332,8 +333,15 @@ public class WeekViewFragment extends Fragment {
                                 } else if (classes[classDay][classHour].isSelected()){
                                     classes[classDay][classHour].setUnselectBackground();
                                     selectedButtons.remove(classes[classDay][classHour]);
-                                    if(selectedButtons.size()==0){
-                                        cancelSelect.performClick();
+                                    if(selectedButtons.size()==0) {
+                                        if (toolbar1.getVisibility() == View.VISIBLE){
+                                            cancelSelect.performClick();
+                                        } else if(toolbarCanceled.getVisibility() == View.VISIBLE){
+                                            turnOffCanceled.performClick();
+                                        } else if(toolbarCompleted.getVisibility() == View.VISIBLE){
+                                            cancelSelectCompleted.performClick();
+                                        }
+
                                         //((MainActivity) getActivity()).setSelectMode(false);
                                         //toolbar button placeholder
                                     }

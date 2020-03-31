@@ -195,7 +195,7 @@ public class TemplateActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(!isSelectMode){
-            super.onBackPressed();
+            prepareCloseAlertDialog();
         } else {
             isSelectMode = false;
             toolbar1.setVisibility(View.GONE);
