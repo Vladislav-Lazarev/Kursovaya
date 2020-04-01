@@ -128,6 +128,8 @@
     <string name="tableFactHeader">Фактично</string>
     <string name="tableCanceledHeader">Знято</string>
     <string name="tableRestHeader">Залишок</string>
+    <string name="ok_button">ОК</string>
+
 
     <string name="hoursHeader">Години</string>
     <string name="monHeader">Пн</string>
@@ -181,4 +183,19 @@
     <string name="fifthLessonLable">5 пара</string>
     <string name="hourLabelText">Час початку</string>
     <string name="auto_complete_text_view_hint">Введіть назву та оберіть її у списку</string>
+    <string name="backup_title">Резервні копії</string>
+    <string name="backup_label_name">Назва:</string>
+    <string name="date_creation_label">Дата створення</string>
+    <string name="dialog_add_backup">Створити резервну копію</string>
+    <string name="backup_name_label">Назва резервної копії</string>
+    <string name="delete_backups_label">Видалити резервні копії</string>
+    <string name="delete_backups_content">Ви дійсно хочете видалити обрані резервні копії?</string>
+    <string name="backups_sending_error_message">Файли резервних копій не були відправлені. Можливо, вони відсутні у папці TeachersDiaryBackup на внутрішній пам\'яті вашого пристрою</string>
+    <string name="backup_sending_title">Помилка відправлення</string>
+    <string name="file_error_toast_part1">Файл з назвою:</string>
+    <string name="file_error_toast_part2">не існує</string>
+    <string name="backups_theme_email">Резервні копії за</string>
+    <string name="edit_name_of_backup">Редагувати назву копії</string>
+    <string name="import_dialog_title">Імпортувати резервну копію</string>
+    <string name="import_dialog_message">Ви дійсно хочете відновити обрану копію? Всі дані вашого застосунку, якщо не створена резервна копія, будуть втрачені.</string>
 </resources>

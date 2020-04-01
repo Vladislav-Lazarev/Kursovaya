@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -127,15 +126,13 @@ public class SpecialitiesActivity extends AppCompatActivity {
                 adapter.removeSelection();
             }
         });
-        specialityLSV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();                Speciality entry = (Speciality) parent.getItemAtPosition(position);
-                onClickPrepareEditSpeciality(entry, position);
+        specialityLSV.setOnItemClickListener((parent, view, position, id) -> {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                return;
             }
+            mLastClickTime = SystemClock.elapsedRealtime();
+            Speciality entry = (Speciality) parent.getItemAtPosition(position);
+            onClickPrepareEditSpeciality(entry, position);
         });
 
     }
@@ -197,14 +194,12 @@ public class SpecialitiesActivity extends AppCompatActivity {
     private void onClickPrepareEditSpeciality(final Speciality entry, final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.dialog_edit_speciality);
-        builder.setPositiveButton(R.string.popup_edit, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();                onClickAcceptEditGroup(dialog, which, entry, position);
+        builder.setPositiveButton(R.string.popup_edit, (dialog, which) -> {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                return;
             }
+            mLastClickTime = SystemClock.elapsedRealtime();
+            onClickAcceptEditGroup(dialog, which, entry, position);
         });
         builder.setCancelable(false);
         builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {

@@ -77,6 +77,7 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
         specialityList.remove(object);
         notifyDataSetChanged();
     }
+
     public void toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
     }

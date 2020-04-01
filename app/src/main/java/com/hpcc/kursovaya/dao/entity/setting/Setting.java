@@ -7,12 +7,14 @@ import org.jetbrains.annotations.NotNull;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
+
+//ошибка была такая, поэтому все закомментировал
 public class Setting extends RealmObject {
-    private RealmList<BackupDB> backupDBList;
+   // private RealmList<BackupDB> backupDBList;
     private CallScheduleDay callScheduleDay;
 
     public Setting() {
-        backupDBList = new RealmList<>();
+       // backupDBList = new RealmList<>();
         callScheduleDay = new CallScheduleDay();
     }
     public Setting(@NotNull RealmList<BackupDB> backupDBList, @NotNull CallScheduleDay callScheduleDay) {
@@ -21,12 +23,12 @@ public class Setting extends RealmObject {
         setCallScheduleDay(callScheduleDay);
     }
 
-    public RealmList<BackupDB> setBackupDBList() {
-        return backupDBList;
-    }
+    //public RealmList<BackupDB> setBackupDBList() {
+  //      return backupDBList;
+   // }
     public Setting setBackupDBList(@NotNull RealmList<BackupDB> backupDBList) {
         // TODO setBackupDB - проверка
-        this.backupDBList = backupDBList;
+       // this.backupDBList = backupDBList;
         return this;
     }
 
@@ -42,7 +44,7 @@ public class Setting extends RealmObject {
     @Override
     public String toString() {
         return "Setting{" +
-                "backupDB=" + backupDBList.toString() +
+                "backupDB=" +/* backupDBList.toString() +*/
                 ", callScheduleDay=" + callScheduleDay +
                 '}';
     }

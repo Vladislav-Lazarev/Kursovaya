@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hpcc.kursovaya">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 
     <application
         android:name=".dao.ApplicationRealm"
@@ -68,6 +71,11 @@
             android:name=".ui.templates.EditTemplateActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_edit_template" />
+
+        <activity
+            android:name=".ui.settings.backup.BackupActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="SettingsActivity" />
 
         <activity
             android:name=".MainActivity"

@@ -18,13 +18,14 @@ import androidx.fragment.app.Fragment;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.ui.settings.alarms.AlarmsActivity;
+import com.hpcc.kursovaya.ui.settings.backup.BackupActivity;
 import com.hpcc.kursovaya.ui.settings.specialities.SpecialitiesActivity;
 
 public class SettingsFragment extends Fragment{
     boolean isCreatedAlready = false;
     private View root;
     private final String TAG = SettingsFragment.class.getSimpleName();
-    private final String[] SETTINGS = { "Розклад дзвінків","Спеціальності", "Мова", "Про програму"};
+    private final String[] SETTINGS = { "Розклад дзвінків","Спеціальності","Резервні копії", "Мова", "Про програму"};
     private long mLastClickTime = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -49,9 +50,15 @@ public class SettingsFragment extends Fragment{
                             Intent alarmInt = new Intent(getActivity(), AlarmsActivity.class);
                             startActivity(alarmInt);
                             break;
-                        default:
+                        case 1:
                             Intent specInt = new Intent(getActivity(), SpecialitiesActivity.class);
                             startActivity(specInt);
+                            break;
+                        case 2:
+                            Intent backInt = new Intent(getActivity(), BackupActivity.class);
+                            startActivity(backInt);
+                            break;
+                        default:
                     }
                     String selectedItem = SETTINGS[position];
                     Log.d(TAG, selectedItem);

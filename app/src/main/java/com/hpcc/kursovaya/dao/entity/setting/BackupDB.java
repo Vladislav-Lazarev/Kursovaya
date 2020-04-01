@@ -1,9 +1,11 @@
 package com.hpcc.kursovaya.dao.entity.setting;
 
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Date;
 
 public class BackupDB {
+    private String name;
     private String fileName;
     private Date dateCreate;
 
@@ -40,5 +42,13 @@ public class BackupDB {
                 " fileName = " + fileName +
                 ", dateCreate = " + dateCreate +
                 '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -1,0 +1,65 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/activatedBackgroundIndicator"
+    android:descendantFocusability="blocksDescendants">
+
+    <TextView
+        android:id="@+id/backup_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/backup_label_name"
+        android:textSize="16sp"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/backup_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="79dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/backup_label"
+        android:text="@string/textStub"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp" />
+    <TextView
+        android:id="@+id/date_creation_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/date_creation_label"
+        android:textSize="16sp"
+        android:layout_below="@+id/backup_label"
+        android:textColor="@color/appDefaultBlack"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_marginStart="6dp"/>
+
+    <TextView
+        android:id="@+id/date_creation_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/date_creation_label"
+        android:text="@string/textStub"
+        android:layout_below="@id/backup_text"
+        android:textColor="@color/appDefaultBlack"
+        android:paddingBottom="10dp"
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/import_backup"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="10dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_import"
+        android:layout_gravity="right"/>
+</RelativeLayout>
