@@ -10,7 +10,7 @@ import androidx.core.util.Pair;
 import com.hpcc.kursovaya.dao.entity.EntityI;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +19,10 @@ import java.util.List;
 import java.util.Objects;
 
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
-public class TemplateAcademicHour extends RealmObject implements EntityI, Parcelable, Cloneable {
+public class TemplateAcademicHour extends RealmObject implements EntityI<TemplateAcademicHour>, Parcelable, Cloneable {
     private static final String TAG = TemplateAcademicHour.class.getSimpleName();
 
     @PrimaryKey
@@ -29,7 +30,7 @@ public class TemplateAcademicHour extends RealmObject implements EntityI, Parcel
     private int idSubject;// ID subject
     private int idGroup;// ID group
 
-    private int numberDayOfWeek;
+    private int numberDayOfWeek;// Number day of Week
     private int numberHalfPair;// Number half pair
 
     {
@@ -49,12 +50,9 @@ public class TemplateAcademicHour extends RealmObject implements EntityI, Parcel
         setNumberHalfPair(numberHalfPair);
     }
 
-    public int getId() {
-        return id;
-    }
     private void setId(int id){
         try{
-            if (id < ConstantEntity.ONE){
+            if (id < ConstantApplication.ONE){
                 throw new Exception("Exception! setId()");
             }
             this.id = id;
@@ -67,10 +65,10 @@ public class TemplateAcademicHour extends RealmObject implements EntityI, Parcel
 
     @NotNull
     public Subject getSubject() {
-        return DBManager.read(Subject.class, ConstantEntity.ID, idSubject);
+        return DBManager.read(Subject.class, ConstantApplication.ID, idSubject);
     }
     public TemplateAcademicHour setSubject(@NotNull Subject subject) {
-        if(subject.getId() < ConstantEntity.ONE){
+        if(subject.getId() < ConstantApplication.ONE){
             Log.e(TAG, "Failed -> setSubject(" + subject.toString() + ")");
             throw new RuntimeException("setSubject(" + subject.toString() + ")");
         }
@@ -80,10 +78,10 @@ public class TemplateAcademicHour extends RealmObject implements EntityI, Parcel
     }
 
     public Group getGroup() {
-        return DBManager.read(Group.class, ConstantEntity.ID, idGroup);
+        return DBManager.read(Group.class, ConstantApplication.ID, idGroup);
     }
     public TemplateAcademicHour setGroup(@NotNull Group group) {
-        if(group.getId() < ConstantEntity.ONE){
+        if(group.getId() < ConstantApplication.ONE){
             Log.e(TAG, "Failed -> setGroup(" + group.toString() + ")");
             throw new RuntimeException("setGroup(" + group.toString() + ")");
         }
@@ -96,7 +94,7 @@ public class TemplateAcademicHour extends RealmObject implements EntityI, Parcel
         return numberDayOfWeek;
     }
     int getNumberHalfPair() {
-        return numberHalfPair % ConstantEntity.TWO + ConstantEntity.ONE;
+        return numberHalfPair % ConstantApplication.TWO + ConstantApplication.ONE;
     }
     int getNumberHalfPairButton(){
         return numberHalfPair;
@@ -105,13 +103,13 @@ public class TemplateAcademicHour extends RealmObject implements EntityI, Parcel
         return Pair.create(numberDayOfWeek, getNumberHalfPair());
     }
     private void setNumberHalfPair(int numberHalfPair) {
-        if (numberHalfPair < ConstantEntity.ZERO || numberHalfPair >= ConstantEntity.MAX_COUNT_LESSON * ConstantEntity.TWO) {
+        if (numberHalfPair < ConstantApplication.ZERO || numberHalfPair >= ConstantApplication.MAX_COUNT_LESSON * ConstantApplication.TWO) {
             throw new RuntimeException("Exception! setNumberAcademicTwoHour() = " + numberHalfPair);
         }
         this.numberHalfPair = numberHalfPair;
     }
     private void setNumberDayOfWeek(int numberDayOfWeek) {
-        if (numberDayOfWeek < ConstantEntity.MIN_DAY_OF_WEEK || numberDayOfWeek >= ConstantEntity.MAX_DAY_OF_WEEK) {
+        if (numberDayOfWeek < ConstantApplication.MIN_DAY_OF_WEEK || numberDayOfWeek >= ConstantApplication.MAX_DAY_OF_WEEK) {
             throw new RuntimeException("Exception! setNumberAcademicTwoHour() = " + numberHalfPair);
         }
         this.numberDayOfWeek = numberDayOfWeek;
@@ -153,25 +151,50 @@ public class TemplateAcademicHour extends RealmObject implements EntityI, Parcel
     private static int countObj = 0;
 
     @Override
-    public boolean isEntity() {
-        return id > ConstantEntity.ZERO;
+    public int getId() {
+        return id;
     }
 
     @Override
-    public boolean createEntity() {
-        if (!isEntity()){
-            try {
-                setSubject(getSubject());
-                setGroup(getGroup());
-                setNumberHalfPair(numberHalfPair);
-            } catch (RuntimeException ex) {
-                return false;
+    public boolean existsEntity() {
+        // TODO Пока коряво
+        RealmResults<TemplateAcademicHour> existingEntities =
+                DBManager.readAll(TemplateAcademicHour.class);
+        for (TemplateAcademicHour entity : existingEntities) {
+            if (this.equals(entity)) {
+                return true;
             }
-
-            int maxID = DBManager.findMaxID(this.getClass());
-            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
         }
-        return true;
+        return false;
+    }
+
+    @Override
+    public boolean isEntity() {
+        setSubject(getSubject());
+        setGroup(getGroup());
+        setDayAndPair(getDayAndPair());
+
+        return id > ConstantApplication.ZERO;
+    }
+    @Override
+    public void checkEntity() throws Exception {
+        try {
+            setGroup(getGroup());
+            setSubject(getSubject());
+            setDayAndPair(getDayAndPair());
+        } catch(RuntimeException ex) {
+            throw new Exception("Entity = ", ex);
+        }
+    }
+    @Override
+    public TemplateAcademicHour createEntity() throws Exception {
+        if (!isEntity()){
+            checkEntity();
+            int maxID = DBManager.findMaxID(this.getClass());
+            setId((maxID > ConstantApplication.ZERO)? ++maxID : ++countObj);
+        }
+
+        return this;
     }
 
     @Override

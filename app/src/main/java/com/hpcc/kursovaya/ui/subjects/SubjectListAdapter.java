@@ -1,12 +1,13 @@
 package com.hpcc.kursovaya.ui.subjects;
 
 import android.content.Context;
-import android.util.SparseBooleanArray;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,11 +15,13 @@ import androidx.annotation.Nullable;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.List;
 import java.util.Map;
+
+import io.realm.Sort;
 
 public class SubjectListAdapter extends ArrayAdapter<Subject> {
     private static final String TAG = SubjectListAdapter.class.getSimpleName();
@@ -27,7 +30,6 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
     private Context mContext;
     private int lastPosition =-1;
     private List<Subject> subjectList;
-    private SparseBooleanArray mSelectedItemsIds;
 
     @NonNull
     @Override
@@ -71,7 +73,7 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
             for (Map.Entry<Speciality, Integer> set : subject.getSpecialityCountHourMap().entrySet()) {
                 str.append(set.getKey().getName() + " - " + set.getValue() + "год.\n");
             }
-            str.deleteCharAt(str.length() - ConstantEntity.ONE);
+            str.deleteCharAt(str.length() - ConstantApplication.ONE);
             holder.speciality.setText(str.toString());
         }
         holder.course.setText(String.valueOf(subject.getNumberCourse()));
@@ -91,34 +93,38 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
         mContext=context;
         mResource=resource;
         subjectList = objects;
-        mSelectedItemsIds = new SparseBooleanArray();
     }
-
-    @Override
-    public void remove(Subject object) {
-        subjectList.remove(object);
-        DBManager.delete(Subject.class, ConstantEntity.ID, object.getId());
-        notifyDataSetChanged();
-    }
-    public void toggleSelection(int position) {
-        selectView(position, !mSelectedItemsIds.get(position));
-    }
-
-    public void selectView(int position, boolean value) {
-        if (value)
-            mSelectedItemsIds.put(position, value);
-        else
-            mSelectedItemsIds.delete(position);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Vlad Code
+    public void write(Subject object) {
+        if (object.existsEntity()) {
+            Log.d(TAG, "And\\Edit Entity = " + object);
+            Toast.makeText(mContext, R.string.toast_exists_entity, Toast.LENGTH_SHORT).show();
+        } else {
+            try {
+                DBManager.write(object.createEntity());
+                Toast.makeText(mContext, R.string.toast_add_edit_entity, Toast.LENGTH_SHORT).show();
+            } catch (Exception ex){
+                Log.e(TAG, ex.getMessage());
+            }
+        }
         notifyDataSetChanged();
     }
 
-    public void removeSelection() {
-        mSelectedItemsIds = new SparseBooleanArray();
+    public void update(String nameSort) {
+        update(nameSort, Sort.ASCENDING);
+    }
+    public void update(String nameSort, Sort sort) {
+        // Могу сортировтаь по Названию и по кол-во Курсо(не в приоритете)
+        subjectList.clear();
+        subjectList.addAll(DBManager.copyObjectFromRealm(
+                DBManager.readAll(Subject.class, nameSort, sort)));
         notifyDataSetChanged();
     }
 
-    public SparseBooleanArray getSelectedIds() {
-        return mSelectedItemsIds;
+    public void delete(Subject object) {
+        DBManager.delete(Subject.class, ConstantApplication.ID, object.getId());
+        notifyDataSetChanged();
     }
-    //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

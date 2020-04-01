@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.widget.Button;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 
@@ -64,7 +64,7 @@ public class TemplateClassesButtonWrapper {
 
     public void clearButtonContent(){
         drawableDef = context.getResources().getDrawable(R.drawable.hover_add);
-        DBManager.delete(TemplateAcademicHour.class, ConstantEntity.ID, templateAcademicHour.getId());
+        DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcademicHour.getId());
         templateAcademicHour = null;
         btn.setBackground(drawableDef);
         isBackgroundChanged = false;

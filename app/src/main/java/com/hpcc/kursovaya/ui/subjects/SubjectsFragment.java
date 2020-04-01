@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -29,7 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.List;
@@ -54,12 +55,12 @@ public class SubjectsFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
                     Intent intent = new Intent(getActivity(), AddSubjectActivity.class);
-                    startActivityForResult(intent, ConstantEntity.ACTIVITY_ADD);
+                    startActivityForResult(intent, ConstantApplication.ACTIVITY_ADD);
                 }
             });
 
@@ -73,7 +74,6 @@ public class SubjectsFragment extends Fragment {
                 public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                     final int checkedCount = listView.getCheckedItemCount();
                     mode.setTitle(checkedCount +" "+getResources().getString(R.string.cab_select_text));
-                    adapter.toggleSelection(position);
                 }
 
                 @Override
@@ -102,14 +102,13 @@ public class SubjectsFragment extends Fragment {
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
                     toolbar.setVisibility(View.VISIBLE);
-                    adapter.removeSelection();
                 }
             });
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
@@ -117,10 +116,8 @@ public class SubjectsFragment extends Fragment {
 
                     Log.d("TAG", "entry = " + entry.toString());
                     Intent intent = new Intent(getActivity(), EditSubjectActivity.class);
-                    intent.putExtra("posOldSubject", position);
-                    intent.putExtra("editSubject", entry);
-
-                    startActivityForResult(intent, ConstantEntity.ACTIVITY_EDIT);
+                    intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT), entry);
+                    startActivityForResult(intent, ConstantApplication.ACTIVITY_EDIT);
                 }
             });
             listView.setItemsCanFocus(false);
@@ -137,27 +134,19 @@ public class SubjectsFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if(resultCode== Activity.RESULT_OK){
-            Subject subject;
+            String strParcelableExtra = "";
             switch (requestCode){
-                case ConstantEntity.ACTIVITY_ADD:
-                    subject = data.getParcelableExtra("addSubject");
-                    Log.d(TAG, "addSubject = " + subject.toString());
-                    DBManager.write(subject);
-
-                    subjectList.add(subject);
+                case ConstantApplication.ACTIVITY_ADD:
+                    strParcelableExtra = String.valueOf(ConstantApplication.ACTIVITY_ADD);
                     break;
-                case ConstantEntity.ACTIVITY_EDIT:
-                    int posOldSubject = data.getIntExtra("posOldSubject",0);
-                    subject = data.getParcelableExtra("editSubject");
-                    Log.d(TAG, "editSubject = " + subject.toString());
-                    DBManager.write(subject);
-
-                    subjectList.set(posOldSubject, subject);
+                case ConstantApplication.ACTIVITY_EDIT:
+                    strParcelableExtra = String.valueOf(ConstantApplication.ACTIVITY_EDIT);
                     break;
             }
-            adapter.notifyDataSetChanged();
+            Subject subject = data.getParcelableExtra(strParcelableExtra);
+            adapter.write(subject);
+            adapter.update(ConstantApplication.NAME);
         }
     }
 
@@ -168,19 +157,25 @@ public class SubjectsFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                SparseBooleanArray selected = adapter
-                        .getSelectedIds();
-                for (int i = (selected.size() - 1); i >= 0; i--) {
-                    if (selected.valueAt(i)) {
-                        Subject selecteditem = adapter
-                                .getItem(selected.keyAt(i));
-                        // Remove selected items following the ids
-                        adapter.remove(selecteditem);
+
+                SparseBooleanArray positionDel = listView.getCheckedItemPositions();
+                for (int i = 0; i < positionDel.size(); i++) {
+                    int key = positionDel.keyAt(i);
+                    if (positionDel.get(key)){
+                        Log.d(TAG, "entity = " + subjectList.get(key));
+                        adapter.delete(subjectList.get(key));
                     }
+                }
+                adapter.update(ConstantApplication.NAME);
+
+                if (positionDel.size() == ConstantApplication.ONE){
+                    Toast.makeText(getContext(), R.string.toast_del_entity, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), R.string.toast_del_many_entity, Toast.LENGTH_SHORT).show();
                 }
                 mode.finish();
 

@@ -1,139 +1,58 @@
 package com.hpcc.kursovaya.ui.templates;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
-import android.widget.RadioButton;
-import android.widget.Spinner;
-import android.widget.TextView;
+
+import androidx.core.util.Pair;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class EditTemplateActivity extends TemplateActivity {
-    private final String TAG = "EditTemplateActivity";
+    private final String TAG = EditTemplateActivity.class.getSimpleName();
 
+    private TemplateScheduleWeek templateScheduleWeek;
+
+    private void fillCellsEssentially(List<TemplateAcademicHour> _1DList){
+        for (int i = 0, i1DList = 0; i < ConstantApplication.MAX_COUNT_WEEK; i++){
+            for (int j = 0; j < ConstantApplication.MAX_COUNT_LESSON * ConstantApplication.TWO; j++){
+                Pair<Integer, Integer> pair = _1DList.get(i1DList).getDayAndPair();
+                if (i == pair.first && j == pair.second){
+                    classes.get(i).get(j).setTemplateAcademicHour(_1DList.get(i1DList++));
+                }
+            }
+        }
+    }
     public EditTemplateActivity(){
         super();
+        intent = getIntent();
+        templateScheduleWeek = intent.getParcelableExtra("editTemplateScheduleWeek");
+        fillCellsEssentially(templateScheduleWeek.getTemplateAcademicHourList());
+        setResult(Activity.RESULT_OK, intent);
     }
 
     @Override
-    protected AlertDialog.Builder getClassDialogBuilder(final int classDay, final int classHour){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(false);
-        classView = getLayoutInflater().inflate(R.layout.dialog_add_new_class_template,null);
-        Spinner subjectSpinner = classView.findViewById(R.id.spinnerSubject);
-        AutoCompleteTextView suggestEditText = classView.findViewById(R.id.groupNameSuggestET);
-        suggestEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Group pressedGroup = (Group) adapterView.getItemAtPosition(i);
-                //это обработчик нажатия на выдачу из AutoCompleteTextView
-                //здесь ты можешь заполнить спиннер предметов
-            }
-        });
-        ArrayList<String> groupNames = new ArrayList<>();
-        for(Group group: groupList) {
-            groupNames.add(group.getName());
+    protected void setHeader(int popup_super_template){
+        super.setHeader(R.string.popup_edit_template);
+    }
 
-        }
-        //ArrayAdapter<String> adapter =
-        // new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, groupNames);
-        groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
-        GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto, DBManager.copyObjectFromRealm(groupList));
-        suggestEditText.setAdapter(adapter);
-        //заполнять спиннер нужно в зависимости от курса и специальности группы, но по дефолту можно тупо все предметы залить туда
-
-        RadioButton oneHourRB = classView.findViewById(R.id.popup_duration_rgroup_short);
-        RadioButton twoHourRB = classView.findViewById(R.id.popup_duration_rgroup_full);
-        if(super.classes.get(classDay).get(classHour).getBtn().getText().equals("")) {
-            builder.setTitle(R.string.popup_add_class);
-            builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    onClickAcceptClass(dialog,which,classDay,classHour);
-                }
-            });
-        }
-        else {
-            builder.setTitle(R.string.popup_edit_class);
-            //данные получай с объекта, а не с кнопки - это пример
-            suggestEditText.setText(super.classes.get(classDay).get(classHour).getBtn().getText());
-            //также заполни здесь спиннер предметов и выдели один из радиобатоннов
-            builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    onClickAcceptEditClass(dialog,which,classDay,classHour);
-                }
-            });
-        }
-        builder.setNegativeButton(R.string.popup_cancel,new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onClickCancelClass(dialog,which,classDay,classHour);
-            }
-        });
-        builder.setView(classView);
+    @Override
+    protected AlertDialog.Builder getConfirmDialogBuilder(int popup_super_template){
+        AlertDialog.Builder builder = super.getConfirmDialogBuilder(R.string.popup_edit_template);
+        String stringName = templateScheduleWeek.getName();
+        nameTemplate.setText(stringName);
         return builder;
     }
-
-    private void onClickAcceptEditClass(DialogInterface dialog, int which, int classDay, int classHour) {
-        AutoCompleteTextView groupName = classView.findViewById(R.id.groupNameSuggestET);
-        String displayedGroupName = groupName.getText().toString();
-        Log.d(TAG, classDay + " " + classHour);
-        Log.d(TAG, displayedGroupName);
-        super.classes.get(classDay).get(classHour).getBtn().setText(displayedGroupName);
-    }
-
-    @Override
-    protected AlertDialog.Builder getConfirmDialogBuilder(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.popup_edit_template);
-        builder.setPositiveButton(R.string.popup_accept, new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onClickAcceptTemplate(dialog,which);
-            }
-        });
-        builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onClickCancelTemplate(dialog,which);
-            }
-        });
-        View view = getLayoutInflater().inflate(R.layout.dialog_add_new_template,null);
-        builder.setView(view);
-        return builder;
-    }
-
-    @Override
-    protected void setHeader(){
-        TextView textCont = (TextView)findViewById(R.id.toolbar_title);
-        textCont.setText(getResources().getString(R.string.popup_edit_template));
-    }
-
     @Override
     protected void onClickAcceptTemplate(DialogInterface dialog, int which) {
-        dialog.cancel();
-    }
+        // Intent Edit
 
-    @Override
-    protected void onClickCancelTemplate(DialogInterface dialog, int which) {
-        dialog.cancel();
-    }
 
-    @Override
-    protected void onClickAcceptClass(DialogInterface dialog, int which,int classDay,int classHour) {
-        AutoCompleteTextView groupName = classView.findViewById(R.id.groupNameSuggestET);
-        String displayedGroupName = groupName.getText().toString();
-        Log.d(TAG, classDay + " " + classHour);
-        Log.d(TAG, displayedGroupName);
-        super.classes.get(classDay).get(classHour).getBtn().setText(displayedGroupName);
+        dialog.cancel();
     }
 }

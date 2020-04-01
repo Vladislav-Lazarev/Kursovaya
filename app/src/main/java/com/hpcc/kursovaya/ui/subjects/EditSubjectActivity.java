@@ -26,7 +26,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.HashMap;
@@ -59,7 +59,7 @@ public class EditSubjectActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -74,7 +74,7 @@ public class EditSubjectActivity extends AppCompatActivity {
         textCont.setText("Редагування предмету");
 
         Intent intent = getIntent();
-        subject = intent.getParcelableExtra("editSubject");
+        subject = intent.getParcelableExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT));
 
         colorPickButton = (Button) findViewById(R.id.pickColorBtn);
         GradientDrawable background = (GradientDrawable) colorPickButton.getBackground();
@@ -84,7 +84,7 @@ public class EditSubjectActivity extends AppCompatActivity {
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -95,7 +95,7 @@ public class EditSubjectActivity extends AppCompatActivity {
         LinearLayout parent = findViewById(R.id.spinnerSpeciality);
 
         final List<Speciality> specialityList = DBManager.copyObjectFromRealm(
-                DBManager.readAll(Speciality.class, ConstantEntity.ID));
+                DBManager.readAll(Speciality.class, ConstantApplication.ID));
         Log.d(TAG, "specialityList = " + specialityList.toString());
         for(int i = 0 ; i < specialityList.size();i++){
             LinearLayout specLayout = new LinearLayout(this);
@@ -144,7 +144,7 @@ public class EditSubjectActivity extends AppCompatActivity {
 
             Spinner spinnerCourse = (Spinner) findViewById(R.id.spinnerCourse);
             listenerSpinnerCourse(spinnerCourse);
-            spinnerCourse.setSelection(subject.getNumberCourse() - ConstantEntity.ONE);
+            spinnerCourse.setSelection(subject.getNumberCourse() - ConstantApplication.ONE);
 
             subjectEditText = findViewById(R.id.editTextSubjectName);
             subjectEditText.setText(subject.getName());
@@ -153,7 +153,7 @@ public class EditSubjectActivity extends AppCompatActivity {
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
@@ -180,20 +180,11 @@ public class EditSubjectActivity extends AppCompatActivity {
 
     private void editSubject(){
         subject.setName(subjectEditText.getText().toString())
-                .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map));
-        for(Map.Entry<Speciality, EditText> ebala : map.entrySet() ){
-            Log.d(TAG, ebala.getKey().toString() +" "+ebala.getValue().getText().toString());
-        }
-        Log.d(TAG, "editSubject = " + subject);
+                .setSpecialityCountHourMap(ConstantApplication.convertMapEditTextToMapInt(map));
 
-        if (subject.createEntity()){
-            Intent intent = getIntent();
-            intent.putExtra("editSubject", subject);
-            setResult(Activity.RESULT_OK, intent);
-        } else {
-            // Оповещение о ее неправильности
-            Log.d(TAG, "editSubject = " + subject);
-        }
+        Intent intent = getIntent();
+        intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT), subject);
+        setResult(Activity.RESULT_OK, intent);
 
         finish();
     }

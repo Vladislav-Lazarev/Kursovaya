@@ -22,7 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.AlarmClassReceiver;
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
@@ -112,8 +112,8 @@ public class AddClass extends AppCompatActivity implements AdapterView.OnItemSel
             Calendar calendar = Calendar.getInstance();
             //PT431762S
             calendar.add(Calendar.SECOND,difference.getSeconds());
-            int hourOfDay = ConstantEntity.timeArray[numberOfLesson][numberOfHalf][0];
-            int minuteOfHour = ConstantEntity.timeArray[numberOfLesson][numberOfHalf][1];
+            int hourOfDay = ConstantApplication.timeArray[numberOfLesson][numberOfHalf][0];
+            int minuteOfHour = ConstantApplication.timeArray[numberOfLesson][numberOfHalf][1];
             Intent _intent = new Intent(this, AlarmClassReceiver.class);
             _intent.putExtra("groupName",groupNameStr);
             _intent.putExtra("yearOfNot",Integer.toString(dayOfWeek.getYear()));
@@ -153,8 +153,8 @@ public class AddClass extends AppCompatActivity implements AdapterView.OnItemSel
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        int hourOfDay = ConstantEntity.timeArray[numberOfLesson][numberOfHalf][0];
-        int minuteOfHour = ConstantEntity.timeArray[numberOfLesson][numberOfHalf][1];
+        int hourOfDay = ConstantApplication.timeArray[numberOfLesson][numberOfHalf][0];
+        int minuteOfHour = ConstantApplication.timeArray[numberOfLesson][numberOfHalf][1];
         timeOfRing = new DateTime(dayOfWeek);
         switch(position) {
             case 0:

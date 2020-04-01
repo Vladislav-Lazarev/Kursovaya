@@ -1,6 +1,7 @@
 package com.hpcc.kursovaya.ui.settings.specialities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -18,6 +19,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,30 +28,26 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.List;
 
 public class SpecialitiesActivity extends AppCompatActivity {
     private static final String TAG = SpecialitiesActivity.class.getSimpleName();
-
-    static void setSpinnerString(Spinner spin, String str) {
-        for(int i= 0; i < spin.getAdapter().getCount(); i++) {
-            if(spin.getAdapter().getItem(i).toString().contains(str)) {
-                spin.setSelection(i);
-            }
-        }
-    }
+    private final Context currentContext = this;
 
     FloatingActionButton addSpeciality;
     ListView specialityLSV;
-    SpecialityListAdapter adapter;
     private View addSpecialityView;
     private View editSpecialityView;
-    List<Speciality> specialitiesList;
-    Speciality speciality;
+    SpecialityListAdapter adapter;
     private long mLastClickTime = 0;
 
+    private EditText specText;
+    private Spinner courseSpinner;
+    Speciality speciality;
+    List<Speciality> specialityList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +60,11 @@ public class SpecialitiesActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
-                mLastClickTime = SystemClock.elapsedRealtime();                finish();
+                mLastClickTime = SystemClock.elapsedRealtime();
+                finish();
             }
         });
 
@@ -76,17 +75,20 @@ public class SpecialitiesActivity extends AppCompatActivity {
         addSpeciality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
-                mLastClickTime = SystemClock.elapsedRealtime();                onClickPrepareAddSpeciality();
+                mLastClickTime = SystemClock.elapsedRealtime();
+                onClickPrepareAddSpeciality();
             }
         });
         specialityLSV = findViewById(R.id.specialitiesLSV);
 
-        specialitiesList = DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class));
-        Log.d(TAG, "DBManager.copyObjectFromRealm = " + specialitiesList.toString());
-        adapter = new SpecialityListAdapter(this,R.layout.listview_item_specialties, specialitiesList);
+        specialityList = DBManager.copyObjectFromRealm(
+                DBManager.readAll(Speciality.class, ConstantApplication.NAME));
+        Log.d(TAG, "DBManager.copyObjectFromRealm = " + specialityList.toString());
+
+        adapter = new SpecialityListAdapter(currentContext,R.layout.listview_item_specialties, specialityList);
         specialityLSV.setAdapter(adapter);
         specialityLSV.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         specialityLSV.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -94,7 +96,6 @@ public class SpecialitiesActivity extends AppCompatActivity {
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 final int checkedCount = specialityLSV.getCheckedItemCount();
                 mode.setTitle(checkedCount +" "+getResources().getString(R.string.cab_select_text));
-                adapter.toggleSelection(position);
             }
 
             @Override
@@ -124,44 +125,48 @@ public class SpecialitiesActivity extends AppCompatActivity {
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 toolbar.setVisibility(View.VISIBLE);
-                adapter.removeSelection();
             }
         });
         specialityLSV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
-                mLastClickTime = SystemClock.elapsedRealtime();                Speciality entry = (Speciality) parent.getItemAtPosition(position);
-                onClickPrepareEditSpeciality(entry, position);
+                mLastClickTime = SystemClock.elapsedRealtime();
+                Speciality entity = (Speciality) parent.getItemAtPosition(position);
+                onClickPrepareEditSpeciality(entity);
             }
         });
-
     }
 
     private void onClickPrepareAddSpeciality() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.dialog_add_speciality);
         builder.setPositiveButton(R.string.dialog_button_add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
-                mLastClickTime = SystemClock.elapsedRealtime();                onClickAcceptAddGroup(dialog, which);
+                mLastClickTime = SystemClock.elapsedRealtime();
+                onClickAcceptAddGroup(dialog, which);
             }
         });
         builder.setCancelable(false);
         builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
                 dialog.cancel();
             }
         });
         addSpecialityView = getLayoutInflater().inflate(R.layout.dialog_speciality, null);
         builder.setView(addSpecialityView);
+
+        speciality = new Speciality();
+        specText = addSpecialityView.findViewById(R.id.speciality_name_text);
+        courseSpinner = addSpecialityView.findViewById(R.id.courseSpinner);
+
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -178,32 +183,26 @@ public class SpecialitiesActivity extends AppCompatActivity {
         leftSpacer.setVisibility(View.GONE);
     }
     private void onClickAcceptAddGroup(DialogInterface dialog, int which) {
-        EditText specText = addSpecialityView.findViewById(R.id.speciality_name_text);
         String strSpeciality = specText.getText().toString();
-        Spinner courseSpinner = addSpecialityView.findViewById(R.id.courseSpinner);
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
 
-        speciality = new Speciality(strSpeciality, countCourse);
-        if (speciality.createEntity()){
-            DBManager.write(speciality);
-            specialitiesList.add(speciality);
-        } else {
-            // Оповещение о ее неправильности
-            Log.d(TAG, "Add speciality = " + speciality);
-        }
-        adapter.notifyDataSetChanged();
+        speciality.setName(strSpeciality)
+                .setCountCourse(countCourse);
+        adapter.write(speciality);
+        adapter.update(ConstantApplication.NAME);
     }
 
-    private void onClickPrepareEditSpeciality(final Speciality entry, final int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    private void onClickPrepareEditSpeciality(Speciality entity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.dialog_edit_speciality);
         builder.setPositiveButton(R.string.popup_edit, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
-                mLastClickTime = SystemClock.elapsedRealtime();                onClickAcceptEditGroup(dialog, which, entry, position);
+                mLastClickTime = SystemClock.elapsedRealtime();
+                onClickAcceptEditGroup(dialog, which);
             }
         });
         builder.setCancelable(false);
@@ -213,14 +212,15 @@ public class SpecialitiesActivity extends AppCompatActivity {
                 dialog.cancel();
             }
         });
+
         editSpecialityView = getLayoutInflater().inflate(R.layout.dialog_speciality, null);
         builder.setView(editSpecialityView);
 
-        EditText specText = editSpecialityView.findViewById(R.id.speciality_name_text);
-        specText.setText(entry.getName());
-
-        Spinner courseSpinner = editSpecialityView.findViewById(R.id.courseSpinner);
-        setSpinnerString(courseSpinner, String.valueOf(entry.getCountCourse()));
+        speciality = entity;
+        specText = editSpecialityView.findViewById(R.id.speciality_name_text);
+        specText.setText(speciality.getName());
+        courseSpinner = editSpecialityView.findViewById(R.id.courseSpinner);
+        ConstantApplication.setSpinnerText(courseSpinner, String.valueOf(speciality.getCountCourse()));
 
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -237,46 +237,38 @@ public class SpecialitiesActivity extends AppCompatActivity {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-    private void onClickAcceptEditGroup(DialogInterface dialog, int which, Speciality speciality, int position) {
-        EditText specText = editSpecialityView.findViewById(R.id.speciality_name_text);
-        String strSpeciality = specText.getText().toString();
-        Spinner courseSpinner = editSpecialityView.findViewById(R.id.courseSpinner);
-        int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
-
-        speciality = specialitiesList.get(position);
-        speciality.setName(strSpeciality).setCountCourse(countCourse);
-        if (speciality.createEntity()){
-            DBManager.write(speciality);
-            specialitiesList.set(position, speciality);
-        } else {
-            // Оповещение о ее неправильности
-            Log.d(TAG, "Edit speciality = " + speciality);
-        }
-        adapter.notifyDataSetChanged();
+    private void onClickAcceptEditGroup(DialogInterface dialog, int which) {
+        onClickAcceptAddGroup(dialog, which);
     }
 
     private void prepareDeleteDialog(final ActionMode mode) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.popup_delete_speciality);
         builder.setMessage(R.string.popup_delete_speciality_content);
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
-                mLastClickTime = SystemClock.elapsedRealtime();                SparseBooleanArray selected = adapter
-                        .getSelectedIds();
-                for (int i = (selected.size() - 1); i >= 0; i--) {
-                    if (selected.valueAt(i)) {
-                        Speciality selecteditem = adapter
-                                .getItem(selected.keyAt(i));
-                        // Remove selected items following the ids
-                        adapter.remove(selecteditem);
+                mLastClickTime = SystemClock.elapsedRealtime();
+
+                SparseBooleanArray positionDel = specialityLSV.getCheckedItemPositions();
+                for (int i = 0; i < positionDel.size(); i++) {
+                    int key = positionDel.keyAt(i);
+                    if (positionDel.get(key)){
+                        Log.d(TAG, "entity = " + specialityList.get(key));
+                        adapter.delete(specialityList.get(key));
                     }
                 }
-                mode.finish();
+                adapter.update(ConstantApplication.NAME);
 
+                if (positionDel.size() == ConstantApplication.ONE){
+                    Toast.makeText(currentContext, R.string.toast_del_entity, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(currentContext, R.string.toast_del_many_entity, Toast.LENGTH_SHORT).show();
+                }
+                mode.finish();
             }
         });
         builder.setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
@@ -301,6 +293,4 @@ public class SpecialitiesActivity extends AppCompatActivity {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-
-
 }

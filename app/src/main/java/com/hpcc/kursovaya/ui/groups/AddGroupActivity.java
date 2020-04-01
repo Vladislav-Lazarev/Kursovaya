@@ -1,10 +1,10 @@
 package com.hpcc.kursovaya.ui.groups;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -19,16 +19,17 @@ import androidx.appcompat.widget.Toolbar;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import com.hpcc.kursovaya.ui.subjects.AddSubjectActivity;
 
 public class AddGroupActivity extends AppCompatActivity {
     private static final String TAG = AddSubjectActivity.class.getSimpleName();
+    private final Context currentContext = this;
+
     private Group group = new Group();
     private EditText groupEditText;
     private long mLastClickTime = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class AddGroupActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -60,7 +61,7 @@ public class AddGroupActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -69,7 +70,7 @@ public class AddGroupActivity extends AppCompatActivity {
         });
 
         Spinner spinnerSpeciality =
-                ConstantEntity.fillingSpinner(this, findViewById(R.id.spinnerSpeciality),
+                ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerSpeciality),
                         new Speciality().entityToNameList());
         listenerSpinnerSpeciality(spinnerSpeciality);
 
@@ -82,14 +83,10 @@ public class AddGroupActivity extends AppCompatActivity {
     private void addGroup(){
         group.setName(groupEditText.getText().toString());
 
-        if (group.createEntity()){
-            Intent intent = getIntent();
-            intent.putExtra("addGroup", group);
-            setResult(Activity.RESULT_OK, intent);
-        } else {
-            // Оповещение о ее неправильности
-            Log.d(TAG, "addGroup = " + group);
-        }
+        Intent intent = getIntent();
+        intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_ADD), group);
+        setResult(Activity.RESULT_OK, intent);
+
         finish();
     }
 
@@ -98,7 +95,7 @@ public class AddGroupActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 String item = (String) parent.getItemAtPosition(selectedItemPosition);
-                Speciality speciality = DBManager.read(Speciality.class, ConstantEntity.NAME, item);
+                Speciality speciality = DBManager.read(Speciality.class, ConstantApplication.NAME, item);
                 group.setSpecialty(speciality);
             }
             public void onNothingSelected(AdapterView<?> parent) {

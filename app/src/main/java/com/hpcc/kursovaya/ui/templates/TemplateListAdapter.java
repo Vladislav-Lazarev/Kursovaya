@@ -21,12 +21,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.List;
 
-public class TemplateListAdapter extends ArrayAdapter<TemplateEntity> {
+public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
     private static final String TAG = "TemplateListAdapter";
 
     private Context mContext;
@@ -38,18 +39,17 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateEntity> {
     }
 
     public View getView(int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
-        String templateName = getItem(position).getTemplateName();
-
-        TemplateEntity templateEntity = new TemplateEntity(templateName);
+        TemplateScheduleWeek templateScheduleWeek = new TemplateScheduleWeek(
+                getItem(position).getName(),
+                getItem(position).getTemplateAcademicHourList()
+        );
 
         final View result;
-
         ViewHolder holder;
 
         if(convertView==null){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource,parent,false);
-
 
             holder = new ViewHolder();
 
@@ -149,12 +149,12 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateEntity> {
 
         lastPosition = position;
 
-        holder.name.setText(templateName);
+        holder.name.setText(templateScheduleWeek.getName());
 
         return convertView;
     }
 
-    public TemplateListAdapter (@NonNull Context context, int resource, @NonNull ArrayList<TemplateEntity> objects) {
+    public TemplateListAdapter (@NonNull Context context, int resource, @NonNull List<TemplateScheduleWeek> objects) {
         super(context, resource, objects);
         mContext=context;
         mResource=resource;

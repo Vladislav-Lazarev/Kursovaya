@@ -14,7 +14,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewPagerAdapter;
 
 import org.joda.time.DateTime;
@@ -147,14 +147,14 @@ public class ScheduleFragment extends Fragment {
     private String getCoupleHeader(int couple,int half){
         StringBuilder hourTimeLabel = new StringBuilder();
         StringBuilder minuteTimeLabel = new StringBuilder();
-        if(ConstantEntity.timeArray[couple][half][0]<10){
+        if(ConstantApplication.timeArray[couple][half][0]<10){
             hourTimeLabel.append("0");
         }
-        hourTimeLabel.append(ConstantEntity.timeArray[couple][half][0]);
-        if(ConstantEntity.timeArray[couple][half][1]<10){
+        hourTimeLabel.append(ConstantApplication.timeArray[couple][half][0]);
+        if(ConstantApplication.timeArray[couple][half][1]<10){
             minuteTimeLabel.append("0");
         }
-        minuteTimeLabel.append(ConstantEntity.timeArray[couple][half][1]);
+        minuteTimeLabel.append(ConstantApplication.timeArray[couple][half][1]);
         StringBuilder result = new StringBuilder(hourTimeLabel);
         result.append(":").append(minuteTimeLabel);
         return result.toString();

@@ -1,30 +1,32 @@
 package com.hpcc.kursovaya.ui.settings.specialities;
 
 import android.content.Context;
-import android.util.SparseBooleanArray;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.List;
 
-class SpecialityListAdapter extends ArrayAdapter<Speciality> {
-    private static final String TAG = "SpecialityListAdapter";
+import io.realm.Sort;
 
+class SpecialityListAdapter extends ArrayAdapter<Speciality> {
+    private static final String TAG = SpecialityListAdapter.class.getSimpleName();
 
     private Context mContext;
     private int mResource;
     private int lastPosition = -1;
     private List<Speciality> specialityList;
-    private SparseBooleanArray mSelectedItemsIds;
 
     static class ViewHolder {
         TextView name;
@@ -36,7 +38,6 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
         mContext=context;
         mResource=resource;
         specialityList = objects;
-        mSelectedItemsIds = new SparseBooleanArray();
     }
 
     @NonNull
@@ -71,30 +72,37 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
         return convertView;
     }
 
-    @Override
-    public void remove(Speciality object) {
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Vlad Code
+    public void write(Speciality object) {
+        if (object.existsEntity()) {
+            Log.d(TAG, "And\\Edit Entity = " + object);
+            Toast.makeText(mContext, R.string.toast_exists_entity, Toast.LENGTH_SHORT).show();
+        } else {
+            try {
+                DBManager.write(object.createEntity());
+                Toast.makeText(mContext, R.string.toast_add_edit_entity, Toast.LENGTH_SHORT).show();
+            } catch (Exception ex){
+                Log.e(TAG, ex.getMessage());
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void update(String nameSort) {
+        update(nameSort, Sort.ASCENDING);
+    }
+    public void update(String nameSort, Sort sort) {
+        // Могу сортировтаь по Названию и по кол-во Курсо(не в приоритете)
+        specialityList.clear();
+        specialityList.addAll(DBManager.copyObjectFromRealm(
+                DBManager.readAll(Speciality.class, nameSort, sort)));
+        notifyDataSetChanged();
+    }
+
+    public void delete(Speciality object) {
         object.deleteAllLinks();
-        specialityList.remove(object);
         notifyDataSetChanged();
     }
-    public void toggleSelection(int position) {
-        selectView(position, !mSelectedItemsIds.get(position));
-    }
-
-    public void selectView(int position, boolean value) {
-        if (value)
-            mSelectedItemsIds.put(position, value);
-        else
-            mSelectedItemsIds.delete(position);
-        notifyDataSetChanged();
-    }
-
-    public void removeSelection() {
-        mSelectedItemsIds.clear();/* = new SparseBooleanArray();*/
-        notifyDataSetChanged();
-    }
-
-    public SparseBooleanArray getSelectedIds() {
-        return mSelectedItemsIds;
-    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
