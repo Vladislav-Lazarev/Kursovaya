@@ -1,7 +1,5 @@
 package com.hpcc.kursovaya.dao.entity.setting;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
@@ -18,22 +16,6 @@ public class BackupDB {
     public BackupDB(@NotNull String fileName, @NotNull Date dateCreate) {
        setFileName(fileName);
        setDateCreate(dateCreate);
-    }
-
-    private void setId(int id){
-        try{
-            if (id < ConstantEntity.ONE){
-                throw new Exception("Exception! setId()");
-            }
-            this.id = id;
-        }
-        catch (Exception ex){
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
-        }
-    }
-    public int getId() {
-        return id;
     }
 
     public String getFileName() {

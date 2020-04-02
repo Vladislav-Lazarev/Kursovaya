@@ -34,7 +34,8 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
         List<TemplateAcademicHour> result = new RealmList<>();
 
         for (Integer id : idTemplateAcademicHourList){
-            result.add(DBManager.read(TemplateAcademicHour.class, ConstantApplication.ID, id));
+            result.add(DBManager.copyObjectFromRealm(
+                    DBManager.read(TemplateAcademicHour.class, ConstantApplication.ID, id)));
         }
         return result;
     }
@@ -81,7 +82,7 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
         return convert(idTemplateAcademicHourList);
     }
     public TemplateScheduleWeek setTemplateAcademicHourList(@NotNull List<TemplateAcademicHour> templateAcademicHourList) {
-        if (templateAcademicHourList.size() > ConstantApplication.ZERO) {
+        if (templateAcademicHourList.isEmpty()) {
             throw new RuntimeException("Exception! setTemplateScheduleDayList()");
         }
         this.idTemplateAcademicHourList = convert(templateAcademicHourList);
@@ -163,7 +164,8 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
     // Parcelable
     protected TemplateScheduleWeek(Parcel in) {
         id = in.readInt();
-        in.readList(idTemplateAcademicHourList, TemplateScheduleWeek.class.getClassLoader());
+        name = in.readString();
+        in.readList(idTemplateAcademicHourList, Integer.class.getClassLoader());
     }
     public static final Creator<TemplateScheduleWeek> CREATOR = new Creator<TemplateScheduleWeek>() {
         @Override
@@ -184,7 +186,8 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeList(getTemplateAcademicHourList());
+        dest.writeString(name);
+        dest.writeList(idTemplateAcademicHourList);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

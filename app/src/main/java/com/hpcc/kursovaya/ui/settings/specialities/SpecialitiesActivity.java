@@ -42,7 +42,6 @@ public class SpecialitiesActivity extends AppCompatActivity {
     SpecialityListAdapter adapter;
     private View addSpecialityView;
     private View editSpecialityView;
-    SpecialityListAdapter adapter;
     private long mLastClickTime = 0;
 
     private EditText specText;
@@ -151,7 +150,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                onClickAcceptAddGroup(dialog, which);
+                onClickAcceptAddSpeciality(dialog, which);
             }
         });
         builder.setCancelable(false);
@@ -184,10 +183,8 @@ public class SpecialitiesActivity extends AppCompatActivity {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-    private void onClickAcceptAddGroup(DialogInterface dialog, int which) {
-        EditText specText = addSpecialityView.findViewById(R.id.speciality_name_text);
+    private void onClickAcceptAddSpeciality(DialogInterface dialog, int which) {
         String strSpeciality = specText.getText().toString();
-        Spinner courseSpinner = addSpecialityView.findViewById(R.id.courseSpinner);
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
 
         speciality.setName(strSpeciality)
@@ -206,7 +203,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                onClickAcceptEditGroup(dialog, which);
+                onClickAcceptEditSpeciality(dialog, which);
             }
         });
         builder.setCancelable(false);
@@ -241,8 +238,8 @@ public class SpecialitiesActivity extends AppCompatActivity {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-    private void onClickAcceptEditGroup(DialogInterface dialog, int which) {
-        onClickAcceptAddGroup(dialog, which);
+    private void onClickAcceptEditSpeciality(DialogInterface dialog, int which) {
+        onClickAcceptAddSpeciality(dialog, which);
     }
 
     private void prepareDeleteDialog(final ActionMode mode) {

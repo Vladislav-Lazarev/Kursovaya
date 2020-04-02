@@ -1,7 +1,7 @@
 package com.hpcc.kursovaya.ui.templates;
 
 import android.content.Context;
-import android.util.SparseBooleanArray;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,35 +9,44 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
 
-import java.util.ArrayList;
 import java.util.List;
 
-// ПРОВЕРИТЬ
+import io.realm.Sort;
+
 public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
     private static final String TAG = TemplateListAdapter.class.getSimpleName();
-    private SparseBooleanArray mSelectedItemsIds;
-    private List<TemplateScheduleWeek> templateList;
 
     private Context mContext;
     private int mResource;
     private int lastPosition = -1;
+    private List<TemplateScheduleWeek> templateScheduleWeekList;
 
     static class ViewHolder {
         TextView name;
     }
 
+    public TemplateListAdapter (@NonNull Context context, int resource, @NonNull List<TemplateScheduleWeek> objects) {
+        super(context, resource, objects);
+        mContext=context;
+        mResource=resource;
+        templateScheduleWeekList = objects;
+    }
+
     public View getView(int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
         TemplateScheduleWeek templateScheduleWeek = new TemplateScheduleWeek(
                 getItem(position).getName(),
-                getItem(position).getTemplateAcademicHourList()
-        );
+                getItem(position).getTemplateAcademicHourList());
 
         final View result;
         ViewHolder holder;
@@ -46,15 +55,14 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource,parent,false);
 
+
             holder = new ViewHolder();
 
-            holder.name = (TextView) convertView.findViewById(R.id.template_label);
+            holder.name = (TextView) convertView.findViewById(R.id.template_text);
             /*//setting onclick action on button
             final Button button = (Button) convertView.findViewById(R.id.btn_lsvOptions);
-
             button.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View view){
-
                     PopupMenu popupMenu = new PopupMenu(mContext,button);
                     //enabling icons in menu
                     try {
@@ -76,7 +84,6 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-
                             switch (item.getItemId()){
                                 case R.id.edit_template:
                                     Intent intent = new Intent(mContext, EditTemplateActivity.class);
@@ -136,9 +143,6 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
             result = convertView;
         }
 
-
-
-
         Animation animation = AnimationUtils.loadAnimation(mContext,(position>lastPosition) ? R.anim.load_down_anim:R.anim.load_up_anim);
         result.startAnimation(animation);
 
@@ -148,39 +152,40 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
 
         return convertView;
     }
-
-    @Override
-    public void remove(TemplateScheduleWeek object) {
-        templateList.remove(object);
-        //DBManager.delete
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Vlad Code
+    public void write(TemplateScheduleWeek object) {
+        if (object.existsEntity()) {
+            Log.d(TAG, "And\\Edit Entity = " + object);
+            Toast.makeText(mContext, R.string.toast_exists_entity, Toast.LENGTH_SHORT).show();
+        } else {
+            try {
+                DBManager.write(object.createEntity());
+                Toast.makeText(mContext, R.string.toast_add_edit_entity, Toast.LENGTH_SHORT).show();
+            } catch (Exception ex){
+                Log.e(TAG, ex.getMessage());
+            }
+        }
         notifyDataSetChanged();
     }
 
-    public void removeSelection() {
-        mSelectedItemsIds = new SparseBooleanArray();
+    public void update(String nameSort) {
+        update(nameSort, Sort.ASCENDING);
+    }
+    public void update(String nameSort, Sort sort) {
+        // Могу сортировтаь по Названию и по кол-во Курсо(не в приоритете)
+        templateScheduleWeekList.clear();
+        templateScheduleWeekList.addAll(DBManager.copyObjectFromRealm(
+                DBManager.readAll(TemplateScheduleWeek.class, nameSort, sort)));
         notifyDataSetChanged();
     }
 
-    public void toggleSelection(int position) {
-        selectView(position, !mSelectedItemsIds.get(position));
-    }
-
-    public void selectView(int position, boolean value) {
-        if (value)
-            mSelectedItemsIds.put(position, value);
-        else
-            mSelectedItemsIds.delete(position);
+    public void delete(TemplateScheduleWeek object) {
+        for (TemplateAcademicHour templateAcademicHour : object.getTemplateAcademicHourList()){
+            DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcademicHour.getId());
+        }
+        DBManager.delete(TemplateScheduleWeek.class, ConstantApplication.ID, object.getId());
         notifyDataSetChanged();
     }
-
-    public TemplateListAdapter (@NonNull Context context, int resource, @NonNull ArrayList<TemplateScheduleWeek> objects) {
-        super(context, resource, objects);
-        mContext=context;
-        mResource=resource;
-        templateList = objects;
-        mSelectedItemsIds = new SparseBooleanArray();
-    }
-    public SparseBooleanArray getSelectedIds() {
-        return mSelectedItemsIds;
-    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

@@ -3,7 +3,6 @@ package com.hpcc.kursovaya.ui.templates;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -18,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +31,7 @@ import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +39,7 @@ import java.util.List;
 
 public abstract class TemplateActivity extends AppCompatActivity {
     private final static String TAG = TemplateActivity.class.getSimpleName();
+    protected final Context currentContext = this;
 
     protected List<List<TemplateClassesButtonWrapper>> classes = new ArrayList<>();
     protected List<TemplateClassesButtonWrapper> selectedButtons = new ArrayList<>();
@@ -53,11 +55,12 @@ public abstract class TemplateActivity extends AppCompatActivity {
     protected Spinner subjectSpinner;
     protected RadioGroup radioGroup;
     // UI - name template
-    protected EditText nameTemplate;
+    protected EditText templateNameEditText;
 
     protected TemplateAcademicHour currentTemplate;
     protected List<TemplateAcademicHour> templateAcademicHourList = new ArrayList<>();
-    protected Intent intent;
+
+    protected TemplateScheduleWeek templateScheduleWeek;
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -218,15 +221,29 @@ public abstract class TemplateActivity extends AppCompatActivity {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Диалоговое окно для возращения к Списку Шаблонов
-    private void prepareCloseAlertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    protected AlertDialog.Builder prepareCloseAlertDialog() {
+        if (convert2DimensionalTo1Dimensional(classes).isEmpty()){
+            finish();
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.template_activity_close_alert_title);
-        builder.setMessage(R.string.template_activity_close_alert_content);
-
-        DialogInterface.OnClickListener clickListener = this::onCloseActivityAcceptClick;
-        builder.setPositiveButton(R.string.delete_positive, clickListener);
-
+        //builder.setMessage(R.string.template_activity_close_alert_content);
+        /*builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                for (TemplateAcademicHour templateAcademicHour : entityTemplateAcademicHourList){
+                    DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcademicHour.getId());
+                }
+                finish();
+            }
+        });*/
         builder.setNegativeButton(R.string.delete_negative, (dialog, which) -> dialog.cancel());
+
+        buttonPainting(builder);
+        return builder;
+    }
+    protected void buttonPainting(AlertDialog.Builder builder){
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener((arg0)-> {dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));});
@@ -236,15 +253,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
         parent.setGravity(Gravity.CENTER_HORIZONTAL);
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
-    }
-    // Нажатия\Действия кнопок prepareCloseAlertDialog - удаляет все заполненные ячейки
-    protected void onCloseActivityAcceptClick(DialogInterface dialogInterface, int i) {
-        List<TemplateAcademicHour> templateAcademicHourList = convert2DimensionalTo1Dimensional(classes);
-        for (TemplateAcademicHour templateAcademicHour : templateAcademicHourList){
-            DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcademicHour.getId());
-        }
-
-        finish();
     }
 
     @Override
@@ -258,7 +266,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
         }
     }
     private void prepareDeleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.popup_delete_classes_template);
         builder.setMessage(R.string.popup_delete_classes_content);
         builder.setPositiveButton(R.string.delete_positive, (dialog, which) -> onDeleteClassesAcceptClick());
@@ -303,7 +311,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
     }
     // Для конструирования getClassDialogBuilder
     private void addClass(final int classDay,final int classHour){
-
         final AlertDialog dialog = getClassDialogBuilder(classDay,classHour).create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -338,10 +345,9 @@ public abstract class TemplateActivity extends AppCompatActivity {
     }
     // Работа я ячейками
     protected AlertDialog.Builder getClassDialogBuilder(final int classDay,final int classHour){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.popup_add_class);
         builder.setCancelable(false);
-        final Context context = this;
         classView = getLayoutInflater().inflate(R.layout.dialog_add_new_class_template,null);
         builder.setView(classView);
 
@@ -355,7 +361,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
         groupNameSuggest = classView.findViewById(R.id.groupNameSuggestET);
         groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
-        GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto, groupList);
+        GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(currentContext,R.layout.group_auto, groupList);
         groupNameSuggest.setAdapter(adapter);
 
         // Нажатие на выпадающий список групп и заполнение spinner subject
@@ -364,7 +370,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Group pressedGroup = (Group) adapterView.getItemAtPosition(i);
                 currentTemplate.setGroup(pressedGroup);
-                fillSpinnerByGroup(context, subjectSpinner, pressedGroup);
+                fillSpinnerByGroup(currentContext, subjectSpinner, pressedGroup);
 
                 if (templateAcademicHourList.size() == ConstantApplication.TWO){
                     templateAcademicHourList.set(ConstantApplication.ONE,
@@ -408,7 +414,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
         if ("".equals(classes.get(classDay).get(classHour).getBtn().getText().toString())) {
             builder.setTitle(R.string.popup_add_class);
-
             builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -433,7 +438,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
             final int maxCountButton = templateAcademicHourList.size();
 
             groupNameSuggest.setText(currentTemplate.getGroup().getName());
-            fillSpinnerByGroup(context, subjectSpinner, currentTemplate.getGroup());
+            fillSpinnerByGroup(currentContext, subjectSpinner, currentTemplate.getGroup());
             ConstantApplication.setSpinnerText(subjectSpinner, currentTemplate.getSubject().getName());
 
             switch (maxCountButton){
@@ -510,6 +515,12 @@ public abstract class TemplateActivity extends AppCompatActivity {
     //~~~~~~ Формирование имени Шаблона
     // Для конструирования getConfirmDialogBuilder
     private void confirmButton() {
+        List<TemplateAcademicHour> entityTemplateAcademicHourList = convert2DimensionalTo1Dimensional(classes);
+        if (entityTemplateAcademicHourList.isEmpty()){
+            Toast.makeText(currentContext, R.string.toast_empty_template, Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
         final AlertDialog dialog = getConfirmDialogBuilder(R.string.popup_super_template).create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -527,12 +538,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
     }
     // Диалоговое окно для создания шаблона
     protected AlertDialog.Builder getConfirmDialogBuilder(int popup_super_template){
-        List<TemplateAcademicHour> entityTemplateAcademicHourList = convert2DimensionalTo1Dimensional(classes);
-        if (entityTemplateAcademicHourList.isEmpty()){
-            throw new RuntimeException("Оповещание что шахматка пустая!");
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setCancelable(false);
         builder.setTitle(popup_super_template);
 
@@ -549,8 +555,8 @@ public abstract class TemplateActivity extends AppCompatActivity {
             }
         });
 
-        nameTemplate = findViewById(R.id.template_name_text);
         View view = getLayoutInflater().inflate(R.layout.dialog_add_new_template,null);
+        templateNameEditText = view.findViewById(R.id.template_name_text);
         builder.setView(view);
 
         return builder;

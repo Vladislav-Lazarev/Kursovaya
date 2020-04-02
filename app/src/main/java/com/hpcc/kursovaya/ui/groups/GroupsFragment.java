@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -40,8 +41,14 @@ public class GroupsFragment extends Fragment {
     private boolean isCreatedAlready = false;
     private View root;
     private ListView listView;
+    private long mLastClickTime = 0;
     private GroupListAdapter adapter;
     private List<Group> groupList;
+
+    public void setActionBarTitle(){
+        ((MainActivity)getActivity()).setActionBarTitle(getContext().getString(R.string.menu_groups));
+        ((MainActivity) getActivity()).showOverflowMenu(false);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if(!isCreatedAlready) {
@@ -54,6 +61,11 @@ public class GroupsFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
+
                     Intent intent = new Intent(getActivity(), AddGroupActivity.class);
                     startActivityForResult(intent, ConstantApplication.ACTIVITY_ADD);
                 }
@@ -106,6 +118,11 @@ public class GroupsFragment extends Fragment {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
+
                     Group entry = (Group) parent.getItemAtPosition(position);
 
                     Intent intent = new Intent(getActivity(), EditGroupActivity.class);
@@ -118,11 +135,6 @@ public class GroupsFragment extends Fragment {
         setActionBarTitle();
 
         return root;
-    }
-
-    public void setActionBarTitle(){
-        ((MainActivity)getActivity()).setActionBarTitle(getContext().getString(R.string.menu_groups));
-        ((MainActivity) getActivity()).showOverflowMenu(false);
     }
 
     @Override
@@ -150,6 +162,11 @@ public class GroupsFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
                 SparseBooleanArray positionDel = listView.getCheckedItemPositions();
                 for (int i = 0; i < positionDel.size(); i++) {
                     int key = positionDel.keyAt(i);

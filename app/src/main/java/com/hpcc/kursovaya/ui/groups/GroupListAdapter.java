@@ -35,6 +35,13 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
         TextView name;
     }
 
+    public GroupListAdapter(@NonNull Context context, int resource, @NonNull List<Group> objects) {
+        super(context, resource, objects);
+        mContext=context;
+        mResource=resource;
+        groupList = objects;
+    }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
@@ -56,7 +63,6 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
             holder.course = convertView.findViewById(R.id.course_label);
             holder.name = convertView.findViewById(R.id.groupName_label);
 
-
             result = convertView;
 
             convertView.setTag(holder);
@@ -75,13 +81,6 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
         holder.course.setText(String.valueOf(group.getNumberCourse()));
 
         return convertView;
-    }
-
-    public GroupListAdapter(@NonNull Context context, int resource, @NonNull List<Group> objects) {
-        super(context, resource, objects);
-        mContext=context;
-        mResource=resource;
-        groupList = objects;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

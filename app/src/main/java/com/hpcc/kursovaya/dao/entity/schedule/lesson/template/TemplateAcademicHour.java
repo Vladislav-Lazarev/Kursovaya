@@ -90,35 +90,43 @@ public class TemplateAcademicHour extends RealmObject implements EntityI<Templat
         return this;
     }
 
-    int getNumberDayOfWeek() {
-        return numberDayOfWeek;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~
+    public Pair<Integer, Integer> getDayAndPairButton(){
+        return Pair.create(numberDayOfWeek, numberHalfPair);
     }
-    int getNumberHalfPair() {
-        return numberHalfPair % ConstantApplication.TWO + ConstantApplication.ONE;
-    }
-    int getNumberHalfPairButton(){
+    public int getNumberHalfPairButton(){
         return numberHalfPair;
     }
-    public Pair<Integer, Integer> getDayAndPair(){
+
+    /*public Pair<Integer, Integer> getDayAndPair(){
         return Pair.create(numberDayOfWeek, getNumberHalfPair());
     }
-    private void setNumberHalfPair(int numberHalfPair) {
-        if (numberHalfPair < ConstantApplication.ZERO || numberHalfPair >= ConstantApplication.MAX_COUNT_LESSON * ConstantApplication.TWO) {
-            throw new RuntimeException("Exception! setNumberAcademicTwoHour() = " + numberHalfPair);
-        }
-        this.numberHalfPair = numberHalfPair;
+    public int getNumberHalfPair() {
+        return numberHalfPair % ConstantApplication.TWO + ConstantApplication.ONE;
     }
-    private void setNumberDayOfWeek(int numberDayOfWeek) {
-        if (numberDayOfWeek < ConstantApplication.MIN_DAY_OF_WEEK || numberDayOfWeek >= ConstantApplication.MAX_DAY_OF_WEEK) {
-            throw new RuntimeException("Exception! setNumberAcademicTwoHour() = " + numberHalfPair);
-        }
-        this.numberDayOfWeek = numberDayOfWeek;
+*/
+    public int getNumberDayOfWeek() {
+        return numberDayOfWeek;
     }
+
     public TemplateAcademicHour setDayAndPair(Pair<Integer, Integer> dayAndPair){
         setNumberDayOfWeek(dayAndPair.first);
         setNumberHalfPair(dayAndPair.second);
         return this;
     }
+    private void setNumberDayOfWeek(int numberDayOfWeek) {
+        if (numberDayOfWeek < ConstantApplication.MIN_DAY_OF_WEEK || numberDayOfWeek > ConstantApplication.MAX_DAY_OF_WEEK) {
+            throw new RuntimeException("Exception! setNumberAcademicTwoHour() = " + numberHalfPair);
+        }
+        this.numberDayOfWeek = numberDayOfWeek;
+    }
+    private void setNumberHalfPair(int numberHalfPair) {
+        if (numberHalfPair < ConstantApplication.ZERO || numberHalfPair >= ConstantApplication.MAX_COUNT_HALF_PAIR) {
+            throw new RuntimeException("Exception! setNumberAcademicTwoHour() = " + numberHalfPair);
+        }
+        this.numberHalfPair = numberHalfPair;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public boolean equals(Object o) {
@@ -172,7 +180,7 @@ public class TemplateAcademicHour extends RealmObject implements EntityI<Templat
     public boolean isEntity() {
         setSubject(getSubject());
         setGroup(getGroup());
-        setDayAndPair(getDayAndPair());
+        setDayAndPair(getDayAndPairButton());
 
         return id > ConstantApplication.ZERO;
     }
@@ -181,7 +189,7 @@ public class TemplateAcademicHour extends RealmObject implements EntityI<Templat
         try {
             setGroup(getGroup());
             setSubject(getSubject());
-            setDayAndPair(getDayAndPair());
+            setDayAndPair(getDayAndPairButton());
         } catch(RuntimeException ex) {
             throw new Exception("Entity = ", ex);
         }

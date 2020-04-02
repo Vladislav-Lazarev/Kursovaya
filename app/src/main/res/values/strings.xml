@@ -206,4 +206,5 @@
     <string name="toast_add_edit_entity">Запис успішно занесена</string>
     <string name="toast_del_entity">Запис успішно видалено</string>
     <string name="toast_del_many_entity">Записи успішно видалені</string>
+    <string name="toast_empty_template">Заповніть шаматку!</string>
 </resources>

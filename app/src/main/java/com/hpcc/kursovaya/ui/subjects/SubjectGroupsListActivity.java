@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.NewEntity;
+import com.hpcc.kursovaya.dao.SubjectGroupsInfo;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
@@ -34,7 +34,7 @@ public class SubjectGroupsListActivity extends AppCompatActivity {
     private static final String TAG = SubjectGroupsListActivity.class.getSimpleName();
     ListView subjectGroupsLSV;
     SubjectGroupsAdapter adapter;
-    List<NewEntity> subjectGroupsList = new ArrayList<>();
+    List<SubjectGroupsInfo> subjectGroupsList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +59,9 @@ public class SubjectGroupsListActivity extends AppCompatActivity {
         ab.setDisplayShowTitleEnabled(false);
         subjectGroupsLSV = findViewById(R.id.groupsLSV);
         ArrayList<Group> groups = (ArrayList<Group>) DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
-        NewEntity one = new NewEntity();
+        SubjectGroupsInfo one = new SubjectGroupsInfo();
         one.setGroup(groups.get(0));
-        NewEntity two = new NewEntity();
+        SubjectGroupsInfo two = new SubjectGroupsInfo();
         one.setGroup(groups.get(0));
         two.setGroup(groups.get(1));
         subjectGroupsList.add(one);

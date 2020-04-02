@@ -55,7 +55,7 @@ public class EditGroupActivity extends AppCompatActivity {
         textCont.setText("Редагування групи");
 
         Intent intent = getIntent();
-        group = intent.getParcelableExtra("editGroup");
+        group = intent.getParcelableExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT));
 
         Spinner spinnerSpeciality =
                 ConstantApplication.fillingSpinner(this, (Spinner) findViewById(R.id.spinnerSpeciality),
