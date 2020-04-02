@@ -19,7 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 public class EditGroupActivity extends AppCompatActivity {
@@ -55,17 +55,17 @@ public class EditGroupActivity extends AppCompatActivity {
         textCont.setText("Редагування групи");
 
         Intent intent = getIntent();
-        group = intent.getParcelableExtra("editGroup");
+        group = intent.getParcelableExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT));
 
         Spinner spinnerSpeciality =
-                ConstantEntity.fillingSpinner(this, (Spinner) findViewById(R.id.spinnerSpeciality),
+                ConstantApplication.fillingSpinner(this, (Spinner) findViewById(R.id.spinnerSpeciality),
                         new Speciality().entityToNameList());
         listenerSpinnerSpeciality(spinnerSpeciality);
-        ConstantEntity.setSpinnerText(spinnerSpeciality, group.getSpecialty().getName());
+        ConstantApplication.setSpinnerText(spinnerSpeciality, group.getSpecialty().getName());
 
         Spinner spinnerCourse = findViewById(R.id.spinnerCourse);
         listenerSpinnerCourse(spinnerCourse);
-        spinnerCourse.setSelection(group.getNumberCourse() - ConstantEntity.ONE);
+        spinnerCourse.setSelection(group.getNumberCourse() - ConstantApplication.ONE);
 
         groupEditText = findViewById(R.id.editTextGroupName);
         groupEditText.setText(group.getName());
@@ -86,14 +86,9 @@ public class EditGroupActivity extends AppCompatActivity {
     private void editGroup(){
         group.setName(groupEditText.getText().toString());
 
-        if (group.isEntity()){
-            Intent intent = getIntent();
-            intent.putExtra("editGroup", group);
-            setResult(Activity.RESULT_OK, intent);
-        } else {
-            // Оповещение о ее неправильности
-            Log.d(TAG, "editGroup = " + group);
-        }
+        Intent intent = getIntent();
+        intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT), group);
+        setResult(Activity.RESULT_OK, intent);
 
         finish();
     }
@@ -103,7 +98,7 @@ public class EditGroupActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 String item = (String) parent.getItemAtPosition(selectedItemPosition);
-                Speciality speciality = DBManager.read(Speciality.class, ConstantEntity.NAME, item);
+                Speciality speciality = DBManager.read(Speciality.class, ConstantApplication.NAME, item);
                 group.setSpecialty(speciality);
             }
             public void onNothingSelected(AdapterView<?> parent) {

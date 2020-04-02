@@ -28,6 +28,7 @@ import androidx.core.content.FileProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.setting.BackupDB;
 
 import java.io.File;
@@ -59,7 +60,7 @@ public class BackupActivity  extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -74,7 +75,7 @@ public class BackupActivity  extends AppCompatActivity {
         addBackup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -90,7 +91,7 @@ public class BackupActivity  extends AppCompatActivity {
         adapter = new BackupListAdapter(this,R.layout.listview_item_backup,backupsList);
         backupLSV.setAdapter(adapter);
         backupLSV.setOnItemClickListener((parent,view,position,id)->{
-            if(SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+            if(SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                 return;
             }
             mLastClickTime = SystemClock.elapsedRealtime();
@@ -192,17 +193,17 @@ public class BackupActivity  extends AppCompatActivity {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                SparseBooleanArray selected = adapter
-                        .getSelectedIds();
-                for (int i = (selected.size() - 1); i >= 0; i--) {
-                    if (selected.valueAt(i)) {
-                        BackupDB selecteditem = adapter.getItem(selected.keyAt(i));
-                        // Remove selected items following the ids
-                        adapter.remove(selecteditem);
+
+                SparseBooleanArray positionDel = backupLSV.getCheckedItemPositions();
+                for (int i = 0; i < positionDel.size(); i++) {
+                    int key = positionDel.keyAt(i);
+                    if (positionDel.get(key)){
+                        Log.d(TAG, "entity = " + backupsList.get(key));
+                        //backupsList.remove(key);
                     }
                 }
                 mode.finish();
@@ -236,7 +237,7 @@ public class BackupActivity  extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.edit_name_of_backup);
         builder.setPositiveButton(R.string.popup_edit,(dialog, which) ->{
-            if(SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+            if(SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                 return;
             }
             mLastClickTime = SystemClock.elapsedRealtime();
@@ -277,7 +278,7 @@ public class BackupActivity  extends AppCompatActivity {
         builder.setPositiveButton(R.string.dialog_button_add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();

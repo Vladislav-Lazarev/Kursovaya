@@ -40,7 +40,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
 import com.hpcc.kursovaya.ui.settings.SettingsFragment;
@@ -147,18 +147,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         File file = new File(existstoragedir);
         FileInputStream fis = null;
         ObjectInputStream iis = null;
-        int timeArrayRecover[][][] = ConstantEntity.timeArray.clone();
+        int timeArrayRecover[][][] = ConstantApplication.timeArray.clone();
         try {
             if(!file.exists()) {
                 file.createNewFile();
             }
             fis = new FileInputStream(file.getAbsolutePath());
             iis = new ObjectInputStream(fis);
-            ConstantEntity.timeArray = (int[][][]) iis.readObject();
+            ConstantApplication.timeArray = (int[][][]) iis.readObject();
 
         } catch (IOException | ClassNotFoundException e) {
             Log.d(TAG,e.toString());
-            ConstantEntity.timeArray = timeArrayRecover;
+            ConstantApplication.timeArray = timeArrayRecover;
         }
     }
 
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();                onClickAcceptReportDates(dialog, which);
-        }
+            }
         });
         builder.setCancelable(false);
         builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             isDatesCorrect = false;
         }
         if(isDatesCorrect){
-             String[] groupsName = {"П-61", "Соплежуйки", "Ветродуйки", "Моржи", "Митинг", "Вирджиния", "П-67", "П-68", "П-69", "П-70"};
+            String[] groupsName = {"П-61", "Соплежуйки", "Ветродуйки", "Моржи", "Митинг", "Вирджиния", "П-67", "П-68", "П-69", "П-70"};
             String existstoragedir = getExternalFilesDir(null).getAbsolutePath() + "/report.pdf";
             File file = new File(existstoragedir);
 

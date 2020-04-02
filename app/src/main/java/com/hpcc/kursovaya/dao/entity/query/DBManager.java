@@ -2,7 +2,7 @@ package com.hpcc.kursovaya.dao.entity.query;
 
 import android.util.Log;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,16 +34,16 @@ public class DBManager {
                 public void execute(Realm realm) {
                     realm.copyToRealmOrUpdate(model);
 
-                    result.add(ConstantEntity.ONE);
+                    result.add(ConstantApplication.ONE);
                     Log.v(TAG, "Success -> " + model.getClass().getSimpleName() + " was write: " + model);
                 }
             });
         } catch (Throwable ex) {
-                result.add(ConstantEntity.ZERO);
+                result.add(ConstantApplication.ZERO);
                 Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
         }
 
-        return (int)result.get(ConstantEntity.ZERO);
+        return (int)result.get(ConstantApplication.ZERO);
     }
     public static <T extends RealmObject> int writeAll(@NotNull final List<T> model) {
         result.clear();
@@ -59,11 +59,11 @@ public class DBManager {
                 }
             });
         } catch (Throwable ex) {
-            result.add(ConstantEntity.ZERO);
+            result.add(ConstantApplication.ZERO);
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
         }
 
-        return (int)result.get(ConstantEntity.ZERO);
+        return (int)result.get(ConstantApplication.ZERO);
     }
 
     public static <T extends RealmObject, V> int delete(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final V value){
@@ -71,7 +71,6 @@ public class DBManager {
 
         try {
             final RealmQuery<T> query = realm.where(clazz);
-
             if (value instanceof Integer) {
                 query.equalTo(fieldName, (Integer) value);
             } else if (value instanceof String) {
@@ -89,21 +88,17 @@ public class DBManager {
                     final T deleteModel = copyObjectFromRealm(model);
                     if (model != null) {
                         model.deleteFromRealm();
-                        result.add(ConstantEntity.ONE);
-                        Log.v(TAG, "Success -> " + clazz.getSimpleName() + " was delete: " + deleteModel.toString());
-                    } else {
-                        result.add(ConstantEntity.ZERO);
-                        Log.e(TAG, "Failed -> object " + clazz.getSimpleName() + " with field = " + fieldName  + " not find");
+                        result.add(ConstantApplication.ONE);
                     }
                     Log.v(TAG, "Success -> " + deleteModel.getClass().getSimpleName() + " was delete: " + deleteModel.toString());
                 }
             });
         } catch (Throwable ex) {
-            result.add(ConstantEntity.ZERO);
+            result.add(ConstantApplication.ZERO);
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
         }
 
-        return (int)result.get(ConstantEntity.ZERO);
+        return (int)result.get(ConstantApplication.ZERO);
     }
     public static <T extends RealmObject> int deleteAll(@NotNull final Class<T> clazz){
         return deleteAll(clazz, null, null);
@@ -131,7 +126,7 @@ public class DBManager {
                 public void execute(Realm realm) {
                     final RealmResults<T> model = query.findAll();
                     final List<T> deleteModel = copyObjectFromRealm(model);
-                    if (model != null || model.size() > ConstantEntity.ZERO) {
+                    if (model != null || model.size() > ConstantApplication.ZERO) {
                         model.deleteAllFromRealm();
                         result.add(deleteModel.size());
                     }
@@ -140,11 +135,11 @@ public class DBManager {
 
             });
         } catch (Throwable ex) {
-            result.add(ConstantEntity.ZERO);
+            result.add(ConstantApplication.ZERO);
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
         }
 
-        return (int)result.get(ConstantEntity.ZERO);
+        return (int)result.get(ConstantApplication.ZERO);
     }
 
     public static <T extends RealmObject, V> T read(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final V value){
@@ -166,13 +161,13 @@ public class DBManager {
             }
 
             result.add(query.findFirst());
-            Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantEntity.ZERO).toString());
+            Log.v(TAG, "Success -> " + result.get(ConstantApplication.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantApplication.ZERO).toString());
         } catch (Throwable ex) {
             result.add(null);
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
         }
 
-        return (T)result.get(ConstantEntity.ZERO);
+        return (T)result.get(ConstantApplication.ZERO);
     }
     public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz){
         return readAll(clazz, null, null, null, null);
@@ -200,7 +195,6 @@ public class DBManager {
 
         try {
             final RealmQuery<T> query = realm.where(clazz);
-
             if (fieldName != null) {
                 if (value instanceof Integer) {
                     query.equalTo(fieldName, (Integer) value);
@@ -219,22 +213,22 @@ public class DBManager {
             }
 
             result.add(model);
-            Log.v(TAG, "Success -> " + result.get(ConstantEntity.ZERO).getClass().getSimpleName() + " was readAll: " + result.get(ConstantEntity.ZERO).toString());
+            Log.v(TAG, "Success -> " + result.get(ConstantApplication.ZERO).getClass().getSimpleName() + " was readAll: " + result.get(ConstantApplication.ZERO).toString());
         } catch (Throwable ex) {
             result.add(null);
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
         }
 
-        return (RealmResults<T>) result.get(ConstantEntity.ZERO);
+        return (RealmResults<T>) result.get(ConstantApplication.ZERO);
     }
 
     public static <T extends RealmObject> int findMaxID(@NotNull Class<T> clazz){
-        Number maxID = realm.where(clazz).max(ConstantEntity.ID);
+        Number maxID = realm.where(clazz).max(ConstantApplication.ID);
 
         if (maxID != null) {
             return maxID.intValue();
         }
-        return ConstantEntity.ZERO;
+        return ConstantApplication.ZERO;
     }
 
     public static <T extends RealmObject> T copyObjectFromRealm(T obj){

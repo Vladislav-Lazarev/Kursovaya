@@ -12,17 +12,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.NewEntity;
+import com.hpcc.kursovaya.dao.SubjectGroupsInfo;
 
 import java.util.List;
 
 import io.realm.Sort;
 
-public class SubjectGroupsAdapter extends ArrayAdapter<NewEntity> {
+public class SubjectGroupsAdapter extends ArrayAdapter<SubjectGroupsInfo> {
     private Context mContext;
     private int mResource;
     private int lastPosition = -1;
-    private List<NewEntity> groupList;
+    private List<SubjectGroupsInfo> groupList;
     private int totalHours = 0;
     private int readHours = 0;
     private int canceledHours = 0;
@@ -37,7 +37,7 @@ public class SubjectGroupsAdapter extends ArrayAdapter<NewEntity> {
         TextView canceledHours;
     }
 
-    public SubjectGroupsAdapter(@NonNull Context context, int resource, @NonNull List<NewEntity> objects) {
+    public SubjectGroupsAdapter(@NonNull Context context, int resource, @NonNull List<SubjectGroupsInfo> objects) {
         super(context, resource, objects);
         mContext = context;
         mResource = resource;
@@ -77,7 +77,7 @@ public class SubjectGroupsAdapter extends ArrayAdapter<NewEntity> {
         return convertView;
     }
 
-    public void write(NewEntity object) {
+    public void write(SubjectGroupsInfo object) {
         /*
         if (object.existsEntity()) {
             Log.d(TAG, "And\\Edit Entity = " + object);
@@ -105,7 +105,7 @@ public class SubjectGroupsAdapter extends ArrayAdapter<NewEntity> {
         notifyDataSetChanged();
     }
 
-    public void delete(NewEntity object) {
+    public void delete(SubjectGroupsInfo object) {
       //  DBManager.delete(Group.class, ConstantApplication.ID, object.getId());
         notifyDataSetChanged();
     }

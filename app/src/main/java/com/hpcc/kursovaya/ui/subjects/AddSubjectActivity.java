@@ -30,7 +30,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.LinkedHashMap;
@@ -64,7 +64,7 @@ public class AddSubjectActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -87,7 +87,7 @@ public class AddSubjectActivity extends AppCompatActivity {
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -98,7 +98,7 @@ public class AddSubjectActivity extends AppCompatActivity {
         LinearLayout parent = findViewById(R.id.spinnerSpeciality);
 
         final List<Speciality> specialityList = DBManager.copyObjectFromRealm(
-                DBManager.readAll(Speciality.class, ConstantEntity.ID));
+                DBManager.readAll(Speciality.class, ConstantApplication.ID));
         for(int i = 0 ; i< specialityList.size();i++){
             LinearLayout specLayout = new LinearLayout(this);
             specLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -164,7 +164,7 @@ public class AddSubjectActivity extends AppCompatActivity {
             addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
@@ -176,16 +176,11 @@ public class AddSubjectActivity extends AppCompatActivity {
 
     private void addSubject(){
         subject.setName(subjectEditText.getText().toString())
-                .setSpecialityCountHourMap(ConstantEntity.convertMapEditTextToMapInt(map));
+                .setSpecialityCountHourMap(ConstantApplication.convertMapEditTextToMapInt(map));
 
-        if (subject.isEntity()){
-            Intent intent = getIntent();
-            intent.putExtra("addSubject", subject);
-            setResult(Activity.RESULT_OK, intent);
-        } else {
-            // Оповещение о ее неправильности
-            Log.d(TAG, "addSubject = " + subject);
-        }
+        Intent intent = getIntent();
+        intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_ADD), subject);
+        setResult(Activity.RESULT_OK, intent);
 
         finish();
     }

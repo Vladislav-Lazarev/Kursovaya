@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Gravity;
@@ -19,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -28,31 +30,27 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.List;
 
-import io.realm.RealmList;
-
 public class GroupsFragment extends Fragment {
+    private static final String TAG = GroupsFragment.class.getSimpleName();
 
     private boolean isCreatedAlready = false;
     private View root;
     private ListView listView;
+    private long mLastClickTime = 0;
     private GroupListAdapter adapter;
     private List<Group> groupList;
 
-    private long mLastClickTime = 0;
-
-    {
-        adapter = null;
-        groupList = new RealmList<>();
+    public void setActionBarTitle(){
+        ((MainActivity)getActivity()).setActionBarTitle(getContext().getString(R.string.menu_groups));
+        ((MainActivity) getActivity()).showOverflowMenu(false);
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if(!isCreatedAlready) {
             root = inflater.inflate(R.layout.fragment_groups, container, false);
             listView = root.findViewById(R.id.groupLSV);
@@ -63,13 +61,19 @@ public class GroupsFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
+
                     Intent intent = new Intent(getActivity(), AddGroupActivity.class);
-                    startActivityForResult(intent, ConstantEntity.ACTIVITY_ADD);
+                    startActivityForResult(intent, ConstantApplication.ACTIVITY_ADD);
                 }
             });
 
             //creating elements for listview
-            groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
+            groupList = DBManager.copyObjectFromRealm(
+                    DBManager.readAll(Group.class));
             adapter = new GroupListAdapter(getActivity(), R.layout.list_view_item_group, groupList);
             listView.setAdapter(adapter);
 
@@ -80,7 +84,6 @@ public class GroupsFragment extends Fragment {
                 public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                     final int checkedCount = listView.getCheckedItemCount();
                     mode.setTitle(checkedCount +" "+getResources().getString(R.string.cab_select_text));
-                    adapter.toggleSelection(position);
                 }
 
                 @Override
@@ -109,24 +112,22 @@ public class GroupsFragment extends Fragment {
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
                     toolbar.setVisibility(View.VISIBLE);
-                    adapter.removeSelection();
                 }
             });
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
+
                     Group entry = (Group) parent.getItemAtPosition(position);
 
                     Intent intent = new Intent(getActivity(), EditGroupActivity.class);
-                    intent.putExtra("posOldGroup", position);
-                    intent.putExtra("editGroup", entry);
-
-                    startActivityForResult(intent, ConstantEntity.ACTIVITY_EDIT);
+                    intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT), entry);
+                    startActivityForResult(intent, ConstantApplication.ACTIVITY_EDIT);
                 }
             });
         }
@@ -136,32 +137,21 @@ public class GroupsFragment extends Fragment {
         return root;
     }
 
-    public void setActionBarTitle(){
-        ((MainActivity)getActivity()).setActionBarTitle(getContext().getString(R.string.menu_groups));
-        ((MainActivity) getActivity()).showOverflowMenu(false);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if(resultCode== Activity.RESULT_OK){
-            Group group;
+            String strParcelableExtra = "";
             switch (requestCode){
-                case ConstantEntity.ACTIVITY_ADD:
-                    group = data.getParcelableExtra("addGroup");
-                    DBManager.write(group);
-
-                    groupList.add(group);
+                case ConstantApplication.ACTIVITY_ADD:
+                    strParcelableExtra = String.valueOf(ConstantApplication.ACTIVITY_ADD);
                     break;
-                case ConstantEntity.ACTIVITY_EDIT:
-                    int posOldGroup = data.getIntExtra("posOldGroup",0);
-                    group = data.getParcelableExtra("editGroup");
-                    DBManager.write(group);
-
-                    groupList.set(posOldGroup, group);
+                case ConstantApplication.ACTIVITY_EDIT:
+                    strParcelableExtra = String.valueOf(ConstantApplication.ACTIVITY_EDIT);
                     break;
             }
-            adapter.notifyDataSetChanged();
+            Group group = data.getParcelableExtra(strParcelableExtra);
+            adapter.write(group);
+            adapter.update(ConstantApplication.NAME);
         }
     }
 
@@ -172,22 +162,28 @@ public class GroupsFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                SparseBooleanArray selected = adapter
-                        .getSelectedIds();
-                for (int i = (selected.size() - 1); i >= 0; i--) {
-                    if (selected.valueAt(i)) {
-                        Group selecteditem = adapter
-                                .getItem(selected.keyAt(i));
-                        // Remove selected items following the ids
-                        adapter.remove(selecteditem);
+
+                SparseBooleanArray positionDel = listView.getCheckedItemPositions();
+                for (int i = 0; i < positionDel.size(); i++) {
+                    int key = positionDel.keyAt(i);
+                    if (positionDel.get(key)){
+                        Log.d(TAG, "entity = " + groupList.get(key));
+                        adapter.delete(groupList.get(key));
                     }
                 }
-                mode.finish();
+                adapter.update(ConstantApplication.NAME);
 
+                if (positionDel.size() == ConstantApplication.ONE){
+                    Toast.makeText(getContext(), R.string.toast_del_entity, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), R.string.toast_del_many_entity, Toast.LENGTH_SHORT).show();
+                }
+
+                mode.finish();
             }
         });
         builder.setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {

@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.calendar;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,7 @@ public class Holiday extends RealmObject {
 
     private void setId(int id){
         try{
-            if (id < ConstantEntity.ONE){
+            if (id < ConstantApplication.ONE){
                 throw new Exception("Exception! setId()");
             }
             this.id = id;

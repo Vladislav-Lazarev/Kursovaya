@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.schedule.lesson;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public class AcademicHour extends RealmObject {
 
     private void setId(int id){
         try{
-            if (id < ConstantEntity.ONE){
+            if (id < ConstantApplication.ONE){
                 throw new Exception("Exception! setId()");
             }
             this.id = id;

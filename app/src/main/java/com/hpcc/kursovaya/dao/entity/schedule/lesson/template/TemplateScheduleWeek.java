@@ -6,11 +6,12 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.hpcc.kursovaya.dao.entity.EntityI;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -33,7 +34,8 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
         List<TemplateAcademicHour> result = new RealmList<>();
 
         for (Integer id : idTemplateAcademicHourList){
-            result.add(DBManager.read(TemplateAcademicHour.class, ConstantEntity.ID, id));
+            result.add(DBManager.copyObjectFromRealm(
+                    DBManager.read(TemplateAcademicHour.class, ConstantApplication.ID, id)));
         }
         return result;
     }
@@ -57,7 +59,7 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
     }
 
     private void setId(int id){
-        if (id < ConstantEntity.ONE){
+        if (id < ConstantApplication.ONE){
             throw new RuntimeException("Exception! setId()");
         }
         this.id = id;
@@ -80,7 +82,7 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
         return convert(idTemplateAcademicHourList);
     }
     public TemplateScheduleWeek setTemplateAcademicHourList(@NotNull List<TemplateAcademicHour> templateAcademicHourList) {
-        if (templateAcademicHourList.size() > ConstantEntity.ZERO) {
+        if (templateAcademicHourList.isEmpty()) {
             throw new RuntimeException("Exception! setTemplateScheduleDayList()");
         }
         this.idTemplateAcademicHourList = convert(templateAcademicHourList);
@@ -100,11 +102,15 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
     // EntityI
     private static int countObj = 0;
 
+    @Override
+    public int getId() {
+        return id;
+    }
 
     public boolean existsEntity() {
         // TODO Пока коряво
         RealmResults<TemplateScheduleWeek> existingEntities =
-                DBManager.readAll(TemplateScheduleWeek.class, ConstantEntity.NAME, this.getName());
+                DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME, this.getName());
         for (TemplateScheduleWeek entity : existingEntities) {
             if (this.equals(entity)) {
                 return true;
@@ -118,11 +124,39 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
         setName(name);
         setTemplateAcademicHourList(getTemplateAcademicHourList());
 
-        return id > ConstantEntity.ZERO;
+        return id > ConstantApplication.ZERO;
+    }
+    @Override
+    public void checkEntity() throws Exception {
+        try {
+            setName(getName());
+            setTemplateAcademicHourList(getTemplateAcademicHourList());
+        } catch(RuntimeException ex) {
+            throw new Exception("Entity = ", ex);
+        }
+    }
+    @Override
+    public TemplateScheduleWeek createEntity() throws Exception {
+        if (!isEntity()){
+            checkEntity();
+            int maxID = DBManager.findMaxID(this.getClass());
+            setId((maxID > ConstantApplication.ZERO)? ++maxID : ++countObj);
+        }
+
+        return this;
+    }
+
+    public static List<String> entityToNameList(List<TemplateScheduleWeek> entityList) {
+        List<String> result = new ArrayList<>();
+
+        for (TemplateScheduleWeek templateScheduleWeek : entityList){
+            result.add(templateScheduleWeek.getName());
+        }
+        return result;
     }
     @Override
     public List<String> entityToNameList() {
-        return entityToNameList(DBManager.readAll(TemplateScheduleWeek.class, ConstantEntity.NAME));
+        return entityToNameList(DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME));
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -130,7 +164,8 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
     // Parcelable
     protected TemplateScheduleWeek(Parcel in) {
         id = in.readInt();
-        in.readList(idTemplateAcademicHourList, TemplateScheduleWeek.class.getClassLoader());
+        name = in.readString();
+        in.readList(idTemplateAcademicHourList, Integer.class.getClassLoader());
     }
     public static final Creator<TemplateScheduleWeek> CREATOR = new Creator<TemplateScheduleWeek>() {
         @Override
@@ -151,7 +186,8 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeList(getTemplateAcademicHourList());
+        dest.writeString(name);
+        dest.writeList(idTemplateAcademicHourList);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

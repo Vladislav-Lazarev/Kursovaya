@@ -1,5 +1,6 @@
 package com.hpcc.kursovaya.ui.templates;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -24,21 +26,28 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class TemplatesFragment extends Fragment {
+    private static final String TAG = TemplatesFragment.class.getSimpleName();
+
     boolean isCreatedAlready = false;
     ListView listView = null;
     private View root;
-    TemplateListAdapter adapter = null;
     private long mLastClickTime = 0;
+    TemplateListAdapter adapter;
+    private List<TemplateScheduleWeek> templateScheduleWeekList;
 
+    public void setActionBarTitle(){
+        ((MainActivity) getActivity()).setActionBarTitle(getContext().getString(R.string.menu_templates));
+        ((MainActivity) getActivity()).showOverflowMenu(false);
+    }
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
         if(!isCreatedAlready) {
             setHasOptionsMenu(false);
@@ -49,17 +58,19 @@ public class TemplatesFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
+
                     Intent intent = new Intent(getActivity(), AddTemplateActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent, ConstantApplication.ACTIVITY_ADD);
                 }
             });
 
-            ArrayList<TemplateScheduleWeek> listTemplates = new ArrayList<>();
-            adapter = new TemplateListAdapter(getActivity(), R.layout.list_view_item_template, listTemplates);
+            templateScheduleWeekList = DBManager.copyObjectFromRealm(
+                    DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME));
+            adapter = new TemplateListAdapter(getActivity(), R.layout.list_view_item_template, templateScheduleWeekList);
             listView.setAdapter(adapter);
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
             listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -67,7 +78,6 @@ public class TemplatesFragment extends Fragment {
                 public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                     final int checkedCount = listView.getCheckedItemCount();
                     mode.setTitle(checkedCount +" "+getResources().getString(R.string.cab_select_text));
-                    adapter.toggleSelection(position);
                 }
 
                 @Override
@@ -96,24 +106,21 @@ public class TemplatesFragment extends Fragment {
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
                     toolbar.setVisibility(View.VISIBLE);
-                    adapter.removeSelection();
                 }
             });
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
                     TemplateScheduleWeek entry = (TemplateScheduleWeek) parent.getItemAtPosition(position);
 
-                    Log.d("TAG", "entry = " + entry.toString());
+                    Log.d(TAG, "entry = " + entry.toString());
                     Intent intent = new Intent(getActivity(), EditTemplateActivity.class);
-                    intent.putExtra("posOfTemplateInList", position);
-                    intent.putExtra("template", entry);
-
-                    startActivityForResult(intent, ConstantEntity.ACTIVITY_EDIT);
+                    intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT), entry);
+                    startActivityForResult(intent, ConstantApplication.ACTIVITY_EDIT);
                 }
             });
             listView.setItemsCanFocus(false);
@@ -123,6 +130,24 @@ public class TemplatesFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode== Activity.RESULT_OK){
+            String strParcelableExtra = "";
+            switch (requestCode){
+                case ConstantApplication.ACTIVITY_ADD:
+                    strParcelableExtra = String.valueOf(ConstantApplication.ACTIVITY_ADD);
+                    break;
+                case ConstantApplication.ACTIVITY_EDIT:
+                    strParcelableExtra = String.valueOf(ConstantApplication.ACTIVITY_EDIT);
+                    break;
+            }
+            TemplateScheduleWeek templateScheduleWeek = data.getParcelableExtra(strParcelableExtra);
+            adapter.write(templateScheduleWeek);
+            adapter.update(ConstantApplication.NAME);
+        }
+    }
+
     private void prepareDeleteDialog(ActionMode mode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(getResources().getString(R.string.delete_alert_header))
@@ -130,19 +155,27 @@ public class TemplatesFragment extends Fragment {
                 .setPositiveButton(R.string.delete_positive,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                                     return;
                                 }
                                 mLastClickTime = SystemClock.elapsedRealtime();
-                                SparseBooleanArray selected = adapter.getSelectedIds();
-                                for (int i = (selected.size() - 1); i >= 0; i--) {
-                                    if (selected.valueAt(i)) {
-                                        TemplateScheduleWeek selecteditem = adapter
-                                                .getItem(selected.keyAt(i));
-                                        // Remove selected items following the ids
-                                        adapter.remove(selecteditem);
+
+                                SparseBooleanArray positionDel = listView.getCheckedItemPositions();
+                                for (int i = 0; i < positionDel.size(); i++) {
+                                    int key = positionDel.keyAt(i);
+                                    if (positionDel.get(key)){
+                                        Log.d(TAG, "entity = " + templateScheduleWeekList.get(key));
+                                        adapter.delete(templateScheduleWeekList.get(key));
                                     }
                                 }
+                                adapter.update(ConstantApplication.NAME);
+
+                                if (positionDel.size() == ConstantApplication.ONE){
+                                    Toast.makeText(getContext(), R.string.toast_del_entity, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getContext(), R.string.toast_del_many_entity, Toast.LENGTH_SHORT).show();
+                                }
+
                                 mode.finish();
                             }
                         })
@@ -161,10 +194,5 @@ public class TemplatesFragment extends Fragment {
             }
         });
         alert.show();
-    }
-
-    public void setActionBarTitle(){
-        ((MainActivity) getActivity()).setActionBarTitle(getContext().getString(R.string.menu_templates));
-        ((MainActivity) getActivity()).showOverflowMenu(false);
     }
 }

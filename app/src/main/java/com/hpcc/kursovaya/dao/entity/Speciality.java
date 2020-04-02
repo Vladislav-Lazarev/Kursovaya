@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 public class Speciality extends RealmObject implements EntityI<Speciality>, Parcelable, Cloneable {
@@ -41,11 +42,8 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         setCountCourse(countCourse);
     }
 
-    public int getId() {
-        return id;
-    }
     private void setId(int id) {
-        if (id < ConstantEntity.ONE){
+        if (id < ConstantApplication.ONE){
             Log.e(TAG, "Failed -> setId(id = " + id + ")");
             throw new RuntimeException("setId(id = "+ id + ")");
         }
@@ -69,7 +67,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         return countCourse;
     }
     public Speciality setCountCourse(int countCourse) {
-        if(countCourse < ConstantEntity.ONE){
+        if(countCourse < ConstantApplication.ONE){
             Log.e(TAG, "Failed -> setCountCourse(countCourse = " + countCourse + ")");
             throw new RuntimeException("setCountCourse(countCourse = " + countCourse + ")");
         }
@@ -78,10 +76,10 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        Speciality that = (Speciality) o;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        Speciality that = (Speciality) obj;
         return countCourse == that.countCourse &&
                 name.equals(that.name);
     }
@@ -100,13 +98,14 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
                 '}';
     }
 
+    // Specific query
     public void deleteAllLinks(){
         // Удаление специальности в дисциплине
         List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
         for (Subject subject : subjectList) {
             if (subject.initMap().containsKeySpecialityCountHour(this)){
-                if (subject.getSpecialityCountHourMap().size() == ConstantEntity.ONE) {
-                    DBManager.delete(Subject.class, ConstantEntity.ID, subject.getId());
+                if (subject.getSpecialityCountHourMap().size() == ConstantApplication.ONE) {
+                    DBManager.delete(Subject.class, ConstantApplication.ID, subject.getId());
                 } else {
                     subject.removeSpecialityCountHour(this);
                     DBManager.write(subject);
@@ -114,53 +113,70 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
             }
         }
 
-        List<Subject> check = DBManager.readAll(Subject.class);
-
         // Удаление групп по специальности
-        DBManager.deleteAll(Group.class, "idSpeciality", id);
+        DBManager.deleteAll(Group.class, "idSpeciality", getId());
 
         // Удаление специальности
-        DBManager.delete(Speciality.class, ConstantEntity.ID, id);
+        DBManager.delete(Speciality.class, ConstantApplication.ID, getId());
     }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // EntityI
     private static int countObj = 0;
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public boolean existsEntity() {
+        RealmResults<Speciality> existingEntities =
+                DBManager.readAll(Speciality.class, ConstantApplication.NAME, this.getName(), ConstantApplication.NAME);
+        for (Speciality entity : existingEntities) {
+            if (this.equals(entity) && this.getId() != entity.getId()) {
+                Log.d(TAG, "DB Speciality = " + entity);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean isEntity() {
-        if (id < ConstantEntity.ONE){
-            try {
-                setName(name);
-                setCountCourse(countCourse);
-            } catch (RuntimeException ex) {
-                return false;
-            }
-
+        return id > ConstantApplication.ZERO;
+    }
+    @Override
+    public void checkEntity() throws Exception{
+        try {
+            setName(getName());
+            setCountCourse(getCountCourse());
+        } catch(RuntimeException ex) {
+            throw new Exception("Entity = ", ex);
+        }
+    }
+    @Override
+    public Speciality createEntity() throws Exception {
+        if (!isEntity()){
+            checkEntity();
             int maxID = DBManager.findMaxID(this.getClass());
-            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
+            setId((maxID > ConstantApplication.ZERO)? ++maxID : ++countObj);
         }
-        return true;
+        return this;
     }
 
-    @Override
-    public List<String> entityToNameList() {
-        List<Speciality> specialityList = DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class, ConstantEntity.COUNT_COURSE));
-        List<String> result = new ArrayList<>();
-
-        for (Speciality speciality : specialityList){
-            result.add(speciality.getName());
-        }
-        return result;
-    }
-
-    @Override
-    public List<String> entityToNameList(List<Speciality> entityList) {
+    public static List<String> entityToNameList(List<Speciality> entityList) {
         List<String> result = new ArrayList<>();
 
         for (Speciality speciality : entityList){
             result.add(speciality.getName());
         }
         return result;
+    }
+    @Override
+    public List<String> entityToNameList() {
+        return entityToNameList(DBManager.readAll(Speciality.class, ConstantApplication.COUNT_COURSE));
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

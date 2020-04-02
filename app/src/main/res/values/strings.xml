@@ -67,6 +67,7 @@
     <string name="popup_cut_classes_template">Зняти заняття</string>
     <string name="popup_cut_classes_content">Ви дійсно хочете зняти обрані заняття?</string>
     <string name="popup_uncut_classes_content">Ви дійсно хочете повернути обраним заняттям статус невичитаних?</string>
+    <string name="popup_super_template">Super шаблон</string>
     <string name="popup_add_template">Додавання шаблону</string>
     <string name="popup_edit_template">Редагування шаблону</string>
     <string name="popup_edit_class">Редагувати заняття</string>
@@ -199,4 +200,11 @@
     <string name="import_dialog_title">Імпортувати резервну копію</string>
     <string name="import_dialog_message">Ви дійсно хочете відновити обрану копію? Всі дані вашого застосунку, якщо не створена резервна копія, будуть втрачені.</string>
     <string name="popup_delete_subject_groups_content">Ви дійсно хочете видалити обрані групи предмету? Усі заняття цих груп по обраному предмету будуть видалені.</string>
+
+    <!-- Уведомление о сущностях -->
+    <string name="toast_exists_entity">Ця запис вже існує!</string>
+    <string name="toast_add_edit_entity">Запис успішно занесена</string>
+    <string name="toast_del_entity">Запис успішно видалено</string>
+    <string name="toast_del_many_entity">Записи успішно видалені</string>
+    <string name="toast_empty_template">Заповніть шаматку!</string>
 </resources>

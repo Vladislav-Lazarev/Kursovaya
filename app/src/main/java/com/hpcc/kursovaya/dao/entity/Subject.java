@@ -8,7 +8,7 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +23,7 @@ import java.util.Set;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -41,7 +42,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     protected static Map<Speciality, Integer> convert(Pair<RealmList<Integer>, RealmList<Integer>> pair) {
         Map<Speciality, Integer> mapResult = new LinkedHashMap<>();
         for (int i = 0; i < pair.first.size() && i < pair.second.size(); i++){
-            mapResult.put(DBManager.read(Speciality.class, ConstantEntity.ID, pair.first.get(i)), pair.second.get(i));
+            mapResult.put(DBManager.read(Speciality.class, ConstantApplication.ID, pair.first.get(i)), pair.second.get(i));
         }
         return mapResult;
     }
@@ -81,11 +82,8 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         return this;
     }
 
-    public int getId() {
-        return id;
-    }
     private void setId(int id){
-        if (id < ConstantEntity.ONE){
+        if (id < ConstantApplication.ONE){
             Log.e(TAG, "Failed -> setId(id = " + id + ")");
             throw new RuntimeException("setId(id = "+ id + ")");
         }
@@ -126,12 +124,12 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
 
     @Nullable
     public Integer putSpecialityCountHour(@NotNull Speciality key, @NotNull Integer value) {
-        if(key.getId() < ConstantEntity.ONE){
+        if(key.getId() < ConstantApplication.ONE){
             Log.e(TAG, "Failed -> " + key.toString());
             throw new RuntimeException(key.toString());
         }
 
-        if(value < ConstantEntity.ONE){
+        if(value < ConstantApplication.ONE){
             Log.e(TAG, "Failed -> countHour = " + value);
             throw new RuntimeException("countHour = " + value);
         }
@@ -150,11 +148,6 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         int index = idSpecialityList.indexOf(key.getId());
         idSpecialityList.remove(index);
         countHourList.remove(index);
-        /*Realm realm = DBManager.getRealm();
-        realm.executeTransaction(realmTrans -> {
-                idSpecialityList.remove(index);
-                countHourList.remove(index);
-        });*/
         return specialityCountHourMap.remove(key);
     }
 
@@ -164,7 +157,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
             throw new RuntimeException("map is empty");
         }else{
             for(Map.Entry<Speciality, Integer> entry:map.entrySet()){
-                if(entry.getKey().getId() < ConstantEntity.ONE || entry.getValue() < ConstantEntity.ONE){
+                if(entry.getKey().getId() < ConstantApplication.ONE || entry.getValue() < ConstantApplication.ONE){
                     Log.e(TAG, "Failed -> " + entry.getKey().toString() + ", countHour = " + entry.getValue());
                     throw new RuntimeException(entry.getKey().toString() + ", countHour = " + entry.getValue());
                 }
@@ -202,17 +195,17 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     public RealmList<Speciality> getSpecialityList() {
         RealmList<Speciality> specialityList = new RealmList<>();
         for (int idSpeciality : idSpecialityList) {
-            specialityList.add(DBManager.read(Speciality.class, ConstantEntity.ID, idSpeciality));
+            specialityList.add(DBManager.read(Speciality.class, ConstantApplication.ID, idSpeciality));
         }
         return specialityList;
     }
-    private Subject setIdSpecialityList(@NotNull RealmList<Integer> idSpecialityList) {
+    private Subject setSpecialityList(@NotNull RealmList<Integer> idSpecialityList) {
         if(idSpecialityList.isEmpty()){
             Log.e(TAG, "Failed -> specialityList is empty");
             throw new RuntimeException("specialityList is empty");
-        }else{
+        } else {
             for (int id: idSpecialityList){
-                if(id < ConstantEntity.ONE){
+                if(id < ConstantApplication.ONE){
                     Log.e(TAG, "Failed -> " + idSpecialityList.toString());
                     throw new RuntimeException(idSpecialityList.toString());
                 }
@@ -233,14 +226,14 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
             throw new RuntimeException("countHourList is empty");
         }else{
             for(Integer countHour:countHourList){
-                if(countHour < ConstantEntity.ONE){
+                if(countHour < ConstantApplication.ONE){
                     Log.e(TAG, "Failed -> countHour = " + countHour);
                     throw new RuntimeException("countHour = " + countHour);
                 }
             }
         }
 
-        this.countHourList =countHourList;
+        this.countHourList = countHourList;
         return this;
     }
 
@@ -262,7 +255,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         return numberCourse;
     }
     public Subject setNumberCourse(int numberCourse) {
-        if(numberCourse < ConstantEntity.ONE){
+        if(numberCourse < ConstantApplication.ONE){
             Log.e(TAG, "Failed -> setNumberCourse(numberCourse = " + numberCourse + ")");
             throw new RuntimeException("setNumberCourse(numberCourse = " + numberCourse + ")");
         }
@@ -279,15 +272,25 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        Subject subject = (Subject) o;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+
+        Subject subject = (Subject) obj;
+
+        if (this.initMap().sizeSpecialtyCountHour() != subject.initMap().sizeSpecialtyCountHour()){
+            return false;
+        }
+
+        for (Map.Entry<Speciality, Integer> entry : subject.getSpecialityCountHourMap().entrySet()){
+            if (!this.containsKeySpecialityCountHour(entry.getKey())){
+                return false;
+            }
+        }
+
         return numberCourse == subject.numberCourse &&
                 color == subject.color &&
-                name.equals(subject.name) &&
-                idSpecialityList.equals(subject.idSpecialityList) &&
-                countHourList.equals(subject.countHourList);
+                name.equals(subject.name);
     }
 
     @Override
@@ -306,47 +309,90 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
                 ", color=" + color +
                 '}';
     }
+
+    // Specific query
+    public List<Group> toGroupList(Integer countCourse, List<Speciality> specialityList){
+        // TODO Реалтзовать readAll что бы можно было сортиорвать по множеству занчений
+        List<Group> result = new ArrayList<>();
+
+        if (countCourse != null && specialityList == null){
+            result = DBManager.readAll(Group.class,
+                    ConstantApplication.NUMBER_COURSE, this.getNumberCourse(),
+                    ConstantApplication.NUMBER_COURSE);
+            return result;
+        }
+
+        result = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class,
+                ConstantApplication.NUMBER_COURSE, this.getNumberCourse(),
+                "idSpeciality"));
+
+        for (int i = 0; i < result.size(); i++){
+            if (!specialityList.contains(result.get(i).getSpecialty())){
+                result.remove(i);
+            }
+        }
+
+        return result;
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // EntityI
     private static int countObj = 0;
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public boolean existsEntity() {
+        RealmResults<Speciality> existingEntities =
+                DBManager.readAll(Speciality.class, ConstantApplication.NAME, this.getName());
+        for (Speciality entity : existingEntities) {
+            if (this.equals(entity)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean isEntity() {
-        if (id < ConstantEntity.ONE){
-            try {
-                setName(name);
-                setSpecialityCountHourMap(initMap().specialityCountHourMap);
-                setNumberCourse(numberCourse);
-                setColor(color);
-            } catch (RuntimeException ex) {
-                return false;
-            }
-
+        return id > ConstantApplication.ZERO;
+    }
+    @Override
+    public void checkEntity() throws Exception {
+        try {
+            setName(name);
+            setSpecialityCountHourMap(initMap().specialityCountHourMap);
+            setNumberCourse(numberCourse);
+            setColor(color);
+        } catch(RuntimeException ex) {
+            throw new Exception("Entity = ", ex);
+        }
+    }
+    @Override
+    public Subject createEntity() throws Exception {
+        if (!isEntity()){
+            checkEntity();
             int maxID = DBManager.findMaxID(this.getClass());
-            setId((maxID > ConstantEntity.ZERO)? ++maxID : ++countObj);
+            setId((maxID > ConstantApplication.ZERO)? ++maxID : ++countObj);
         }
-        return true;
+        return this;
     }
 
-    @Override
-    public List<String> entityToNameList() {
-        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
-        List<String> result = new ArrayList<>();
-
-        for (Subject subject : subjectList){
-            result.add(subject.getName());
-        }
-        return result;
-    }
-
-    @Override
-    public List<String> entityToNameList(List<Subject> entityList) {
+    public static List<String> entityToNameList(List<Subject> entityList) {
         List<String> result = new ArrayList<>();
 
         for (Subject subject : entityList){
             result.add(subject.getName());
         }
         return result;
+    }
+    @Override
+    public List<String> entityToNameList() {
+        return entityToNameList(DBManager.readAll(Subject.class, this.getName()));
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

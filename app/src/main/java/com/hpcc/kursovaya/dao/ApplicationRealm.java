@@ -19,6 +19,8 @@ public class ApplicationRealm extends Application {
                 .directory(directory)
                 .name("DB.realm")
                 .deleteRealmIfMigrationNeeded()
+                //.schemaVersion(1)
+                //.migration(new MigrationRealm())
                 .build();
         Realm.setDefaultConfiguration(config);
     }

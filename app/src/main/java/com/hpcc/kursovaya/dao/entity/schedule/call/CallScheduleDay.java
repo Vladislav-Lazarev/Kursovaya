@@ -1,6 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.schedule.call;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,7 @@ public class CallScheduleDay extends RealmObject {
 
     private void setId(int id){
         try{
-            if (id < ConstantEntity.ONE){
+            if (id < ConstantApplication.ONE){
                 throw new Exception("Exception! setId()");
             }
             this.id = id;
@@ -47,7 +47,7 @@ public class CallScheduleDay extends RealmObject {
     }
     public CallScheduleDay setDayOfWeek(int dayOfWeek) {
         try {
-            if (dayOfWeek < ConstantEntity.MIN_DAY_OF_WEEK || dayOfWeek > ConstantEntity.MAX_DAY_OF_WEEK) {
+            if (dayOfWeek < ConstantApplication.MIN_DAY_OF_WEEK || dayOfWeek > ConstantApplication.MAX_DAY_OF_WEEK) {
                 throw new Exception("Exception! setDayOfWeek()");
             }
             this.dayOfWeek = dayOfWeek;
@@ -65,8 +65,8 @@ public class CallScheduleDay extends RealmObject {
     public CallScheduleDay setCallLessonList(@NotNull RealmList<CallLesson> callLessonList) {
         // TODO setCallLessonList - проверка
         try {
-            if (callLessonList.size() < ConstantEntity.MIN_COUNT_LESSON ||
-                    callLessonList.size() > ConstantEntity.MAX_COUNT_LESSON) {
+            if (callLessonList.size() < ConstantApplication.MIN_COUNT_LESSON ||
+                    callLessonList.size() > ConstantApplication.MAX_COUNT_LESSON) {
                 throw new Exception("Exception! setCallLessonList()");
             }
             this.callLessonList = callLessonList;

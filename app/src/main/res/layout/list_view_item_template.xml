@@ -5,7 +5,7 @@
     android:descendantFocusability="blocksDescendants">
 
 
-<TextView
+    <TextView
         android:id="@+id/template_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
