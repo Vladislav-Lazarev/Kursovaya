@@ -198,4 +198,5 @@
     <string name="edit_name_of_backup">Редагувати назву копії</string>
     <string name="import_dialog_title">Імпортувати резервну копію</string>
     <string name="import_dialog_message">Ви дійсно хочете відновити обрану копію? Всі дані вашого застосунку, якщо не створена резервна копія, будуть втрачені.</string>
+    <string name="popup_delete_subject_groups_content">Ви дійсно хочете видалити обрані групи предмету? Усі заняття цих груп по обраному предмету будуть видалені.</string>
 </resources>

@@ -1,11 +1,13 @@
 package com.hpcc.kursovaya.ui.subjects;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -52,7 +54,12 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
             holder.course = (TextView) convertView.findViewById(R.id.course_label);
             holder.name = (TextView) convertView.findViewById(R.id.subjectName_label);
 
-
+            holder.subjectGroupsButton = convertView.findViewById(R.id.subjectGroups);
+            holder.subjectGroupsButton.setOnClickListener(v -> {
+                Intent intent = new Intent(mContext,SubjectGroupsListActivity.class);
+                intent.putExtra("entry",getItem(position));
+                mContext.startActivity(intent);
+            });
             result = convertView;
             convertView.setTag(holder);
         } else {
@@ -83,6 +90,7 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
         TextView speciality;
         TextView course;
         TextView name;
+        ImageButton subjectGroupsButton;
     }
 
 

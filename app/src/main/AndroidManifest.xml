@@ -72,6 +72,12 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_edit_template" />
 
+
+        <activity
+            android:name=".ui.subjects.SubjectGroupsListActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="SubjectGroupsActivity" />
+
         <activity
             android:name=".ui.settings.backup.BackupActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
