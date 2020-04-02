@@ -10,9 +10,18 @@
         android:textColor="@color/appDefaultBlack"
         android:layout_marginTop="26dp"
         android:layout_marginStart="15dp"/>
-    <AutoCompleteTextView
-        android:id="@+id/groupNameSuggestET"
+    <HorizontalScrollView
+        android:id="@+id/scrollView"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginEnd="15dp"
+        android:fillViewport="true"
+        android:layout_toEndOf="@id/popup_group_name">
+        <AutoCompleteTextView
+        android:id="@+id/groupNameSuggestET"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/sideBar"
         android:textSize="16sp"
@@ -20,11 +29,9 @@
         android:hint="@string/auto_complete_text_view_hint"
         android:focusedByDefault="false"
         android:textColor="@color/appDefaultBlack"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginEnd="15dp"
-        android:layout_toEndOf="@id/popup_group_name"
-        />
+
+        /></HorizontalScrollView>
+
     <TextView
         android:id="@+id/popup_subject_name"
         android:layout_width="wrap_content"
@@ -40,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/popup_subject_name"
-        android:layout_below="@id/groupNameSuggestET"
+        android:layout_below="@id/scrollView"
         android:layout_marginStart="23dp"
         android:layout_marginTop="13dp"
         android:layout_marginEnd="15dp" />
@@ -63,7 +70,7 @@
         android:orientation="horizontal"
         android:layout_below="@id/spinnerSubject"
         android:layout_toEndOf="@id/popup_duration_label"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
         android:layout_marginStart="9dp">
         <RadioButton

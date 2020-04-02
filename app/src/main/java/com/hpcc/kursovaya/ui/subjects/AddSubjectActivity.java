@@ -6,10 +6,13 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -134,6 +137,13 @@ public class AddSubjectActivity extends AppCompatActivity {
 
             LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,2);
             hourEditTxt.setWidth(0);
+            hourEditTxt.setInputType(InputType.TYPE_CLASS_NUMBER);
+            int maxLength = 4;
+            InputFilter[] fArray = new InputFilter[1];
+            fArray[0] = new InputFilter.LengthFilter(maxLength);
+            hourEditTxt.setFilters(fArray);
+            hourEditTxt.setSingleLine(false);
+            hourEditTxt.setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
             hourEditTxt.setLayoutParams(etParams);
             hourEditTxt.setHint("Введіть кількість годин");
             hourEditTxt.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
