@@ -1,38 +1,28 @@
 package com.hpcc.kursovaya.dao.entity.setting;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantEntity;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
-public class BackupDB extends RealmObject {
-    @PrimaryKey
-    private int id;
+public class BackupDB {
     private String name;
-    private String path;
-    private Date date;
+    private String fileName;
+    private Date dateCreate;
 
     public BackupDB() {
-        id = 0;
-        name = "";
-        path = "";
-        date = new Date();
+        fileName = "";
+        dateCreate = new Date();
     }
-    public BackupDB(int id, @NotNull String name, @NotNull String path, @NotNull Date date) {
-        this();
-        setId(id);
-        setName(name);
-        setPath(path);
-        setDate(date);
+    public BackupDB(@NotNull String fileName, @NotNull Date dateCreate) {
+       setFileName(fileName);
+       setDateCreate(dateCreate);
     }
 
     private void setId(int id){
         try{
-            if (id < ConstantApplication.ONE){
+            if (id < ConstantEntity.ONE){
                 throw new Exception("Exception! setId()");
             }
             this.id = id;
@@ -46,40 +36,37 @@ public class BackupDB extends RealmObject {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getFileName() {
+        return fileName;
     }
-    public BackupDB setName(@NotNull String name) {
-        // TODO setName - проверка
-        this.name = name;
+    public BackupDB setFileName(@NotNull String fileName) {
+        // TODO setFileName - проверка
+        this.fileName = fileName;
         return this;
     }
 
-    public String getPath() {
-        return path;
+    public Date getDateCreate() {
+        return dateCreate;
     }
-    public BackupDB setPath(@NotNull String path) {
-        // TODO setPath - проверка
-        this.path = path;
-        return this;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-    public BackupDB setDate(@NotNull Date dateTime) {
-        // TODO setRealmDateTime - проверка
-        this.date = dateTime;
+    public BackupDB setDateCreate(@NotNull Date dateCreate) {
+        // TODO setDateCreate - проверка
+        this.dateCreate = dateCreate;
         return this;
     }
 
     @Override
     public String toString() {
         return "BackupDB{" +
-                "id=" + id +
-                ", name=" + name +
-                ", path=" + path +
-                ", date=" + date +
+                " fileName = " + fileName +
+                ", dateCreate = " + dateCreate +
                 '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

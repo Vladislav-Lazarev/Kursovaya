@@ -104,7 +104,6 @@ public class SubjectsFragment extends Fragment {
                     toolbar.setVisibility(View.VISIBLE);
                 }
             });
-
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -120,6 +119,8 @@ public class SubjectsFragment extends Fragment {
                     startActivityForResult(intent, ConstantApplication.ACTIVITY_EDIT);
                 }
             });
+
+
             listView.setItemsCanFocus(false);
         }
         isCreatedAlready=true;

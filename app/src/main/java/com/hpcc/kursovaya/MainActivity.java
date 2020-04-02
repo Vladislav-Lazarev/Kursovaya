@@ -1,11 +1,14 @@
 package com.hpcc.kursovaya;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,6 +27,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -70,6 +74,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private static final int REQUEST_CODE = 26;
     private Menu fuckingMenu;
     private final String TAG = MainActivity.class.getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
@@ -87,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
         deserializeAlarms();
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
@@ -97,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbarCompleteClasses.setVisibility(View.GONE);
         toolbar1.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
-
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -111,6 +116,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().add(R.id.nav_host_fragment,
                     new ScheduleFragment(), getResources().getString(R.string.scheduleTag)).commit();
             navigationView.setCheckedItem(R.id.nav_schedule);
+        }
+    }
+    //This method creates folder in external storage for backups
+    private void createBackupFolder() {
+        String externalStorage = "TeachersDiaryBackups";
+        Log.d(TAG,externalStorage);
+        File file = new File(Environment.getExternalStorageDirectory(), externalStorage);
+        if(!file.exists()){
+            boolean isCreated = file.mkdirs();
+            if(isCreated){
+                Log.i(TAG,"Successfully created folder TeachersDiaryBackups");
+            } else {
+                Log.i(TAG,"Failed to create a folder: TeachersDiaryBackups");
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
+            createBackupFolder();
         }
     }
 
@@ -233,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 toolbarCompleteClasses.setVisibility(View.VISIBLE);
                 return true;
             case R.id.action_checkCanceled:
-                isSelectMode=false;
+                isSelectMode=true;
                 toolbar.setVisibility(View.GONE);
                 toolbarCanceledClasses.setVisibility(View.VISIBLE);
                 return true;

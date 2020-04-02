@@ -39,6 +39,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
 
     FloatingActionButton addSpeciality;
     ListView specialityLSV;
+    SpecialityListAdapter adapter;
     private View addSpecialityView;
     private View editSpecialityView;
     SpecialityListAdapter adapter;
@@ -157,6 +158,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
         builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 dialog.cancel();
             }
         });
@@ -183,7 +185,9 @@ public class SpecialitiesActivity extends AppCompatActivity {
         leftSpacer.setVisibility(View.GONE);
     }
     private void onClickAcceptAddGroup(DialogInterface dialog, int which) {
+        EditText specText = addSpecialityView.findViewById(R.id.speciality_name_text);
         String strSpeciality = specText.getText().toString();
+        Spinner courseSpinner = addSpecialityView.findViewById(R.id.courseSpinner);
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
 
         speciality.setName(strSpeciality)

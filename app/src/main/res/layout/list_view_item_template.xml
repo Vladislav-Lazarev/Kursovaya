@@ -1,38 +1,31 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/activatedBackgroundIndicator">
+    android:background="?android:attr/activatedBackgroundIndicator"
+    android:descendantFocusability="blocksDescendants">
 
-    <TextView
-        android:id="@+id/template_text"
+
+<TextView
+        android:id="@+id/template_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/template_label"
         android:textSize="16sp"
         android:textColor="@color/appDefaultBlack"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="6dp"/>
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="10dp"/>
 
     <TextView
-        android:id="@+id/template_label"
+        android:id="@+id/template_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
         android:layout_marginTop="10dp"
-        android:layout_toEndOf="@id/template_text"
+        android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@id/template_label"
         android:text="@string/textStub"
         android:textColor="@color/appDefaultBlack"
         android:textSize="16sp" />
-
-
-    <Button
-        android:id="@+id/btn_lsvOptions"
-        android:layout_width="8dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="20dp"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/ic_path_153"
-        android:focusable="false"/>
 
 </RelativeLayout>

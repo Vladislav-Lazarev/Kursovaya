@@ -1,20 +1,13 @@
 package com.hpcc.kursovaya.ui.templates;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Rect;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,12 +16,14 @@ import androidx.annotation.Nullable;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
+// ПРОВЕРИТЬ
 public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
-    private static final String TAG = "TemplateListAdapter";
+    private static final String TAG = TemplateListAdapter.class.getSimpleName();
+    private SparseBooleanArray mSelectedItemsIds;
+    private List<TemplateScheduleWeek> templateList;
 
     private Context mContext;
     private int mResource;
@@ -54,7 +49,7 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
             holder = new ViewHolder();
 
             holder.name = (TextView) convertView.findViewById(R.id.template_label);
-            //setting onclick action on button
+            /*//setting onclick action on button
             final Button button = (Button) convertView.findViewById(R.id.btn_lsvOptions);
 
             button.setOnClickListener(new View.OnClickListener(){
@@ -132,7 +127,7 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
                     parent.setTouchDelegate( new TouchDelegate( rect , button));
                 }
             });
-
+*/
             result = convertView;
 
             convertView.setTag(holder);
@@ -154,9 +149,38 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
         return convertView;
     }
 
-    public TemplateListAdapter (@NonNull Context context, int resource, @NonNull List<TemplateScheduleWeek> objects) {
+    @Override
+    public void remove(TemplateScheduleWeek object) {
+        templateList.remove(object);
+        //DBManager.delete
+        notifyDataSetChanged();
+    }
+
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    public void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position, value);
+        else
+            mSelectedItemsIds.delete(position);
+        notifyDataSetChanged();
+    }
+
+    public TemplateListAdapter (@NonNull Context context, int resource, @NonNull ArrayList<TemplateScheduleWeek> objects) {
         super(context, resource, objects);
         mContext=context;
         mResource=resource;
+        templateList = objects;
+        mSelectedItemsIds = new SparseBooleanArray();
+    }
+    public SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
     }
 }
