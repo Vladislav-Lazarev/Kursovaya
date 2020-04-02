@@ -182,7 +182,12 @@ public class WeekViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         final View view = inflater.inflate(R.layout.fragment_weekview, null);
         final Context cntxt = getContext();
-
+        Thread prepareDayHeadersThread = new Thread(){
+            public void run(){
+                prepareDayHeaders(view);
+            }
+        };
+        prepareDayHeadersThread.start();
         final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
         final Toolbar toolbar1 = ((MainActivity)getActivity()).getToolbar1();
         final Toolbar toolbarCompleted = ((MainActivity)getActivity()).getToolbarCompleteClasses();
@@ -377,7 +382,19 @@ public class WeekViewFragment extends Fragment {
             dayOfWeekHeader[1].setBackground(ContextCompat.getDrawable(cntxt,R.drawable.grid_today));
             dayOfWeekHeader[1].setTextColor(ContextCompat.getColor(cntxt,R.color.menuTextColor));
         }
+
+        try {
+            t.join();
+            prepareDayHeadersThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return view;
+    }
+
+    private void prepareDayHeaders(View view){
         DateTime firstDayOfWeekCopy;
+
         for(int i = 0; i<7;i++){
             String viewDayHeader = "day"+i;
             firstDayOfWeekCopy = firstDayOfWeek.plusDays(i);
@@ -390,12 +407,6 @@ public class WeekViewFragment extends Fragment {
             //sb = (monthOfYear.length()==1 ? sb.append("0").append(monthOfYear):sb.append(monthOfYear));
             dayHeaders[i].setText(sb.toString());
         }
-        try {
-            t.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return view;
     }
 
     private void prepareUncancelledClasses() {

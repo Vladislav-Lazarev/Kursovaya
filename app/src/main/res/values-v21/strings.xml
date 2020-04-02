@@ -21,17 +21,17 @@
     </string-array>
 
     <string name="app_name">Щоденник викладача</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="scheduleTag">Schedule</string>
-    <string name="templatesTag">Templates</string>
-    <string name="groupsTag">Groups</string>
-    <string name="subjectsTag">Subject</string>
-    <string name="settingsTag">Settings</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="scheduleTag" translatable="false">Schedule</string>
+    <string name="templatesTag" translatable="false">Templates</string>
+    <string name="groupsTag" translatable="false">Groups</string>
+    <string name="subjectsTag" translatable="false">Subject</string>
+    <string name="settingsTag" translatable="false">Settings</string>
 
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_title" translatable="false">Android Studio</string>
+    <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="action_datePicker">Перейти до дати</string>
     <string name="action_importTemplates">Імпортувати шаблони</string>
     <string name="action_read">Обрати/Прибрати прочитані заняття</string>
@@ -97,16 +97,16 @@
     <string name="color_label">Колір:</string>
     <string name="textStub">Текст</string>
 
-    <string name="title_activity_add_template">AddTemplateActivity</string>
-    <string name="title_activity_add_group">AddGroupActivity</string>
-    <string name="title_activity_add_subject">AddSubjectActivity</string>
-    <string name="title_activity_edit_group">EditGroupActivity</string>
+    <string name="title_activity_add_template" translatable="false">AddTemplateActivity</string>
+    <string name="title_activity_add_group" translatable="false">AddGroupActivity</string>
+    <string name="title_activity_add_subject" translatable="false">AddSubjectActivity</string>
+    <string name="title_activity_edit_group" translatable="false">EditGroupActivity</string>
 
     <string name="delete_alert_header">Видалити</string>
     <string name="delete_alert_msg">Ви справді хочете видалити запис?</string>
     <string name="delete_positive">Так</string>
     <string name="delete_negative">Ні</string>
-    <string name="title_activity_edit_subject">EditSubjectActivity</string>
+    <string name="title_activity_edit_subject" translatable="false">EditSubjectActivity</string>
 
     <string name="hoursHeader">Години</string>
     <string name="monHeader">Пн</string>
@@ -132,12 +132,12 @@
     <string name="November">Листопад</string>
     <string name="December">Грудень</string>
 
-    <string name="firstCoupleHeader">1</string>
-    <string name="secondCoupleHeader">2</string>
-    <string name="thirdCoupleHeader">3</string>
-    <string name="fourthCoupleHeader">4</string>
-    <string name="fifthCoupleHeader">5</string>
+    <string name="firstCoupleHeader" translatable="false">1</string>
+    <string name="secondCoupleHeader" translatable="false">2</string>
+    <string name="thirdCoupleHeader" translatable="false">3</string>
+    <string name="fourthCoupleHeader" translatable="false">4</string>
+    <string name="fifthCoupleHeader" translatable="false">5</string>
 
-    <string name="firstHalfCoupleHeader">1</string>
-    <string name="secondHalfCoupleHeader">2</string>
+    <string name="firstHalfCoupleHeader" translatable="false">1</string>
+    <string name="secondHalfCoupleHeader" translatable="false">2</string>
 </resources>

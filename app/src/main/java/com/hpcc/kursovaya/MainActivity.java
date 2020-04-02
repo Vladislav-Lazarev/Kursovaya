@@ -328,13 +328,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int toMonth = pickerTo.getMonth();
         int toDay = pickerTo.getDayOfMonth();
         boolean isDatesCorrect = true;
-        if(fromYear>toYear){
+        /*if(fromYear>toYear){
             isDatesCorrect = false;
         } else if(fromYear<=toYear && fromMonth>toMonth) {
             isDatesCorrect = false;
         } else if(fromYear<=toYear && fromMonth<=toMonth && fromDay>=toDay){
             isDatesCorrect = false;
-        }
+        }*/
         if(isDatesCorrect){
             String[] groupsName = {"П-61", "Соплежуйки", "Ветродуйки", "Моржи", "Митинг", "Вирджиния", "П-67", "П-68", "П-69", "П-70"};
             String existstoragedir = getExternalFilesDir(null).getAbsolutePath() + "/report.pdf";

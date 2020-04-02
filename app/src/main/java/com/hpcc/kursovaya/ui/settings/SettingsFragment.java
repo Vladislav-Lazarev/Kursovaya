@@ -25,7 +25,6 @@ public class SettingsFragment extends Fragment{
     boolean isCreatedAlready = false;
     private View root;
     private final String TAG = SettingsFragment.class.getSimpleName();
-    private final String[] SETTINGS = { "Розклад дзвінків","Спеціальності","Резервні копії", "Мова", "Про програму"};
     private long mLastClickTime = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -33,6 +32,7 @@ public class SettingsFragment extends Fragment{
 
         if(!isCreatedAlready) {
             root = inflater.inflate(R.layout.fragment_settings, container, false);
+            final String[] SETTINGS = { getResources().getString(R.string.schedule_alarm_title),getResources().getString(R.string.specialty_list_label),getResources().getString(R.string.backup_title), getResources().getString(R.string.language_title), getResources().getString(R.string.about_title)};
             ListView lsv = root.findViewById(R.id.settingsLSV);
             ArrayAdapter<String> adapter = new ArrayAdapter(getContext(), R.layout.listview_item_settings, SETTINGS);
 

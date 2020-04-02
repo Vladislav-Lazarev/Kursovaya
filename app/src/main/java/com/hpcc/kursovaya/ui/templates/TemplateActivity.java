@@ -230,7 +230,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
     protected AlertDialog.Builder prepareCloseAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.template_activity_close_alert_title);
-        //builder.setMessage(R.string.template_activity_close_alert_content);
+        builder.setMessage(R.string.template_activity_close_alert_content);
         /*builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -242,12 +242,13 @@ public abstract class TemplateActivity extends AppCompatActivity {
         });*/
         builder.setNegativeButton(R.string.delete_negative, (dialog, which) -> dialog.cancel());
 
-        buttonPainting(builder);
+        //buttonPainting(builder);
         return builder;
     }
     protected void buttonPainting(AlertDialog.Builder builder){
         final AlertDialog dialog = builder.create();
-        dialog.setOnShowListener((arg0)-> {dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+        dialog.setOnShowListener((arg0)-> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));});
         dialog.show();
         Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
