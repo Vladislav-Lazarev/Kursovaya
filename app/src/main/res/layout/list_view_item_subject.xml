@@ -15,12 +15,13 @@
 
     <TextView
         android:id="@+id/speciality_label"
-        android:layout_width="218dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@id/specialityName"
-        android:text="@string/textStub"
+        android:layout_toStartOf="@id/subjectGroups"
+        android:text="sssssssssssssssssssssssssssssssssssssssssssssssssss"
         android:textColor="@color/appDefaultBlack"
         android:textSize="16sp" />
 
@@ -77,6 +78,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignParentRight="true"
+        android:layout_marginStart="60dp"
         android:layout_marginEnd="10dp"
         android:adjustViewBounds="true"
         android:scaleType="centerInside"

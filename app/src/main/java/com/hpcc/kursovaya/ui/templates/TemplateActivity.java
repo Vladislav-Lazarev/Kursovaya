@@ -157,7 +157,13 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_path_150));
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> prepareCloseAlertDialog());
+        toolbar.setNavigationOnClickListener(v -> {
+            if (convert2DimensionalTo1Dimensional(classes).isEmpty()){
+                finish();
+            } else {
+                prepareCloseAlertDialog();
+            }
+            });
 
         ActionBar ab = getSupportActionBar();
         ab.setDisplayShowTitleEnabled(false);
@@ -222,10 +228,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
     // Диалоговое окно для возращения к Списку Шаблонов
     protected AlertDialog.Builder prepareCloseAlertDialog() {
-        if (convert2DimensionalTo1Dimensional(classes).isEmpty()){
-            finish();
-        }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.template_activity_close_alert_title);
         //builder.setMessage(R.string.template_activity_close_alert_content);

@@ -202,9 +202,9 @@
     <string name="popup_delete_subject_groups_content">Ви дійсно хочете видалити обрані групи предмету? Усі заняття цих груп по обраному предмету будуть видалені.</string>
 
     <!-- Уведомление о сущностях -->
-    <string name="toast_exists_entity">Ця запис вже існує!</string>
-    <string name="toast_add_edit_entity">Запис успішно занесена</string>
+    <string name="toast_exists_entity">Цей запис вже існує!</string>
+    <string name="toast_add_edit_entity">Запис успішно занесено</string>
     <string name="toast_del_entity">Запис успішно видалено</string>
     <string name="toast_del_many_entity">Записи успішно видалені</string>
-    <string name="toast_empty_template">Заповніть шаматку!</string>
+    <string name="toast_empty_template">Заповніть шахматку!</string>
 </resources>
