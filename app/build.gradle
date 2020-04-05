@@ -31,9 +31,13 @@ android {
         targetCompatibility = 1.8
     }
 }
+repositories {
+    maven { url 'https://jitpack.io' }
+}
 
 dependencies {
-    compile 'com.itextpdf:itextg:5.5.10'
+    implementation "com.github.YarikSOffice:lingver:1.2.2"
+    implementation 'com.itextpdf:itextg:5.5.10'
     implementation 'com.github.duanhong169:drawabletoolbox:1.0.7'
     implementation 'com.github.yukuku:ambilwarna:2.0.1'
     implementation 'androidx.appcompat:appcompat:1.1.0'

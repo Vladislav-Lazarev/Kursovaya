@@ -32,6 +32,7 @@ import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,6 +65,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        LocaleManager.setLocale(this);
         setContentView(R.layout.activity_add_template);
         toolbar = findViewById(R.id.toolbar);
         toolbar1 = findViewById(R.id.toolbarEdit);
@@ -257,6 +259,12 @@ public abstract class TemplateActivity extends AppCompatActivity {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
 
     @Override
     public void onBackPressed() {

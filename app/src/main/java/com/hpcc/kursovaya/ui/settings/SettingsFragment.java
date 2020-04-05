@@ -19,6 +19,8 @@ import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.ui.settings.alarms.AlarmsActivity;
 import com.hpcc.kursovaya.ui.settings.backup.BackupActivity;
+import com.hpcc.kursovaya.ui.settings.language.LanguageActivity;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 import com.hpcc.kursovaya.ui.settings.specialities.SpecialitiesActivity;
 
 public class SettingsFragment extends Fragment{
@@ -29,10 +31,14 @@ public class SettingsFragment extends Fragment{
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
+        LocaleManager.setLocale(getActivity());
         if(!isCreatedAlready) {
             root = inflater.inflate(R.layout.fragment_settings, container, false);
-            final String[] SETTINGS = { getResources().getString(R.string.schedule_alarm_title),getResources().getString(R.string.specialty_list_label),getResources().getString(R.string.backup_title), getResources().getString(R.string.language_title), getResources().getString(R.string.about_title)};
+            final String[] SETTINGS = { getResources().getString(R.string.schedule_alarm_title),
+                    getResources().getString(R.string.specialty_list_label),
+                    getResources().getString(R.string.backup_title),
+                    getResources().getString(R.string.language_title),
+                    getResources().getString(R.string.about_title)};
             ListView lsv = root.findViewById(R.id.settingsLSV);
             ArrayAdapter<String> adapter = new ArrayAdapter(getContext(), R.layout.listview_item_settings, SETTINGS);
 
@@ -57,6 +63,10 @@ public class SettingsFragment extends Fragment{
                         case 2:
                             Intent backInt = new Intent(getActivity(), BackupActivity.class);
                             startActivity(backInt);
+                            break;
+                        case 3:
+                            Intent langInt = new Intent(getActivity(), LanguageActivity.class);
+                            startActivity(langInt);
                             break;
                         default:
                     }

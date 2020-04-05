@@ -28,6 +28,7 @@ import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.ui.schedule.AddClass;
 import com.hpcc.kursovaya.ui.schedule.EditClass;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -180,6 +181,7 @@ public class WeekViewFragment extends Fragment {
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        LocaleManager.setLocale(getActivity());
         final View view = inflater.inflate(R.layout.fragment_weekview, null);
         final Context cntxt = getContext();
         Thread prepareDayHeadersThread = new Thread(){
@@ -616,7 +618,21 @@ public class WeekViewFragment extends Fragment {
         }
     }
 
+
     @Override
+    public void onResume(){
+        super.onResume();
+        Log.d(TAG,Boolean.toString(((MainActivity)getActivity()).isLanguageChanged()) );
+        if (isResumed() && !((MainActivity)getActivity()).isLanguageChanged()) {
+            StringBuilder title = new StringBuilder();
+            title.append(monthNumberToString(firstDayOfWeek.getMonthOfYear())).append(", ").append(firstDayOfWeek.getYear());
+            Log.d(TAG, firstDayOfWeek.toString());
+            ((MainActivity)getActivity()).setActionBarTitle(title.toString());
+        } else if (((MainActivity)getActivity()).isLanguageChanged()) {
+            ((MainActivity) getActivity()).showOverflowMenu(false);
+        }
+    }
+   /* @Override
     public void setUserVisibleHint(boolean visible) {
         super.setUserVisibleHint(visible);
         if (visible && isResumed()) {
@@ -625,5 +641,5 @@ public class WeekViewFragment extends Fragment {
             Log.d(TAG, firstDayOfWeek.toString());
             ((MainActivity)getActivity()).setActionBarTitle(title.toString());
         }
-    }
+    }*/
 }

@@ -29,6 +29,7 @@ import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.List;
 
@@ -50,7 +51,9 @@ public class TemplatesFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         toolbar = ((MainActivity)getActivity()).getToolbar();
-            setHasOptionsMenu(false);
+        LocaleManager.setLocale(getActivity());
+
+        setHasOptionsMenu(false);
             root = inflater.inflate(R.layout.fragment_templates, container, false);
             listView = root.findViewById(R.id.templatesLSV);
             getActivity().setTitle("");

@@ -58,6 +58,7 @@ public class ConstantApplication {
 
     public static final int CLICK_TIME = 500;
 
+
     public static Map<Speciality, Integer> convertMapEditTextToMapInt(Map<Speciality, EditText> mapEdit){
         Map<Speciality, Integer> mapInt = new LinkedHashMap<>();
         for (Map.Entry<Speciality, EditText> set : mapEdit.entrySet()){

@@ -1,6 +1,7 @@
 package com.hpcc.kursovaya.ui.groups;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -21,6 +22,7 @@ import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 public class EditGroupActivity extends AppCompatActivity {
     private static final String TAG = EditGroupActivity.class.getSimpleName();
@@ -30,9 +32,17 @@ public class EditGroupActivity extends AppCompatActivity {
 
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        LocaleManager.setLocale(this);
         setContentView(R.layout.activity_edit_group);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_path_150));

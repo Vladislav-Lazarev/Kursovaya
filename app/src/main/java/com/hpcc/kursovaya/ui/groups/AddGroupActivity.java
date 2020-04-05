@@ -21,6 +21,7 @@ import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 import com.hpcc.kursovaya.ui.subjects.AddSubjectActivity;
 
 public class AddGroupActivity extends AppCompatActivity {
@@ -32,9 +33,15 @@ public class AddGroupActivity extends AppCompatActivity {
     private long mLastClickTime = 0;
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        LocaleManager.setLocale(this);
         setContentView(R.layout.activity_add_group);
 
         Toolbar toolbar = findViewById(R.id.toolbar);

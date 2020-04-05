@@ -1,6 +1,7 @@
 package com.hpcc.kursovaya.ui.subjects;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import com.hpcc.kursovaya.dao.SubjectGroupsInfo;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,7 @@ public class SubjectGroupsListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleManager.setLocale(this);
         setContentView(R.layout.activity_subject_groups_list);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         Intent intent = getIntent();
@@ -106,6 +109,12 @@ public class SubjectGroupsListActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
 
     private void prepareDeleteDialog(ActionMode mode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

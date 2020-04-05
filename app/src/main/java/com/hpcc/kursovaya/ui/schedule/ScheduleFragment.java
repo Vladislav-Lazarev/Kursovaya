@@ -10,12 +10,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewPagerAdapter;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import org.joda.time.DateTime;
 import org.joda.time.Weeks;
@@ -30,19 +32,22 @@ public class ScheduleFragment extends Fragment {
     private View root;
     private WeekViewPagerAdapter pagerAdapter;
     boolean isCreatedAlready = false;
+
     private long mLastClickTime = 0;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         Log.d("ScheduleFragment", "onCreateView is called");
+        Log.d("ScheduleFragment", Boolean.toString(isCreatedAlready));
+        LocaleManager.setLocale(getActivity());
 
-       // if(!isCreatedAlready) {
+        if(!isCreatedAlready) {
 
             root = inflater.inflate(R.layout.fragment_schedule, container, false);
 
             pager = root.findViewById(R.id.pager);
-            pagerAdapter = new WeekViewPagerAdapter(getChildFragmentManager());
+            pagerAdapter = new WeekViewPagerAdapter(getChildFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             pager.setAdapter(pagerAdapter);
             Log.d("ScheduleFragment", "onCreateView is called");
             DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
@@ -109,10 +114,9 @@ public class ScheduleFragment extends Fragment {
                 e.printStackTrace();
             }
             isCreatedAlready = true;
-       // }
-
-        setCoupleHeaders();
-        setActionBarTitle();
+            setCoupleHeaders();
+            //setActionBarTitle();
+        }
         return root;
     }
 
@@ -166,8 +170,14 @@ public class ScheduleFragment extends Fragment {
 
 
     public void setActionBarTitle(){
-        Log.d(TAG, "setActionBar title in schedule called");
-        ((MainActivity) getActivity()).setActionBarTitle(title);
-        ((MainActivity) getActivity()).showOverflowMenu(true);
+        if(!((MainActivity) getActivity()).isLanguageChanged()) {
+            Log.d(TAG, "setActionBar title in schedule called");
+            ((MainActivity) getActivity()).setActionBarTitle(title);
+            ((MainActivity) getActivity()).showOverflowMenu(true);
+        } else {
+            Log.d(TAG, "setActionBar title in schedule called (language changed true)");
+            ((MainActivity) getActivity()).showOverflowMenu(false);
+            ((MainActivity) getActivity()).setLanguageChanged(false);
+        }
     }
 }

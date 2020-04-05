@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -45,6 +46,7 @@ import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
 import com.hpcc.kursovaya.ui.settings.SettingsFragment;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 import com.hpcc.kursovaya.ui.subjects.SubjectsFragment;
 import com.hpcc.kursovaya.ui.templates.TemplatesFragment;
 import com.itextpdf.text.Chunk;
@@ -73,6 +75,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final int REQUEST_CODE = 26;
@@ -89,10 +92,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private View importTemplates;
     private View genReport;
     private long mLastClickTime = 0;
+    private Locale savedLocale = null;
+    private boolean isOverflowShown = true;
+
+    public boolean isLanguageChanged() {
+        return isLanguageChanged;
+    }
+
+    public void setLanguageChanged(boolean languageChanged) {
+        isLanguageChanged = languageChanged;
+    }
+
+    private boolean isLanguageChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleManager.setLocale(this);
+        savedLocale = LocaleManager.getLocale(getResources());
         final Activity activity = this;
         Thread t = new Thread(){
             public void run(){
@@ -100,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 deserializeAlarms();
             }
         };
-
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         toolbar1 = findViewById(R.id.toolbarEdit);
@@ -119,11 +135,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ActionBar ab = getSupportActionBar();
         ab.setDisplayShowTitleEnabled(false);
-        if(savedInstanceState==null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.nav_host_fragment,
-                    new ScheduleFragment(), getResources().getString(R.string.scheduleTag)).commit();
-            navigationView.setCheckedItem(R.id.nav_schedule);
-        }
+       if(savedInstanceState==null) {
+           Log.d(TAG,"Чо теперь сейвд инстанс стейт?");
+               getSupportFragmentManager().beginTransaction().add(R.id.nav_host_fragment,
+                       new ScheduleFragment(), getResources().getString(R.string.scheduleTag)).commit();
+               navigationView.setCheckedItem(R.id.nav_schedule);
+
+        } else {
+           Log.d(TAG,"открывай сука");
+           isLanguageChanged = true;
+       }
     }
     //This method creates folder in external storage for backups
     private void createBackupFolder() {
@@ -147,6 +168,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
             createBackupFolder();
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
     private void deserializeAlarms() {
@@ -176,10 +202,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     @Override
+    public void onResume(){
+        super.onResume();
+        Log.d(TAG,"onResume"+LocaleManager.getLanguage(this));
+        Log.d(TAG,"onResume"+savedLocale.toString());
+        if(!savedLocale.toString().toLowerCase().equals(LocaleManager.getLanguage(this).toLowerCase())){
+            Log.d(TAG, "onResume if savedLocale doesnt equals");
+            savedLocale = LocaleManager.getLocale(getResources());
+            recreate();
+        }
+    }
+
+
+    @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
+
+            return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                    || super.onSupportNavigateUp();
     }
 
     @Override
@@ -250,6 +290,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fuckingMenu = menu;
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        showOverflowMenu(isOverflowShown);
         return true;
     }
 
@@ -629,9 +670,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return monthStr;
     }
-    public void showOverflowMenu(boolean showMenu){
-        if(fuckingMenu == null)
+    public void showOverflowMenu(boolean showMenu) {
+        if (fuckingMenu == null){
+            isOverflowShown = showMenu;
             return;
+        }
         fuckingMenu.setGroupVisible(R.id.main_menu_group, showMenu);
     }
 

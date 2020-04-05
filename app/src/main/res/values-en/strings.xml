@@ -150,4 +150,6 @@
     <string name="schedule_alarm_title">Alarm schedule</string>
     <string name="language_title">Language</string>
     <string name="about_title">About</string>
+    <string name="choose_language">Language</string>
+    <string name="rings_acitvity_title">Rings schedule</string>
 </resources>

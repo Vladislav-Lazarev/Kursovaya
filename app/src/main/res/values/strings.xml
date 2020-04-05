@@ -210,4 +210,9 @@
     <string name="October">Жовтень</string>
     <string name="minuteTimeLabel">ММ</string>
     <string name="import_dialog_title">Імпортувати резервну копію</string>
+    <string name="choose_language">Вибір мови</string>
+    <string name="english" translatable="false">English</string>
+    <string name="russian" translatable="false">Русский</string>
+    <string name="ukranian" translatable="false">Українська</string>
+    <string name="rings_acitvity_title">Розклад дзвінків</string>
 </resources>

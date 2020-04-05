@@ -1,5 +1,6 @@
 package com.hpcc.kursovaya.ui.schedule;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 public class EditClass extends AppCompatActivity {
     AutoCompleteTextView groupName;
@@ -31,6 +33,7 @@ public class EditClass extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleManager.setLocale(this);
         setContentView(R.layout.activity_edit_class);
         groupName = findViewById(R.id.groupNameSuggestET);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -67,6 +70,13 @@ public class EditClass extends AppCompatActivity {
     TestMethod
     Needs correction in future
      */
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
+
     private void editClass() {
         String groupNameStr = groupName.getText().toString();
         Intent intent = getIntent();

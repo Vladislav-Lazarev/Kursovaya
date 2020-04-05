@@ -1,6 +1,7 @@
 package com.hpcc.kursovaya.ui.subjects;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -32,6 +33,7 @@ import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,7 +55,7 @@ public class AddSubjectActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        LocaleManager.setLocale(this);
         setContentView(R.layout.activity_add_subject);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -173,6 +175,12 @@ public class AddSubjectActivity extends AppCompatActivity {
             });
         }
     }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
 
     private void addSubject(){
         subject.setName(subjectEditText.getText().toString())

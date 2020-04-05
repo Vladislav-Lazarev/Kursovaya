@@ -150,4 +150,6 @@
     <string name="schedule_alarm_title">Розклад дзвінків</string>
     <string name="language_title">Мова</string>
     <string name="about_title">Про програму</string>
+    <string name="choose_language">Вибір мови</string>
+    <string name="rings_acitvity_title">Розклад дзвінків</string>
 </resources>

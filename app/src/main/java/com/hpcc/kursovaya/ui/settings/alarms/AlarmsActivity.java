@@ -1,6 +1,7 @@
 package com.hpcc.kursovaya.ui.settings.alarms;
 
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,6 +50,7 @@ public class AlarmsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleManager.setLocale(this);
         setContentView(R.layout.activity_alarm_rings);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -159,6 +162,12 @@ public class AlarmsActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
 
     private void fifthLessonOnClick(int hour, int minute) {
         new TimePickerDialog(AlarmsActivity.this, fifthLessonClick,hour,minute,true).show();

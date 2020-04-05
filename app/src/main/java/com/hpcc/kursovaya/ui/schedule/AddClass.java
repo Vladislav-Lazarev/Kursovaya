@@ -23,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.hpcc.kursovaya.AlarmClassReceiver;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
@@ -50,6 +51,7 @@ public class AddClass extends AppCompatActivity implements AdapterView.OnItemSel
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleManager.setLocale(this);
         setContentView(R.layout.activity_add_class);
         groupName = findViewById(R.id.groupNameSuggestET);
         Intent intent = getIntent();
@@ -99,6 +101,12 @@ public class AddClass extends AppCompatActivity implements AdapterView.OnItemSel
     TestMethod
     Needs correction in future
      */
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
+
     private void addClass() {
         String groupNameStr = groupName.getText().toString();
         Intent intent = getIntent();
@@ -114,15 +122,15 @@ public class AddClass extends AppCompatActivity implements AdapterView.OnItemSel
             calendar.add(Calendar.SECOND,difference.getSeconds());
             int hourOfDay = ConstantApplication.timeArray[numberOfLesson][numberOfHalf][0];
             int minuteOfHour = ConstantApplication.timeArray[numberOfLesson][numberOfHalf][1];
-            Intent _intent = new Intent(this, AlarmClassReceiver.class);
-            _intent.putExtra("groupName",groupNameStr);
-            _intent.putExtra("yearOfNot",Integer.toString(dayOfWeek.getYear()));
-            _intent.putExtra("monthOfYearNot",Integer.toString(dayOfWeek.getMonthOfYear()));
-            _intent.putExtra("dayOfMonthNot",Integer.toString(dayOfWeek.getDayOfMonth()));
-            _intent.putExtra("description",classSummary.getText().toString());
-            _intent.putExtra("hourOfDay",hourOfDay);
-            _intent.putExtra("minuteOfHour",minuteOfHour);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 228, _intent, 0);
+            Intent serviceIntent = new Intent(this, AlarmClassReceiver.class);
+            serviceIntent.putExtra("groupName",groupNameStr);
+            serviceIntent.putExtra("yearOfNot",Integer.toString(dayOfWeek.getYear()));
+            serviceIntent.putExtra("monthOfYearNot",Integer.toString(dayOfWeek.getMonthOfYear()));
+            serviceIntent.putExtra("dayOfMonthNot",Integer.toString(dayOfWeek.getDayOfMonth()));
+            serviceIntent.putExtra("description",classSummary.getText().toString());
+            serviceIntent.putExtra("hourOfDay",hourOfDay);
+            serviceIntent.putExtra("minuteOfHour",minuteOfHour);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 228, serviceIntent, 0);
             AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             // Remove any previous pending intent.
             alarmManager.cancel(pendingIntent);

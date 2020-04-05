@@ -32,6 +32,7 @@ import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.List;
 
@@ -51,6 +52,7 @@ public class GroupsFragment extends Fragment {
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        LocaleManager.setLocale(getActivity());
         if(!isCreatedAlready) {
             root = inflater.inflate(R.layout.fragment_groups, container, false);
             listView = root.findViewById(R.id.groupLSV);
