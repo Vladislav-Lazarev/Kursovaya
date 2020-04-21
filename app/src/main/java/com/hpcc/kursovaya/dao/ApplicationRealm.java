@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.io.File;
@@ -21,11 +22,15 @@ public class ApplicationRealm extends Application {
         LocaleManager.setLocale(this);
 
         Realm.init(this);
-        File directory = new File(getExternalFilesDir(null).getAbsolutePath());
+        File directory = new File(
+                getExternalFilesDir(null).getAbsolutePath() +
+                ConstantApplication.DIR_DELIMITER +
+                ConstantApplication.DIR_DB
+        );
 
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .directory(directory)
-                .name("DB.realm")
+                .name(ConstantApplication.DB_NAME)
                 .deleteRealmIfMigrationNeeded()
                 //.schemaVersion(1)
                 //.migration(new MigrationRealm())

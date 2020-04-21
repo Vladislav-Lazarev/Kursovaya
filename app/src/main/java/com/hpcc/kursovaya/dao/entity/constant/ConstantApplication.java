@@ -1,12 +1,15 @@
 package com.hpcc.kursovaya.dao.entity.constant;
 
+import android.app.Application;
 import android.content.Context;
+import android.os.Environment;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.hpcc.kursovaya.dao.entity.Speciality;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +35,12 @@ public class ConstantApplication {
     public static final String COUNT_COURSE = "countCourse";
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    public static final String DIR_BACKUP = "backup";
+    public static final String DIR_DB = "database";
+    public static final String DB_NAME = "DB.realm";
+    public static final String DIR_DELIMITER = File.separator;
+    public static final String DB_EXTENSION = ".realm";
 
     public static final int MIN_COUNT_HALF_PAIR = ONE;// Максимальной(наибольшее) количестов полупар в день
     public static final int MAX_COUNT_HALF_PAIR = 10;// Максимальной(наибольшее) количестов полупар в день

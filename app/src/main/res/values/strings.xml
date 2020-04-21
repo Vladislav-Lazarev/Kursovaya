@@ -190,11 +190,11 @@
     <string name="backup_name_label">Назва резервної копії</string>
     <string name="delete_backups_label">Видалити резервні копії</string>
     <string name="delete_backups_content">Ви дійсно хочете видалити обрані резервні копії?</string>
-    <string name="backups_sending_error_message">Файли резервних копій не були відправлені. Можливо, вони відсутні у папці TeachersDiaryBackup на внутрішній пам\'яті вашого пристрою</string>
+    <string name="backups_sending_error_message">Файли резервних копій не були відправлені. Можливо, вони відсутні у папці backup на внутрішній пам\'яті вашого пристрою</string>
     <string name="backup_sending_title">Помилка відправлення</string>
     <string name="file_error_toast_part1">Файл з назвою:</string>
     <string name="file_error_toast_part2">не існує</string>
-    <string name="backups_theme_email">Резервні копії за</string>
+    <string name="backups_theme_email">Резервні копії</string>
     <string name="edit_name_of_backup">Редагувати назву копії</string>
     <string name="import_dialog_message">Ви дійсно хочете відновити обрану копію? Всі дані вашого застосунку, якщо не створена резервна копія, будуть втрачені.</string>
     <string name="popup_delete_subject_groups_content">Ви дійсно хочете видалити обрані групи предмету? Усі заняття цих груп по обраному предмету будуть видалені.</string>
@@ -202,8 +202,14 @@
     <string name="about_title">Про програму</string>
 
     <!-- Уведомление о сущностях -->
+    <string name="toast_exist_backup">"Заменить копию?"</string>
+    <string name="toast_invalid_backup_name">"Название резервной копии не должно содержать символы"</string>
+    <string name="toast_invalid_backup_file">Файл должен содержать расширение </string>
+    <string name="toast_restart">Для применения БД перезапустите приложение</string>
+    <string name="toast_empty_backup_name">Введите название резервной копии</string>
     <string name="toast_exists_entity">Цей запис вже існує!</string>
     <string name="toast_add_edit_entity">Запис успішно занесено</string>
+    <string name="toast_edit_entity">Запись успешно изменена</string>
     <string name="toast_del_entity">Запис успішно видалено</string>
     <string name="toast_del_many_entity">Записи успішно видалені</string>
     <string name="toast_empty_template">Заповніть шахматку!</string>

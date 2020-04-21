@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -31,21 +32,25 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.setting.BackupDB;
+import com.hpcc.kursovaya.dao.entity.setting.FileManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class BackupActivity  extends AppCompatActivity {
-    private static final int REQUEST_CODE = 100;
     private static String TAG = BackupActivity.class.getSimpleName();
-    FloatingActionButton addBackup;
-    ListView backupLSV;
-    BackupListAdapter adapter;
-    List<BackupDB> backupsList = new ArrayList<>();
-    BackupDB speciality;
+    private static final int PICK_FILE_REQUEST_CODE = 1;
+
+    private FloatingActionButton addBackup;
+    private ListView backupLSV;
+    private BackupListAdapter adapter;
+    private String LOCATION_BACKUP_DB;
+    private Uri selectUriBackup;
     private View addBackupView;
     private View editBackupView;
     private long mLastClickTime = 0;
@@ -73,7 +78,6 @@ public class BackupActivity  extends AppCompatActivity {
 
         ActionBar ab = getSupportActionBar();
         ab.setDisplayShowTitleEnabled(false);
-
         addBackup = findViewById(R.id.fab);
         addBackup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,15 +86,20 @@ public class BackupActivity  extends AppCompatActivity {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                onClickPrepareAddBackup();
+                showFileManager();
             }
         });
+
         backupLSV = findViewById(R.id.backupLSV);
-        BackupDB db1 = new BackupDB();
-        db1.setName("ept");
-        db1.setDateCreate(Calendar.getInstance().getTime());
-        db1.setFileName("/DB.realm");
-        backupsList.add(db1);
+
+        //Init backupsList files from DIR_BACKUP
+        LOCATION_BACKUP_DB = getExternalFilesDir(null).getAbsolutePath() + ConstantApplication.DIR_DELIMITER + ConstantApplication.DIR_BACKUP;
+        List<BackupDB> backupsList = new ArrayList<>();
+        List<File> backupFiles = FileManager.getFiles(LOCATION_BACKUP_DB);
+        for (File backupFile : backupFiles) {
+                backupsList.add(new BackupDB(backupFile.getPath()));
+        }
+
         adapter = new BackupListAdapter(this,R.layout.listview_item_backup,backupsList);
         backupLSV.setAdapter(adapter);
         backupLSV.setOnItemClickListener((parent,view,position,id)->{
@@ -152,30 +161,33 @@ public class BackupActivity  extends AppCompatActivity {
 
 
     private void invokeShareIntent() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-        StringBuilder sbDate = new StringBuilder();
-        Calendar date = Calendar.getInstance();
-        sbDate.append(date.get(Calendar.YEAR)).append(".").append(date.get(Calendar.MONTH)).append(".").append(date.get(Calendar.DAY_OF_MONTH));
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.backups_theme_email)+" "+sbDate.toString());
-        intent.setType("image/jpeg"); /* This example is sharing jpeg images. */
-
-        ArrayList<Uri> files = new ArrayList<Uri>();
-
-        String folderPath = Environment.getExternalStorageDirectory()+"/TeachersDiaryBackups";
-        for(BackupDB entry : backupsList) {
-            String filePath = folderPath + entry.getFileName();
-            File file = new File(filePath);
-            if(file.exists()) {
-                Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
-                files.add(uri);
-            } else {
-                Toast.makeText(this,getString(R.string.file_error_toast_part1)+entry.getFileName()+" "+getString(R.string.file_error_toast_part2),Toast.LENGTH_LONG).show();
+        List<BackupDB> sendBackupDBList = adapter.getSelectBackupDBList();
+        StringBuilder message = new StringBuilder(getString(R.string.backups_theme_email) + ": ");
+        String formatDateCreate = "dd-MM-yyyy";
+        for (BackupDB sendBackupDB : sendBackupDBList){
+            message.append(sendBackupDB.getFileName() +" - " + sendBackupDB.getDateCreateToString(formatDateCreate));
+            if(sendBackupDBList.indexOf(sendBackupDB) != sendBackupDBList.size()-1){
+                message.append(", ");
             }
         }
-        Log.d(TAG, files.size()+"");
-        if(!(files.size()==0)) {
-            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+
+        Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        intent.putExtra(Intent.EXTRA_SUBJECT, message.toString());
+        intent.setType("*/*");
+
+        ArrayList<Uri> sendBackupFiles = new ArrayList<Uri>();
+        for(BackupDB sendBackupDB : sendBackupDBList) {
+            File sendBackupDBFile = new File(sendBackupDB.getLocation(), sendBackupDB.getFileName());
+            if(sendBackupDBFile.exists()) {
+                Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", sendBackupDBFile);
+                sendBackupFiles.add(uri);
+            } else {
+                Toast.makeText(this,getString(R.string.file_error_toast_part1)+sendBackupDB.getFileName()+" "+getString(R.string.file_error_toast_part2),Toast.LENGTH_LONG).show();
+            }
+        }
+
+        if(sendBackupFiles.size() != 0) {
+            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, sendBackupFiles);
             startActivity(intent);
         } else {
           AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -207,14 +219,20 @@ public class BackupActivity  extends AppCompatActivity {
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
 
-                SparseBooleanArray positionDel = backupLSV.getCheckedItemPositions();
-                for (int i = 0; i < positionDel.size(); i++) {
-                    int key = positionDel.keyAt(i);
-                    if (positionDel.get(key)){
-                        Log.d(TAG, "entity = " + backupsList.get(key));
-                        //backupsList.remove(key);
-                    }
+                List<BackupDB> backupDBList = adapter.getSelectBackupDBList();
+                adapter.removeSelection();
+
+                adapter.getBackupDBList().removeAll(backupDBList);
+                for(BackupDB delBackupDB : backupDBList){
+                    FileManager.remove(delBackupDB.getFileName(), delBackupDB.getLocation());
                 }
+
+                if(backupDBList.size() < 1){
+                    Toast.makeText(getApplicationContext(), R.string.toast_del_entity, Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getApplicationContext(), R.string.toast_del_many_entity, Toast.LENGTH_SHORT).show();
+                }
+
                 mode.finish();
 
             }
@@ -242,7 +260,7 @@ public class BackupActivity  extends AppCompatActivity {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    private void onClickPrepareEditBackup(final BackupDB entry,final int position) {
+    private void onClickPrepareEditBackup(final BackupDB editBackupDB, final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.edit_name_of_backup);
         builder.setPositiveButton(R.string.popup_edit,(dialog, which) ->{
@@ -250,7 +268,7 @@ public class BackupActivity  extends AppCompatActivity {
                 return;
             }
             mLastClickTime = SystemClock.elapsedRealtime();
-            onClickAcceptEditBackup(dialog,which,entry,position);
+            onClickAcceptEditBackup(editBackupDB);
         } );
         builder.setCancelable(false);
         builder.setNegativeButton(R.string.popup_cancel,((dialog, which) -> {
@@ -260,7 +278,8 @@ public class BackupActivity  extends AppCompatActivity {
         builder.setView(editBackupView);
 
         EditText backText = editBackupView.findViewById(R.id.backup_name_text);
-        backText.setText(entry.getName());
+        String fileNameBackup = editBackupDB.getFileName();
+        backText.setText(fileNameBackup.substring(0, fileNameBackup.lastIndexOf(".")));
 
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener((arg0)->{
@@ -275,10 +294,10 @@ public class BackupActivity  extends AppCompatActivity {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    private void onClickAcceptEditBackup(DialogInterface dialog, int which, BackupDB entry, int position) {
+    private void onClickAcceptEditBackup(BackupDB editBackupDB) {
         EditText backupText = editBackupView.findViewById(R.id.backup_name_text);
-        String strBackup = backupText.getText().toString();
-        entry.setName(strBackup);
+        String fileNameBackupDB = backupText.getText().toString() + ConstantApplication.DB_EXTENSION;
+        adapter.rename(fileNameBackupDB, editBackupDB);
     }
 
     private void onClickPrepareAddBackup() {
@@ -291,14 +310,34 @@ public class BackupActivity  extends AppCompatActivity {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                onClickAcceptAddBackup(dialog, which);
+
+                EditText backupText = addBackupView.findViewById(R.id.backup_name_text);
+                String fileNameBackupDB = backupText.getText().toString() + ConstantApplication.DB_EXTENSION;
+                BackupDB backupDB = new BackupDB(LOCATION_BACKUP_DB, fileNameBackupDB);
+
+                if(fileNameBackupDB.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), R.string.toast_empty_backup_name, Toast.LENGTH_SHORT).show();
+                }
+
+                if(FileManager.isValidFileName(fileNameBackupDB, BackupDB.getInvalidCharsBackupDB())){
+                    Toast.makeText(getApplicationContext(), getString(R.string.toast_invalid_backup_name) + " : " + BackupDB.getInvalidCharsBackupDB(), Toast.LENGTH_SHORT).show();
+                }
+
+                if (FileManager.exists(LOCATION_BACKUP_DB + ConstantApplication.DIR_DELIMITER + fileNameBackupDB)) {
+                    dialog.cancel();
+                    onClickPrepareExistBackupDB(backupDB);
+                } else {
+                    backupDB.createFile();
+                    adapter.add(selectUriBackup, backupDB);
+                    selectUriBackup = null;
+                }
             }
         });
         builder.setCancelable(false);
         builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                selectUriBackup = null;
                 dialog.cancel();
             }
         });
@@ -320,14 +359,73 @@ public class BackupActivity  extends AppCompatActivity {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    private void onClickAcceptAddBackup(DialogInterface dialog, int which) {
-        EditText backupText = addBackupView.findViewById(R.id.backup_name_text);
-        String strBackup = backupText.getText().toString();
-        BackupDB backupDB = new BackupDB();
-        backupDB.setName(strBackup);
-        backupDB.setDateCreate(Calendar.getInstance().getTime());
-        backupDB.setFileName("/DB (3).realm");
-        backupsList.add(backupDB);
-        adapter.notifyDataSetChanged();
+    private void showFileManager(){
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
+    }
+
+    private void onClickPrepareExistBackupDB(BackupDB backupDB){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.toast_exist_backup);
+        builder.setMessage(R.string.toast_exists_entity);
+        builder.setPositiveButton(R.string.popup_accept, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                adapter.add(selectUriBackup, backupDB);
+                selectUriBackup = null;
+            }
+        });
+        builder.setCancelable(false);
+        builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                selectUriBackup = null;
+                dialog.cancel();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+            }
+        });
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout parent = (LinearLayout) positiveButton.getParent();
+        parent.setGravity(Gravity.CENTER_HORIZONTAL);
+        View leftSpacer = parent.getChildAt(1);
+        leftSpacer.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == PICK_FILE_REQUEST_CODE && resultCode == RESULT_OK){
+            selectUriBackup = data.getData();
+            String fileNameBackupDB = FileManager.getFileName(selectUriBackup);
+
+            if(fileNameBackupDB.contains(ConstantApplication.DB_EXTENSION)) {
+                onClickPrepareAddBackup();
+                EditText backupText = addBackupView.findViewById(R.id.backup_name_text);
+
+                if(fileNameBackupDB.contains(".")) {
+                    backupText.setText(fileNameBackupDB.substring(0, fileNameBackupDB.lastIndexOf(".")));
+                }else{
+                    backupText.setText(fileNameBackupDB);
+                }
+            }else{
+                Toast.makeText(this,
+                        getString(R.string.toast_invalid_backup_file) + ConstantApplication.DB_EXTENSION,
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        }
     }
 }
