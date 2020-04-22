@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 
 import java.util.List;
@@ -112,7 +111,8 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
     }
 
     public void delete(Group object) {
-        DBManager.delete(Group.class, ConstantApplication.ID, object.getId());
+        object.deleteAllLinks();
+        //DBManager.delete(Group.class, ConstantApplication.ID, object.getId());
         notifyDataSetChanged();
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

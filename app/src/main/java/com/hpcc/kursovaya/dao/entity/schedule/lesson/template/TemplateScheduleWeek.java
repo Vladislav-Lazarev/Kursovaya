@@ -12,6 +12,7 @@ import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -19,8 +20,8 @@ import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
-public class TemplateScheduleWeek extends RealmObject implements EntityI<TemplateScheduleWeek>, Parcelable, Cloneable {
-    private static final String TAG = TemplateScheduleWeek.class.getSimpleName();
+public class TemplateScheduleWeek extends RealmObject implements EntityI<com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek>, Parcelable, Cloneable {
+    private static final String TAG = com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek.class.getSimpleName();
 
     protected static RealmList<Integer> convert(List<TemplateAcademicHour> templateScheduleDayList) {
         RealmList<Integer> result = new RealmList<>();
@@ -31,12 +32,15 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
         return result;
     }
     protected static List<TemplateAcademicHour> convert(RealmList<Integer> idTemplateAcademicHourList) {
-        List<TemplateAcademicHour> result = new RealmList<>();
+        List<TemplateAcademicHour> result = new ArrayList<>();
 
-        for (Integer id : idTemplateAcademicHourList){
-            result.add(DBManager.copyObjectFromRealm(
-                    DBManager.read(TemplateAcademicHour.class, ConstantApplication.ID, id)));
+        for(int i = 0; i<idTemplateAcademicHourList.size();i++){
+            Integer id = idTemplateAcademicHourList.get(i);
+            result.add(DBManager.copyObjectFromRealm(DBManager.read(TemplateAcademicHour.class,ConstantApplication.ID,id)));
         }
+       /* for (Integer id : idTemplateAcademicHourList){
+            result.add(DBManager.read(TemplateAcademicHour.class, ConstantApplication.ID, id));
+        }*/
         return result;
     }
 
@@ -65,11 +69,15 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
         this.id = id;
     }
 
+    public boolean isContainsTemplateAcademicHourList(TemplateAcademicHour template){
+        return idTemplateAcademicHourList.contains(template.getId());
+    }
+
     @NotNull
     public String getName() {
         return name;
     }
-    public TemplateScheduleWeek setName(@NotNull String name) {
+    public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek setName(@NotNull String name) {
         if (name.isEmpty()) {
             throw new RuntimeException("Exception! setName()");
         }
@@ -81,8 +89,8 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
     public List<TemplateAcademicHour> getTemplateAcademicHourList() {
         return convert(idTemplateAcademicHourList);
     }
-    public TemplateScheduleWeek setTemplateAcademicHourList(@NotNull List<TemplateAcademicHour> templateAcademicHourList) {
-        if (templateAcademicHourList.isEmpty()) {
+    public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek setTemplateAcademicHourList(@NotNull List<TemplateAcademicHour> templateAcademicHourList) {
+        if (templateAcademicHourList.size() < ConstantApplication.ONE) {
             throw new RuntimeException("Exception! setTemplateScheduleDayList()");
         }
         this.idTemplateAcademicHourList = convert(templateAcademicHourList);
@@ -109,9 +117,9 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
 
     public boolean existsEntity() {
         // TODO Пока коряво
-        RealmResults<TemplateScheduleWeek> existingEntities =
-                DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME, this.getName());
-        for (TemplateScheduleWeek entity : existingEntities) {
+        RealmResults<com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek> existingEntities =
+                DBManager.readAll(com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek.class, ConstantApplication.NAME, this.getName());
+        for (com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek entity : existingEntities) {
             if (this.equals(entity)) {
                 return true;
             }
@@ -136,7 +144,7 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
         }
     }
     @Override
-    public TemplateScheduleWeek createEntity() throws Exception {
+    public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek createEntity() throws Exception {
         if (!isEntity()){
             checkEntity();
             int maxID = DBManager.findMaxID(this.getClass());
@@ -146,17 +154,17 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
         return this;
     }
 
-    public static List<String> entityToNameList(List<TemplateScheduleWeek> entityList) {
+    public static List<String> entityToNameList(List<com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek> entityList) {
         List<String> result = new ArrayList<>();
 
-        for (TemplateScheduleWeek templateScheduleWeek : entityList){
-            result.add(templateScheduleWeek.getName());
+        for (com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek scheduleWeek : entityList){
+            result.add(scheduleWeek.getName());
         }
         return result;
     }
     @Override
     public List<String> entityToNameList() {
-        return entityToNameList(DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME));
+        return entityToNameList(DBManager.readAll(com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek.class, ConstantApplication.NAME));
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -167,15 +175,15 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
         name = in.readString();
         in.readList(idTemplateAcademicHourList, Integer.class.getClassLoader());
     }
-    public static final Creator<TemplateScheduleWeek> CREATOR = new Creator<TemplateScheduleWeek>() {
+    public static final Creator<com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek> CREATOR = new Creator<com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek>() {
         @Override
-        public TemplateScheduleWeek createFromParcel(Parcel in) {
-            return new TemplateScheduleWeek(in);
+        public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek createFromParcel(Parcel in) {
+            return new com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek(in);
         }
 
         @Override
-        public TemplateScheduleWeek[] newArray(int size) {
-            return new TemplateScheduleWeek[size];
+        public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek[] newArray(int size) {
+            return new com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek[size];
         }
     };
 
@@ -194,7 +202,15 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
     // Cloneable
     @NonNull
     @Override
-    public TemplateScheduleWeek clone() throws CloneNotSupportedException {
-        return (TemplateScheduleWeek) super.clone();
+    public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek clone() throws CloneNotSupportedException {
+        return (com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek) super.clone();
+    }
+
+    public void deleteTemplateAcademicHour(int id) {
+        idTemplateAcademicHourList.removeAll(Arrays.asList(id));
+        if(idTemplateAcademicHourList.isEmpty()){
+            DBManager.delete(TemplateScheduleWeek.class,ConstantApplication.ID,getId());
+        }
+        DBManager.delete(TemplateAcademicHour.class,ConstantApplication.ID,id);
     }
 }

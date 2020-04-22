@@ -1,6 +1,7 @@
 package com.hpcc.kursovaya.ClassesButton;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.widget.Button;
 
@@ -81,6 +82,8 @@ public class TemplateClassesButtonWrapper {
         this.templateAcademicHour = templateAcademicHour;
         btn.setBackgroundColor(templateAcademicHour.getSubject().getColor());
         btn.setText(templateAcademicHour.getGroup().getName());
+        btn.setTextColor(Color.WHITE);
+        btn.setShadowLayer(5,4,4,Color.BLACK);
         isBackgroundChanged = true;
     }
     public boolean isSelected() {

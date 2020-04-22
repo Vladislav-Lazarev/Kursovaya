@@ -13,6 +13,11 @@ import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.SubjectGroupsInfo;
+import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 
 import java.util.List;
 
@@ -35,6 +40,7 @@ public class SubjectGroupsAdapter extends ArrayAdapter<SubjectGroupsInfo> {
         TextView totalHours;
         TextView readHours;
         TextView canceledHours;
+        TextView restHours;
     }
 
     public SubjectGroupsAdapter(@NonNull Context context, int resource, @NonNull List<SubjectGroupsInfo> objects) {
@@ -52,6 +58,7 @@ public class SubjectGroupsAdapter extends ArrayAdapter<SubjectGroupsInfo> {
         String totalHours = Integer.toString(getItem(position).getHoursPlan());
         String readHours = Integer.toString(getItem(position).getHoursDeducted());
         String canceledHours = Integer.toString(getItem(position).getHoursCanceled());
+        String restHours = Integer.toString(getItem(position).getRest());
 
         ViewHolder holder;
         if(convertView == null){
@@ -63,7 +70,7 @@ public class SubjectGroupsAdapter extends ArrayAdapter<SubjectGroupsInfo> {
             holder.totalHours = convertView.findViewById(R.id.totalHoursText);
             holder.readHours = convertView.findViewById(R.id.readHoursText);
             holder.canceledHours = convertView.findViewById(R.id.canceledHoursText);
-
+            holder.restHours = convertView.findViewById(R.id.restHoursText);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -74,6 +81,7 @@ public class SubjectGroupsAdapter extends ArrayAdapter<SubjectGroupsInfo> {
         holder.totalHours.setText(totalHours);
         holder.readHours.setText(readHours);
         holder.canceledHours.setText(canceledHours);
+        holder.restHours.setText(restHours);
         return convertView;
     }
 
@@ -106,7 +114,22 @@ public class SubjectGroupsAdapter extends ArrayAdapter<SubjectGroupsInfo> {
     }
 
     public void delete(SubjectGroupsInfo object) {
+        List<AcademicHour> academicHourList = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class));
+        for(AcademicHour academicHour : academicHourList){
+            if(academicHour.getTemplateAcademicHour()!=null){
+                TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+                if(templateAcademicHour.getGroup()!=null){
+                    Group group = templateAcademicHour.getGroup();
+                    Group objGr = object.getGroup();
+                    if(group!=null && objGr!=null && group.getId()==objGr.getId()){
+                        DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcademicHour.getId());
+                        DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+                    }
+                }
+            }
+        }
       //  DBManager.delete(Group.class, ConstantApplication.ID, object.getId());
+        groupList.remove(object);
         notifyDataSetChanged();
     }
 

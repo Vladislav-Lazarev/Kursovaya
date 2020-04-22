@@ -10,6 +10,9 @@ import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -439,5 +442,40 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     @Override
     public Subject clone() throws CloneNotSupportedException {
         return (Subject) super.clone();
+    }
+
+    public void deleteAllLinks() {
+        //удаление полупар из расписания, которые имеют такой же предмет
+        List<AcademicHour> academicHourList = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class));
+        for(AcademicHour academicHour : academicHourList){
+            if(academicHour.getTemplateAcademicHour()!=null){
+                TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+                if(templateAcademicHour.getSubject()!=null){
+                    Subject subject = templateAcademicHour.getSubject();
+                    if(subject!=null && subject.getId()==getId()){
+                        DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcademicHour.getId());
+                        DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+                    }
+                }
+            }
+        }
+        //удаление шаблонов
+        List<TemplateScheduleWeek> templateScheduleWeeks = DBManager.copyObjectFromRealm(DBManager.readAll(TemplateScheduleWeek.class));
+        for(TemplateScheduleWeek templateScheduleWeek : templateScheduleWeeks){
+            List<TemplateAcademicHour> templateAcademicHourList = templateScheduleWeek.getTemplateAcademicHourList();
+            if(templateAcademicHourList!=null) {
+                for (TemplateAcademicHour templateAcademicHour : templateAcademicHourList) {
+                    Subject subject = templateAcademicHour.getSubject();
+                    if (subject != null && subject.getId()==getId()) {
+                        templateScheduleWeek.deleteTemplateAcademicHour(templateAcademicHour.getId());
+                    }
+                }
+            }
+        }
+
+        // Удаление дисциплины
+        DBManager.delete(Subject.class, ConstantApplication.ID, getId());
+
+
     }
 }

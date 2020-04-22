@@ -39,9 +39,9 @@ public class SpecialitiesActivity extends AppCompatActivity {
 
     FloatingActionButton addSpeciality;
     ListView specialityLSV;
-    SpecialityListAdapter adapter;
     private View addSpecialityView;
     private View editSpecialityView;
+    SpecialityListAdapter adapter;
     private long mLastClickTime = 0;
 
     private EditText specText;
@@ -157,7 +157,6 @@ public class SpecialitiesActivity extends AppCompatActivity {
         builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
                 dialog.cancel();
             }
         });

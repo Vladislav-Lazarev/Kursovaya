@@ -30,7 +30,7 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
     private Context mContext;
     private int mResource;
     private int lastPosition = -1;
-    private List<TemplateScheduleWeek> templateScheduleWeekList;
+    private List<TemplateScheduleWeek> scheduleWeekList;
 
     static class ViewHolder {
         TextView name;
@@ -40,11 +40,11 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
         super(context, resource, objects);
         mContext=context;
         mResource=resource;
-        templateScheduleWeekList = objects;
+        scheduleWeekList = objects;
     }
 
     public View getView(int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
-        TemplateScheduleWeek templateScheduleWeek = new TemplateScheduleWeek(
+        TemplateScheduleWeek scheduleWeek = new TemplateScheduleWeek(
                 getItem(position).getName(),
                 getItem(position).getTemplateAcademicHourList());
 
@@ -54,10 +54,7 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
         if(convertView==null){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource,parent,false);
-
-
             holder = new ViewHolder();
-
             holder.name = (TextView) convertView.findViewById(R.id.template_text);
             /*//setting onclick action on button
             final Button button = (Button) convertView.findViewById(R.id.btn_lsvOptions);
@@ -148,7 +145,7 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
 
         lastPosition = position;
 
-        holder.name.setText(templateScheduleWeek.getName());
+        holder.name.setText(scheduleWeek.getName());
 
         return convertView;
     }
@@ -174,8 +171,8 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
     }
     public void update(String nameSort, Sort sort) {
         // Могу сортировтаь по Названию и по кол-во Курсо(не в приоритете)
-        templateScheduleWeekList.clear();
-        templateScheduleWeekList.addAll(DBManager.copyObjectFromRealm(
+        scheduleWeekList.clear();
+        scheduleWeekList.addAll(DBManager.copyObjectFromRealm(
                 DBManager.readAll(TemplateScheduleWeek.class, nameSort, sort)));
         notifyDataSetChanged();
     }

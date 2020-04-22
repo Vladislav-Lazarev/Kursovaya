@@ -90,29 +90,28 @@ public class TemplateAcademicHour extends RealmObject implements EntityI<Templat
         return this;
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public Pair<Integer, Integer> getDayAndPairButton(){
-        return Pair.create(numberDayOfWeek, numberHalfPair);
+    public int getNumberDayOfWeek() {
+        return numberDayOfWeek;
+    }
+    int getNumberHalfPair() {
+        return numberHalfPair % ConstantApplication.TWO + ConstantApplication.ONE;
     }
     public int getNumberHalfPairButton(){
         return numberHalfPair;
     }
 
-    /*public Pair<Integer, Integer> getDayAndPair(){
-        return Pair.create(numberDayOfWeek, getNumberHalfPair());
+    public Pair<Integer, Integer> getDayAndPair(){
+        return Pair.create(getNumberDayOfWeek(), getNumberHalfPair());
     }
-    public int getNumberHalfPair() {
-        return numberHalfPair % ConstantApplication.TWO + ConstantApplication.ONE;
-    }
-*/
-    public int getNumberDayOfWeek() {
-        return numberDayOfWeek;
+    public Pair<Integer, Integer> getDayAndPairButton(){
+        return Pair.create(getNumberDayOfWeek(), getNumberHalfPairButton());
     }
 
-    public TemplateAcademicHour setDayAndPair(Pair<Integer, Integer> dayAndPair){
-        setNumberDayOfWeek(dayAndPair.first);
-        setNumberHalfPair(dayAndPair.second);
-        return this;
+    private void setNumberHalfPair(int numberHalfPair) {
+        if (numberHalfPair < ConstantApplication.ZERO || numberHalfPair >= ConstantApplication.MAX_COUNT_LESSON * ConstantApplication.TWO) {
+            throw new RuntimeException("Exception! setNumberAcademicTwoHour() = " + numberHalfPair);
+        }
+        this.numberHalfPair = numberHalfPair;
     }
     private void setNumberDayOfWeek(int numberDayOfWeek) {
         if (numberDayOfWeek < ConstantApplication.MIN_DAY_OF_WEEK || numberDayOfWeek > ConstantApplication.MAX_DAY_OF_WEEK) {
@@ -120,13 +119,11 @@ public class TemplateAcademicHour extends RealmObject implements EntityI<Templat
         }
         this.numberDayOfWeek = numberDayOfWeek;
     }
-    private void setNumberHalfPair(int numberHalfPair) {
-        if (numberHalfPair < ConstantApplication.ZERO || numberHalfPair >= ConstantApplication.MAX_COUNT_HALF_PAIR) {
-            throw new RuntimeException("Exception! setNumberAcademicTwoHour() = " + numberHalfPair);
-        }
-        this.numberHalfPair = numberHalfPair;
+    public TemplateAcademicHour setDayAndPair(Pair<Integer, Integer> dayAndPair){
+        setNumberDayOfWeek(dayAndPair.first);
+        setNumberHalfPair(dayAndPair.second);
+        return this;
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public boolean equals(Object o) {

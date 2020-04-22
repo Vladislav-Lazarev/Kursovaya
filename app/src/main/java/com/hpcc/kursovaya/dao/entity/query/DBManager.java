@@ -33,7 +33,6 @@ public class DBManager {
                 @Override
                 public void execute(Realm realm) {
                     realm.copyToRealmOrUpdate(model);
-
                     result.add(ConstantApplication.ONE);
                     Log.v(TAG, "Success -> " + model.getClass().getSimpleName() + " was write: " + model);
                 }
@@ -103,6 +102,7 @@ public class DBManager {
     public static <T extends RealmObject> int deleteAll(@NotNull final Class<T> clazz){
         return deleteAll(clazz, null, null);
     }
+
     public static <T extends RealmObject, V> int deleteAll(@NotNull final Class<T> clazz, final String fieldName, final V value){
         result.clear();
 

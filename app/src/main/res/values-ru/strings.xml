@@ -9,7 +9,7 @@
     <string name="template_activity_close_alert_content">Все внесенные данные будут утрачены</string>
     <string name="popup_choose_date_report">Выберите период отчета</string>
     <string name="popup_gen_report">Генерировать отчёт</string>
-    <string name="popup_dates_wrong">Введенный диапазон дат неверный, повторите ввод!</string>
+    <string name="popup_dates_wrong">Введенный диапазон дат неверный или введенный курс, повторите ввод!</string>
     <string name="popup_edit">Редактировать</string>
     <string name="popup_groupName_label">Группа:</string>
     <string name="popup_subjectName_label">Предмет:</string>
@@ -79,6 +79,7 @@
     <string name="tableFactHeader">Вычитано</string>
     <string name="tableCanceledHeader">Снято</string>
     <string name="tableRestHeader">Остаток</string>
+    <string name="restHeader">Остаток:</string>
     <string name="hoursHeader">Часы</string>
     <string name="monHeader">Пн</string>
     <string name="tueHeader">Вт</string>
@@ -152,4 +153,14 @@
     <string name="about_title">О программе</string>
     <string name="choose_language">Выбор языка</string>
     <string name="rings_acitvity_title">Расписание звонков</string>
+    <string name="toast_exist_backup">Заменить копию?</string>
+    <string name="toast_invalid_backup_name">Название резервной копии не должно содержать символы</string>
+    <string name="toast_invalid_backup_file">"Файл должен содержать расширение "</string>
+    <string name="toast_restart">Для применения БД перезапустите приложение</string>
+    <string name="toast_empty_backup_name">Введите название резервной копии</string>
+    <string name="toast_edit_entity">Запись успешно изменена</string>
+    <string name="courseLabelPDF">Курс:</string>
+    <string name="specialityLabelPDF">Специальность:</string>
+    <string name="creationDatePDF">Дата создания:</string>
+    <string name="periodLabelPDF">Период:</string>
 </resources>

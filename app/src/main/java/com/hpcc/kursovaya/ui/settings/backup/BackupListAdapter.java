@@ -1,16 +1,13 @@
 package com.hpcc.kursovaya.ui.settings.backup;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -25,6 +22,7 @@ import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.setting.BackupDB;
 import com.hpcc.kursovaya.dao.entity.setting.FileManager;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -219,5 +217,6 @@ public class BackupListAdapter extends ArrayAdapter<BackupDB> {
                 break;
             }
         }
+        ProcessPhoenix.triggerRebirth(mContext);
     }
 }

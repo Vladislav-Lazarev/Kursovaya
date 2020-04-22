@@ -8,6 +8,9 @@ import androidx.annotation.NonNull;
 
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -100,6 +103,40 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
 
     // Specific query
     public void deleteAllLinks(){
+        //удаление полупар из расписания, которые имеют такую же специальность
+        List<AcademicHour> academicHourList = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class));
+        for(AcademicHour academicHour : academicHourList){
+            if(academicHour.getTemplateAcademicHour()!=null){
+                TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+                if(templateAcademicHour.getGroup()!=null){
+                    Group group = templateAcademicHour.getGroup();
+                    if(group.getSpecialty()!=null){
+                        Speciality speciality = group.getSpecialty();
+                        if(speciality!=null && speciality.getId()==getId()) {
+                            DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcademicHour.getId());
+                            DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+                        }
+                    }
+                }
+            }
+        }
+        //удаление шаблонов
+        List<TemplateScheduleWeek> templateScheduleWeeks = DBManager.copyObjectFromRealm(DBManager.readAll(TemplateScheduleWeek.class));
+        for(TemplateScheduleWeek templateScheduleWeek : templateScheduleWeeks){
+            List<TemplateAcademicHour> templateAcademicHourList = templateScheduleWeek.getTemplateAcademicHourList();
+            if(templateAcademicHourList!=null) {
+                for (TemplateAcademicHour templateAcademicHour : templateAcademicHourList) {
+                    Group group = templateAcademicHour.getGroup();
+                    if (group != null) {
+                        Speciality speciality = group.getSpecialty();
+                        if (speciality != null && speciality.getId() == getId()) {
+                            templateScheduleWeek.deleteTemplateAcademicHour(templateAcademicHour.getId());
+                        }
+                    }
+                }
+            }
+        }
+
         // Удаление специальности в дисциплине
         List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
         for (Subject subject : subjectList) {

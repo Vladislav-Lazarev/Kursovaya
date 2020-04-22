@@ -1,88 +1,84 @@
 package com.hpcc.kursovaya.ui.schedule;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.view.View;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Spinner;
-import android.widget.TextView;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import android.util.Log;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 
-public class EditClass extends AppCompatActivity {
-    AutoCompleteTextView groupName;
-    Spinner choosenSubject;
-    boolean repeatForWeeks = false;
-    Spinner repeatForWeeksContent;
-    boolean notificationBefore = false;
-    Spinner notificationBeforeContent;
-    EditText classSummary;
-    private long mLastClickTime = 0;
+import org.joda.time.DateTime;
 
+public class EditClass extends Class {
+    private int savedHourSize = 0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        intent = getIntent();
+        dayOfWeek = (DateTime)intent.getSerializableExtra("dayOfWeek");
+        numberOfLesson = intent.getIntExtra("classHour",0);
+        classHour = intent.getIntExtra("classHour",0);
+        classDay = intent.getIntExtra("classDay",0);
         super.onCreate(savedInstanceState);
-        LocaleManager.setLocale(this);
-        setContentView(R.layout.activity_edit_class);
-        groupName = findViewById(R.id.groupNameSuggestET);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_path_150));
-        //here place for getting classDay, classHour and Group\Subject entities
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
-                setResult(1);
-                finish();
+        academicHourList.clear();
+        templateAcademicHourList.clear();
+        currentAcademicHour = intent.getParcelableExtra("currentCell");
+        currentTemplateAcademicHour = currentAcademicHour.getTemplateAcademicHour();
+        academicHourList.add(currentAcademicHour);
+        templateAcademicHourList.add(currentTemplateAcademicHour);
+        AcademicHour secondCell = intent.getParcelableExtra("secondCell");
+        if(secondCell!=null) {
+            TemplateAcademicHour secondCellTemplate = secondCell.getTemplateAcademicHour();
+            if(secondCellTemplate!=null &&
+                    currentTemplateAcademicHour.getGroup().equals(secondCellTemplate.getGroup()) &&
+                    currentTemplateAcademicHour.getSubject().equals(secondCellTemplate.getSubject()) &&
+                    currentAcademicHour.getRepeatForNextWeek() == secondCell.getRepeatForNextWeek() && secondCell.getNote().equals(currentAcademicHour.getNote())){
+                templateAcademicHourList.add(secondCellTemplate);
+                academicHourList.add(secondCell);
             }
-        });
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayShowTitleEnabled(false);
-        ImageButton btnAdd = findViewById(R.id.edit_class);
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();                editClass();
-            }
-        });
-        TextView textCont = (TextView)findViewById(R.id.toolbar_title);
-        textCont.setText(R.string.edit_class);
+        }
+
+        final int maxCountButton = templateAcademicHourList.size();
+
+        groupName.setText(currentTemplateAcademicHour.getGroup().getName());
+        fillSpinnerByGroup(this, subjectSpinner, currentTemplateAcademicHour.getGroup());
+        ConstantApplication.setSpinnerText(subjectSpinner, currentTemplateAcademicHour.getSubject().getName());
+        switch (maxCountButton){
+            case ConstantApplication.ONE:
+                radioGroup.check(R.id.duration_rgroup_short);
+                break;
+            case ConstantApplication.TWO:
+                radioGroup.check(R.id.duration_rgroup_full);
+                break;
+        }
+        classSummary.setText(currentAcademicHour.getNote());
+        repeatForNextWeekContent.setSelection(currentAcademicHour.getRepeatForNextWeek());
+        notificationBeforeContent.setSelection(currentAcademicHour.getNotificationBefore());
+        notificationBefore = false;
+        numberOfHalf = ((numberOfLesson+1) % 2 == 0)? 1 : 0;
+        numberOfLesson = numberOfLesson/2;
+        savedHourSize = academicHourList.size();
+        Log.d("sdf","sfdsf");
     }
-    /*
-    TestMethod
-    Needs correction in future
-     */
+
+
+    protected void actionBar(ActionBarI actionBarI){
+        super.actionBar(this::addClass);
+    }
 
     @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(LocaleManager.setLocale(base));
+    protected void addClass(){
+        if(savedHourSize!=academicHourList.size()
+        && savedHourSize!=ConstantApplication.ONE){
+            intent.putExtra("clearSecondCell",true);
+        }
+        super.addClass();
     }
-
-
-    private void editClass() {
-        String groupNameStr = groupName.getText().toString();
-        Intent intent = getIntent();
-        intent.putExtra("groupName",groupNameStr);
-        setResult(0,intent);
-        finish();
+    @Override
+    protected void setHeader(int popup_super){
+        super.setHeader(R.string.edit_class);
     }
 
 }

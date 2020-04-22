@@ -57,18 +57,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/course_label"
+        android:layout_below="@id/specialitySpinner"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="90dp"/>
+    <TextView
+        android:id="@+id/specialityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/specialty_label"
         android:layout_below="@id/dateToPicker"
         android:textColor="@color/appDefaultBlack"
         android:textSize="16sp"
         android:layout_marginTop="-40dp"
         android:layout_marginStart="90dp"/>
     <Spinner
-        android:id="@+id/courseSpinner"
+        android:id="@+id/specialitySpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/dateToPicker"
-        android:layout_toEndOf="@id/courseLabel"
+        android:layout_toEndOf="@id/specialityLabel"
         android:layout_marginStart="10dp"
         android:layout_marginTop="-40dp"
+        />
+    <Spinner
+        android:id="@+id/courseSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/specialitySpinner"
+        android:layout_toEndOf="@id/courseLabel"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:entries="@array/courses"/>
 </RelativeLayout>

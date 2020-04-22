@@ -1,9 +1,8 @@
 package com.hpcc.kursovaya.ui.subjects;
 
 import android.content.Context;
-import android.util.Log;
 import android.content.Intent;
-import android.util.SparseBooleanArray;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,7 +132,8 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
     }
 
     public void delete(Subject object) {
-        DBManager.delete(Subject.class, ConstantApplication.ID, object.getId());
+        object.deleteAllLinks();
+        //DBManager.delete(Subject.class, ConstantApplication.ID, object.getId());
         notifyDataSetChanged();
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

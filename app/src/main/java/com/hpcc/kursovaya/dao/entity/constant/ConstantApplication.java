@@ -1,8 +1,6 @@
 package com.hpcc.kursovaya.dao.entity.constant;
 
-import android.app.Application;
 import android.content.Context;
-import android.os.Environment;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -16,6 +14,7 @@ import java.util.Map;
 
 public class ConstantApplication {
 
+    public static final int ALARM_FLAG = 67;
     public static int[][][] timeArray = { {{8,0},{8,50}},
                                           {{9,45},{10,35}},
                                           {{11,55},{12,45}},
@@ -67,7 +66,6 @@ public class ConstantApplication {
 
     public static final int CLICK_TIME = 500;
 
-
     public static Map<Speciality, Integer> convertMapEditTextToMapInt(Map<Speciality, EditText> mapEdit){
         Map<Speciality, Integer> mapInt = new LinkedHashMap<>();
         for (Map.Entry<Speciality, EditText> set : mapEdit.entrySet()){
@@ -93,6 +91,14 @@ public class ConstantApplication {
         }
         return false;
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // UI
+
+    public static final String PATTERN_DATE_TIME = "dd/MM/yyyy HH:mm:ss";
+    public static final String MIN_DATE_TIME = "01/01/1990 00:00:00";
+
+
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

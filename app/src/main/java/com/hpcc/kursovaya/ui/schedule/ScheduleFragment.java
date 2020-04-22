@@ -11,11 +11,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewFragment;
 import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewPagerAdapter;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
@@ -34,6 +36,7 @@ public class ScheduleFragment extends Fragment {
     boolean isCreatedAlready = false;
 
     private long mLastClickTime = 0;
+    private int weekDifference;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -53,7 +56,7 @@ public class ScheduleFragment extends Fragment {
             DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
             final DateTime startDate = formatter.parseDateTime("01/01/1990 00:00:00");
             DateTime currentDate = DateTime.now();
-            final int weekDifference = Weeks.weeksBetween(startDate.dayOfWeek().withMinimumValue().minusDays(1), currentDate.dayOfWeek().withMaximumValue().plusDays(1)).getWeeks() - 1;
+            weekDifference = Weeks.weeksBetween(startDate.dayOfWeek().withMinimumValue().minusDays(1), currentDate.dayOfWeek().withMaximumValue().plusDays(1)).getWeeks() - 1;
             Thread t = new Thread() {
                 public void run() {
                     StringBuilder titleSB = new StringBuilder();
@@ -179,5 +182,11 @@ public class ScheduleFragment extends Fragment {
             ((MainActivity) getActivity()).showOverflowMenu(false);
             ((MainActivity) getActivity()).setLanguageChanged(false);
         }
+    }
+
+    public void refreshGrid(DateTime from, DateTime to) {
+        FragmentStatePagerAdapter a = (FragmentStatePagerAdapter) pager.getAdapter();
+        WeekViewFragment currentPage = (WeekViewFragment) a.instantiateItem(pager, weekDifference);
+        currentPage.refreshGrid(from, to);
     }
 }

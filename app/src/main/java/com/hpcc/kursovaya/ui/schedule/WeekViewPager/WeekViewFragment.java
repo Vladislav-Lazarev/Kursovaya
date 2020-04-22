@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -18,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -26,6 +26,10 @@ import androidx.fragment.app.Fragment;
 import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.ui.schedule.AddClass;
 import com.hpcc.kursovaya.ui.schedule.EditClass;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
@@ -33,23 +37,26 @@ import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
-
-import top.defaults.drawabletoolbox.DrawableBuilder;
+import java.util.Date;
+import java.util.List;
 
 
 public class WeekViewFragment extends Fragment {
+    private static final int ADD_CLASS = 1;
+    private static final int EDIT_CLASS = 2;
+
     private final String TAG = "WeekViewFragment";
     public static final String ARGUMENT_WEEK_FROM_CURRENT="arg_week_from_current";
     private int weekFromCurrent;
     private DateTime firstDayOfWeek;
     private TextView[] dayHeaders;
     private static ImageButton cancelSelect;
-    private ClassesButtonWrapper[][] classes = new ClassesButtonWrapper[7][10];
+    private static ImageButton cancelSelectCompleted;
+    private static ImageButton cancelSelectCanceled;
+    private List<List<ClassesButtonWrapper>> classes = new ArrayList<>();
     private static ArrayList<ClassesButtonWrapper> selectedButtons = new ArrayList<>();
-
 
 
     public TextView[] getDayHeaders() {
@@ -82,8 +89,7 @@ public class WeekViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         dayHeaders = new TextView[7];
         weekFromCurrent=getArguments().getInt(ARGUMENT_WEEK_FROM_CURRENT);
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-        firstDayOfWeek = formatter.parseDateTime("01/01/1990 00:00:00");
+        firstDayOfWeek = DateTime.parse(ConstantApplication.MIN_DATE_TIME, DateTimeFormat.forPattern(ConstantApplication.PATTERN_DATE_TIME));
         //firstDayOfWeek = DateTime.now().withDayOfWeek(DateTimeConstants.MONDAY);
         //Log.d(TAG,"Created fragment with week from current "+weekFromCurrent);
         if(weekFromCurrent!=0){
@@ -172,6 +178,7 @@ public class WeekViewFragment extends Fragment {
     public void cancelOnClick(Toolbar toolbar, Toolbar toolbar1){
         ((MainActivity) getActivity()).setSelectMode(false);
         toolbar1.setVisibility(View.GONE);
+
         toolbar.setVisibility(View.VISIBLE);
         for (ClassesButtonWrapper b: selectedButtons) {
             b.setUnselectBackground();
@@ -194,14 +201,10 @@ public class WeekViewFragment extends Fragment {
         final Toolbar toolbar1 = ((MainActivity)getActivity()).getToolbar1();
         final Toolbar toolbarCompleted = ((MainActivity)getActivity()).getToolbarCompleteClasses();
         final Toolbar toolbarCanceled = ((MainActivity) getActivity()).getToolbarCanceledClasses();
-        ImageButton cancelSelectCompleted = toolbarCompleted.findViewById(R.id.turnOff_complete);
+        cancelSelectCompleted = toolbarCompleted.findViewById(R.id.turnOff_complete);
         cancelSelectCompleted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
                 ((MainActivity) getActivity()).setSelectMode(false);
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarCompleted.setVisibility(View.GONE);
@@ -211,14 +214,10 @@ public class WeekViewFragment extends Fragment {
                 selectedButtons.clear();
             }
         });
-        ImageButton turnOffCanceled = toolbarCanceled.findViewById(R.id.turnOff_cancel);
-        turnOffCanceled.setOnClickListener(new View.OnClickListener() {
+        cancelSelectCanceled  = toolbarCanceled.findViewById(R.id.turnOff_cancel);
+        cancelSelectCanceled.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
                 ((MainActivity) getActivity()).setSelectMode(false);
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarCanceled.setVisibility(View.GONE);
@@ -235,10 +234,6 @@ public class WeekViewFragment extends Fragment {
             cancelSelect.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
                     cancelOnClick(toolbar,toolbar1);
                 }
             });
@@ -248,10 +243,6 @@ public class WeekViewFragment extends Fragment {
         completedClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
                 prepareCompletedClassesDialog();
             }
         });
@@ -301,67 +292,73 @@ public class WeekViewFragment extends Fragment {
         Thread t = new Thread(){
             public void run(){
 
-
-                for(int i = 0; i<7; i++){
-                    for(int j=0; j<10; j++){
+                for(int i = 0; i < ConstantApplication.MAX_COUNT_WEEK; i++){
+                    List<ClassesButtonWrapper> classesButtonWrapperList = new ArrayList<>();
+                    for(int j = 0; j < ConstantApplication.MAX_COUNT_HALF_PAIR; j++){
                         StringBuilder className = new StringBuilder("class");
                         className.append(j).append(i);
                         final int classDay = i;
                         final int classHour = j;
+
                         int classRes = getResources().getIdentifier(className.toString(),"id",getActivity().getPackageName());
-                        classes[i][j] = new ClassesButtonWrapper((Button)view.findViewById(classRes),getContext());
-                        classes[i][j].getBtn().setOnClickListener(new View.OnClickListener() {
+                        classesButtonWrapperList.add(new ClassesButtonWrapper((Button)view.findViewById(classRes),getContext()));
+                        classesButtonWrapperList.get(classHour).getBtn().setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                                     return;
                                 }
                                 mLastClickTime = SystemClock.elapsedRealtime();
                                 if(!((MainActivity) getActivity()).isSelectMode()) {
                                     Intent intent;
-                                    if(classes[classDay][classHour].getBtn().getText().equals("")) {
+                                    if(classesButtonWrapperList.get(classHour).getBtn().getText().equals("")) {
                                         intent = new Intent(getActivity(), AddClass.class);
-
+                                        intent.putExtra("classDay", classDay);
+                                        intent.putExtra("classHour", classHour);
+                                        intent.putExtra("dayOfWeek",firstDayOfWeek.plusDays(classDay).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
+                                        startActivityForResult(intent,ADD_CLASS);
                                     } else{
                                         intent = new Intent(getActivity(), EditClass.class);
+                                        intent.putExtra("classDay", classDay);
+                                        intent.putExtra("classHour", classHour);
+                                        intent.putExtra("dayOfWeek",firstDayOfWeek.plusDays(classDay).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
+                                        intent.putExtra("currentCell",classes.get(classDay).get(classHour).getAcademicHour());
+                                        int secondCellHour = classHour+((classHour % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1);
+                                        intent.putExtra("secondClassHour",secondCellHour);
+                                        intent.putExtra("secondCell",classes.get(classDay).get(secondCellHour).getAcademicHour());
+                                        startActivityForResult(intent,EDIT_CLASS);
                                         //intent.putExtra("group",groupEnt);
                                         //intent.putExtra("subject",subjectEnt);
                                     }
-                                    intent.putExtra("classDay", classDay);
-                                    intent.putExtra("classHour", classHour);
-                                    intent.putExtra("dayOfWeek",firstDayOfWeek.plusDays(classDay));
-                                    startActivityForResult(intent,1);
 
 
-                                } else if(!classes[classDay][classHour].getBtn().getText().equals("") && !classes[classDay][classHour].isSelected()){
-                                    classes[classDay][classHour].setSelectBackground();
-                                    classes[classDay][classHour].setSelected(true);
-                                    selectedButtons.add(classes[classDay][classHour]);
-                                } else if (classes[classDay][classHour].isSelected()){
-                                    classes[classDay][classHour].setUnselectBackground();
-                                    selectedButtons.remove(classes[classDay][classHour]);
-                                    if(selectedButtons.size()==0) {
-                                        if (toolbar1.getVisibility() == View.VISIBLE){
-                                            cancelSelect.performClick();
-                                        } else if(toolbarCanceled.getVisibility() == View.VISIBLE){
-                                            turnOffCanceled.performClick();
-                                        } else if(toolbarCompleted.getVisibility() == View.VISIBLE){
-                                            cancelSelectCompleted.performClick();
-                                        }
 
+                                } else if(!classesButtonWrapperList.get(classHour).getBtn().getText().equals("") &&
+                                        !classesButtonWrapperList.get(classHour).isSelected()){
+                                    classesButtonWrapperList.get(classHour).setSelectBackground();
+                                    classesButtonWrapperList.get(classHour).setSelected(true);
+                                    selectedButtons.add(classesButtonWrapperList.get(classHour));
+                                } else if (classesButtonWrapperList.get(classHour).isSelected()){
+                                    classesButtonWrapperList.get(classHour).setUnselectBackground();
+                                    selectedButtons.remove(classesButtonWrapperList.get(classHour));
+                                    if(selectedButtons.size()==0){
+                                        cancelSelect.performClick();
+                                        toolbarCanceled.setVisibility(View.GONE);
+                                        toolbarCompleted.setVisibility(View.GONE);
                                         //((MainActivity) getActivity()).setSelectMode(false);
                                         //toolbar button placeholder
                                     }
                                 }
                             }
                         });
-                        classes[i][j].getBtn().setOnLongClickListener(new View.OnLongClickListener() {
+                        classesButtonWrapperList.get(classHour).getBtn().setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View v) {
-                                if(!((MainActivity) getActivity()).isSelectMode() && !classes[classDay][classHour].getBtn().getText().equals("")) {
-                                    classes[classDay][classHour].setSelectBackground();
-                                    selectedButtons.add(classes[classDay][classHour]);
-                                    classes[classDay][classHour].setSelected(true);
+                                if(!((MainActivity) getActivity()).isSelectMode() &&
+                                        !classesButtonWrapperList.get(classHour).getBtn().getText().equals("")) {
+                                    classesButtonWrapperList.get(classHour).setSelectBackground();
+                                    selectedButtons.add(classesButtonWrapperList.get(classHour));
+                                    classesButtonWrapperList.get(classHour).setSelected(true);
                                     ((MainActivity) getActivity()).setSelectMode(true);
                                     toolbar.setVisibility(View.GONE);
                                     toolbar1.setVisibility(View.VISIBLE);
@@ -371,12 +368,12 @@ public class WeekViewFragment extends Fragment {
                             }
                         });
                     }
+                    classes.add(classesButtonWrapperList);
                 }
             }
 
         };
         t.start();
-
         if(firstDayOfWeek.equals(DateTime.now().withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0).withMinuteOfHour(0).withMillisOfDay(0))){
             TextView dayOfWeekHeader[] = getCurrentDayHeader(view, DateTime.now().getDayOfWeek());
             dayOfWeekHeader[0].setBackground(ContextCompat.getDrawable(cntxt,R.drawable.grid_today));
@@ -391,6 +388,16 @@ public class WeekViewFragment extends Fragment {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        //Thread fillButtons = new Thread(){
+        //public void run() {
+     /*   List<AcademicHour> academicHours = AcademicHour.academicHourListFromPeriod(firstDayOfWeek.toDate(),firstDayOfWeek.plusDays(6).toDate());
+        for(AcademicHour hour: academicHours){
+            TemplateAcademicHour templateAcademicHour = hour.getTemplateAcademicHour();
+            classes.get(templateAcademicHour.getNumberDayOfWeek()).get(templateAcademicHour.getNumberHalfPairButton()).setAcademicHour(hour);
+        }*/
+        //      }
+        //    };
+        //fillButtons.start();
         return view;
     }
 
@@ -422,7 +429,7 @@ public class WeekViewFragment extends Fragment {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                //onDeleteClassesAcceptClick();
+                onUncancelledClassesClick();
             }
         });
         builder.setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
@@ -447,6 +454,17 @@ public class WeekViewFragment extends Fragment {
         leftSpacer.setVisibility(View.GONE);
     }
 
+    private void onUncancelledClassesClick() {
+        for (ClassesButtonWrapper b : selectedButtons) {
+            if(!b.getAcademicHour().hasCompleted()) {
+                b.setCanceled(false);
+            } else {
+                Toast.makeText(getActivity(),"Неможливо позначити вичитаним не знятим вичитане заняття" ,Toast.LENGTH_LONG).show();
+            }
+        }
+        cancelSelectCanceled.performClick();
+    }
+
     private void prepareCancelledClassesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_cut_classes_template);
@@ -454,8 +472,7 @@ public class WeekViewFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                //onDeleteClassesAcceptClick();
+                onCancelClassesAcceptClick();
             }
         });
         builder.setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
@@ -478,6 +495,17 @@ public class WeekViewFragment extends Fragment {
         parent.setGravity(Gravity.CENTER_HORIZONTAL);
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
+    }
+
+    private void onCancelClassesAcceptClick() {
+        for (ClassesButtonWrapper b : selectedButtons) {
+            if(!b.getAcademicHour().hasCompleted()) {
+                b.setCanceled(true);
+            } else {
+                Toast.makeText(getActivity(),"Неможливо позначити знятим вичитане заняття" ,Toast.LENGTH_LONG).show();
+            }
+        }
+        cancelSelectCanceled.performClick();
     }
 
     private void prepareCancelCompletedClassesDialog() {
@@ -491,7 +519,7 @@ public class WeekViewFragment extends Fragment {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                //onDeleteClassesAcceptClick();
+                onCancelCompletedClassesAcceptClick();
             }
         });
         builder.setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
@@ -516,6 +544,17 @@ public class WeekViewFragment extends Fragment {
         leftSpacer.setVisibility(View.GONE);
     }
 
+    private void onCancelCompletedClassesAcceptClick() {
+        for (ClassesButtonWrapper b : selectedButtons) {
+            if(b.getAcademicHour().hasCompleted() && !b.getAcademicHour().hasCanceled()) {
+                b.setCompleted(false);
+            } else {
+                Toast.makeText(getActivity(),"Неможливо позначити невичитаним зняте заняття чи заняття що не є вичитанним" ,Toast.LENGTH_LONG).show();
+            }
+        }
+        cancelSelectCompleted.performClick();
+    }
+
     private void prepareCompletedClassesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_complete_classes_template);
@@ -527,7 +566,7 @@ public class WeekViewFragment extends Fragment {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                // onDeleteClassesAcceptClick();
+                onCompletedClassesAcceptClick();
             }
         });
         builder.setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
@@ -550,6 +589,17 @@ public class WeekViewFragment extends Fragment {
         parent.setGravity(Gravity.CENTER_HORIZONTAL);
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
+    }
+
+    private void onCompletedClassesAcceptClick() {
+        for (ClassesButtonWrapper b : selectedButtons) {
+            if(!b.getAcademicHour().hasCanceled()) {
+                b.setCompleted(true);
+            } else {
+                Toast.makeText(getActivity(),"Неможливо позначити вичитаним зняте заняття" ,Toast.LENGTH_LONG).show();
+            }
+        }
+        cancelSelectCompleted.performClick();
     }
 
     private void prepareDeleteDialog() {
@@ -601,22 +651,96 @@ public class WeekViewFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG,resultCode+""+requestCode);
         if(resultCode== Activity.RESULT_OK){
+            boolean isTwoHours = data.getBooleanExtra("isTwoHour",false);
+            int classDay = data.getIntExtra("classDay", 0);
+            int classHour = data.getIntExtra("classHour", 0);
             switch (requestCode){
-                case 1:
-                    String grpName = data.getStringExtra("groupName");
-                    int classDay = data.getIntExtra("classDay",0);
-                    int classHour = data.getIntExtra("classHour",0);
-                    classes[classDay][classHour].getBtn().setText(grpName);
-                    Drawable drawable = new DrawableBuilder().rectangle().solidColor(getResources().getColor(android.R.color.holo_green_light)).strokeColor(R.color.appDefaultBlack).strokeWidth(1).build();
-                    //set your own background color here
-                    classes[classDay][classHour].setSelectBackground(drawable);
-                    Log.d(TAG,grpName+" "+classDay+" "+classHour);
+                case ADD_CLASS:
+                    AcademicHour academicHourFirst = data.getParcelableExtra("firstHour");
+                    classes.get(classDay).get(classHour).setAcademicHour(academicHourFirst);
+
+                    repeatForWeeks(academicHourFirst,classDay,classHour);
+                    if(isTwoHours){
+                        AcademicHour academicHourSecond = data.getParcelableExtra("secondHour");
+                        int secondCellShift = data.getIntExtra("secondCellPosition",0);
+                        classes.get(classDay).get(classHour+secondCellShift).setAcademicHour(academicHourSecond);
+                        repeatForWeeks(academicHourSecond,classDay,classHour+secondCellShift);
+                    }
+                    Log.d(TAG,classDay + " " + classHour);
+                    break;
+                case EDIT_CLASS:
+                    AcademicHour academicHourEditedFirst = data.getParcelableExtra("firstHour");
+                    boolean isHourChanged = data.getBooleanExtra("clearSecondCell",false);
+                    classes.get(classDay).get(classHour).setAcademicHour(academicHourEditedFirst);
+                    repeatForWeeks(academicHourEditedFirst,classDay,classHour);
+                    if(isHourChanged){
+                        int secondCellShift = data.getIntExtra("secondClassHour",0);
+                        classes.get(classDay).get(secondCellShift).clearButtonContent();
+                    }
+                    if(isTwoHours){
+                        AcademicHour academicHourEditedSecond = data.getParcelableExtra("secondHour");
+                        int secondCellShift = data.getIntExtra("secondClassHour",0);
+                        classes.get(classDay).get(secondCellShift).setAcademicHour(academicHourEditedSecond);
+                        repeatForWeeks(academicHourEditedSecond,classDay,secondCellShift);
+                    }
+
+                    Log.d(TAG,classDay + " " + classHour);
                     break;
                 default:
                     return;
             }
         }
     }
+
+    private void repeatForWeeks(AcademicHour academicHour, int classDay, int classHour) {
+        int numberOfWeeks = academicHour.getRepeatForNextWeek();
+       DateTime start = new DateTime(academicHour.getDate());
+        List<AcademicHour> academicHours = AcademicHour.academicHourListFromPeriod(start.plusDays(1).toDate(),start.plusWeeks(3).toDate());
+        for(AcademicHour academicHourToDelete: academicHours){
+            TemplateAcademicHour templateAcHour = academicHourToDelete.getTemplateAcademicHour();
+            if(templateAcHour.getNumberDayOfWeek()==classDay && templateAcHour.getNumberHalfPairButton()==classHour){
+                DBManager.delete(AcademicHour.class,ConstantApplication.ID,academicHourToDelete.getId());
+                DBManager.delete(TemplateAcademicHour.class,ConstantApplication.ID,templateAcHour.getId());
+            }
+        }
+        if(numberOfWeeks!=0) {
+            for (int i = 0; i < numberOfWeeks; i++) {
+                Date date = academicHour.getDate();
+                DateTime nextWeek = (date == null) ? null : new DateTime(date).plusWeeks(i + 1);
+                TemplateAcademicHour templateAcademicHourSource = academicHour.getTemplateAcademicHour();
+                TemplateAcademicHour templateAcademicHour = new TemplateAcademicHour();
+                templateAcademicHour.setGroup(templateAcademicHourSource.getGroup());
+                templateAcademicHour.setSubject(templateAcademicHourSource.getSubject());
+                templateAcademicHour.setDayAndPair(templateAcademicHourSource.getDayAndPairButton());
+                try {
+                    DBManager.write(templateAcademicHour.createEntity());
+                    Log.d(TAG, "repeatForWeeks = " + templateAcademicHour.toString());
+                } catch (Exception e) {
+                    // TODO Оповещение о не правильности\корректности
+                    Log.d(TAG,"repeatForWeeks"+e.toString());
+                }
+                AcademicHour nextAcademicHour = new AcademicHour(0, templateAcademicHour, nextWeek.toDate()
+                        , academicHour.getNote(), academicHour.getNotificationBefore(), 0, false, false);
+                try {
+                    DBManager.write(nextAcademicHour.createEntity());
+                    Log.d(TAG, "repeatForWeeks = " + nextAcademicHour.toString());
+                } catch (Exception e) {
+                    // TODO Оповещение о не правильности\корректности
+                    e.printStackTrace();
+                }
+                AcademicHour.setNotifaction(getActivity().getApplicationContext(),nextAcademicHour);
+            }
+        }
+    }
+
+    public void refreshGrid(DateTime from, DateTime to){
+        List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(from.toDate(),to.plusDays(6).toDate()));
+        for(AcademicHour hour: academicHours){
+            TemplateAcademicHour templateAcademicHour = hour.getTemplateAcademicHour();
+            classes.get(templateAcademicHour.getNumberDayOfWeek()).get(templateAcademicHour.getNumberHalfPairButton()).setAcademicHour(hour);
+        }
+    }
+
 
 
     @Override
@@ -628,6 +752,7 @@ public class WeekViewFragment extends Fragment {
             title.append(monthNumberToString(firstDayOfWeek.getMonthOfYear())).append(", ").append(firstDayOfWeek.getYear());
             Log.d(TAG, firstDayOfWeek.toString());
             ((MainActivity)getActivity()).setActionBarTitle(title.toString());
+            refreshGrid(firstDayOfWeek,firstDayOfWeek.plusDays(6));
         } else if (((MainActivity)getActivity()).isLanguageChanged()) {
             ((MainActivity) getActivity()).showOverflowMenu(false);
         }

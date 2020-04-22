@@ -9,7 +9,7 @@
     <string name="template_activity_close_alert_content">All data will be wiped</string>
     <string name="popup_choose_date_report">Choose report period</string>
     <string name="popup_gen_report">Generate report</string>
-    <string name="popup_dates_wrong">Input dates are wrong! Please repeat input.</string>
+    <string name="popup_dates_wrong">Input dates or course are wrong! Please repeat input.</string>
     <string name="popup_edit">Edit</string>
     <string name="popup_groupName_label">Group:</string>
     <string name="popup_subjectName_label">Discipline:</string>
@@ -152,4 +152,15 @@
     <string name="about_title">About</string>
     <string name="choose_language">Language</string>
     <string name="rings_acitvity_title">Rings schedule</string>
+    <string name="toast_exist_backup">Replace copy?</string>
+    <string name="toast_invalid_backup_name">Name of backup shouldnt containt symbols</string>
+    <string name="toast_invalid_backup_file">File should contain extension</string>
+    <string name="toast_restart">For applying of backup relaunch application</string>
+    <string name="toast_empty_backup_name">Type in name of backup</string>
+    <string name="toast_edit_entity">Record was succesfully changed</string>
+    <string name="courseLabelPDF">Course:</string>
+    <string name="specialityLabelPDF">Speciality</string>
+    <string name="creationDatePDF">Creation date:</string>
+    <string name="periodLabelPDF">Period:</string>
+    <string name="restHeader">Rest:</string>
 </resources>

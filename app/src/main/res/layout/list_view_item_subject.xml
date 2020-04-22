@@ -3,82 +3,96 @@
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:background="?android:attr/activatedBackgroundIndicator"
     android:descendantFocusability="blocksDescendants">
-    <TextView
-        android:id="@+id/specialityName"
+    <RelativeLayout
+        android:id="@+id/labelBlock"
+        android:layout_alignParentStart="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/specialty_label"
-        android:textSize="16sp"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="13dp"/>
+       >
+        <TextView
+            android:id="@+id/specialityName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/specialty_label"
+            android:textSize="16sp"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="13dp"/>
 
-    <TextView
-        android:id="@+id/speciality_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="10dp"
-        android:layout_toEndOf="@id/specialityName"
+
+
+        <TextView
+            android:id="@+id/courseName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/specialityName"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="9dp"
+            android:text="@string/course_label"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp" />
+
+
+
+        <TextView
+            android:id="@+id/groupName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/courseName"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/subjectName_label"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp" />
+
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/contentBlock"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/labelBlock"
         android:layout_toStartOf="@id/subjectGroups"
-        android:text="sssssssssssssssssssssssssssssssssssssssssssssssssss"
-        android:textColor="@color/appDefaultBlack"
-        android:textSize="16sp" />
+        android:layout_width="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/speciality_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="sssssssssssssssssssssssssssssssssssssssssssssssssss"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/course_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/speciality_label"
+            android:layout_marginTop="9dp"
+            android:text="@string/textStub"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/courseName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/speciality_label"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="9dp"
-        android:text="@string/course_label"
-        android:textColor="@color/appDefaultBlack"
-        android:textSize="16sp" />
+        <TextView
+            android:id="@+id/subjectName_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/course_label"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/textStub"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/course_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/speciality_label"
-        android:layout_marginStart="75dp"
-        android:layout_marginTop="9dp"
-        android:layout_toEndOf="@id/courseName"
-        android:text="@string/textStub"
-        android:textColor="@color/appDefaultBlack"
-        android:textSize="16sp" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/groupName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/courseName"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="10dp"
-        android:text="@string/subjectName_label"
-        android:textColor="@color/appDefaultBlack"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/subjectName_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/course_label"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="10dp"
-        android:layout_toEndOf="@id/groupName"
-        android:text="@string/textStub"
-        android:textColor="@color/appDefaultBlack"
-        android:textSize="16sp" />
 
     <ImageButton
         android:id="@+id/subjectGroups"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="60dp"
         android:layout_marginEnd="10dp"
         android:adjustViewBounds="true"
         android:scaleType="centerInside"

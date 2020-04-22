@@ -1,12 +1,16 @@
 package com.hpcc.kursovaya.ClassesButton;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.widget.Button;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 
 public class ClassesButtonWrapper {
     private Button btn;
@@ -18,6 +22,7 @@ public class ClassesButtonWrapper {
 
     private int selectColorList = R.color.sideBarTransp;
     private boolean isSelected = false;
+    private boolean isBackgroundChanged = false;
 
     public ClassesButtonWrapper(Button btn, Context context){
         this.btn = btn;
@@ -29,11 +34,13 @@ public class ClassesButtonWrapper {
         return btn;
     }
 
-    public void setBtn(Button btn) {
+    public void setBtn(Button btn)
+    {
         this.btn = btn;
     }
 
     public void setSelectBackground(){
+        isBackgroundChanged = true;
         btn.setBackgroundColor(context.getResources().getColor(selectColorList));
         isSelected = true;
     }
@@ -45,14 +52,21 @@ public class ClassesButtonWrapper {
     }
 
     public void setUnselectBackground(){
-        btn.setBackground(drawableDef);
+        if(isBackgroundChanged) {
+            btn.setBackgroundColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
+        } else {
+            btn.setBackground(drawableDef);
+        }
         isSelected = false;
     }
 
     public void clearButtonContent(){
         drawableDef = context.getResources().getDrawable(R.drawable.hover_add);
+        DBManager.delete(TemplateAcademicHour.class,ConstantApplication.ID,academicHour.getTemplateAcademicHour().getId());
+        DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
         btn.setBackground(drawableDef);
-        //clear entity
+        academicHour = null;
+        isBackgroundChanged = false;
         btn.setText("");
         isSelected=false;
     }
@@ -62,9 +76,15 @@ public class ClassesButtonWrapper {
 
     public void setAcademicHour(AcademicHour academicHour) {
         this.academicHour = academicHour;
-        GradientDrawable background = (GradientDrawable) btn.getBackground();
-        background.setColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
-        btn.setText(academicHour.getTemplateAcademicHour().getSubject().getName());
+        btn.setBackgroundColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
+        btn.setText(academicHour.getTemplateAcademicHour().getGroup().getName());
+        btn.setTextColor(Color.WHITE);
+        btn.setShadowLayer(5,4,4,Color.BLACK);
+        setCompleted(academicHour.hasCompleted());
+        if(!academicHour.hasCompleted()) {
+            setCanceled(academicHour.hasCanceled());
+        }
+        isBackgroundChanged = true;
     }
 
     public boolean isSelected() {
@@ -72,5 +92,30 @@ public class ClassesButtonWrapper {
     }
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    public void setCompleted(boolean isCompleted) {
+        if(academicHour != null){
+            if(isCompleted){
+                btn.setTextColor(Color.GREEN);
+            } else {
+                btn.setTextColor(Color.WHITE);
+            }
+            academicHour.setCompleted(isCompleted);
+            DBManager.write(academicHour);
+        }
+    }
+    public void setCanceled(boolean isCanceled){
+        if(academicHour!=null){
+            if(isCanceled){
+                btn.setTextColor(Color.GRAY);
+                btn.setPaintFlags(btn.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG );
+            } else {
+                btn.setPaintFlags(0);
+                btn.setTextColor(Color.WHITE);
+            }
+            academicHour.setCanceled(isCanceled);
+            DBManager.write(academicHour);
+        }
     }
 }

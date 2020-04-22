@@ -4,72 +4,83 @@
     android:layout_height="wrap_content"
     android:background="?android:attr/activatedBackgroundIndicator">
 
-    <TextView
-        android:id="@+id/groupName_text"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/groupName_label"
-        android:textSize="16sp"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="6dp"/>
+        android:layout_alignParentStart="true">
 
-    <TextView
-        android:id="@+id/groupName_label"
-        android:layout_toEndOf="@id/groupName_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/textStub"
-        android:textColor="@color/appDefaultBlack"
-        android:textSize="16sp" />
+        <TextView
+            android:id="@+id/groupName_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/groupName_label"
+            android:textSize="16sp"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="6dp"/>
 
 
-    <TextView
-        android:id="@+id/speciality_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/specialty_label"
-        android:layout_below="@id/groupName_label"
-        android:textSize="16sp"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="6dp"/>
 
-    <TextView
-        android:id="@+id/speciality_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/groupName_label"
-        android:text="@string/textStub"
-        android:textSize="16sp"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_marginTop="10dp"
-        android:layout_toEndOf="@id/speciality_text"
-        android:layout_marginStart="13dp"/>
 
-    <TextView
-        android:id="@+id/course_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/course_label"
-        android:textSize="16sp"
-        android:layout_below="@id/speciality_label"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="6dp"/>
+        <TextView
+            android:id="@+id/speciality_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/specialty_label"
+            android:layout_below="@id/groupName_text"
+            android:textSize="16sp"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="6dp"/>
 
-    <TextView
-        android:id="@+id/course_label"
+
+        <TextView
+            android:id="@+id/course_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/course_label"
+            android:textSize="16sp"
+            android:layout_below="@id/speciality_text"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="6dp"/>
+
+    </RelativeLayout>
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/speciality_label"
-        android:layout_marginStart="75dp"
-        android:layout_marginTop="10dp"
-        android:layout_toEndOf="@id/course_text"
-        android:text="@string/textStub"
-        android:textColor="@color/appDefaultBlack"
-        android:textSize="16sp" />
+        android:id="@+id/contentBlock"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:id="@+id/groupName_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/textStub"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/speciality_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/groupName_label"
+            android:text="@string/textStub"
+            android:textSize="16sp"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="10dp" />
+        <TextView
+            android:id="@+id/course_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/speciality_label"
+            android:layout_marginTop="10dp"
+            android:text="@string/textStub"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp" />
+
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

@@ -2,7 +2,6 @@ package com.hpcc.kursovaya;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,8 +25,6 @@ public class AlarmClassReceiver extends BroadcastReceiver {
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(AddClass.class);
         stackBuilder.addNextIntent(notificationIntent);
-
-        PendingIntent pendingIntent = stackBuilder.getPendingIntent(228, PendingIntent.FLAG_UPDATE_CURRENT);
 
         String description = intent.getStringExtra("groupName")+": "+intent.getStringExtra("description");
         StringBuilder notificationHeader = new StringBuilder();
@@ -61,7 +58,7 @@ public class AlarmClassReceiver extends BroadcastReceiver {
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 */
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0,notification);
+        notificationManager.notify( (int) System.currentTimeMillis(),notification);
         try {
             Uri notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             Ringtone r = RingtoneManager.getRingtone(context, notificationSound);

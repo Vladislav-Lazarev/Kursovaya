@@ -3,7 +3,6 @@ package com.hpcc.kursovaya.ui.templates;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
@@ -16,7 +15,7 @@ public class AddTemplateActivity extends TemplateActivity {
 
     public AddTemplateActivity(){
         super();
-        templateScheduleWeek = new TemplateScheduleWeek();
+        scheduleWeek = new TemplateScheduleWeek();
     }
 
     @Override
@@ -43,16 +42,16 @@ public class AddTemplateActivity extends TemplateActivity {
     @Override
     protected AlertDialog.Builder getConfirmDialogBuilder(int popup_super_template){
         AlertDialog.Builder builder = super.getConfirmDialogBuilder(R.string.popup_add_template);
-        templateScheduleWeek.setTemplateAcademicHourList(convert2DimensionalTo1Dimensional(classes));
+        scheduleWeek.setTemplateAcademicHourList(convert2DimensionalTo1Dimensional(classes));
         return builder;
     }
     @Override
     protected void onClickAcceptTemplate(DialogInterface dialog, int which) {
         // Intent Add
-        templateScheduleWeek.setName(templateNameEditText.getText().toString());
+        scheduleWeek.setName(templateNameEditText.getText().toString());
 
-        Intent intent = getIntent();
-        intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_ADD), templateScheduleWeek);
+        intent = getIntent();
+        intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_ADD), scheduleWeek);
         setResult(Activity.RESULT_OK, intent);
 
         finish();

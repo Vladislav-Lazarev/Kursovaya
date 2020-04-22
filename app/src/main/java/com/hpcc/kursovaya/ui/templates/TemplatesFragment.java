@@ -29,7 +29,6 @@ import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
-import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class TemplatesFragment extends Fragment {
     private long mLastClickTime = 0;
     private Toolbar toolbar;
     TemplateListAdapter adapter;
-    private List<TemplateScheduleWeek> templateScheduleWeekList;
+    private List<TemplateScheduleWeek> scheduleWeekList;
 
     public void setActionBarTitle(){
         ((MainActivity) getActivity()).setActionBarTitle(getContext().getString(R.string.menu_templates));
@@ -51,9 +50,7 @@ public class TemplatesFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         toolbar = ((MainActivity)getActivity()).getToolbar();
-        LocaleManager.setLocale(getActivity());
-
-        setHasOptionsMenu(false);
+            setHasOptionsMenu(false);
             root = inflater.inflate(R.layout.fragment_templates, container, false);
             listView = root.findViewById(R.id.templatesLSV);
             getActivity().setTitle("");
@@ -142,9 +139,9 @@ public class TemplatesFragment extends Fragment {
 
     public void listViewFiller(){
 
-        templateScheduleWeekList = DBManager.copyObjectFromRealm(
+        scheduleWeekList = DBManager.copyObjectFromRealm(
                 DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME));
-        adapter = new TemplateListAdapter(getActivity(), R.layout.list_view_item_template, templateScheduleWeekList);
+        adapter = new TemplateListAdapter(getActivity(), R.layout.list_view_item_template, scheduleWeekList);
         listView.setAdapter(adapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -212,8 +209,8 @@ public class TemplatesFragment extends Fragment {
                     strParcelableExtra = String.valueOf(ConstantApplication.ACTIVITY_EDIT);
                     break;
             }
-            TemplateScheduleWeek templateScheduleWeek = data.getParcelableExtra(strParcelableExtra);
-            adapter.write(templateScheduleWeek);
+            TemplateScheduleWeek scheduleWeek = data.getParcelableExtra(strParcelableExtra);
+            adapter.write(scheduleWeek);
             adapter.update(ConstantApplication.NAME);
         }
     }
@@ -234,8 +231,8 @@ public class TemplatesFragment extends Fragment {
                                 for (int i = 0; i < positionDel.size(); i++) {
                                     int key = positionDel.keyAt(i);
                                     if (positionDel.get(key)){
-                                        Log.d(TAG, "entity = " + templateScheduleWeekList.get(key));
-                                        adapter.delete(templateScheduleWeekList.get(key));
+                                        Log.d(TAG, "entity = " + scheduleWeekList.get(key));
+                                        adapter.delete(scheduleWeekList.get(key));
                                     }
                                 }
                                 adapter.update(ConstantApplication.NAME);

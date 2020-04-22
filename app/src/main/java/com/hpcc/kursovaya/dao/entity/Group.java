@@ -6,8 +6,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.hpcc.kursovaya.dao.SubjectGroupsInfo;
 import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -245,5 +249,78 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     @Override
     public Group clone() throws CloneNotSupportedException {
         return (Group) super.clone();
+    }
+
+    public void deleteAllLinks() {
+        //удаление полупар из расписания, которые имеют такую же группу
+        List<AcademicHour> academicHourList = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class));
+        for(AcademicHour academicHour : academicHourList){
+            if(academicHour.getTemplateAcademicHour()!=null){
+                TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+                if(templateAcademicHour.getGroup()!=null){
+                    Group group = templateAcademicHour.getGroup();
+                    if(group!=null && group.getId()==getId()){
+                        DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcademicHour.getId());
+                        DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+                    }
+                }
+            }
+        }
+        //удаление шаблонов
+        List<TemplateScheduleWeek> templateScheduleWeeks = DBManager.copyObjectFromRealm(DBManager.readAll(TemplateScheduleWeek.class));
+        for(TemplateScheduleWeek templateScheduleWeek : templateScheduleWeeks){
+            List<TemplateAcademicHour> templateAcademicHourList = templateScheduleWeek.getTemplateAcademicHourList();
+            if(templateAcademicHourList!=null) {
+                for (TemplateAcademicHour templateAcademicHour : templateAcademicHourList) {
+                    Group group = templateAcademicHour.getGroup();
+                    if (group != null && group.getId()==getId()) {
+                        templateScheduleWeek.deleteTemplateAcademicHour(templateAcademicHour.getId());
+                    }
+                }
+            }
+        }
+        // Удаление групп по специальности
+        DBManager.delete(Group.class, ConstantApplication.ID, getId());
+    }
+
+    public int getReadHours(Subject subject, List<AcademicHour> academicHourList){
+        int result = 0;
+        for(AcademicHour academicHour : academicHourList){
+            TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+            if(templateAcademicHour!=null){
+                Subject subjectFromHour = templateAcademicHour.getSubject();
+                if(subjectFromHour!=null && subject.equals(subjectFromHour) && academicHour.hasCompleted()){
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+
+    public int getCanceledHours(Subject subject, List<AcademicHour> academicHourList){
+        int result = 0;
+        for(AcademicHour academicHour : academicHourList){
+            TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+            if(templateAcademicHour!=null){
+                Subject subjectFromHour = templateAcademicHour.getSubject();
+                if(subjectFromHour!=null && subject.equals(subjectFromHour) && academicHour.hasCanceled()){
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+
+    public SubjectGroupsInfo toSubjectGroupsInfo(Subject subject, List<AcademicHour> academicHourList) {
+        SubjectGroupsInfo result = new SubjectGroupsInfo();
+        int hoursPlan = subject.getSpecialityCountHourMap().get(getSpecialty());
+        int hourCompleted = getReadHours(subject,academicHourList);
+        int hourCanceled = getCanceledHours(subject,academicHourList);
+        result.setGroup(this);
+        result.setSubject(subject);
+        result.setHoursPlan(hoursPlan);
+        result.setHoursCanceled(hourCanceled);
+        result.setHoursDeducted(hourCompleted);
+        return result;
     }
 }

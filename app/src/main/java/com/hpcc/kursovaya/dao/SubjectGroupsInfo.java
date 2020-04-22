@@ -18,6 +18,7 @@ public class SubjectGroupsInfo implements Parcelable, Cloneable {
     private int hoursPlan;
     private int hoursDeducted;
     private int hoursCanceled;
+    private int rest;
 
     {
         idSubject = 0;
@@ -25,19 +26,34 @@ public class SubjectGroupsInfo implements Parcelable, Cloneable {
         hoursPlan = 0;
         hoursDeducted = 0;
         hoursCanceled = 0;
+        rest = 0;
     }
+
     public SubjectGroupsInfo() {
+
     }
+
     public SubjectGroupsInfo(Subject subject, Group group, int hoursPlan, int hoursDeducted, int hoursCanceled) {
         setSubject(subject);
         setHoursPlan(hoursPlan);
         setHoursDeducted(hoursDeducted);
         setHoursCanceled(hoursCanceled);
+        rest = hoursPlan - hoursCanceled - hoursDeducted;
+    }
+
+
+    public int getRest() {
+        return rest;
+    }
+
+    public void setRest(int rest) {
+        this.rest = rest;
     }
 
     public Subject getSubject() {
         return DBManager.read(Subject.class, ConstantApplication.ID, idSubject);
     }
+
     public SubjectGroupsInfo setSubject(Subject subject) {
         this.idSubject = subject.getId();
         return  this;
@@ -46,6 +62,7 @@ public class SubjectGroupsInfo implements Parcelable, Cloneable {
     public Group getGroup() {
         return DBManager.read(Group.class, ConstantApplication.ID, idGroup);
     }
+
     public SubjectGroupsInfo setGroup(Group group) {
         this.idGroup = group.getId();
         return  this;

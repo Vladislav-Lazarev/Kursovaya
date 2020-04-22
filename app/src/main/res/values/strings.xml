@@ -45,7 +45,7 @@
 
     <string name="popup_choose_date_report">Оберіть період звіту</string>
     <string name="popup_gen_report">Згенерувати звіт</string>
-    <string name="popup_dates_wrong">Введений діпазон дат невірний, повторіть введення!</string>
+    <string name="popup_dates_wrong">Введений діпазон дат невірний або введений курс, повторіть введення!</string>
     <string name="popup_edit">Редагувати</string>
     <string name="popup_groupName_label">Група:</string>
     <string name="popup_subjectName_label">Предмет:</string>
@@ -202,14 +202,12 @@
     <string name="about_title">Про програму</string>
 
     <!-- Уведомление о сущностях -->
-    <string name="toast_exist_backup">"Заменить копию?"</string>
-    <string name="toast_invalid_backup_name">"Название резервной копии не должно содержать символы"</string>
-    <string name="toast_invalid_backup_file">Файл должен содержать расширение </string>
-    <string name="toast_restart">Для применения БД перезапустите приложение</string>
-    <string name="toast_empty_backup_name">Введите название резервной копии</string>
+    <string name="toast_invalid_backup_file">Файл повинен містити розширення</string>
+    <string name="toast_restart">Для застосування БД перезапустіть додаток</string>
+    <string name="toast_empty_backup_name">Введіть назву резервної копії</string>
     <string name="toast_exists_entity">Цей запис вже існує!</string>
     <string name="toast_add_edit_entity">Запис успішно занесено</string>
-    <string name="toast_edit_entity">Запись успешно изменена</string>
+    <string name="toast_edit_entity">Запис успішно змінений</string>
     <string name="toast_del_entity">Запис успішно видалено</string>
     <string name="toast_del_many_entity">Записи успішно видалені</string>
     <string name="toast_empty_template">Заповніть шахматку!</string>
@@ -221,4 +219,12 @@
     <string name="russian" translatable="false">Русский</string>
     <string name="ukranian" translatable="false">Українська</string>
     <string name="rings_acitvity_title">Розклад дзвінків</string>
+    <string name="super_class" translatable="false">Super class</string>
+    <string name="courseLabelPDF">Курс:</string>
+    <string name="specialityLabelPDF">Спеціальність:</string>
+    <string name="creationDatePDF">Дата створення:</string>
+    <string name="periodLabelPDF">Період:</string>
+    <string name="toast_invalid_backup_name">Назва резервної копії не повинна містити символи</string>
+    <string name="toast_exist_backup">Замінити копію?</string>
+    <string name="restHeader">Залишок:</string>
 </resources>

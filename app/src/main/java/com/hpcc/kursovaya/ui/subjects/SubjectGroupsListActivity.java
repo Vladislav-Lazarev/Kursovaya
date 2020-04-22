@@ -27,10 +27,15 @@ import com.hpcc.kursovaya.dao.SubjectGroupsInfo;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
 public class SubjectGroupsListActivity extends AppCompatActivity {
     private static final String TAG = SubjectGroupsListActivity.class.getSimpleName();
@@ -61,14 +66,37 @@ public class SubjectGroupsListActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayShowTitleEnabled(false);
         subjectGroupsLSV = findViewById(R.id.groupsLSV);
-        ArrayList<Group> groups = (ArrayList<Group>) DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
-        SubjectGroupsInfo one = new SubjectGroupsInfo();
-        one.setGroup(groups.get(0));
-        SubjectGroupsInfo two = new SubjectGroupsInfo();
-        one.setGroup(groups.get(0));
-        two.setGroup(groups.get(1));
-        subjectGroupsList.add(one);
-        subjectGroupsList.add(two);
+        List<AcademicHour> academicHours = new ArrayList<>();
+        List<Group> groups = new ArrayList<>();
+        for(AcademicHour academicHour : DBManager.readAll(AcademicHour.class)){
+            TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+            if(templateAcademicHour!=null){
+                Group groupHour = templateAcademicHour.getGroup();
+                Subject subjectHour = templateAcademicHour.getSubject();
+                if(groupHour!=null && subjectHour!=null && subject.equals(subjectHour)){
+                    groups.add(groupHour);
+                    academicHours.add(academicHour);
+                }
+            }
+        }
+        groups = new ArrayList<>(new LinkedHashSet<>(groups));
+        Map<Group,List<AcademicHour>> academicHoursOfGroup = new HashMap<>();
+        for(Group group : groups){
+            List<AcademicHour> groupAcademicHours = new ArrayList<>();
+            for(AcademicHour academicHour : academicHours){
+                TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+                if(templateAcademicHour.getGroup()!=null && group.equals(templateAcademicHour.getGroup())){
+                    groupAcademicHours.add(academicHour);
+                }
+            }
+            academicHoursOfGroup.put(group,groupAcademicHours);
+        }
+
+        for(Group group : groups){
+            subjectGroupsList.add(group.toSubjectGroupsInfo(subject,academicHoursOfGroup.get(group)));
+        }
+
+
         adapter = new SubjectGroupsAdapter(this,R.layout.listview_item_subject_groups,subjectGroupsList);
         subjectGroupsLSV.setAdapter(adapter);
 

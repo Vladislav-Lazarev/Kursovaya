@@ -3,6 +3,7 @@ package com.hpcc.kursovaya.ui.templates;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -32,7 +33,6 @@ import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.query.DBManager;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
-import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,11 +61,11 @@ public abstract class TemplateActivity extends AppCompatActivity {
     protected TemplateAcademicHour currentTemplate;
     protected List<TemplateAcademicHour> templateAcademicHourList = new ArrayList<>();
 
-    protected TemplateScheduleWeek templateScheduleWeek;
+    protected TemplateScheduleWeek scheduleWeek;
+    protected Intent intent;
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        LocaleManager.setLocale(this);
         setContentView(R.layout.activity_add_template);
         toolbar = findViewById(R.id.toolbar);
         toolbar1 = findViewById(R.id.toolbarEdit);
@@ -233,18 +233,8 @@ public abstract class TemplateActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.template_activity_close_alert_title);
         builder.setMessage(R.string.template_activity_close_alert_content);
-        /*builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                for (TemplateAcademicHour templateAcademicHour : entityTemplateAcademicHourList){
-                    DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcademicHour.getId());
-                }
-                finish();
-            }
-        });*/
-        builder.setNegativeButton(R.string.delete_negative, (dialog, which) -> dialog.cancel());
 
-        //buttonPainting(builder);
+        builder.setNegativeButton(R.string.delete_negative, (dialog, which) -> dialog.cancel());
         return builder;
     }
     protected void buttonPainting(AlertDialog.Builder builder){
@@ -259,12 +249,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(LocaleManager.setLocale(base));
-    }
-
 
     @Override
     public void onBackPressed() {
@@ -392,34 +376,31 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
         // Выбор, определения сколько часов она будет ввести
         radioGroup = classView.findViewById(R.id.popup_duration_rgroup);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                currentTemplate.setDayAndPair(Pair.create(classDay, classHour));
-                switch (checkedId){
-                    case R.id.popup_duration_rgroup_short:
-                        if (templateAcademicHourList.size() == ConstantApplication.TWO) {
-                            templateAcademicHourList.remove(ConstantApplication.ONE);
+        radioGroup.setOnCheckedChangeListener((radioGroup, checkedId) -> {
+            currentTemplate.setDayAndPair(Pair.create(classDay, classHour));
+            switch (checkedId){
+                case R.id.popup_duration_rgroup_short:
+                    if (templateAcademicHourList.size() == ConstantApplication.TWO) {
+                        templateAcademicHourList.remove(ConstantApplication.ONE);
+                    }
+                    break;
+                case R.id.popup_duration_rgroup_full:
+                    if (templateAcademicHourList.size() == ConstantApplication.ONE){
+                        TemplateAcademicHour following = new TemplateAcademicHour();
+                        if (currentTemplate.getGroup() != null){
+                            following.setGroup(currentTemplate.getGroup())
+                                    .setSubject(currentTemplate.getSubject())
+                                    .setDayAndPair(Pair.create(classDay, classHour + posSecondCell));
                         }
-                        break;
-                    case R.id.popup_duration_rgroup_full:
-                        if (templateAcademicHourList.size() == ConstantApplication.ONE){
-                            TemplateAcademicHour following = new TemplateAcademicHour();
-                            if (currentTemplate.getGroup() != null){
-                                following.setGroup(currentTemplate.getGroup())
-                                        .setSubject(currentTemplate.getSubject())
-                                        .setDayAndPair(Pair.create(classDay, classHour + posSecondCell));
-                            }
-                            templateAcademicHourList.add(following);
-                        } else if (templateAcademicHourList.size() == ConstantApplication.TWO) {
-                            templateAcademicHourList.set(ConstantApplication.ONE,
-                                    templateAcademicHourList.get(ConstantApplication.ONE)
-                                            .setDayAndPair(Pair.create(classDay, classHour + posSecondCell)));
-                        } else {
-                            throw new RuntimeException("popup_duration_rgroup_full = Шо за дичь");
-                        }
-                        break;
-                }
+                        templateAcademicHourList.add(following);
+                    } else if (templateAcademicHourList.size() == ConstantApplication.TWO) {
+                        templateAcademicHourList.set(ConstantApplication.ONE,
+                                templateAcademicHourList.get(ConstantApplication.ONE)
+                                        .setDayAndPair(Pair.create(classDay, classHour + posSecondCell)));
+                    } else {
+                        throw new RuntimeException("popup_duration_rgroup_full = Шо за дичь");
+                    }
+                    break;
             }
         });
 
@@ -529,7 +510,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
         List<TemplateAcademicHour> entityTemplateAcademicHourList = convert2DimensionalTo1Dimensional(classes);
         if (entityTemplateAcademicHourList.isEmpty()){
             Toast.makeText(currentContext, R.string.toast_empty_template, Toast.LENGTH_SHORT).show();
-            finish();
         }
 
         final AlertDialog dialog = getConfirmDialogBuilder(R.string.popup_super_template).create();
