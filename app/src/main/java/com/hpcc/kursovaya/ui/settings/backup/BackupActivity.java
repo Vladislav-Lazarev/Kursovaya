@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -47,9 +48,11 @@ public class BackupActivity  extends AppCompatActivity {
     private static final int PICK_FILE_REQUEST_CODE = 1;
 
     private FloatingActionButton addBackup;
+    private ImageButton importExternalBackupDB;
     private ListView backupLSV;
     private BackupListAdapter adapter;
     private String LOCATION_BACKUP_DB;
+    private String LOCATION_DB;
     private Uri selectUriBackup;
     private View addBackupView;
     private View editBackupView;
@@ -86,6 +89,20 @@ public class BackupActivity  extends AppCompatActivity {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
+                File fileDB = new File(LOCATION_DB + ConstantApplication.DIR_DELIMITER + ConstantApplication.DB_NAME);
+                selectUriBackup = Uri.fromFile(fileDB);
+                onClickPrepareAddBackup();
+            }
+        });
+
+        importExternalBackupDB = findViewById(R.id.externalBackup);
+        importExternalBackupDB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 showFileManager();
             }
         });
@@ -93,7 +110,8 @@ public class BackupActivity  extends AppCompatActivity {
         backupLSV = findViewById(R.id.backupLSV);
 
         //Init backupsList files from DIR_BACKUP
-        LOCATION_BACKUP_DB = getExternalFilesDir(null).getAbsolutePath() + ConstantApplication.DIR_DELIMITER + ConstantApplication.DIR_BACKUP;
+        LOCATION_BACKUP_DB = getExternalFilesDir(null).getPath() + ConstantApplication.DIR_DELIMITER + ConstantApplication.DIR_BACKUP;
+        LOCATION_DB = getExternalFilesDir(null).getPath() + ConstantApplication.DIR_DELIMITER + ConstantApplication.DIR_DB;
         List<BackupDB> backupsList = new ArrayList<>();
         List<File> backupFiles = FileManager.getFiles(LOCATION_BACKUP_DB);
         for (File backupFile : backupFiles) {
@@ -227,7 +245,7 @@ public class BackupActivity  extends AppCompatActivity {
                     FileManager.remove(delBackupDB.getFileName(), delBackupDB.getLocation());
                 }
 
-                if(backupDBList.size() < 1){
+                if(backupDBList.size() < 2){
                     Toast.makeText(getApplicationContext(), R.string.toast_del_entity, Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(getApplicationContext(), R.string.toast_del_many_entity, Toast.LENGTH_SHORT).show();
@@ -315,19 +333,22 @@ public class BackupActivity  extends AppCompatActivity {
                 String fileNameBackupDB = backupText.getText().toString() + ConstantApplication.DB_EXTENSION;
                 BackupDB backupDB = new BackupDB(LOCATION_BACKUP_DB, fileNameBackupDB);
 
-                if(fileNameBackupDB.isEmpty()) {
+                if(backupText.getText().toString().isEmpty()) {
+                    dialog.cancel();
                     Toast.makeText(getApplicationContext(), R.string.toast_empty_backup_name, Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                if(FileManager.isValidFileName(fileNameBackupDB, BackupDB.getInvalidCharsBackupDB())){
+                if(!FileManager.isValidFileName(backupText.getText().toString(), BackupDB.getInvalidCharsBackupDB())){
+                    dialog.cancel();
                     Toast.makeText(getApplicationContext(), getString(R.string.toast_invalid_backup_name) + " : " + BackupDB.getInvalidCharsBackupDB(), Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 if (FileManager.exists(LOCATION_BACKUP_DB + ConstantApplication.DIR_DELIMITER + fileNameBackupDB)) {
                     dialog.cancel();
                     onClickPrepareExistBackupDB(backupDB);
                 } else {
-                    backupDB.createFile();
                     adapter.add(selectUriBackup, backupDB);
                     selectUriBackup = null;
                 }
@@ -361,7 +382,8 @@ public class BackupActivity  extends AppCompatActivity {
 
     private void showFileManager(){
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
+        Uri uri = Uri.parse(getExternalFilesDir(null).getPath());
+        intent.setDataAndType(uri, "*/*");
         startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
     }
 
@@ -416,7 +438,7 @@ public class BackupActivity  extends AppCompatActivity {
                 EditText backupText = addBackupView.findViewById(R.id.backup_name_text);
 
                 if(fileNameBackupDB.contains(".")) {
-                    backupText.setText(fileNameBackupDB.substring(0, fileNameBackupDB.lastIndexOf(".")));
+                    backupText.setText(fileNameBackupDB.substring(0, fileNameBackupDB.indexOf(".")));
                 }else{
                     backupText.setText(fileNameBackupDB);
                 }

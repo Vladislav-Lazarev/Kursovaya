@@ -25,6 +25,17 @@
                 android:textColor="@color/appDefaultBlack"
                 android:textSize="20sp" />
 
+            <ImageButton
+                android:id="@+id/externalBackup"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:adjustViewBounds="true"
+                android:background="?selectableItemBackgroundBorderless"
+                android:scaleType="centerInside"
+                android:layout_gravity="right"
+                android:src="@drawable/external_backup"/>
+
+
         </androidx.appcompat.widget.Toolbar>
         <View
             android:id="@+id/toolbar_shadow"

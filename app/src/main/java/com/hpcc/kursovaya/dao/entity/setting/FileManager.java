@@ -146,11 +146,12 @@ public class FileManager {
     }
 
     public static boolean isValidFileName(@NotNull String fileName, @NotNull String invalidChars){
-       invalidChars = "[" + getInvalidCharsFileName() + "]";
+       invalidChars = "[" + invalidChars + "]";
        Pattern pattern = Pattern.compile(invalidChars);
        Matcher matcher = pattern.matcher(fileName);
+       boolean isValid = matcher.find();
 
-       return !matcher.find();
+       return !isValid;
     }
 
     public static String getInvalidCharsFileName(){
