@@ -3,6 +3,7 @@ package com.hpcc.kursovaya.ui.templates;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.widget.Toast;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
@@ -37,6 +38,22 @@ public class AddTemplateActivity extends TemplateActivity {
         });
         buttonPainting(builder);
         return builder;
+    }
+
+    @Override
+    protected void onClickAcceptClass(DialogInterface dialog, int which,int classDay, int classHour) {
+        //здесь обработчик кнопки принять
+        if (!ConstantApplication.checkUIGroup(groupNameSuggest.getText().toString())){
+            Toast.makeText(currentContext, R.string.toast_check_group, Toast.LENGTH_LONG).show();
+            super.addClass(classDay, classHour);
+            return;
+        }
+        if (subjectSpinner.getCount() == ConstantApplication.ZERO){
+            Toast.makeText(currentContext, R.string.toast_check_subject_menu_bar, Toast.LENGTH_LONG).show();
+            super.addClass(classDay, classHour);
+            return;
+        }
+        super.onClickAcceptClass(dialog, which, classDay, classHour);
     }
 
     @Override

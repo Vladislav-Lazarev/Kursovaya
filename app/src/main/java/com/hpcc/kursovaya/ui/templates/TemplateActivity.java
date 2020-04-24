@@ -308,7 +308,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
         textCont.setText(getResources().getString(popup_super_template));
     }
     // Для конструирования getClassDialogBuilder
-    private void addClass(final int classDay,final int classHour){
+    protected void addClass(final int classDay,final int classHour){
         final AlertDialog dialog = getClassDialogBuilder(classDay,classHour).create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -324,7 +324,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-    private void editClass(final int classDay,final int classHour){
+    protected void editClass(final int classDay,final int classHour){
 
         final AlertDialog dialog = getClassDialogBuilder(classDay,classHour).create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -495,21 +495,12 @@ public abstract class TemplateActivity extends AppCompatActivity {
         });
         return builder;
     }
+
     // Нажатия\Действия кнопок getClassDialogBuilder
     private void onClickCancelClass(DialogInterface dialog, int which,int classDay,int classHour) {
         dialog.cancel();
     }
-    private void onClickAcceptClass(DialogInterface dialog, int which,int classDay, int classHour) {
-        //здесь обработчик кнопки принять
-        if (!ConstantApplication.checkUIGroup(groupNameSuggest.getText().toString())){
-            groupNameSuggest.setError(getString(R.string.toast_check_group));
-            return;
-        }
-        if (subjectSpinner.getCount() == ConstantApplication.ZERO){
-            Toast.makeText(this, R.string.toast_check_subject_menu_bar, Toast.LENGTH_LONG).show();
-            return;
-        }
-
+    protected void onClickAcceptClass(DialogInterface dialog, int which,int classDay, int classHour) {
         for (TemplateAcademicHour templateAcademicHour : templateAcademicHourList){
             try {
                 DBManager.write(templateAcademicHour.createEntity());
@@ -605,7 +596,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
         String strTemplate = templateNameEditText.getText().toString();
 
         if (!ConstantApplication.checkUITemplate(strTemplate)){
-            Toast.makeText(this, R.string.toast_check_name, Toast.LENGTH_LONG);
+            Toast.makeText(this, R.string.toast_check, Toast.LENGTH_LONG);
             return;
         }
 

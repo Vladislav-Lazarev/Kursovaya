@@ -102,7 +102,7 @@ public class EditGroupActivity extends AppCompatActivity {
             return;
         }
         if (!ConstantApplication.checkUIGroup(strGroup)){
-            groupEditText.setError(getString(R.string.toast_check_name));
+            groupEditText.setError(getString(R.string.toast_check));
             return;
         }
 

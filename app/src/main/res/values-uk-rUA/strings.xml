@@ -237,7 +237,7 @@
     <string name="creationDatePDF">Дата створення:</string>
     <string name="periodLabelPDF">Період:</string>
     <string name="restHeader">Залишок:</string>
-    <string name="toast_check_name">Заповніть коректно поле \"Назва\"</string>
+    <string name="toast_check">Заповніть коректно поле</string>
     <string name="toast_check_speciality_and_number_of_hours">Оберіть \"Спеціальність\" та заповніть поле \"Кількість годин\"</string>
     <string name="activity_add_subject">Додавання предмету</string>
     <string name="activity_edit_subject">Редагування предмету</string>

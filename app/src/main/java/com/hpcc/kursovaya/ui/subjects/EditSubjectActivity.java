@@ -220,7 +220,7 @@ public class EditSubjectActivity extends AppCompatActivity {
             return;
         }
         if (!ConstantApplication.checkUISubject(strSubject)){
-            subjectEditText.setError(getString(R.string.toast_check_name));
+            subjectEditText.setError(getString(R.string.toast_check));
             return;
         }
 

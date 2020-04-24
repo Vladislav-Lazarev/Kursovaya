@@ -210,7 +210,7 @@ public class AddSubjectActivity extends AppCompatActivity {
         }
         String strSubject = subjectEditText.getText().toString();
         if (!ConstantApplication.checkUISubject(strSubject)){
-            subjectEditText.setError(getString(R.string.toast_check_name));
+            subjectEditText.setError(getString(R.string.toast_check));
             return;
         }
 

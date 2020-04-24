@@ -187,7 +187,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
 
         if (!ConstantApplication.checkUISpeciality(strSpeciality)){
-            Toast.makeText(currentContext, R.string.toast_check_name, Toast.LENGTH_LONG).show();
+            Toast.makeText(currentContext, R.string.toast_check, Toast.LENGTH_LONG).show();
             onClickPrepareAddSpeciality();
             return;
         }
@@ -248,7 +248,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
 
         if (!ConstantApplication.checkUISpeciality(strSpeciality)){
-            Toast.makeText(currentContext, R.string.toast_check_name, Toast.LENGTH_LONG).show();
+            Toast.makeText(currentContext, R.string.toast_check, Toast.LENGTH_LONG).show();
             onClickPrepareEditSpeciality(entity);
             return;
         }

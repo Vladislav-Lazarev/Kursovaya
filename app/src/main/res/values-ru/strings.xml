@@ -163,7 +163,7 @@
     <string name="specialityLabelPDF">Специальность:</string>
     <string name="creationDatePDF">Дата создания:</string>
     <string name="periodLabelPDF">Период:</string>
-    <string name="toast_check_name">Заполните корректно поле \"Название\"</string>
+    <string name="toast_check">Заполните корректно поле</string>
     <string name="toast_check_speciality_and_number_of_hours">Выберите \"Специальность\" и заполните поле \"Количество часов\"</string>
     <string name="activity_add_subject">Добавление предмета</string>
     <string name="activity_edit_subject">Редактирование предмета</string>
