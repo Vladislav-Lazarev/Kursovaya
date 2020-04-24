@@ -208,25 +208,24 @@ public class EditSubjectActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
-
+    private void checkSubject(String str){
+        if (!ConstantApplication.checkUISubject(str)){
+            subjectEditText.setError(getString(R.string.toast_check));
+        }
+    }
     private void editSubject(){
         String strSubject = subjectEditText.getText().toString();
         if (specialityList.isEmpty()){
             Toast.makeText(currentContext, R.string.toast_check_speciality_setting, Toast.LENGTH_LONG).show();
-            if (!ConstantApplication.checkUISubject(strSubject)){
-                subjectEditText.setError(getString(R.string.toast_check));
-                return;
-            }
+            checkSubject(strSubject);
             return;
         }
         if (map.isEmpty()){
             Toast.makeText(currentContext, R.string.toast_check_speciality_and_number_of_hours, Toast.LENGTH_LONG).show();
-            if (!ConstantApplication.checkUISubject(strSubject)){
-                subjectEditText.setError(getString(R.string.toast_check));
-                return;
-            }
+            checkSubject(strSubject);
             return;
         }
+        checkSubject(strSubject);
 
         Map<Speciality, Integer> resultMap = ConstantApplication.convertMapEditTextToMapInt(map);
 

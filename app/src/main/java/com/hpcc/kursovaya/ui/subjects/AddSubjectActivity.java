@@ -218,7 +218,6 @@ public class AddSubjectActivity extends AppCompatActivity {
         checkSubject(strSubject);
 
         Map<Speciality, Integer> resultMap = ConstantApplication.convertMapEditTextToMapInt(map);
-
         subject.setName(strSubject)
                 .setSpecialityCountHourMap(resultMap);
 
