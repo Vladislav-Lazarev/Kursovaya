@@ -48,6 +48,8 @@ public class TemplatesFragment extends Fragment {
         ((MainActivity) getActivity()).showOverflowMenu(false);
     }
 
+
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         toolbar = ((MainActivity)getActivity()).getToolbar();
             setHasOptionsMenu(false);
@@ -261,5 +263,12 @@ public class TemplatesFragment extends Fragment {
             }
         });
         alert.show();
+    }
+
+    public void resetAdapter() {
+        scheduleWeekList = DBManager.copyObjectFromRealm(
+                DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME));
+        adapter = new TemplateListAdapter(getActivity(),R.layout.list_view_item_template,scheduleWeekList);
+        listView.setAdapter(adapter);
     }
 }

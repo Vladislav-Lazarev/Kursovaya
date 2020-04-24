@@ -37,8 +37,7 @@ public class SettingsFragment extends Fragment{
             final String[] SETTINGS = { getResources().getString(R.string.schedule_alarm_title),
                     getResources().getString(R.string.specialty_list_label),
                     getResources().getString(R.string.backup_title),
-                    getResources().getString(R.string.language_title),
-                    getResources().getString(R.string.about_title)};
+                    getResources().getString(R.string.language_title)};
             ListView lsv = root.findViewById(R.id.settingsLSV);
             ArrayAdapter<String> adapter = new ArrayAdapter(getContext(), R.layout.listview_item_settings, SETTINGS);
 
