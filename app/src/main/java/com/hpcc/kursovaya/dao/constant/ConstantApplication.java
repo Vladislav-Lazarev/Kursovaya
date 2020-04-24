@@ -107,7 +107,7 @@ public class ConstantApplication {
     public static final String PATTERN_DATE_TIME = "dd/MM/yyyy HH:mm:ss";
     public static final String MIN_DATE_TIME = "01/01/1990 00:00:00";
 
-    public static final String PATTERN_SPECIALITY = "^\\p{Upper}\\p{Lower}+([\\s-]\\p{Lower}{3})*|\\p{Upper}{3,}$";
+    public static final String PATTERN_SPECIALITY = "^\\p{Upper}\\p{Lower}[.]?+([\\s-]\\p{Lower}{3}[.]?)*|\\p{Upper}{2,}$";
     public static final String PATTERN_GROUP = "^\\p{Upper}+-?\\d{2,}$";
     public static final String PATTERN_SUBJECT = PATTERN_SPECIALITY;
     //public static final String PATTERN_SUBJECT_HOUR = "^([1-9])\\d+|0[3-9]\\d$";
