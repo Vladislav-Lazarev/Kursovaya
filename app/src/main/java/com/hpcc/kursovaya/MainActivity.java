@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final String TAG = MainActivity.class.getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
     private boolean isSelectMode = false;
+    private boolean isScheduleSelected = true;
     private DrawerLayout drawer;
     private Toolbar toolbar1;
     private Toolbar toolbarCompleteClasses;
@@ -179,6 +180,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    public boolean isScheduleSelected() {
+        return isScheduleSelected;
+    }
+
+    public void setScheduleSelected(boolean scheduleSelected) {
+        isScheduleSelected = scheduleSelected;
+    }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -256,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 } else {
                     transaction.add(R.id.nav_host_fragment, new ScheduleFragment());
                 }
+                isScheduleSelected = true;
                 break;
             case R.id.nav_templates:
                 String specTag2 = getResources().getString(R.string.templatesTag);
@@ -266,6 +277,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 } else {
                     transaction.add(R.id.nav_host_fragment, new TemplatesFragment());
                 }
+                isScheduleSelected = false;
                 break;
             case R.id.nav_groups:
                 String specTag3 = getResources().getString(R.string.groupsTag);
@@ -276,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 } else {
                     transaction.add(R.id.nav_host_fragment, new GroupsFragment());
                 }
+                isScheduleSelected = false;
                 break;
             case R.id.nav_subjects:
                 String specTag4 = getResources().getString(R.string.subjectsTag);
@@ -287,6 +300,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 } else {
                     transaction.add(R.id.nav_host_fragment, new SubjectsFragment());
                 }
+                isScheduleSelected = false;
                 break;
             case R.id.nav_settings:
                 String specTag5 = getResources().getString(R.string.settingsTag);
@@ -297,6 +311,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 } else {
                     transaction.add(R.id.nav_host_fragment, new SettingsFragment());
                 }
+                isScheduleSelected = false;
                 break;
         }
         transaction.commit();

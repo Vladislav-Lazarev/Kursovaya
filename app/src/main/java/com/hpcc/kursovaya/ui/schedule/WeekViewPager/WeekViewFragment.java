@@ -748,10 +748,12 @@ public class WeekViewFragment extends Fragment {
         super.onResume();
         Log.d(TAG,Boolean.toString(((MainActivity)getActivity()).isLanguageChanged()) );
         if (isResumed() && !((MainActivity)getActivity()).isLanguageChanged()) {
-            StringBuilder title = new StringBuilder();
-            title.append(monthNumberToString(firstDayOfWeek.getMonthOfYear())).append(", ").append(firstDayOfWeek.getYear());
-            Log.d(TAG, firstDayOfWeek.toString());
-            ((MainActivity)getActivity()).setActionBarTitle(title.toString());
+            if(((MainActivity)getActivity()).isScheduleSelected()) {
+                StringBuilder title = new StringBuilder();
+                title.append(monthNumberToString(firstDayOfWeek.getMonthOfYear())).append(", ").append(firstDayOfWeek.getYear());
+                Log.d(TAG, firstDayOfWeek.toString());
+                ((MainActivity) getActivity()).setActionBarTitle(title.toString());
+            }
             refreshGrid(firstDayOfWeek,firstDayOfWeek.plusDays(6));
         } else if (((MainActivity)getActivity()).isLanguageChanged()) {
             ((MainActivity) getActivity()).showOverflowMenu(false);

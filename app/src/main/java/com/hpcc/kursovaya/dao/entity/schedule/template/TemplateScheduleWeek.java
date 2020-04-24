@@ -87,7 +87,11 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<com.hpc
 
     @NotNull
     public List<TemplateAcademicHour> getTemplateAcademicHourList() {
-        return convert(idTemplateAcademicHourList);
+        if(idTemplateAcademicHourList.isEmpty()){
+            return new ArrayList<>();
+        } else {
+            return convert(idTemplateAcademicHourList);
+        }
     }
     public com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek setTemplateAcademicHourList(@NotNull List<TemplateAcademicHour> templateAcademicHourList) {
         if (templateAcademicHourList.size() < ConstantApplication.ONE) {
