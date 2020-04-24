@@ -224,7 +224,7 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
 
     protected void addClass() {
         if (!ConstantApplication.checkUIGroup(groupNameSuggest.getText().toString())){
-            groupNameSuggest.setError(getString(R.string.toast_check_group));
+            groupNameSuggest.setError(getString(R.string.toast_check));
             return;
         }
         if (subjectSpinner.getCount() == ConstantApplication.ZERO){

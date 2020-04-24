@@ -200,17 +200,21 @@ public class AddSubjectActivity extends AppCompatActivity {
 
 
     private void addSubject(){
+        String strSubject = subjectEditText.getText().toString();
         if (specialityList.isEmpty()){
             Toast.makeText(currentContext, R.string.toast_check_speciality_setting, Toast.LENGTH_LONG).show();
+            if (!ConstantApplication.checkUISubject(strSubject)){
+                subjectEditText.setError(getString(R.string.toast_check));
+                return;
+            }
             return;
         }
         if (map.isEmpty()){
             Toast.makeText(currentContext, R.string.toast_check_speciality_and_number_of_hours, Toast.LENGTH_LONG).show();
-            return;
-        }
-        String strSubject = subjectEditText.getText().toString();
-        if (!ConstantApplication.checkUISubject(strSubject)){
-            subjectEditText.setError(getString(R.string.toast_check));
+            if (!ConstantApplication.checkUISubject(strSubject)){
+                subjectEditText.setError(getString(R.string.toast_check));
+                return;
+            }
             return;
         }
 
