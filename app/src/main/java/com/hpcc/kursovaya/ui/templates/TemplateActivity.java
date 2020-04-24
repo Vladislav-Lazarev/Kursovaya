@@ -556,6 +556,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
         List<TemplateAcademicHour> entityTemplateAcademicHourList = convert2DimensionalTo1Dimensional(classes);
         if (entityTemplateAcademicHourList.isEmpty()){
             Toast.makeText(currentContext, R.string.toast_empty_template, Toast.LENGTH_SHORT).show();
+            return;
         }
 
         final AlertDialog dialog = getConfirmDialogBuilder(R.string.popup_super_template).create();
@@ -576,16 +577,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
     // Диалоговое окно для создания шаблона
     protected AlertDialog.Builder getConfirmDialogBuilder(int popup_super_template){
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
-
-        List<TemplateAcademicHour> entityTemplateAcademicHourList = convert2DimensionalTo1Dimensional(classes);
-        if (entityTemplateAcademicHourList.isEmpty()){
-            Toast.makeText(this, R.string.toast_empty_template,Toast.LENGTH_SHORT);
-            return builder;
-        }
-
-        builder.setCancelable(false);
         builder.setTitle(popup_super_template);
-
         builder.setPositiveButton(R.string.popup_accept, new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {

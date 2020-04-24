@@ -41,13 +41,12 @@ public class AddTemplateActivity extends TemplateActivity {
 
     @Override
     protected AlertDialog.Builder getConfirmDialogBuilder(int popup_super_template){
-        AlertDialog.Builder builder = super.getConfirmDialogBuilder(R.string.popup_add_template);
-        scheduleWeek.setTemplateAcademicHourList(convert2DimensionalTo1Dimensional(classes));
-        return builder;
+        return super.getConfirmDialogBuilder(R.string.popup_add_template);
     }
     @Override
     protected void onClickAcceptTemplate(DialogInterface dialog, int which) {
         super.onClickAcceptTemplate(dialog, which);
+        scheduleWeek.setTemplateAcademicHourList(convert2DimensionalTo1Dimensional(classes));
 
         intent = getIntent();
         intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_ADD), scheduleWeek);

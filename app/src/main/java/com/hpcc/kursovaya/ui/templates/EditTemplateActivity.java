@@ -74,14 +74,13 @@ public class EditTemplateActivity extends TemplateActivity {
 
     @Override
     protected AlertDialog.Builder getConfirmDialogBuilder(int popup_super_template){
-        AlertDialog.Builder builder = super.getConfirmDialogBuilder(R.string.popup_edit_template);
-        scheduleWeek.setTemplateAcademicHourList(convert2DimensionalTo1Dimensional(classes));
-        templateNameEditText.setText(scheduleWeek.getName());
-        return builder;
+        return super.getConfirmDialogBuilder(R.string.popup_edit_template);
     }
     @Override
     protected void onClickAcceptTemplate(DialogInterface dialog, int which) {
         super.onClickAcceptTemplate(dialog, which);
+        scheduleWeek.setTemplateAcademicHourList(convert2DimensionalTo1Dimensional(classes));
+        templateNameEditText.setText(scheduleWeek.getName());
 
         intent = getIntent();
         intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT), scheduleWeek);
