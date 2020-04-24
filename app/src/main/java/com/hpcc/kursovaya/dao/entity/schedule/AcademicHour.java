@@ -1,4 +1,4 @@
-package com.hpcc.kursovaya.dao.entity.schedule.lesson;
+package com.hpcc.kursovaya.dao.entity.schedule;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -11,10 +11,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.hpcc.kursovaya.AlarmClassReceiver;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.EntityI;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;

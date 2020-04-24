@@ -27,6 +27,7 @@
         android:layout_marginStart="44dp"
         android:layout_marginEnd="15dp"
         android:layout_toEndOf="@id/group_name_label"
+        android:maxLength="30"
         />
     <TextView
         android:id="@+id/subject_name_label"

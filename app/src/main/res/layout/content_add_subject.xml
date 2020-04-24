@@ -7,12 +7,10 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.subjects.AddSubjectActivity"
     tools:showIn="@layout/activity_add_subject">
-    <ScrollView
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/addSpecialityLabel"
@@ -46,9 +44,6 @@
         android:layout_marginTop="23dp"
         android:layout_below="@id/addCourseLabel"/>
 
-
-
-
     <LinearLayout
         android:id="@+id/spinnerSpeciality"
         android:layout_marginStart="9dp"
@@ -61,14 +56,13 @@
     </LinearLayout>
     <Spinner
         android:id="@+id/spinnerCourse"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/spinnerSpeciality"
         android:layout_marginStart="71dp"
         android:layout_marginTop="23dp"
         android:layout_marginEnd="15dp"
-        android:layout_toEndOf="@id/addCourseLabel"
-        android:entries="@array/courses"/>
+        android:layout_toEndOf="@id/addCourseLabel"/>
 
     <HorizontalScrollView
         android:id="@+id/scrollView"
@@ -86,8 +80,10 @@
         android:layout_height="wrap_content"
         android:minWidth="180dp"
         android:hint="@string/subjectName_hint"
-        android:inputType="text"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:maxLength="30"
+        android:inputType="textCapWords"
+        />
     </HorizontalScrollView>
     <TextView
         android:id="@+id/addColorLabel"
@@ -109,5 +105,4 @@
         android:layout_marginStart="65dp"
         android:background="@drawable/round_button"/>
         </RelativeLayout>
-    </ScrollView>
 </RelativeLayout>

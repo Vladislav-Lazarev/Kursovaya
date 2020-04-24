@@ -29,9 +29,9 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.List;

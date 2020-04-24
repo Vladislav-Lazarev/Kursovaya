@@ -1,4 +1,4 @@
-package com.hpcc.kursovaya.dao.entity.schedule.lesson.template;
+package com.hpcc.kursovaya.dao.entity.schedule.template;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,11 +7,11 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.EntityI;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 

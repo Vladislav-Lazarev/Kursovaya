@@ -1,8 +1,8 @@
-package com.hpcc.kursovaya.dao.entity.query;
+package com.hpcc.kursovaya.dao.query;
 
 import android.util.Log;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -6,10 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.SystemClock;
-import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
@@ -31,17 +28,14 @@ import androidx.core.content.FileProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.setting.BackupDB;
 import com.hpcc.kursovaya.dao.entity.setting.FileManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 public class BackupActivity  extends AppCompatActivity {
     private static String TAG = BackupActivity.class.getSimpleName();

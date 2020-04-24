@@ -1,13 +1,13 @@
-package com.hpcc.kursovaya.dao.entity.schedule.lesson.template;
+package com.hpcc.kursovaya.dao.entity.schedule.template;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.EntityI;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -20,8 +20,8 @@ import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
-public class TemplateScheduleWeek extends RealmObject implements EntityI<com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek>, Parcelable, Cloneable {
-    private static final String TAG = com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek.class.getSimpleName();
+public class TemplateScheduleWeek extends RealmObject implements EntityI<com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek>, Parcelable, Cloneable {
+    private static final String TAG = com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek.class.getSimpleName();
 
     protected static RealmList<Integer> convert(List<TemplateAcademicHour> templateScheduleDayList) {
         RealmList<Integer> result = new RealmList<>();
@@ -77,7 +77,7 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<com.hpc
     public String getName() {
         return name;
     }
-    public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek setName(@NotNull String name) {
+    public com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek setName(@NotNull String name) {
         if (name.isEmpty()) {
             throw new RuntimeException("Exception! setName()");
         }
@@ -89,7 +89,7 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<com.hpc
     public List<TemplateAcademicHour> getTemplateAcademicHourList() {
         return convert(idTemplateAcademicHourList);
     }
-    public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek setTemplateAcademicHourList(@NotNull List<TemplateAcademicHour> templateAcademicHourList) {
+    public com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek setTemplateAcademicHourList(@NotNull List<TemplateAcademicHour> templateAcademicHourList) {
         if (templateAcademicHourList.size() < ConstantApplication.ONE) {
             throw new RuntimeException("Exception! setTemplateScheduleDayList()");
         }
@@ -117,9 +117,9 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<com.hpc
 
     public boolean existsEntity() {
         // TODO Пока коряво
-        RealmResults<com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek> existingEntities =
-                DBManager.readAll(com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek.class, ConstantApplication.NAME, this.getName());
-        for (com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek entity : existingEntities) {
+        RealmResults<com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek> existingEntities =
+                DBManager.readAll(com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek.class, ConstantApplication.NAME, this.getName());
+        for (com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek entity : existingEntities) {
             if (this.equals(entity)) {
                 return true;
             }
@@ -144,7 +144,7 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<com.hpc
         }
     }
     @Override
-    public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek createEntity() throws Exception {
+    public com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek createEntity() throws Exception {
         if (!isEntity()){
             checkEntity();
             int maxID = DBManager.findMaxID(this.getClass());
@@ -154,17 +154,17 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<com.hpc
         return this;
     }
 
-    public static List<String> entityToNameList(List<com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek> entityList) {
+    public static List<String> entityToNameList(List<com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek> entityList) {
         List<String> result = new ArrayList<>();
 
-        for (com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek scheduleWeek : entityList){
+        for (com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek scheduleWeek : entityList){
             result.add(scheduleWeek.getName());
         }
         return result;
     }
     @Override
     public List<String> entityToNameList() {
-        return entityToNameList(DBManager.readAll(com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek.class, ConstantApplication.NAME));
+        return entityToNameList(DBManager.readAll(com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek.class, ConstantApplication.NAME));
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -175,15 +175,15 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<com.hpc
         name = in.readString();
         in.readList(idTemplateAcademicHourList, Integer.class.getClassLoader());
     }
-    public static final Creator<com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek> CREATOR = new Creator<com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek>() {
+    public static final Creator<com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek> CREATOR = new Creator<com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek>() {
         @Override
-        public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek createFromParcel(Parcel in) {
-            return new com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek(in);
+        public com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek createFromParcel(Parcel in) {
+            return new com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek(in);
         }
 
         @Override
-        public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek[] newArray(int size) {
-            return new com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek[size];
+        public com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek[] newArray(int size) {
+            return new com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek[size];
         }
     };
 
@@ -202,8 +202,8 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<com.hpc
     // Cloneable
     @NonNull
     @Override
-    public com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek clone() throws CloneNotSupportedException {
-        return (com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek) super.clone();
+    public com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek clone() throws CloneNotSupportedException {
+        return (com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek) super.clone();
     }
 
     public void deleteTemplateAcademicHour(int id) {

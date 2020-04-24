@@ -201,16 +201,27 @@
     <string name="language_title">Мова</string>
     <string name="about_title">Про програму</string>
 
-    <!-- Уведомление о сущностях -->
+    <!-- Backup -->
     <string name="toast_invalid_backup_file">Файл повинен містити розширення</string>
     <string name="toast_restart">Для застосування БД перезапустіть додаток</string>
     <string name="toast_empty_backup_name">Введіть назву резервної копії</string>
+
+    <!-- Уведомление о сущностях -->
     <string name="toast_exists_entity">Цей запис вже існує!</string>
     <string name="toast_add_edit_entity">Запис успішно занесено</string>
     <string name="toast_edit_entity">Запис успішно змінений</string>
     <string name="toast_del_entity">Запис успішно видалено</string>
     <string name="toast_del_many_entity">Записи успішно видалені</string>
     <string name="toast_empty_template">Заповніть шахматку!</string>
+
+    <!-- Проверка полей -->
+    <string name="toast_check_name">Заповніть коректно поле \"Назва\"</string>
+    <string name="toast_check_group">Заповніть коректно поле \"Група\"</string>
+    <string name="toast_check_subject">Заповніть коректно поле \"Предмет\"</string>
+    <string name="toast_check_speciality_and_number_of_hours">Оберіть \"Спеціальність\" та заповніть поле \"Кількість годин\"</string>
+    <string name="toast_check_speciality_setting">Заповніть \"Спеціальність\" в Настройках</string>
+    <string name="toast_check_subject_menu_bar">Заповніть \"Предмет\" в меню барі</string>
+
     <string name="October">Жовтень</string>
     <string name="minuteTimeLabel">ММ</string>
     <string name="import_dialog_title">Імпортувати резервну копію</string>
@@ -227,4 +238,11 @@
     <string name="toast_invalid_backup_name">Назва резервної копії не повинна містити символи</string>
     <string name="toast_exist_backup">Замінити копію?</string>
     <string name="restHeader">Залишок:</string>
+
+    <string name="activity_add_group">Додавання групи</string>
+    <string name="activity_edit_group">Редагування групи</string>
+
+    <string name="activity_add_subject">Додавання предмету</string>
+    <string name="activity_edit_subject">Редагування предмету</string>
+    <string name="enter_the_number_of_hours">Введіть кількість годин</string>
 </resources>

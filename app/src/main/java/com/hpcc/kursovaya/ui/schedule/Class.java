@@ -13,9 +13,11 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,12 +26,12 @@ import androidx.core.util.Pair;
 
 import com.hpcc.kursovaya.AlarmClassReceiver;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.templates.GroupAutoCompleteAdapter;
 
 import org.joda.time.DateTime;
@@ -58,7 +60,7 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
     int classHour = 0;
     int numberOfLesson = 0;
     int numberOfHalf = 0;
-    AutoCompleteTextView groupName;
+    AutoCompleteTextView groupNameSuggest;
     RadioGroup radioGroup;
     Spinner subjectSpinner;
     boolean repeatForNextWeek = false;
@@ -76,7 +78,7 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
         //intent = getIntent();
         setContentView(R.layout.activity_add_class);
         posSecondCell = secondCellShift(numberOfLesson);
-        groupName = findViewById(R.id.groupNameSuggestET);
+        groupNameSuggest = findViewById(R.id.groupNameSuggestET);
         academicHourList = new ArrayList<>(Collections.singletonList(new AcademicHour()));
         templateAcademicHourList = new ArrayList<>(Collections.singletonList(new TemplateAcademicHour()));
         currentAcademicHour = academicHourList.get(ConstantApplication.ZERO);
@@ -106,12 +108,12 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
         subjectSpinner = findViewById(R.id.spinnerSubject);
         listenerSpinnerSubject(subjectSpinner);
 
-        groupName = findViewById(R.id.groupNameSuggestET);
+        groupNameSuggest = findViewById(R.id.groupNameSuggestET);
         List<Group> groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
         GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto, groupList);
-        groupName.setAdapter(adapter);
+        groupNameSuggest.setAdapter(adapter);
         Context savedContext = this;
-        groupName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        groupNameSuggest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Group pressedGroup = (Group) adapterView.getItemAtPosition(i);
@@ -125,6 +127,7 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
             }
         });
 
+        ((RadioButton)findViewById(R.id.duration_rgroup_short)).setChecked(true);
         radioGroup = findViewById(R.id.duration_rgroup);
         radioGroup.setOnCheckedChangeListener((rg, checkedId) -> {
             currentTemplateAcademicHour.setDayAndPair(Pair.create(classDay, classHour));
@@ -153,8 +156,6 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
                         templateAcademicHourList.set(ConstantApplication.ONE,
                                 templateAcademicHourList.get(ConstantApplication.ONE)
                                         .setDayAndPair(Pair.create(classDay, classHour + posSecondCell)));
-                    } else {
-                        throw new RuntimeException("popup_duration_rgroup_full = Шо за дичь");
                     }
                     break;
             }
@@ -222,9 +223,18 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
     }
 
     protected void addClass() {
+        if (!ConstantApplication.checkUIGroup(groupNameSuggest.getText().toString())){
+            groupNameSuggest.setError(getString(R.string.toast_check_group));
+            return;
+        }
+        if (subjectSpinner.getCount() == ConstantApplication.ZERO){
+            Toast.makeText(this, R.string.toast_check_subject_menu_bar, Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Date entityDate = dayOfWeek.toDate();
         String description = classSummary.getText().toString();
-        String groupNameStr = groupName.getText().toString();
+        String groupNameStr = groupNameSuggest.getText().toString();
         for (TemplateAcademicHour templateAcademicHour : templateAcademicHourList){
             try {
                 if(templateAcademicHour.getNumberHalfPairButton()==-1){

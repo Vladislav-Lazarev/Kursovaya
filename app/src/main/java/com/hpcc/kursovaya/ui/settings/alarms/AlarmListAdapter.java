@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 
 public class AlarmListAdapter extends ArrayAdapter<int[]> {
     private int[][] timeAlarms = null;
@@ -57,11 +58,11 @@ public class AlarmListAdapter extends ArrayAdapter<int[]> {
 
         String hourTimeLabel = new String();
         String minuteTimeLabel = new String();
-        if(timeAlarms[position][0]<10){
+        if(timeAlarms[position][0] < ConstantApplication.MAX_COUNT_HALF_PAIR){
                hourTimeLabel = "0";
            }
         hourTimeLabel +=String.valueOf(timeAlarms[position][0]);
-        if(timeAlarms[position][1]<10){
+        if(timeAlarms[position][1] < ConstantApplication.MAX_COUNT_HALF_PAIR){
             minuteTimeLabel = "0";
         }
         minuteTimeLabel += String.valueOf(timeAlarms[position][1]);

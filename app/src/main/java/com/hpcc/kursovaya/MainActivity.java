@@ -44,14 +44,14 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
 import com.hpcc.kursovaya.ui.settings.SettingsFragment;
@@ -93,6 +93,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private final Context currentContext = this;
     private static final int REQUEST_CODE = 26;
     private Menu fuckingMenu;
     private final String TAG = MainActivity.class.getSimpleName();
@@ -152,16 +153,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ActionBar ab = getSupportActionBar();
         ab.setDisplayShowTitleEnabled(false);
-       if(savedInstanceState==null) {
-           Log.d(TAG,"Чо теперь сейвд инстанс стейт?");
-               getSupportFragmentManager().beginTransaction().add(R.id.nav_host_fragment,
-                       new ScheduleFragment(), getResources().getString(R.string.scheduleTag)).commit();
-               navigationView.setCheckedItem(R.id.nav_schedule);
+        if(savedInstanceState==null) {
+            Log.d(TAG,"Чо теперь сейвд инстанс стейт?");
+            getSupportFragmentManager().beginTransaction().add(R.id.nav_host_fragment,
+                    new ScheduleFragment(), getResources().getString(R.string.scheduleTag)).commit();
+            navigationView.setCheckedItem(R.id.nav_schedule);
 
         } else {
-           Log.d(TAG,"открывай сука");
-           isLanguageChanged = true;
-       }
+            Log.d(TAG,"открывай сука");
+            isLanguageChanged = true;
+        }
     }
     //This method creates folder in external storage for backups
     private void createBackupFolder() {
@@ -236,8 +237,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-            return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                    || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
     }
 
     @Override
@@ -343,9 +344,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         specialities.add(new Speciality());
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.popup_choose_date_report);
+
+        genReport = getLayoutInflater().inflate(R.layout.dialog_choose_report_period, null);
+        builder.setView(genReport);
+
+        Spinner spinnerSpeciality =
+                ConstantApplication.fillingSpinner(currentContext, genReport.findViewById(R.id.specialitySpinner),
+                        new Speciality().entityToNameList());
+        Spinner spinnerCourse = genReport.findViewById(R.id.courseSpinner);
+        listenerSpinnerSpeciality(spinnerSpeciality,spinnerCourse,specialities);
+
         builder.setPositiveButton(R.string.popup_gen_report, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (spinnerSpeciality.getCount() == ConstantApplication.ZERO){
+                    Toast.makeText(currentContext, R.string.toast_check_speciality_setting, Toast.LENGTH_LONG).show();
+                    prepareReporDatePicker();
+                    return;
+                }
                 onClickAcceptReportDates(dialog, which,specialities.get(0));
             }
         });
@@ -356,12 +372,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 dialog.cancel();
             }
         });
-        genReport = getLayoutInflater().inflate(R.layout.dialog_choose_report_period, null);
-        builder.setView(genReport);
-        Spinner spinnerSpeciality =
-                ConstantApplication.fillingSpinner(this, genReport.findViewById(R.id.specialitySpinner),
-                        new Speciality().entityToNameList());
-        listenerSpinnerSpeciality(spinnerSpeciality,specialities);
+
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -377,13 +388,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-    private void listenerSpinnerSpeciality(Spinner spinner, List<Speciality> specialities) {
+    private void listenerSpinnerSpeciality(Spinner spinner, Spinner spinnerCourse, List<Speciality> specialities) {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 String item = (String) parent.getItemAtPosition(selectedItemPosition);
                 Speciality speciality = DBManager.read(Speciality.class, ConstantApplication.NAME, item);
                 specialities.set(0,speciality);
+
+                ConstantApplication.fillingSpinner(currentContext,spinnerCourse,
+                        ConstantApplication.countCourse(speciality.getCountCourse()));
             }
             public void onNothingSelected(AdapterView<?> parent) {
             }

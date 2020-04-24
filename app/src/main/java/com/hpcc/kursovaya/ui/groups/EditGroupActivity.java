@@ -12,31 +12,32 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 public class EditGroupActivity extends AppCompatActivity {
     private static final String TAG = EditGroupActivity.class.getSimpleName();
+    private final Context currentContext = this;
+
     private Group group = new Group();
     private EditText groupEditText;
     private long mLastClickTime = 0;
-
+    Spinner spinnerCourse;
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class EditGroupActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -62,7 +63,7 @@ public class EditGroupActivity extends AppCompatActivity {
         ab.setDisplayShowTitleEnabled(false);
 
         TextView textCont = (TextView)findViewById(R.id.toolbar_title);
-        textCont.setText("Редагування групи");
+        textCont.setText(R.string.activity_edit_group);
 
         Intent intent = getIntent();
         group = intent.getParcelableExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT));
@@ -73,7 +74,7 @@ public class EditGroupActivity extends AppCompatActivity {
         listenerSpinnerSpeciality(spinnerSpeciality);
         ConstantApplication.setSpinnerText(spinnerSpeciality, group.getSpecialty().getName());
 
-        Spinner spinnerCourse = findViewById(R.id.spinnerCourse);
+        spinnerCourse = findViewById(R.id.spinnerCourse);
         listenerSpinnerCourse(spinnerCourse);
         spinnerCourse.setSelection(group.getNumberCourse() - ConstantApplication.ONE);
 
@@ -84,7 +85,7 @@ public class EditGroupActivity extends AppCompatActivity {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -94,7 +95,17 @@ public class EditGroupActivity extends AppCompatActivity {
     }
 
     private void editGroup(){
-        group.setName(groupEditText.getText().toString());
+        String strGroup = groupEditText.getText().toString();
+        if (!ConstantApplication.checkUISpeciality(strGroup)){
+            Toast.makeText(this, R.string.toast_check_speciality_setting, Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (!ConstantApplication.checkUIGroup(strGroup)){
+            groupEditText.setError(getString(R.string.toast_check_name));
+            return;
+        }
+
+        group.setName(strGroup);
 
         Intent intent = getIntent();
         intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT), group);
@@ -109,6 +120,12 @@ public class EditGroupActivity extends AppCompatActivity {
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 String item = (String) parent.getItemAtPosition(selectedItemPosition);
                 Speciality speciality = DBManager.read(Speciality.class, ConstantApplication.NAME, item);
+
+                spinnerCourse =
+                        ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                ConstantApplication.countCourse(speciality.getCountCourse()));
+                listenerSpinnerCourse(spinnerCourse);
+
                 group.setSpecialty(speciality);
             }
             public void onNothingSelected(AdapterView<?> parent) {

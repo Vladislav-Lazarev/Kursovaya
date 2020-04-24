@@ -70,7 +70,6 @@ public class GroupAutoCompleteAdapter extends ArrayAdapter<Group> implements Fil
                     }
                 }
 
-
                 results.values = suggestions;
                 results.count = suggestions.size();
             }

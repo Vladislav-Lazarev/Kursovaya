@@ -6,11 +6,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.dao.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -172,7 +172,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         RealmResults<Speciality> existingEntities =
                 DBManager.readAll(Speciality.class, ConstantApplication.NAME, this.getName(), ConstantApplication.NAME);
         for (Speciality entity : existingEntities) {
-            if (this.equals(entity) && this.getId() != entity.getId()) {
+            if (this.getName().equals(entity.getName()) && this.getId() != entity.getId()) {
                 Log.d(TAG, "DB Speciality = " + entity);
                 return true;
             }
@@ -213,6 +213,8 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
     }
     @Override
     public List<String> entityToNameList() {
+
+
         return entityToNameList(DBManager.readAll(Speciality.class, ConstantApplication.COUNT_COURSE));
     }
 

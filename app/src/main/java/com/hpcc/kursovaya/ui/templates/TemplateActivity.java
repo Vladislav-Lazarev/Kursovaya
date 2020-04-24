@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,12 +30,12 @@ import androidx.core.util.Pair;
 
 import com.hpcc.kursovaya.ClassesButton.TemplateClassesButtonWrapper;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.dao.query.DBManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -359,10 +362,44 @@ public abstract class TemplateActivity extends AppCompatActivity {
         GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(currentContext,R.layout.group_auto, groupList);
         groupNameSuggest.setAdapter(adapter);
 
+        groupNameSuggest.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String strGroup = s.toString();
+                Group group = DBManager.read(Group.class, ConstantApplication.NAME, strGroup);
+
+                if (!ConstantApplication.checkUIGroup(strGroup) || group == null){
+                    ConstantApplication.fillingSpinner(currentContext, subjectSpinner, new ArrayList<>());
+                    return;
+                }
+
+                currentTemplate.setGroup(group);
+                fillSpinnerByGroup(currentContext, subjectSpinner, group);
+
+                if (templateAcademicHourList.size() == ConstantApplication.TWO){
+                    templateAcademicHourList.set(ConstantApplication.ONE,
+                            templateAcademicHourList.get(ConstantApplication.ONE).setGroup(group));
+                }
+            }
+        });
+
         // Нажатие на выпадающий список групп и заполнение spinner subject
         groupNameSuggest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                subjectSpinner = classView.findViewById(R.id.spinnerSubject);
+                listenerSpinnerSubject(subjectSpinner);
+
                 Group pressedGroup = (Group) adapterView.getItemAtPosition(i);
                 currentTemplate.setGroup(pressedGroup);
                 fillSpinnerByGroup(currentContext, subjectSpinner, pressedGroup);
@@ -375,19 +412,21 @@ public abstract class TemplateActivity extends AppCompatActivity {
         });
 
         // Выбор, определения сколько часов она будет ввести
+        ((RadioButton)classView
+                .findViewById(R.id.popup_duration_rgroup_short)).setChecked(true);
         radioGroup = classView.findViewById(R.id.popup_duration_rgroup);
         radioGroup.setOnCheckedChangeListener((radioGroup, checkedId) -> {
             currentTemplate.setDayAndPair(Pair.create(classDay, classHour));
-            switch (checkedId){
+            switch (checkedId) {
                 case R.id.popup_duration_rgroup_short:
                     if (templateAcademicHourList.size() == ConstantApplication.TWO) {
                         templateAcademicHourList.remove(ConstantApplication.ONE);
                     }
                     break;
                 case R.id.popup_duration_rgroup_full:
-                    if (templateAcademicHourList.size() == ConstantApplication.ONE){
+                    if (templateAcademicHourList.size() == ConstantApplication.ONE) {
                         TemplateAcademicHour following = new TemplateAcademicHour();
-                        if (currentTemplate.getGroup() != null){
+                        if (currentTemplate.getGroup() != null) {
                             following.setGroup(currentTemplate.getGroup())
                                     .setSubject(currentTemplate.getSubject())
                                     .setDayAndPair(Pair.create(classDay, classHour + posSecondCell));
@@ -397,8 +436,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
                         templateAcademicHourList.set(ConstantApplication.ONE,
                                 templateAcademicHourList.get(ConstantApplication.ONE)
                                         .setDayAndPair(Pair.create(classDay, classHour + posSecondCell)));
-                    } else {
-                        throw new RuntimeException("popup_duration_rgroup_full = Шо за дичь");
                     }
                     break;
             }
@@ -464,6 +501,15 @@ public abstract class TemplateActivity extends AppCompatActivity {
     }
     private void onClickAcceptClass(DialogInterface dialog, int which,int classDay, int classHour) {
         //здесь обработчик кнопки принять
+        if (!ConstantApplication.checkUIGroup(groupNameSuggest.getText().toString())){
+            groupNameSuggest.setError(getString(R.string.toast_check_group));
+            return;
+        }
+        if (subjectSpinner.getCount() == ConstantApplication.ZERO){
+            Toast.makeText(this, R.string.toast_check_subject_menu_bar, Toast.LENGTH_LONG).show();
+            return;
+        }
+
         for (TemplateAcademicHour templateAcademicHour : templateAcademicHourList){
             try {
                 DBManager.write(templateAcademicHour.createEntity());
@@ -530,6 +576,13 @@ public abstract class TemplateActivity extends AppCompatActivity {
     // Диалоговое окно для создания шаблона
     protected AlertDialog.Builder getConfirmDialogBuilder(int popup_super_template){
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
+
+        List<TemplateAcademicHour> entityTemplateAcademicHourList = convert2DimensionalTo1Dimensional(classes);
+        if (entityTemplateAcademicHourList.isEmpty()){
+            Toast.makeText(this, R.string.toast_empty_template,Toast.LENGTH_SHORT);
+            return builder;
+        }
+
         builder.setCancelable(false);
         builder.setTitle(popup_super_template);
 
@@ -556,5 +609,14 @@ public abstract class TemplateActivity extends AppCompatActivity {
     protected void onClickCancelTemplate(DialogInterface dialog, int which) {
         dialog.cancel();
     }
-    protected abstract void onClickAcceptTemplate(DialogInterface dialog, int which);
+    protected void onClickAcceptTemplate(DialogInterface dialog, int which){
+        String strTemplate = templateNameEditText.getText().toString();
+
+        if (!ConstantApplication.checkUITemplate(strTemplate)){
+            Toast.makeText(this, R.string.toast_check_name, Toast.LENGTH_LONG);
+            return;
+        }
+
+        scheduleWeek.setName(strTemplate);
+    }
 }

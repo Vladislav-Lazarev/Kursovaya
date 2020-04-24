@@ -26,10 +26,10 @@ import androidx.fragment.app.Fragment;
 import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.schedule.AddClass;
 import com.hpcc.kursovaya.ui.schedule.EditClass;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
@@ -250,7 +250,7 @@ public class WeekViewFragment extends Fragment {
         cancelCompletedClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -261,7 +261,7 @@ public class WeekViewFragment extends Fragment {
         cancelledClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -272,7 +272,7 @@ public class WeekViewFragment extends Fragment {
         uncancelledClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -282,7 +282,7 @@ public class WeekViewFragment extends Fragment {
         deleteClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -425,7 +425,7 @@ public class WeekViewFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -515,7 +515,7 @@ public class WeekViewFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -562,7 +562,7 @@ public class WeekViewFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -609,7 +609,7 @@ public class WeekViewFragment extends Fragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();

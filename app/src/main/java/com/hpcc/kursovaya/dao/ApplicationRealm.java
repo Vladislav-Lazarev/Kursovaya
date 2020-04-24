@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.io.File;

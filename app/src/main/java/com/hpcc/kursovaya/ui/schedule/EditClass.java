@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 
 import org.joda.time.DateTime;
 
@@ -42,7 +42,7 @@ public class EditClass extends Class {
 
         final int maxCountButton = templateAcademicHourList.size();
 
-        groupName.setText(currentTemplateAcademicHour.getGroup().getName());
+        groupNameSuggest.setText(currentTemplateAcademicHour.getGroup().getName());
         fillSpinnerByGroup(this, subjectSpinner, currentTemplateAcademicHour.getGroup());
         ConstantApplication.setSpinnerText(subjectSpinner, currentTemplateAcademicHour.getSubject().getName());
         switch (maxCountButton){

@@ -15,10 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.dao.query.DBManager;
 
 import java.util.List;
 

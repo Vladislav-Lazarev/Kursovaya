@@ -16,7 +16,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewFragment;
 import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewPagerAdapter;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;

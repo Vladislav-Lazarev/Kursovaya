@@ -237,4 +237,15 @@
     <string name="creationDatePDF">Дата створення:</string>
     <string name="periodLabelPDF">Період:</string>
     <string name="restHeader">Залишок:</string>
+    <string name="toast_check_name">Заповніть коректно поле \"Назва\"</string>
+    <string name="toast_check_speciality_and_number_of_hours">Оберіть \"Спеціальність\" та заповніть поле \"Кількість годин\"</string>
+    <string name="activity_add_subject">Додавання предмету</string>
+    <string name="activity_edit_subject">Редагування предмету</string>
+    <string name="enter_the_number_of_hours">Введіть кількість годин</string>
+    <string name="activity_add_group">Додавання групи</string>
+    <string name="activity_edit_group">Редагування групи</string>
+    <string name="toast_check_subject">Заповніть коректно поле \"Предмет\"</string>
+    <string name="toast_check_group">Заповніть коректно поле \"Група\"</string>
+    <string name="toast_check_speciality_setting">Заповніть \"Спеціальність\" в Настройках</string>
+    <string name="toast_check_subject_menu_bar">Заповніть \"Предмет\" в меню барі</string>
 </resources>

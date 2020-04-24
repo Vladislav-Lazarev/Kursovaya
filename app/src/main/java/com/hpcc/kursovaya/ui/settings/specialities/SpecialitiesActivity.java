@@ -27,9 +27,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Speciality;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.query.DBManager;
 
 import java.util.List;
 
@@ -186,6 +186,12 @@ public class SpecialitiesActivity extends AppCompatActivity {
         String strSpeciality = specText.getText().toString();
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
 
+        if (!ConstantApplication.checkUISpeciality(strSpeciality)){
+            Toast.makeText(currentContext, R.string.toast_check_name, Toast.LENGTH_LONG).show();
+            onClickPrepareAddSpeciality();
+            return;
+        }
+
         speciality.setName(strSpeciality)
                 .setCountCourse(countCourse);
         adapter.write(speciality);
@@ -202,7 +208,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                onClickAcceptEditSpeciality(dialog, which);
+                onClickAcceptEditSpeciality(dialog, which, entity);
             }
         });
         builder.setCancelable(false);
@@ -237,8 +243,20 @@ public class SpecialitiesActivity extends AppCompatActivity {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-    private void onClickAcceptEditSpeciality(DialogInterface dialog, int which) {
-        onClickAcceptAddSpeciality(dialog, which);
+    private void onClickAcceptEditSpeciality(DialogInterface dialog, int which, Speciality entity) {
+        String strSpeciality = specText.getText().toString();
+        int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
+
+        if (!ConstantApplication.checkUISpeciality(strSpeciality)){
+            Toast.makeText(currentContext, R.string.toast_check_name, Toast.LENGTH_LONG).show();
+            onClickPrepareEditSpeciality(entity);
+            return;
+        }
+
+        speciality.setName(strSpeciality)
+                .setCountCourse(countCourse);
+        adapter.write(speciality);
+        adapter.update(ConstantApplication.NAME);
     }
 
     private void prepareDeleteDialog(final ActionMode mode) {

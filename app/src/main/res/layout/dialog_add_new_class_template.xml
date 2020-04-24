@@ -10,27 +10,31 @@
         android:textColor="@color/appDefaultBlack"
         android:layout_marginTop="26dp"
         android:layout_marginStart="15dp"/>
+
     <HorizontalScrollView
         android:id="@+id/scrollView"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_marginTop="14dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="44dp"
         android:layout_marginEnd="15dp"
-        android:fillViewport="true"
-        android:layout_toEndOf="@id/popup_group_name">
-        <AutoCompleteTextView
-        android:id="@+id/groupNameSuggestET"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/sideBar"
-        android:textSize="16sp"
-        android:completionThreshold="1"
-        android:hint="@string/auto_complete_text_view_hint"
-        android:focusedByDefault="false"
-        android:textColor="@color/appDefaultBlack"
+		 android:layout_marginTop="23dp"
+        android:layout_toEndOf="@id/popup_group_name"
+        android:fillViewport="true">
 
-        /></HorizontalScrollView>
+        <AutoCompleteTextView
+            android:id="@+id/groupNameSuggestET"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/sideBar"
+            android:completionThreshold="1"
+            android:focusedByDefault="false"
+            android:hint="@string/auto_complete_text_view_hint"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp"
+            android:maxLength="30"
+            android:inputType="textCapWords"
+            />
+    </HorizontalScrollView>
 
     <TextView
         android:id="@+id/popup_subject_name"
@@ -44,7 +48,7 @@
         android:layout_marginStart="15dp"/>
     <Spinner
         android:id="@+id/spinnerSubject"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/popup_subject_name"
         android:layout_below="@id/scrollView"

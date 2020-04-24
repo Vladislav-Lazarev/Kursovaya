@@ -22,5 +22,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="15dp"
         android:layout_toEndOf="@id/template_name"
+        android:maxLength="30"
+        android:inputType="text"
         />
 </RelativeLayout>

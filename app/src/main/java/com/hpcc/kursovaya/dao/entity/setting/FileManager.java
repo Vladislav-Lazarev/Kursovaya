@@ -1,11 +1,9 @@
 package com.hpcc.kursovaya.dao.entity.setting;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.net.Uri;
-import android.webkit.MimeTypeMap;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,10 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.annotation.RegEx;
-
-import kotlin.text.Regex;
 
 public class FileManager {
 

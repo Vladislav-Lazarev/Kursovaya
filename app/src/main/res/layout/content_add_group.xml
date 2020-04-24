@@ -51,14 +51,13 @@
 
     <Spinner
         android:id="@+id/spinnerCourse"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_marginEnd="15dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/spinnerSpeciality"
         android:layout_marginStart="71dp"
         android:layout_marginTop="23dp"
-        android:layout_toEndOf="@id/addCourseLabel"
-        android:entries = "@array/courses"/>
+        android:layout_toEndOf="@id/addCourseLabel"/>
 
     <EditText
         android:id="@+id/editTextGroupName"
@@ -70,8 +69,10 @@
         android:layout_marginTop="16dp"
         android:layout_toEndOf="@id/addCourseLabel"
         android:hint="@string/groupName_hint"
-        android:inputType="text"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:maxLength="30"
+        android:inputType="textCapWords"
+        />
 
 
 </RelativeLayout>

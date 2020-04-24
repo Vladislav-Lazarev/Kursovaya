@@ -163,4 +163,15 @@
     <string name="creationDatePDF">Creation date:</string>
     <string name="periodLabelPDF">Period:</string>
     <string name="restHeader">Rest:</string>
+    <string name="toast_check_name">Correctly fill in the \"Title\" field</string>
+    <string name="toast_check_speciality_and_number_of_hours">Select \"Specialty\" and fill in the \"Hours\" field</string>
+    <string name="enter_the_number_of_hours">Enter the number of hours</string>
+    <string name="activity_edit_subject">Subject editing</string>
+    <string name="activity_add_subject">Subject add</string>
+    <string name="activity_add_group">Group add</string>
+    <string name="activity_edit_group">Group editing</string>
+    <string name="toast_check_subject">Correctly fill in the \"Subject\" field</string>
+    <string name="toast_check_group">Correctly fill in the \"Group\" field</string>
+    <string name="toast_check_speciality_setting">Fill in the \"Specialty\" in Settings</string>
+    <string name="toast_check_subject_menu_bar">Fill in the \"Subject\" in the menu bar</string>
 </resources>

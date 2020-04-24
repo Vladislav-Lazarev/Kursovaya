@@ -7,12 +7,10 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.subjects.EditSubjectActivity"
     tools:showIn="@layout/activity_edit_subject">
-    <ScrollView
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
     <TextView
         android:id="@+id/editSpecialityLabel"
         android:layout_width="wrap_content"
@@ -59,15 +57,13 @@
 
     <Spinner
         android:id="@+id/spinnerCourse"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/spinnerSpeciality"
         android:layout_marginTop="23dp"
         android:layout_marginEnd="15dp"
         android:layout_marginStart="59dp"
-
-        android:layout_toEndOf="@id/editCourseLabel"
-        android:entries="@array/courses" />
+        android:layout_toEndOf="@id/editCourseLabel"/>
     <HorizontalScrollView
                 android:id="@+id/scrollView"
                 android:layout_width="match_parent"
@@ -83,8 +79,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/subjectName_hint"
-                    android:inputType="text"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:maxLength="30"
+                    android:inputType="textCapWords"
+                    />
     </HorizontalScrollView>
 
     <TextView
@@ -108,5 +106,4 @@
         android:layout_toEndOf="@id/editColorLabel"
         android:background="@drawable/round_button" />
         </RelativeLayout>
-    </ScrollView>
 </RelativeLayout>

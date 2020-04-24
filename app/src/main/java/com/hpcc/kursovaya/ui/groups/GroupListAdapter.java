@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.query.DBManager;
 
 import java.util.List;
 

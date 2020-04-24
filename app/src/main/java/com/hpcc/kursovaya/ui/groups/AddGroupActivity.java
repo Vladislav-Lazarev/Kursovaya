@@ -11,16 +11,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 import com.hpcc.kursovaya.ui.subjects.AddSubjectActivity;
 
@@ -62,7 +63,7 @@ public class AddGroupActivity extends AppCompatActivity {
         ab.setDisplayShowTitleEnabled(false);
 
         TextView textCont = (TextView)findViewById(R.id.toolbar_title);
-        textCont.setText("Додавання групи");
+        textCont.setText(R.string.activity_add_group);
 
         ImageButton addButton = findViewById(R.id.create_group);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -81,14 +82,21 @@ public class AddGroupActivity extends AppCompatActivity {
                         new Speciality().entityToNameList());
         listenerSpinnerSpeciality(spinnerSpeciality);
 
-        Spinner spinnerCourse = (Spinner) findViewById(R.id.spinnerCourse);
-        listenerSpinnerCourse(spinnerCourse);
-
         groupEditText = findViewById(R.id.editTextGroupName);
     }
 
     private void addGroup(){
-        group.setName(groupEditText.getText().toString());
+        String strGroup = groupEditText.getText().toString();
+        if (!ConstantApplication.checkUISpeciality(strGroup)){
+            Toast.makeText(this, R.string.toast_check_speciality_setting, Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (!ConstantApplication.checkUIGroup(strGroup)){
+            groupEditText.setError(getString(R.string.toast_check_name));
+            return;
+        }
+
+        group.setName(strGroup);
 
         Intent intent = getIntent();
         intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_ADD), group);
@@ -103,6 +111,12 @@ public class AddGroupActivity extends AppCompatActivity {
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 String item = (String) parent.getItemAtPosition(selectedItemPosition);
                 Speciality speciality = DBManager.read(Speciality.class, ConstantApplication.NAME, item);
+
+                Spinner spinnerCourse =
+                        ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                ConstantApplication.countCourse(speciality.getCountCourse()));
+                listenerSpinnerCourse(spinnerCourse);
+
                 group.setSpecialty(speciality);
             }
             public void onNothingSelected(AdapterView<?> parent) {

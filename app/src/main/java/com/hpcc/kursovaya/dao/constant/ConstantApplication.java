@@ -1,4 +1,4 @@
-package com.hpcc.kursovaya.dao.entity.constant;
+package com.hpcc.kursovaya.dao.constant;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
@@ -8,18 +8,20 @@ import android.widget.Spinner;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class ConstantApplication {
 
     public static final int ALARM_FLAG = 67;
-    public static int[][][] timeArray = { {{8,0},{8,50}},
-                                          {{9,45},{10,35}},
-                                          {{11,55},{12,45}},
-                                          {{13,40},{14,30}},
-                                          {{15,25},{16,20}} };
+    public static int[][][] timeArray = { {{8,0}, {8,50}},
+                                          {{9,45}, {10,35}},
+                                          {{11,55}, {12,45}},
+                                          {{13,40}, {14,30}},
+                                          {{15,25}, {16,15}} };
 
     public static final int ZERO = 0;
     public static final int ONE = 1;
@@ -73,6 +75,13 @@ public class ConstantApplication {
         }
         return mapInt;
     }
+    public static List<String> countCourse(int countCourse){
+        List<String> result = new ArrayList<>();
+        for (int i = 1; i <= countCourse; i++) {
+            result.add(String.valueOf(i));
+        }
+        return result;
+    }
 
     public static Spinner fillingSpinner(Context context, Spinner spinner, List<String> stringList){
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, stringList);
@@ -98,7 +107,28 @@ public class ConstantApplication {
     public static final String PATTERN_DATE_TIME = "dd/MM/yyyy HH:mm:ss";
     public static final String MIN_DATE_TIME = "01/01/1990 00:00:00";
 
+    public static final String PATTERN_SPECIALITY = "^\\p{Upper}\\p{Lower}+([\\s-]\\p{Lower}{3})*|\\p{Upper}{3,}$";
+    public static final String PATTERN_GROUP = "^\\p{Upper}+-?\\d{2,}$";
+    public static final String PATTERN_SUBJECT = PATTERN_SPECIALITY;
+    //public static final String PATTERN_SUBJECT_HOUR = "^([1-9])\\d+|0[3-9]\\d$";
+    public static final String PATTERN_TEMPLATE = "^[\\p{Alnum}\\p{Punct}][\\s\\p{Alnum}\\p{Punct}]*$";
 
-
+    // checkUI
+    public static boolean checkUISpeciality(String str){
+        return Pattern.matches(PATTERN_SPECIALITY, str);
+    }
+    public static boolean checkUIGroup(String str){
+        return Pattern.matches(PATTERN_GROUP, str);
+    }
+    public static boolean checkUISubject(String str){
+        return Pattern.matches(PATTERN_SUBJECT, str);
+    }
+    /*public static boolean checkUISubjectHour(String str){
+        pattern = Pattern.compile(PATTERN_SUBJECT_HOUR);
+        return pattern.matcher(str).matches();
+    }*/
+    public static boolean checkUITemplate(String str){
+        return Pattern.matches(PATTERN_TEMPLATE, str);
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

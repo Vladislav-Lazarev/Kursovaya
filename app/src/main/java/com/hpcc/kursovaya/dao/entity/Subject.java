@@ -8,11 +8,11 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.AcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateAcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.lesson.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
+import com.hpcc.kursovaya.dao.query.DBManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -353,7 +353,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         RealmResults<Speciality> existingEntities =
                 DBManager.readAll(Speciality.class, ConstantApplication.NAME, this.getName());
         for (Speciality entity : existingEntities) {
-            if (this.equals(entity)) {
+            if (this.getName().equals(entity.getName()) && this.getId() != entity.getId()) {
                 return true;
             }
         }

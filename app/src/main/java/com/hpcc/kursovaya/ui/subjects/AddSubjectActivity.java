@@ -23,16 +23,17 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.query.DBManager;
+import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.LinkedHashMap;
@@ -43,11 +44,14 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class AddSubjectActivity extends AppCompatActivity {
     private static final String TAG = AddSubjectActivity.class.getSimpleName();
+    private final Context currentContext = this;
 
     private Button colorPickButton;
     private EditText subjectEditText;
 
     private Map<Speciality, EditText> map = new LinkedHashMap<>();
+    private final List<Speciality> specialityList = DBManager.copyObjectFromRealm(
+            DBManager.readAll(Speciality.class, ConstantApplication.ID));
     private Subject subject = new Subject();
     private long mLastClickTime = 0;
 
@@ -78,7 +82,7 @@ public class AddSubjectActivity extends AppCompatActivity {
         ab.setDisplayShowTitleEnabled(false);
 
         TextView textCont = (TextView)findViewById(R.id.toolbar_title);
-        textCont.setText("Додавання предмету");
+        textCont.setText(R.string.activity_add_subject);
 
         colorPickButton = (Button) findViewById(R.id.pickColorBtn);
         GradientDrawable background = (GradientDrawable) colorPickButton.getBackground();
@@ -98,9 +102,18 @@ public class AddSubjectActivity extends AppCompatActivity {
         });
 
         LinearLayout parent = findViewById(R.id.spinnerSpeciality);
+        ImageButton addButton = findViewById(R.id.create_subject);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                addSubject();
+            }
+        });
 
-        final List<Speciality> specialityList = DBManager.copyObjectFromRealm(
-                DBManager.readAll(Speciality.class, ConstantApplication.ID));
         for(int i = 0 ; i< specialityList.size();i++){
             LinearLayout specLayout = new LinearLayout(this);
             specLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -110,19 +123,8 @@ public class AddSubjectActivity extends AppCompatActivity {
             specLayout.setLayoutParams(LLParams);
             final EditText hourEditTxt = new EditText(this);
             CheckBox checkSpecHour = new CheckBox(this);
-            final Speciality speciality = specialityList.get(i);
-            checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        map.put(speciality, hourEditTxt);
-                    } else {
-                        map.remove(speciality);
-                    }
-                    hourEditTxt.setEnabled(isChecked);
-                    Log.d(TAG, map.toString());
-                }
-            });
+            final Speciality finalSpeciality = specialityList.get(i);
+            fillingCheckBox(checkSpecHour, finalSpeciality, hourEditTxt);
 
             LinearLayout.LayoutParams checkBoxParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,2);
             checkSpecHour.setLayoutParams(checkBoxParams);
@@ -140,14 +142,14 @@ public class AddSubjectActivity extends AppCompatActivity {
             LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,2);
             hourEditTxt.setWidth(0);
             hourEditTxt.setInputType(InputType.TYPE_CLASS_NUMBER);
-            int maxLength = 4;
+            int maxLength = 3;
             InputFilter[] fArray = new InputFilter[1];
             fArray[0] = new InputFilter.LengthFilter(maxLength);
             hourEditTxt.setFilters(fArray);
             hourEditTxt.setSingleLine(false);
             hourEditTxt.setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
             hourEditTxt.setLayoutParams(etParams);
-            hourEditTxt.setHint("Введіть кількість годин");
+            hourEditTxt.setHint(R.string.enter_the_number_of_hours);
             hourEditTxt.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
             hourEditTxt.setEnabled(false);
 
@@ -157,23 +159,38 @@ public class AddSubjectActivity extends AppCompatActivity {
 
             parent.addView(specLayout);
 
-            Spinner spinnerCourse = (Spinner) findViewById(R.id.spinnerCourse);
-            listenerSpinnerCourse(spinnerCourse);
-
             subjectEditText = findViewById(R.id.editTextSubjectName);
-
-            ImageButton addButton = findViewById(R.id.create_subject);
-            addButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    addSubject();
-                }
-            });
         }
+    }
+
+    private void fillingCheckBox(CheckBox checkSpecHour, Speciality finalSpeciality, EditText hourEditTxt) {
+        checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    map.put(finalSpeciality, hourEditTxt);
+                } else {
+                    map.remove(finalSpeciality);
+                }
+
+                int countCourse = 1;
+                while (countCourse != 0 && ++countCourse <= 4) {
+                    for (Speciality sp : map.keySet()){
+                        if (countCourse > sp.getCountCourse()){
+                            Spinner spinnerCourse =
+                                    ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                            ConstantApplication.countCourse(sp.getCountCourse()));
+                            countCourse = 0;
+                            listenerSpinnerCourse(spinnerCourse);
+                            break;
+                        }
+                    }
+                }
+
+                hourEditTxt.setEnabled(isChecked);
+                Log.d(TAG,"Filling out = " + map.toString());
+            }
+        });
     }
 
     @Override
@@ -183,8 +200,24 @@ public class AddSubjectActivity extends AppCompatActivity {
 
 
     private void addSubject(){
-        subject.setName(subjectEditText.getText().toString())
-                .setSpecialityCountHourMap(ConstantApplication.convertMapEditTextToMapInt(map));
+        if (specialityList.isEmpty()){
+            Toast.makeText(currentContext, R.string.toast_check_speciality_setting, Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (map.isEmpty()){
+            Toast.makeText(currentContext, R.string.toast_check_speciality_and_number_of_hours, Toast.LENGTH_LONG).show();
+            return;
+        }
+        String strSubject = subjectEditText.getText().toString();
+        if (!ConstantApplication.checkUISubject(strSubject)){
+            subjectEditText.setError(getString(R.string.toast_check_name));
+            return;
+        }
+
+        Map<Speciality, Integer> resultMap = ConstantApplication.convertMapEditTextToMapInt(map);
+
+        subject.setName(strSubject)
+                .setSpecialityCountHourMap(resultMap);
 
         Intent intent = getIntent();
         intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_ADD), subject);

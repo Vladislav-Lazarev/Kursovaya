@@ -19,7 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.entity.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.setting.BackupDB;
 import com.hpcc.kursovaya.dao.entity.setting.FileManager;
 import com.jakewharton.processphoenix.ProcessPhoenix;
