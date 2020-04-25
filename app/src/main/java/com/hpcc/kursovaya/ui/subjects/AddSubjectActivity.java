@@ -191,6 +191,7 @@ public class AddSubjectActivity extends AppCompatActivity {
                 Log.d(TAG,"Filling out = " + map.toString());
             }
         });
+
     }
 
     @Override
