@@ -73,7 +73,6 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Vlad Code
     public void write(Speciality object) {
         if (object.existsEntity()) {
             Log.d(TAG, "And\\Edit Entity = " + object);

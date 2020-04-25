@@ -83,7 +83,6 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Vlad Code
     public void write(Group object) {
         if (object.existsEntity()) {
             Log.d(TAG, "And\\Edit Entity = " + object);

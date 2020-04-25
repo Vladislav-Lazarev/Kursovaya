@@ -104,7 +104,6 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
         subjectList = objects;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Vlad Code
     public void write(Subject object) {
         if (object.existsEntity()) {
             Log.d(TAG, "And\\Edit Entity = " + object);
