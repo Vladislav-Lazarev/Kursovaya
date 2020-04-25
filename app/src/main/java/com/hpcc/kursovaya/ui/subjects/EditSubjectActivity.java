@@ -115,10 +115,11 @@ public class EditSubjectActivity extends AppCompatActivity {
 
             final Speciality finalSpeciality = specialityList.get(i);
             if (subject.containsKeySpecialityCountHour(finalSpeciality)){
-                map.put(finalSpeciality, hourEditTxt);
+                checkSpecHour.setClickable(true);
                 checkSpecHour.setChecked(true);
                 hourEditTxt.setEnabled(true);
                 hourEditTxt.setText(String.valueOf(subject.getSpecialityCountHour(finalSpeciality)));
+                map.put(finalSpeciality, hourEditTxt);
             }
             fillingCheckBox(checkSpecHour, finalSpeciality, hourEditTxt);
 
@@ -183,24 +184,25 @@ public class EditSubjectActivity extends AppCompatActivity {
                     map.remove(finalSpeciality);
                 }
 
-                int countCourse = 1;
-                while (countCourse != 0 && ++countCourse <= 4) {
-                    for (Speciality sp : map.keySet()){
-                        if (countCourse > sp.getCountCourse()){
-                            Spinner spinnerCourse =
-                                    ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                                            ConstantApplication.countCourse(sp.getCountCourse()));
-                            countCourse = 0;
-                            listenerSpinnerCourse(spinnerCourse);
-                            break;
-                        }
-                    }
-                }
-
                 hourEditTxt.setEnabled(isChecked);
                 Log.d(TAG,"Filling out = " + map.toString());
             }
         });
+
+        int countCourse = 1;
+        while (countCourse != 0 && ++countCourse <= 4) {
+            for (Speciality sp : map.keySet()){
+                if (countCourse > sp.getCountCourse()){
+
+                    Spinner spinnerCourse =
+                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                    ConstantApplication.countCourse(sp.getCountCourse()));
+                    countCourse = 0;
+                    listenerSpinnerCourse(spinnerCourse);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
