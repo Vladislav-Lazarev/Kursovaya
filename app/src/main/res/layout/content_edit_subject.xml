@@ -7,66 +7,65 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.subjects.EditSubjectActivity"
     tools:showIn="@layout/activity_edit_subject">
-    <ScrollView
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/editSpecialityLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="26dp"
-                android:text="@string/specialty_label"
-                android:textColor="@color/appDefaultBlack"
-                android:textSize="16sp" />
+    <TextView
+        android:id="@+id/editSpecialityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="26dp"
+        android:text="@string/specialty_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/editCourseLabel"
-                android:text="@string/course_label"
-                android:textColor="@color/appDefaultBlack"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="23dp"
-                android:layout_below="@id/spinnerSpeciality"/>
+    <TextView
+        android:id="@+id/editCourseLabel"
+        android:text="@string/course_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/spinnerSpeciality"/>
 
-            <TextView
-                android:id="@+id/editSubjectNameLabel"
-                android:text="@string/groupName_label"
-                android:textColor="@color/appDefaultBlack"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="23dp"
-                android:layout_below="@id/editCourseLabel"/>
+    <TextView
+        android:id="@+id/editSubjectNameLabel"
+        android:text="@string/groupName_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/editCourseLabel"/>
 
 
-            <LinearLayout
-                android:id="@+id/spinnerSpeciality"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                android:layout_marginTop="23dp"
-                android:layout_toEndOf="@id/editSpecialityLabel"
-                android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/spinnerSpeciality"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="23dp"
+        android:layout_toEndOf="@id/editSpecialityLabel"
+        android:orientation="vertical">
 
-            </LinearLayout>
+    </LinearLayout>
 
-            <Spinner
-                android:id="@+id/spinnerCourse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/spinnerSpeciality"
-                android:layout_marginTop="23dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginStart="59dp"
-                android:layout_toEndOf="@id/editCourseLabel"/>
-            <HorizontalScrollView
+    <Spinner
+        android:id="@+id/spinnerCourse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerSpeciality"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="59dp"
+        android:layout_toEndOf="@id/editCourseLabel"
+        android:entries="@array/courses"/>
+    <HorizontalScrollView
                 android:id="@+id/scrollView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -85,30 +84,27 @@
                     android:maxLength="30"
                     android:inputType="textCapWords"
                     />
-            </HorizontalScrollView>
+    </HorizontalScrollView>
 
-            <TextView
-                android:id="@+id/editColorLabel"
-                android:text="@string/color_label"
-                android:textColor="@color/appDefaultBlack"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="23dp"
-                android:layout_below="@id/editSubjectNameLabel"/>
+    <TextView
+        android:id="@+id/editColorLabel"
+        android:text="@string/color_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/editSubjectNameLabel"/>
 
-            <Button
-                android:id="@+id/pickColorBtn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_below="@id/scrollView"
-                android:layout_marginStart="62dp"
-                android:layout_marginTop="1dp"
-                android:layout_toEndOf="@id/editColorLabel"
-                android:background="@drawable/round_button" />
+    <Button
+        android:id="@+id/pickColorBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/scrollView"
+        android:layout_marginStart="62dp"
+        android:layout_marginTop="1dp"
+        android:layout_toEndOf="@id/editColorLabel"
+        android:background="@drawable/round_button" />
         </RelativeLayout>
-    </ScrollView>
-
-
 </RelativeLayout>

@@ -36,6 +36,7 @@ import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,7 +164,7 @@ public class AddSubjectActivity extends AppCompatActivity {
         }
         Spinner spinnerCourse =
                 ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                        findViewById(R.array.courses));
+                        Arrays.asList(getResources().getStringArray(R.array.courses)));
         listenerSpinnerCourse(spinnerCourse);
     }
 

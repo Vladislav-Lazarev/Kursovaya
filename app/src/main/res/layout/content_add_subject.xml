@@ -7,106 +7,103 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.subjects.AddSubjectActivity"
     tools:showIn="@layout/activity_add_subject">
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/addSpecialityLabel"
-            android:text="@string/specialty_label"
-            android:textColor="@color/appDefaultBlack"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
-            android:layout_marginStart="15dp"/>
+    <TextView
+        android:id="@+id/addSpecialityLabel"
+        android:text="@string/specialty_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:layout_marginStart="15dp"/>
 
-        <TextView
-            android:id="@+id/addCourseLabel"
-            android:text="@string/course_label"
-            android:textColor="@color/appDefaultBlack"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="23dp"
-            android:layout_below="@id/spinnerSpeciality"/>
+    <TextView
+        android:id="@+id/addCourseLabel"
+        android:text="@string/course_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/spinnerSpeciality"/>
 
-        <TextView
-            android:id="@+id/addSubjectNameLabel"
-            android:text="@string/groupName_label"
-            android:textColor="@color/appDefaultBlack"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="23dp"
-            android:layout_below="@id/addCourseLabel"/>
+    <TextView
+        android:id="@+id/addSubjectNameLabel"
+        android:text="@string/groupName_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/addCourseLabel"/>
 
-        <LinearLayout
-            android:id="@+id/spinnerSpeciality"
-            android:layout_marginStart="9dp"
-            android:layout_marginTop="23dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toEndOf="@id/addSpecialityLabel">
+    <LinearLayout
+        android:id="@+id/spinnerSpeciality"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="23dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toEndOf="@id/addSpecialityLabel">
 
-        </LinearLayout>
-        <Spinner
-            android:id="@+id/spinnerCourse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/spinnerSpeciality"
-            android:layout_marginStart="71dp"
-            android:layout_marginTop="23dp"
-            android:layout_marginEnd="15dp"
-            android:layout_toEndOf="@id/addCourseLabel"/>
+    </LinearLayout>
+    <Spinner
+        android:id="@+id/spinnerCourse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerSpeciality"
+        android:layout_marginStart="71dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="15dp"
+        android:layout_toEndOf="@id/addCourseLabel"
+        android:entries="@array/courses"/>
 
-        <HorizontalScrollView
-            android:id="@+id/scrollView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/spinnerCourse"
-            android:layout_toEndOf="@id/addCourseLabel"
-            android:layout_marginStart="71dp"
-            android:layout_marginTop="15dp"
-            android:fillViewport="true"
-            android:layout_marginEnd="15dp" >
-            <EditText
-                android:id="@+id/editTextSubjectName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="180dp"
-                android:hint="@string/subjectName_hint"
-                android:textSize="16sp"
-                android:maxLength="30"
-                android:inputType="textCapWords"
-                />
-        </HorizontalScrollView>
-        <TextView
-            android:id="@+id/addColorLabel"
-            android:text="@string/color_label"
-            android:textColor="@color/appDefaultBlack"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="23dp"
-            android:layout_below="@id/addSubjectNameLabel"/>
+    <HorizontalScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerCourse"
+        android:layout_toEndOf="@id/addCourseLabel"
+        android:layout_marginStart="71dp"
+        android:layout_marginTop="15dp"
+        android:fillViewport="true"
+        android:layout_marginEnd="15dp" >
+    <EditText
+        android:id="@+id/editTextSubjectName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="180dp"
+        android:hint="@string/subjectName_hint"
+        android:textSize="16sp"
+        android:maxLength="30"
+        android:inputType="textCapWords"
+        />
+    </HorizontalScrollView>
+    <TextView
+        android:id="@+id/addColorLabel"
+        android:text="@string/color_label"
+        android:textColor="@color/appDefaultBlack"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/addSubjectNameLabel"/>
 
-        <Button
-            android:id="@+id/pickColorBtn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_below="@id/scrollView"
-            android:layout_toEndOf="@id/addColorLabel"
-            android:layout_marginStart="65dp"
-            android:background="@drawable/round_button"/>
-    </RelativeLayout>
-</ScrollView>
-
+    <Button
+        android:id="@+id/pickColorBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/scrollView"
+        android:layout_toEndOf="@id/addColorLabel"
+        android:layout_marginStart="65dp"
+        android:background="@drawable/round_button"/>
+        </RelativeLayout>
 </RelativeLayout>
