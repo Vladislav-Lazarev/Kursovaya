@@ -227,6 +227,13 @@ public class EditSubjectActivity extends AppCompatActivity {
             checkSubject(strSubject);
             return;
         }
+        for (EditText editTextHour : map.values()){
+            if (!ConstantApplication.checkUISubjectHour(editTextHour.getText().toString())) {
+                Toast.makeText(currentContext, R.string.toast_check_speciality_and_number_of_hours, Toast.LENGTH_LONG).show();
+                checkSubject(strSubject);
+                return;
+            }
+        }
         checkSubject(strSubject);
 
         Map<Speciality, Integer> resultMap = ConstantApplication.convertMapEditTextToMapInt(map);
