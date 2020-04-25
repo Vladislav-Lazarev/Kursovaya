@@ -161,6 +161,10 @@ public class AddSubjectActivity extends AppCompatActivity {
 
             subjectEditText = findViewById(R.id.editTextSubjectName);
         }
+        Spinner spinnerCourse =
+                ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                        findViewById(R.array.courses));
+        listenerSpinnerCourse(spinnerCourse);
     }
 
     private void fillingCheckBox(CheckBox checkSpecHour, Speciality finalSpeciality, EditText hourEditTxt) {
@@ -173,7 +177,7 @@ public class AddSubjectActivity extends AppCompatActivity {
                     map.remove(finalSpeciality);
                 }
 
-                int countCourse = 1;
+                /*int countCourse = 1;
                 while (countCourse != 0 && ++countCourse <= 4) {
                     for (Speciality sp : map.keySet()){
                         if (countCourse > sp.getCountCourse()){
@@ -185,13 +189,13 @@ public class AddSubjectActivity extends AppCompatActivity {
                             break;
                         }
                     }
-                }
+                }*/
 
                 hourEditTxt.setEnabled(isChecked);
                 Log.d(TAG,"Filling out = " + map.toString());
             }
-        });
 
+        });
     }
 
     @Override
