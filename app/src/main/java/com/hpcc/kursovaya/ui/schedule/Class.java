@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,16 +46,14 @@ import java.util.Date;
 import java.util.List;
 
 public abstract class Class extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
-    private static final String CHANNEL_ID = "Class";
-    private static final int NOTIFY_ID = 1;
-
     protected AcademicHour currentAcademicHour;
     protected TemplateAcademicHour currentTemplateAcademicHour;
     protected ArrayList<AcademicHour> academicHourList;
     protected ArrayList<TemplateAcademicHour> templateAcademicHourList;
 
-    Intent intent;
     private static final String TAG = AddClass.class.getSimpleName() ;
+    protected final Context currentContext = this;
+    Intent intent;
     DateTime dayOfWeek;
     DateTime timeOfRing = new DateTime();
     int classDay = 0;
@@ -112,13 +112,42 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
         List<Group> groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
         GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto, groupList);
         groupNameSuggest.setAdapter(adapter);
-        Context savedContext = this;
+        groupNameSuggest.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String strGroup = s.toString();
+                Group group = DBManager.read(Group.class, ConstantApplication.NAME, strGroup);
+
+                if (!ConstantApplication.checkUIGroup(strGroup) || group == null){
+                    ConstantApplication.fillingSpinner(currentContext, subjectSpinner, new ArrayList<>());
+                    return;
+                }
+
+                currentTemplateAcademicHour.setGroup(group);
+                fillSpinnerByGroup(currentContext, subjectSpinner, group);
+
+                if (templateAcademicHourList.size() == ConstantApplication.TWO){
+                    templateAcademicHourList.set(ConstantApplication.ONE,
+                            templateAcademicHourList.get(ConstantApplication.ONE).setGroup(group));
+                }
+            }
+        });
         groupNameSuggest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Group pressedGroup = (Group) adapterView.getItemAtPosition(i);
                 currentTemplateAcademicHour.setGroup(pressedGroup);
-                fillSpinnerByGroup(savedContext, subjectSpinner, pressedGroup);
+                fillSpinnerByGroup(currentContext, subjectSpinner, pressedGroup);
 
                 if (templateAcademicHourList.size() == ConstantApplication.TWO){
                     templateAcademicHourList.set(ConstantApplication.ONE,

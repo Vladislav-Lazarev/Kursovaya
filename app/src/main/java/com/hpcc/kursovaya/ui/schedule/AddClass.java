@@ -7,9 +7,6 @@ import com.hpcc.kursovaya.R;
 import org.joda.time.DateTime;
 
 public class AddClass extends Class {
-    private static final String CHANNEL_ID = "Class";
-    private static final int NOTIFY_ID = 1;
-
     private static final String TAG = AddClass.class.getSimpleName() ;
 
     @Override

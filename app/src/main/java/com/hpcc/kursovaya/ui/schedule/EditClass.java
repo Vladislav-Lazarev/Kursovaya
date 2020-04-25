@@ -13,7 +13,6 @@ import org.joda.time.DateTime;
 public class EditClass extends Class {
     private int savedHourSize = 0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         intent = getIntent();
