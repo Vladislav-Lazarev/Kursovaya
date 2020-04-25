@@ -173,24 +173,24 @@ public class AddSubjectActivity extends AppCompatActivity {
                     map.remove(finalSpeciality);
                 }
 
+                int countCourse = 1;
+                while (countCourse != 0 && ++countCourse <= 4) {
+                    for (Speciality sp : map.keySet()){
+                        if (countCourse > sp.getCountCourse()){
+                            Spinner spinnerCourse =
+                                    ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                            ConstantApplication.countCourse(sp.getCountCourse()));
+                            countCourse = 0;
+                            listenerSpinnerCourse(spinnerCourse);
+                            break;
+                        }
+                    }
+                }
+
                 hourEditTxt.setEnabled(isChecked);
                 Log.d(TAG,"Filling out = " + map.toString());
             }
         });
-
-        int countCourse = 1;
-        while (countCourse != 0 && ++countCourse <= 4) {
-            for (Speciality sp : map.keySet()){
-                if (countCourse > sp.getCountCourse()){
-                    Spinner spinnerCourse =
-                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                                    ConstantApplication.countCourse(sp.getCountCourse()));
-                    countCourse = 0;
-                    listenerSpinnerCourse(spinnerCourse);
-                    break;
-                }
-            }
-        }
     }
 
     @Override
@@ -214,6 +214,14 @@ public class AddSubjectActivity extends AppCompatActivity {
             Toast.makeText(currentContext, R.string.toast_check_speciality_and_number_of_hours, Toast.LENGTH_LONG).show();
             checkSubject(strSubject);
             return;
+        }
+
+        for (EditText editTextHour : map.values()){
+            if (!ConstantApplication.checkUISubjectHour(editTextHour.getText().toString())) {
+                Toast.makeText(currentContext, R.string.toast_check_speciality_and_number_of_hours, Toast.LENGTH_LONG).show();
+                checkSubject(strSubject);
+                return;
+            }
         }
         checkSubject(strSubject);
 

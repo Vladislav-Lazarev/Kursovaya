@@ -110,7 +110,7 @@ public class ConstantApplication {
     public static final String PATTERN_SPECIALITY = "^\\p{Upper}\\p{Lower}+\\.?([\\s-]\\p{Alpha}\\p{Lower}+\\.?)*|\\p{Upper}{2,}$";
     public static final String PATTERN_GROUP = "^[\\p{Alnum}-]{2,}$";//"^\\p{Upper}+-?\\d{2,}$";
     public static final String PATTERN_SUBJECT = PATTERN_SPECIALITY;
-    //public static final String PATTERN_SUBJECT_HOUR = "^([1-9])\\d+|0[3-9]\\d$";
+    public static final String PATTERN_SUBJECT_HOUR = "^\\d+$";
     public static final String PATTERN_TEMPLATE = "^[\\p{Alnum}\\p{Punct}][\\s\\p{Alnum}\\p{Punct}]*$";
 
     // checkUI
@@ -123,10 +123,9 @@ public class ConstantApplication {
     public static boolean checkUISubject(String str){
         return Pattern.matches(PATTERN_SUBJECT, str);
     }
-    /*public static boolean checkUISubjectHour(String str){
-        pattern = Pattern.compile(PATTERN_SUBJECT_HOUR);
-        return pattern.matcher(str).matches();
-    }*/
+    public static boolean checkUISubjectHour(String str){
+        return Pattern.matches(PATTERN_SUBJECT_HOUR, str);
+    }
     public static boolean checkUITemplate(String str){
         return Pattern.matches(PATTERN_TEMPLATE, str);
     }
