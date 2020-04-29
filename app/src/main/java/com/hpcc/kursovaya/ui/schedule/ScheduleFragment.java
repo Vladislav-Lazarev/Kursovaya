@@ -6,9 +6,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -110,7 +112,10 @@ public class ScheduleFragment extends Fragment {
                 }
             };
             t.start();
-            pager.setCurrentItem(weekDifference, false);
+            Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
+            ImageButton toCurrentDayButton = toolbar.findViewById(R.id.toCurrentDay);
+            toCurrentDayButton.setOnClickListener(v -> pager.setCurrentItem(weekDifference));
+            pager.setCurrentItem(weekDifference, true);
             try {
                 t.join();
             } catch (InterruptedException e) {
@@ -184,9 +189,18 @@ public class ScheduleFragment extends Fragment {
         }
     }
 
-    public void refreshGrid(DateTime from, DateTime to) {
+    public void refreshGrid(int page){
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+        DateTime from = formatter.parseDateTime("01/01/1990 00:00:00");
+        from = from.plusWeeks(((MainActivity)getActivity()).getWeeksFromCurrent()).dayOfWeek().withMinimumValue();
+        DateTime to = from.dayOfWeek().withMaximumValue().plusDays(1);
+        from = from.minusDays(1);
+        refreshGrid(from, to, page);
+    }
+
+    public void refreshGrid(DateTime from, DateTime to, int page) {
         FragmentStatePagerAdapter a = (FragmentStatePagerAdapter) pager.getAdapter();
-        WeekViewFragment currentPage = (WeekViewFragment) a.instantiateItem(pager, weekDifference);
+        WeekViewFragment currentPage = (WeekViewFragment) a.instantiateItem(pager,page);
         currentPage.refreshGrid(from, to);
     }
 }

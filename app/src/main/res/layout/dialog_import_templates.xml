@@ -8,8 +8,10 @@
         android:layout_height="match_parent">
         <TextView
             android:id="@+id/popupUpperTemplate"
-            android:layout_width="100dp"
+            android:layout_toStartOf="@id/upperTemplateSpinner"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:text="@string/popup_upperWeekTemplate"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
@@ -17,38 +19,40 @@
             android:layout_marginStart="15dp"/>
         <Spinner
             android:id="@+id/upperTemplateSpinner"
-            android:layout_width="100dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/sideBar"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="26dp"
-            android:layout_marginStart="44dp"
             android:layout_marginEnd="15dp"
-            android:layout_toEndOf="@id/popupUpperTemplate"
             />
         <TextView
             android:id="@+id/popupBottomTemplate"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="@string/popup_bottomWeekTemplate"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
+            android:layout_alignParentStart="true"
             android:layout_marginTop="26dp"
+            android:layout_toStartOf="@id/bottomTemplateSpinner"
             android:layout_below="@id/popupUpperTemplate"
             android:layout_marginStart="15dp"/>
         <Spinner
             android:id="@+id/bottomTemplateSpinner"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/sideBar"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="26dp"
-            android:layout_marginStart="44dp"
             android:layout_marginEnd="15dp"
-            android:layout_below="@id/upperTemplateSpinner"
-            android:layout_toEndOf="@id/popupBottomTemplate"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/popupUpperTemplate"
             />
         <TextView
             android:id="@+id/popupFirstWeek"
@@ -57,17 +61,20 @@
             android:text="@string/popup_firstWeek"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
+            android:layout_alignParentStart="true"
             android:layout_marginTop="26dp"
+            android:layout_toStartOf="@id/popup_firstWeek_rgroup"
             android:layout_below="@id/popupBottomTemplate"
             android:layout_marginStart="15dp"/>
         <RadioGroup
             android:id="@+id/popup_firstWeek_rgroup"
             android:layout_width="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_below="@id/popupFirstWeek"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="10dp"
+            android:layout_below="@id/popupBottomTemplate"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
             android:layout_marginEnd="15dp">
             <RadioButton
                 android:id="@+id/popup_firstWeek_rgroup_upper"
@@ -93,7 +100,7 @@
             android:text="@string/popup_rangeLabel"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
-            android:layout_marginTop="26dp"
+            android:layout_marginTop="60dp"
             android:layout_below="@id/popup_firstWeek_rgroup"
             android:layout_marginStart="15dp"/>
 

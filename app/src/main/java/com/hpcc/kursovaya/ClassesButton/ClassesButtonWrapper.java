@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.widget.Button;
 
 import com.hpcc.kursovaya.R;
@@ -62,8 +63,17 @@ public class ClassesButtonWrapper {
 
     public void clearButtonContent(){
         drawableDef = context.getResources().getDrawable(R.drawable.hover_add);
-        DBManager.delete(TemplateAcademicHour.class,ConstantApplication.ID,academicHour.getTemplateAcademicHour().getId());
-        DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+        if(academicHour!=null && academicHour.getTemplateAcademicHour()!=null) {
+            DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, academicHour.getTemplateAcademicHour().getId());
+            DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+        }
+        btn.setBackground(drawableDef);
+        academicHour = null;
+        isBackgroundChanged = false;
+        btn.setText("");
+        isSelected=false;
+    }
+    public void clearButtonContentWithoutDeleting(){
         btn.setBackground(drawableDef);
         academicHour = null;
         isBackgroundChanged = false;
@@ -76,7 +86,13 @@ public class ClassesButtonWrapper {
 
     public void setAcademicHour(AcademicHour academicHour) {
         this.academicHour = academicHour;
-        btn.setBackgroundColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
+        GradientDrawable shape = new GradientDrawable();
+        shape.setShape(GradientDrawable.RECTANGLE);
+        shape.setCornerRadii(new float[] { 0, 0, 0, 0, 0, 0, 0, 0 });
+        shape.setColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
+        shape.setStroke(1, Color.BLACK);
+        btn.setBackground(shape);
+       // btn.setBackgroundColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
         btn.setText(academicHour.getTemplateAcademicHour().getGroup().getName());
         btn.setTextColor(Color.WHITE);
         btn.setShadowLayer(5,4,4,Color.BLACK);

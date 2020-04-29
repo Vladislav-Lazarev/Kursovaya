@@ -36,7 +36,8 @@ import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,8 @@ public class AddSubjectActivity extends AppCompatActivity {
 
     private Button colorPickButton;
     private EditText subjectEditText;
+    private Spinner spinnerCourse;
+    private int minCourseCount = 4;
 
     private Map<Speciality, EditText> map = new LinkedHashMap<>();
     private final List<Speciality> specialityList = DBManager.copyObjectFromRealm(
@@ -162,35 +165,62 @@ public class AddSubjectActivity extends AppCompatActivity {
 
             subjectEditText = findViewById(R.id.editTextSubjectName);
         }
-        Spinner spinnerCourse =
+
+        spinnerCourse =
                 ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                        Arrays.asList(getResources().getStringArray(R.array.courses)));
-        listenerSpinnerCourse(spinnerCourse);
+                        new ArrayList<>(Collections.singleton("Оберіть спеціальність")));
+        spinnerCourse.setEnabled(false);
     }
 
     private void fillingCheckBox(CheckBox checkSpecHour, Speciality finalSpeciality, EditText hourEditTxt) {
         checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                spinnerCourse.setEnabled(true);
+                int currCountCourse = finalSpeciality.getCountCourse();
                 if (isChecked) {
                     map.put(finalSpeciality, hourEditTxt);
+                    if(currCountCourse<=minCourseCount){
+                        minCourseCount = currCountCourse;
+                    }
                 } else {
                     map.remove(finalSpeciality);
+                    currCountCourse = 4;
+                    for (Speciality sp : map.keySet()){
+                        if (sp.getCountCourse() <= currCountCourse){
+                            currCountCourse = sp.getCountCourse();
+                            break;
+                        }
+                    }
+                    minCourseCount = currCountCourse;
+                }
+                if(map.size()!=0) {
+                    spinnerCourse =
+                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                    ConstantApplication.countCourse(minCourseCount));
+                    listenerSpinnerCourse(spinnerCourse);
+                } else {
+                    spinnerCourse =
+                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                    new ArrayList<>(Collections.singleton(getString(R.string.course_spinner_hint))));
+                    spinnerCourse.setEnabled(false);
+                    spinnerCourse.setOnItemSelectedListener(null);
                 }
 
-                /*int countCourse = 1;
-                while (countCourse != 0 && ++countCourse <= 4) {
+
+
+              /* // while (countCourse != 0 && ++countCourse <= 4) {
                     for (Speciality sp : map.keySet()){
-                        if (countCourse > sp.getCountCourse()){
-                            Spinner spinnerCourse =
+                        if (countCourse >= sp.getCountCourse()){
+                            spinnerCourse =
                                     ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
                                             ConstantApplication.countCourse(sp.getCountCourse()));
-                            countCourse = 0;
+                            countCourse = sp.getCountCourse();
                             listenerSpinnerCourse(spinnerCourse);
                             break;
                         }
                     }
-                }*/
+                //}*/
 
                 hourEditTxt.setEnabled(isChecked);
                 Log.d(TAG,"Filling out = " + map.toString());

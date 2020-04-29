@@ -3,6 +3,7 @@
     package="com.hpcc.kursovaya">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
 
     <application
@@ -14,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -30,6 +32,11 @@
         <receiver android:name=".AlarmClassReceiver">
             <intent-filter>
                 <action android:name="class.action.DISPLAY_NOTIFICATION"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".DeviceBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
         <activity

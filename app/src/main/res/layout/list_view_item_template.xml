@@ -9,13 +9,14 @@
         android:id="@+id/template_label"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@id/template_text"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="@string/template_label"
         android:textSize="16sp"
         android:textColor="@color/appDefaultBlack"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="6dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="15dp"
         android:layout_marginBottom="10dp"/>
 
     <TextView

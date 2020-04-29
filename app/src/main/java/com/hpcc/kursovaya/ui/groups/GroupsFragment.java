@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.ui.groups;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
@@ -60,6 +62,7 @@ public class GroupsFragment extends Fragment {
             // getActivity().setTitle("");
             final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
             FloatingActionButton button = root.findViewById(R.id.fab);
+            Context context = getActivity();
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -68,8 +71,12 @@ public class GroupsFragment extends Fragment {
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
 
-                    Intent intent = new Intent(getActivity(), AddGroupActivity.class);
-                    startActivityForResult(intent, ConstantApplication.ACTIVITY_ADD);
+                    if(DBManager.readAll(Speciality.class).size()!=0) {
+                        Intent intent = new Intent(getActivity(), AddGroupActivity.class);
+                        startActivityForResult(intent, ConstantApplication.ACTIVITY_ADD);
+                    } else {
+                        Toast.makeText(context, R.string.groups_fragment_no_specialities,Toast.LENGTH_LONG).show();
+                    }
                 }
             });
 

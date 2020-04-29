@@ -7,10 +7,12 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -33,7 +35,8 @@ import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,11 @@ public class EditSubjectActivity extends AppCompatActivity {
 
     private Button colorPickButton;
     private EditText subjectEditText;
+
+    private Spinner spinnerCourse;
+    private int minCourseCount = 4;
+
+
     private long mLastClickTime = 0;
 
 
@@ -121,6 +129,14 @@ public class EditSubjectActivity extends AppCompatActivity {
                 hourEditTxt.setEnabled(true);
                 hourEditTxt.setText(String.valueOf(subject.getSpecialityCountHour(finalSpeciality)));
                 map.put(finalSpeciality, hourEditTxt);
+                int currCountCourse = subject.getNumberCourse();
+                if(currCountCourse<=minCourseCount){
+                    minCourseCount = currCountCourse;
+                    spinnerCourse =
+                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                    ConstantApplication.countCourse(minCourseCount));
+                    listenerSpinnerCourse(spinnerCourse);
+                }
             }
             fillingCheckBox(checkSpecHour, finalSpeciality, hourEditTxt);
 
@@ -132,11 +148,6 @@ public class EditSubjectActivity extends AppCompatActivity {
             TextView specUI = new TextView(this);
             LinearLayout.LayoutParams textViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,6);
             specUI.setWidth(0);
-            int maxLength = 3;
-            InputFilter[] fArray = new InputFilter[1];
-            fArray[0] = new InputFilter.LengthFilter(maxLength);
-            hourEditTxt.setFilters(fArray);
-            hourEditTxt.setSingleLine(false);
             specUI.setLayoutParams(textViewParams);
             specUI.setText(specialityList.get(i).getName());
             specUI.setTextColor(getResources().getColor(R.color.appDefaultBlack));
@@ -144,6 +155,13 @@ public class EditSubjectActivity extends AppCompatActivity {
 
             LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,2);
             hourEditTxt.setWidth(0);
+            hourEditTxt.setInputType(InputType.TYPE_CLASS_NUMBER);
+            int maxLength = 3;
+            InputFilter[] fArray = new InputFilter[1];
+            fArray[0] = new InputFilter.LengthFilter(maxLength);
+            hourEditTxt.setFilters(fArray);
+            hourEditTxt.setSingleLine(false);
+            hourEditTxt.setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
             hourEditTxt.setLayoutParams(etParams);
             hourEditTxt.setHint(R.string.enter_the_number_of_hours);
             hourEditTxt.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
@@ -154,7 +172,7 @@ public class EditSubjectActivity extends AppCompatActivity {
 
             parent.addView(specLayout);
 
-            Spinner spinnerCourse = (Spinner) findViewById(R.id.spinnerCourse);
+            spinnerCourse = findViewById(R.id.spinnerCourse);
             listenerSpinnerCourse(spinnerCourse);
             spinnerCourse.setSelection(subject.getNumberCourse() - ConstantApplication.ONE);
 
@@ -173,20 +191,45 @@ public class EditSubjectActivity extends AppCompatActivity {
                 }
             });
         }
-        Spinner spinnerCourse =
+       /* Spinner spinnerCourse =
                 ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
                         Arrays.asList(getResources().getStringArray(R.array.courses)));
-        listenerSpinnerCourse(spinnerCourse);
+        listenerSpinnerCourse(spinnerCourse);*/
     }
 
     private void fillingCheckBox(CheckBox checkSpecHour, Speciality finalSpeciality, EditText hourEditTxt) {
         checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                spinnerCourse.setEnabled(true);
+                int currCountCourse = finalSpeciality.getCountCourse();
                 if (isChecked) {
                     map.put(finalSpeciality, hourEditTxt);
+                    if(currCountCourse<=minCourseCount){
+                        minCourseCount = currCountCourse;
+                    }
                 } else {
                     map.remove(finalSpeciality);
+                    currCountCourse = 4;
+                    for (Speciality sp : map.keySet()){
+                        if (sp.getCountCourse() <= currCountCourse){
+                            currCountCourse = sp.getCountCourse();
+                            break;
+                        }
+                    }
+                    minCourseCount = currCountCourse;
+                }
+                if(map.size()!=0) {
+                    spinnerCourse =
+                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                    ConstantApplication.countCourse(minCourseCount));
+                    listenerSpinnerCourse(spinnerCourse);
+                } else {
+                    spinnerCourse =
+                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                    new ArrayList<>(Collections.singleton(getString(R.string.course_spinner_hint))));
+                    spinnerCourse.setEnabled(false);
+                    spinnerCourse.setOnItemSelectedListener(null);
                 }
 
                 /*int countCourse = 1;
@@ -278,8 +321,13 @@ public class EditSubjectActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 String item = (String) parent.getItemAtPosition(selectedItemPosition);
-                int course = Integer.parseInt(item);
-                subject.setNumberCourse(course);
+                try {
+                    int course = Integer.parseInt(item);
+                    subject.setNumberCourse(course);
+                } catch (Exception ex){
+                    Log.e(TAG, ex.toString());
+                }
+
             }
             public void onNothingSelected(AdapterView<?> parent) {
             }

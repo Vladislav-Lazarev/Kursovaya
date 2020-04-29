@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +29,9 @@ import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.query.DBManager;
@@ -52,11 +57,15 @@ public class WeekViewFragment extends Fragment {
     private int weekFromCurrent;
     private DateTime firstDayOfWeek;
     private TextView[] dayHeaders;
+    private ImageButton toCurrentDay;
+    private TextView currentDayText;
     private static ImageButton cancelSelect;
     private static ImageButton cancelSelectCompleted;
     private static ImageButton cancelSelectCanceled;
+    private View weekView;
     private List<List<ClassesButtonWrapper>> classes = new ArrayList<>();
     private static ArrayList<ClassesButtonWrapper> selectedButtons = new ArrayList<>();
+    private boolean isCurrentWeek = false;
 
 
     public TextView[] getDayHeaders() {
@@ -141,6 +150,34 @@ public class WeekViewFragment extends Fragment {
         return monthStr;
     }
 
+    private GridLayout getCurrentGrid(View view, int dayOfWeek){
+        GridLayout layout = new GridLayout(getActivity());
+        switch (dayOfWeek){
+            case 1:
+                layout = view.findViewById(R.id.monGrid);
+                break;
+            case 2:
+                layout = view.findViewById(R.id.tueGrid);
+                break;
+            case 3:
+                layout = view.findViewById(R.id.wedGrid);
+                break;
+            case 4:
+                layout = view.findViewById(R.id.thuGrid);
+                break;
+            case 5:
+                layout = view.findViewById(R.id.friGrid);
+                break;
+            case 6:
+                layout = view.findViewById(R.id.satGrid);
+                break;
+            case 7:
+                layout = view.findViewById(R.id.sunGrid);
+                break;
+        }
+        return layout;
+    }
+
     private TextView[] getCurrentDayHeader(View view,int dayOfWeek){
         TextView[] dayHeader = new TextView[2];
         switch(dayOfWeek){
@@ -190,6 +227,7 @@ public class WeekViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         LocaleManager.setLocale(getActivity());
         final View view = inflater.inflate(R.layout.fragment_weekview, null);
+        weekView = view;
         final Context cntxt = getContext();
         Thread prepareDayHeadersThread = new Thread(){
             public void run(){
@@ -198,6 +236,8 @@ public class WeekViewFragment extends Fragment {
         };
         prepareDayHeadersThread.start();
         final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
+        toCurrentDay = toolbar.findViewById(R.id.toCurrentDay);
+        currentDayText = toolbar.findViewById(R.id.currentDayText);
         final Toolbar toolbar1 = ((MainActivity)getActivity()).getToolbar1();
         final Toolbar toolbarCompleted = ((MainActivity)getActivity()).getToolbarCompleteClasses();
         final Toolbar toolbarCanceled = ((MainActivity) getActivity()).getToolbarCanceledClasses();
@@ -311,25 +351,37 @@ public class WeekViewFragment extends Fragment {
                                 mLastClickTime = SystemClock.elapsedRealtime();
                                 if(!((MainActivity) getActivity()).isSelectMode()) {
                                     Intent intent;
-                                    if(classesButtonWrapperList.get(classHour).getBtn().getText().equals("")) {
-                                        intent = new Intent(getActivity(), AddClass.class);
-                                        intent.putExtra("classDay", classDay);
-                                        intent.putExtra("classHour", classHour);
-                                        intent.putExtra("dayOfWeek",firstDayOfWeek.plusDays(classDay).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
-                                        startActivityForResult(intent,ADD_CLASS);
-                                    } else{
-                                        intent = new Intent(getActivity(), EditClass.class);
-                                        intent.putExtra("classDay", classDay);
-                                        intent.putExtra("classHour", classHour);
-                                        intent.putExtra("dayOfWeek",firstDayOfWeek.plusDays(classDay).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
-                                        intent.putExtra("currentCell",classes.get(classDay).get(classHour).getAcademicHour());
-                                        int secondCellHour = classHour+((classHour % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1);
-                                        intent.putExtra("secondClassHour",secondCellHour);
-                                        intent.putExtra("secondCell",classes.get(classDay).get(secondCellHour).getAcademicHour());
-                                        startActivityForResult(intent,EDIT_CLASS);
-                                        //intent.putExtra("group",groupEnt);
-                                        //intent.putExtra("subject",subjectEnt);
-                                    }
+                                    if(DBManager.readAll(Speciality.class).size()!=0) {
+                                        if(DBManager.readAll(Group.class).size()!=0) {
+                                            if(DBManager.readAll(Subject.class).size()!=0) {
+                                                if (classesButtonWrapperList.get(classHour).getBtn().getText().equals("")) {
+                                                    intent = new Intent(getActivity(), AddClass.class);
+                                                    intent.putExtra("classDay", classDay);
+                                                    intent.putExtra("classHour", classHour);
+                                                    intent.putExtra("dayOfWeek", firstDayOfWeek.plusDays(classDay).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
+                                                    startActivityForResult(intent, ADD_CLASS);
+                                                } else {
+                                                    intent = new Intent(getActivity(), EditClass.class);
+                                                    intent.putExtra("classDay", classDay);
+                                                    intent.putExtra("classHour", classHour);
+                                                    intent.putExtra("dayOfWeek", firstDayOfWeek.plusDays(classDay).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
+                                                    intent.putExtra("currentCell", classes.get(classDay).get(classHour).getAcademicHour());
+                                                    int secondCellHour = classHour + ((classHour % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1);
+                                                    intent.putExtra("secondClassHour", secondCellHour);
+                                                    intent.putExtra("secondCell", classes.get(classDay).get(secondCellHour).getAcademicHour());
+                                                    startActivityForResult(intent, EDIT_CLASS);
+                                                    //intent.putExtra("group",groupEnt);
+                                                    //intent.putExtra("subject",subjectEnt);
+                                                }
+                                            }   else {
+                                                    Toast.makeText(cntxt, R.string.templates_fragment_no_subjects,Toast.LENGTH_LONG).show();
+                                                }
+                                            } else {
+                                                Toast.makeText(cntxt, R.string.templates_fragment_no_groups,Toast.LENGTH_LONG).show();
+                                            }
+                                        } else {
+                                            Toast.makeText(cntxt, R.string.templates_fragment_no_specialities,Toast.LENGTH_LONG).show();
+                                        }
 
 
 
@@ -374,19 +426,29 @@ public class WeekViewFragment extends Fragment {
 
         };
         t.start();
-        if(firstDayOfWeek.equals(DateTime.now().withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0).withMinuteOfHour(0).withMillisOfDay(0))){
-            TextView dayOfWeekHeader[] = getCurrentDayHeader(view, DateTime.now().getDayOfWeek());
-            dayOfWeekHeader[0].setBackground(ContextCompat.getDrawable(cntxt,R.drawable.grid_today));
-            dayOfWeekHeader[0].setTextColor(ContextCompat.getColor(cntxt,R.color.menuTextColor));
-            dayOfWeekHeader[1].setBackground(ContextCompat.getDrawable(cntxt,R.drawable.grid_today));
-            dayOfWeekHeader[1].setTextColor(ContextCompat.getColor(cntxt,R.color.menuTextColor));
-        }
-
         try {
             t.join();
             prepareDayHeadersThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        if(firstDayOfWeek.equals(DateTime.now().withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0).withMinuteOfHour(0).withMillisOfDay(0))){
+            toCurrentDay.setVisibility(View.GONE);
+            currentDayText.setVisibility(View.VISIBLE);
+            isCurrentWeek = true;
+            int dayOfWeek = DateTime.now().getDayOfWeek();
+            TextView dayOfWeekHeader[] = getCurrentDayHeader(view, dayOfWeek);
+            GridLayout layout = getCurrentGrid(view,dayOfWeek);
+            layout.setBackground(ContextCompat.getDrawable(cntxt,R.drawable.grid_today));
+            dayOfWeekHeader[0].setTextColor(ContextCompat.getColor(cntxt, R.color.menuTextColor));
+            dayOfWeekHeader[1].setTextColor(ContextCompat.getColor(cntxt, R.color.menuTextColor));
+            if(dayOfWeek<7){
+                for(int i = dayOfWeek+1; i<=7;i++){
+                    Drawable background = ContextCompat.getDrawable(cntxt,R.drawable.future_days_grid);
+                    GridLayout futureLayout = getCurrentGrid(view,i);
+                    futureLayout.setBackground(background);
+                }
+            }
         }
         //Thread fillButtons = new Thread(){
         //public void run() {
@@ -401,20 +463,24 @@ public class WeekViewFragment extends Fragment {
         return view;
     }
 
-    private void prepareDayHeaders(View view){
+    private void prepareDayHeaders(View view) {
         DateTime firstDayOfWeekCopy;
 
-        for(int i = 0; i<7;i++){
-            String viewDayHeader = "day"+i;
+        for (int i = 0; i < 7; i++) {
+            String viewDayHeader = "day" + i;
             firstDayOfWeekCopy = firstDayOfWeek.plusDays(i);
-            int dayRes = getResources().getIdentifier(viewDayHeader,"id",getActivity().getPackageName());
+            int dayRes = getResources().getIdentifier(viewDayHeader, "id", getActivity().getPackageName());
             dayHeaders[i] = (TextView) view.findViewById(dayRes);
             String dayOfMonth = Integer.toString(firstDayOfWeekCopy.getDayOfMonth());
             String monthOfYear = Integer.toString(firstDayOfWeekCopy.getMonthOfYear());
             StringBuilder sb = new StringBuilder();
-            sb = (dayOfMonth.length()==1 ? sb.append("0").append(dayOfMonth):sb.append(dayOfMonth));
+            sb = (dayOfMonth.length() == 1 ? sb.append("0").append(dayOfMonth) : sb.append(dayOfMonth));
             //sb = (monthOfYear.length()==1 ? sb.append("0").append(monthOfYear):sb.append(monthOfYear));
             dayHeaders[i].setText(sb.toString());
+            if (firstDayOfWeek.isAfter(DateTime.now().withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0).withMinuteOfHour(0).withMillisOfDay(0))) {
+                GridLayout layout = getCurrentGrid(weekView,i+1);
+                layout.setBackground(getResources().getDrawable(R.drawable.future_days_grid));
+            }
         }
     }
 
@@ -422,6 +488,7 @@ public class WeekViewFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_cut_classes_template);
         builder.setMessage(R.string.popup_uncut_classes_content);
+        builder.setCancelable(false);
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -469,6 +536,7 @@ public class WeekViewFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_cut_classes_template);
         builder.setMessage(R.string.popup_cut_classes_content);
+        builder.setCancelable(false);
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -512,6 +580,7 @@ public class WeekViewFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_complete_classes_template);
         builder.setMessage(R.string.popup_uncomplete_classes_content);
+        builder.setCancelable(false);
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -558,6 +627,7 @@ public class WeekViewFragment extends Fragment {
     private void prepareCompletedClassesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_complete_classes_template);
+        builder.setCancelable(false);
         builder.setMessage(R.string.popup_complete_classes_content);
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
@@ -616,6 +686,7 @@ public class WeekViewFragment extends Fragment {
                 onDeleteClassesAcceptClick();
             }
         });
+        builder.setCancelable(false);
         builder.setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -734,7 +805,21 @@ public class WeekViewFragment extends Fragment {
     }
 
     public void refreshGrid(DateTime from, DateTime to){
-        List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(from.toDate(),to.plusDays(6).toDate()));
+        if(isCurrentWeek){
+            toCurrentDay.setVisibility(View.GONE);
+            currentDayText.setVisibility(View.GONE);
+        } else {
+            toCurrentDay.setVisibility(View.VISIBLE);
+            currentDayText.setVisibility(View.VISIBLE);
+        }
+        List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(from.toDate(),to.toDate()));
+        for(List<ClassesButtonWrapper> classs : classes ){
+            for(ClassesButtonWrapper clazz : classs){
+                if(clazz!=null) {
+                    clazz.clearButtonContentWithoutDeleting();
+                }
+            }
+        }
         for(AcademicHour hour: academicHours){
             TemplateAcademicHour templateAcademicHour = hour.getTemplateAcademicHour();
             classes.get(templateAcademicHour.getNumberDayOfWeek()).get(templateAcademicHour.getNumberHalfPairButton()).setAcademicHour(hour);
@@ -746,15 +831,17 @@ public class WeekViewFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+        currentDayText.setVisibility(View.GONE);
         Log.d(TAG,Boolean.toString(((MainActivity)getActivity()).isLanguageChanged()) );
         if (isResumed() && !((MainActivity)getActivity()).isLanguageChanged()) {
+            ((MainActivity)getActivity()).setWeeksFromCurrent(weekFromCurrent);
             if(((MainActivity)getActivity()).isScheduleSelected()) {
                 StringBuilder title = new StringBuilder();
                 title.append(monthNumberToString(firstDayOfWeek.getMonthOfYear())).append(", ").append(firstDayOfWeek.getYear());
                 Log.d(TAG, firstDayOfWeek.toString());
+                refreshGrid(firstDayOfWeek,firstDayOfWeek.plusDays(6));
                 ((MainActivity) getActivity()).setActionBarTitle(title.toString());
             }
-            refreshGrid(firstDayOfWeek,firstDayOfWeek.plusDays(6));
         } else if (((MainActivity)getActivity()).isLanguageChanged()) {
             ((MainActivity) getActivity()).showOverflowMenu(false);
         }

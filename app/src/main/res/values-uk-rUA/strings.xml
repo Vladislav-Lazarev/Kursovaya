@@ -103,7 +103,7 @@
     <string name="specialty_cours_length">Кількість курсів:</string>
 
 
-    <string name="specialty_name_label">Назва спеціальності:</string>
+    <string name="specialty_name_label">Назва:</string>
     <string name="specialty_label">Спеціальність:</string>
     <string name="course_label">Курс:</string>
     <string name="groupName_label">Назва:</string>
@@ -248,4 +248,5 @@
     <string name="toast_check_group">Заповніть коректно поле \"Група\"</string>
     <string name="toast_check_speciality_setting">Заповніть \"Спеціальність\" в Настройках</string>
     <string name="toast_check_subject_menu_bar">Заповніть \"Предмет\" в меню барі</string>
+    <string name="course_spinner_hint">Оберіть спеціальність</string>
 </resources>

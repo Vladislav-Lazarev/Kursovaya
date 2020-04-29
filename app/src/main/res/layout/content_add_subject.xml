@@ -7,7 +7,9 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.subjects.AddSubjectActivity"
     tools:showIn="@layout/activity_add_subject">
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -62,8 +64,7 @@
         android:layout_marginStart="71dp"
         android:layout_marginTop="23dp"
         android:layout_marginEnd="15dp"
-        android:layout_toEndOf="@id/addCourseLabel"
-        android:entries="@array/courses"/>
+        android:layout_toEndOf="@id/addCourseLabel" />
 
     <HorizontalScrollView
         android:id="@+id/scrollView"
@@ -106,4 +107,5 @@
         android:layout_marginStart="65dp"
         android:background="@drawable/round_button"/>
         </RelativeLayout>
+</ScrollView>
 </RelativeLayout>

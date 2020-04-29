@@ -3,17 +3,14 @@
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:background="?android:attr/activatedBackgroundIndicator"
     android:descendantFocusability="blocksDescendants">
-    <RelativeLayout
-        android:id="@+id/labelBlock"
-        android:layout_alignParentStart="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-       >
+
         <TextView
             android:id="@+id/specialityName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/specialty_label"
+            android:layout_alignParentStart="true"
+
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
             android:layout_marginTop="10dp"
@@ -25,8 +22,10 @@
             android:id="@+id/courseName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/specialityName"
+            android:layout_below="@id/speciality_label"
             android:layout_marginStart="13dp"
+            android:layout_alignParentStart="true"
+
             android:layout_marginTop="9dp"
             android:text="@string/course_label"
             android:textColor="@color/appDefaultBlack"
@@ -38,8 +37,10 @@
             android:id="@+id/groupName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/courseName"
+            android:layout_below="@id/course_label"
             android:layout_marginStart="13dp"
+            android:layout_alignParentStart="true"
+
             android:layout_marginTop="6dp"
             android:layout_marginBottom="10dp"
             android:text="@string/subjectName_label"
@@ -47,19 +48,13 @@
             android:textSize="16sp" />
 
 
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/contentBlock"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@id/labelBlock"
-        android:layout_toStartOf="@id/subjectGroups"
-        android:layout_width="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content">
         <TextView
             android:id="@+id/speciality_label"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/specialityName"
+            android:layout_marginStart="10dp"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:text="sssssssssssssssssssssssssssssssssssssssssssssssssss"
             android:textColor="@color/appDefaultBlack"
@@ -68,6 +63,8 @@
             android:id="@+id/course_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_alignStart="@id/speciality_label"
             android:layout_below="@id/speciality_label"
             android:layout_marginTop="9dp"
             android:text="@string/textStub"
@@ -80,12 +77,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/course_label"
             android:layout_marginTop="6dp"
+            android:textAlignment="center"
             android:layout_marginBottom="10dp"
+            android:layout_alignStart="@id/speciality_label"
             android:text="@string/textStub"
             android:textColor="@color/appDefaultBlack"
             android:textSize="16sp" />
 
-    </RelativeLayout>
 
 
     <ImageButton

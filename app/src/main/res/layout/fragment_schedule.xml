@@ -7,13 +7,14 @@
     >
     <TextView
         android:id ="@+id/hoursLabel"
-        android:layout_height="36dp"
+        android:layout_height="33dp"
         android:layout_width="0dp"
+        android:textSize="12sp"
         android:layout_columnWeight="0.3"
         android:textColor="@color/appDefaultBlack"
         android:text="@string/hourLabelText"
         android:textAlignment="center"
-        android:background="@drawable/grid"
+        android:background="@drawable/grid_header"
         />
 
     <androidx.viewpager.widget.ViewPager
@@ -38,7 +39,7 @@
             android:layout_gravity="fill"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
-            android:background="@drawable/grid"
+            android:background="@drawable/grid_transparent"
             >
             <TextView
                 android:id="@+id/firstCoupleHeader"
@@ -78,7 +79,8 @@
             android:layout_gravity="fill"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
-            android:background="@drawable/grid">
+            android:background="@drawable/grid_transparent"
+            >
             <TextView
                 android:id="@+id/secondCoupleHeader"
                 android:layout_width="wrap_content"
@@ -118,7 +120,8 @@
             android:layout_gravity="fill"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
-            android:background="@drawable/grid">
+            android:background="@drawable/grid_transparent"
+            >
             <TextView
                 android:id="@+id/thirdCoupleHeader"
                 android:layout_width="wrap_content"
@@ -157,7 +160,8 @@
             android:layout_gravity="fill"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
-            android:background="@drawable/grid">
+            android:background="@drawable/grid_transparent"
+            >
             <TextView
                 android:id="@+id/fourthCoupleHeader"
                 android:layout_width="wrap_content"
@@ -197,7 +201,8 @@
             android:layout_gravity="fill"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
-            android:background="@drawable/grid">
+            android:background="@drawable/grid_transparent"
+            >
             <TextView
                 android:id="@+id/fifthCoupleHeader"
                 android:layout_width="wrap_content"

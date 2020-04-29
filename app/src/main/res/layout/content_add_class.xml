@@ -7,6 +7,12 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.schedule.AddClass"
     tools:showIn="@layout/activity_add_class">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <TextView
         android:id="@+id/group_name_label"
         android:layout_width="wrap_content"
@@ -157,5 +163,6 @@
         android:layout_marginStart="23dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="15dp" />
-
+    </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

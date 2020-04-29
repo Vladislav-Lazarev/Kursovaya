@@ -28,6 +28,29 @@
                 android:layout_gravity="center"
                 android:textColor="@color/appDefaultBlack"
                 android:textSize="20sp" />
+
+            <FrameLayout android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="right">
+            <ImageButton
+                android:id="@+id/toCurrentDay"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:adjustViewBounds="true"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_calendar_today_24px" />
+                <TextView
+                    android:id="@+id/currentDayText"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:textSize="12sp"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/appDefaultBlack"
+                    android:textAlignment="center"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:text="16"/>
+            </FrameLayout>
+
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.appcompat.widget.Toolbar

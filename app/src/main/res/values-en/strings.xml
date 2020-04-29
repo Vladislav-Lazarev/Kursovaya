@@ -59,7 +59,7 @@
     <string name="dialog_button_add">Add</string>
     <string name="specialty_list_label">Specialities</string>
     <string name="specialty_cours_length">Course quantity:</string>
-    <string name="specialty_name_label">Speciality name:</string>
+    <string name="specialty_name_label">Name:</string>
     <string name="specialty_label">Speciality:</string>
     <string name="course_label">Course:</string>
     <string name="groupName_label">Name:</string>
@@ -174,4 +174,5 @@
     <string name="toast_check_group">Correctly fill in the \"Group\" field</string>
     <string name="toast_check_speciality_setting">Fill in the \"Specialty\" in Settings</string>
     <string name="toast_check_subject_menu_bar">Fill in the \"Subject\" in the menu bar</string>
+    <string name="course_spinner_hint">Choose speciality</string>
 </resources>

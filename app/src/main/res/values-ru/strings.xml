@@ -59,7 +59,7 @@
     <string name="dialog_button_add">Добавить</string>
     <string name="specialty_list_label">Специальности</string>
     <string name="specialty_cours_length">Количество курсов:</string>
-    <string name="specialty_name_label">Название специальности:</string>
+    <string name="specialty_name_label">Название:</string>
     <string name="specialty_label">Специальность:</string>
     <string name="course_label">Курс:</string>
     <string name="groupName_label">Название:</string>
@@ -174,4 +174,5 @@
     <string name="toast_check_subject">Заполните корректно поле \"Предмет\"</string>
     <string name="toast_check_speciality_setting">Заполните \"Специальность\" в Настройках</string>
     <string name="toast_check_subject_menu_bar">Заполните \"Предмет\" в меню баре</string>
+    <string name="course_spinner_hint">Выберите специальность</string>
 </resources>

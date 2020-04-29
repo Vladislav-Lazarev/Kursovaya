@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:rowCount="2"
     android:columnCount="2"
-    android:background="@drawable/grid"
+    android:background="@android:color/white"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.templates.AddTemplateActivity"
     tools:showIn="@layout/activity_add_template">
@@ -17,145 +17,186 @@
       android:text="@string/hoursHeader"
       android:textColor="@color/appDefaultBlack"
       android:layout_gravity="fill"
-      android:background="@drawable/grid"
+      android:background="@drawable/grid_transparent"
       />
   <GridLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-      android:rowCount="2"
+      android:rowCount="1"
       android:columnCount="7"
       android:layout_gravity="fill">
-    <TextView
-        android:id="@+id/monHeader"
-        android:layout_width="0dp"
-        android:layout_columnWeight="1"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textColor="@color/appDefaultBlack"
-        android:text="@string/monHeader"
-        />
-    <TextView
-        android:id="@+id/tueHeader"
-        android:layout_width="0dp"
-        android:layout_columnWeight="1"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/tueHeader"
+    <GridLayout
+      android:columnCount="1"
+      android:rowCount="2"
+      android:layout_width="0dp"
+      android:layout_columnWeight="1"
+      android:background="@drawable/grid"
+      android:layout_height="wrap_content">
+      <TextView
+          android:id="@+id/monHeader"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_rowWeight="1"
+          android:textAlignment="center"
+          android:textColor="@color/appDefaultBlack"
+          android:text="@string/monHeader"
+          />
+      <TextView
+          android:id="@+id/day0"
+          android:layout_width="match_parent"
+          android:layout_rowWeight="1"
+          android:textColor="@color/appDefaultBlack"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/contentDateFiller"
+          />
+    </GridLayout>
 
-        />
-    <TextView
-        android:id="@+id/wedHeader"
+    <GridLayout
+        android:columnCount="1"
+        android:rowCount="2"
         android:layout_width="0dp"
         android:layout_columnWeight="1"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/wedHeader"
-        />
-    <TextView
-        android:id="@+id/thuHeader"
-        android:layout_width="0dp"
-        android:layout_columnWeight="1"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/thuHeader"
+        android:background="@drawable/grid"
+        android:layout_height="wrap_content">
+      <TextView
+          android:id="@+id/tueHeader"
+          android:layout_width="match_parent"
+          android:textColor="@color/appDefaultBlack"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/tueHeader"
+          />
+      <TextView
+          android:id="@+id/day1"
+          android:layout_width="match_parent"
+          android:textColor="@color/appDefaultBlack"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/contentDateFiller"
+          />
+    </GridLayout>
 
-        />
-    <TextView
-        android:id="@+id/friHeader"
+    <GridLayout
+        android:columnCount="1"
+        android:rowCount="2"
         android:layout_width="0dp"
         android:layout_columnWeight="1"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/friHeader"
-        />
-    <TextView
-        android:id="@+id/satHeader"
-        android:layout_width="0dp"
-        android:layout_columnWeight="1"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/satHeader"
-        />
-    <TextView
-        android:id="@+id/sunHeader"
-        android:layout_width="0dp"
-        android:layout_columnWeight="1"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/sunHeader"
-        />
+        android:background="@drawable/grid"
+        android:layout_height="wrap_content">
+      <TextView
+          android:id="@+id/wedHeader"
+          android:layout_width="match_parent"
+          android:textColor="@color/appDefaultBlack"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/wedHeader"
+          />
+      <TextView
+          android:id="@+id/day2"
+          android:layout_width="match_parent"
+          android:textColor="@color/appDefaultBlack"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/contentDateFiller"
+          />
+    </GridLayout>
 
-    <TextView
-        android:id="@+id/day0"
+    <GridLayout
+        android:columnCount="1"
+        android:rowCount="2"
         android:layout_width="0dp"
         android:layout_columnWeight="1"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_columnSpan="1"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/contentDateFiller"
-        />
-    <TextView
-        android:id="@+id/day1"
+        android:background="@drawable/grid"
+        android:layout_height="wrap_content">
+      <TextView
+          android:id="@+id/thuHeader"
+          android:layout_width="match_parent"
+          android:textColor="@color/appDefaultBlack"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/thuHeader" />
+      <TextView
+          android:id="@+id/day3"
+          android:layout_width="match_parent"
+          android:textColor="@color/appDefaultBlack"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/contentDateFiller"
+          />
+    </GridLayout>
+    <GridLayout
+        android:columnCount="1"
+        android:rowCount="2"
         android:layout_width="0dp"
         android:layout_columnWeight="1"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/contentDateFiller"
-        />
-    <TextView
-        android:id="@+id/day2"
-        android:layout_width="0dp"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_columnWeight="1"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/contentDateFiller"
-        />
-    <TextView
-        android:id="@+id/day3"
-        android:layout_width="0dp"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_columnWeight="1"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/contentDateFiller"
-        />
-    <TextView
-        android:id="@+id/day4"
-        android:layout_width="0dp"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_columnWeight="1"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/contentDateFiller"
+        android:background="@drawable/grid"
+        android:layout_height="wrap_content">
+      <TextView
+          android:id="@+id/friHeader"
+          android:layout_width="match_parent"
+          android:textColor="@color/appDefaultBlack"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/friHeader"
+          />
+      <TextView
+          android:id="@+id/day4"
+          android:layout_width="match_parent"
+          android:textColor="@color/appDefaultBlack"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/contentDateFiller"/>
 
-        />
-    <TextView
-        android:id="@+id/day5"
-        android:layout_width="0dp"
-        android:textColor="@color/appDefaultBlack"
-        android:layout_columnWeight="1"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/contentDateFiller"
+    </GridLayout>
 
-        />
-    <TextView
-        android:id="@+id/day6"
+    <GridLayout
+        android:columnCount="1"
+        android:rowCount="2"
         android:layout_width="0dp"
-        android:textColor="@color/appDefaultBlack"
         android:layout_columnWeight="1"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/contentDateFiller"
+        android:background="@drawable/grid"
+        android:layout_height="wrap_content">
+      <TextView
+          android:id="@+id/satHeader"
+          android:layout_width="match_parent"
+          android:textColor="@color/appDefaultBlack"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/satHeader"
+          />
 
-        />
+      <TextView
+          android:id="@+id/day5"
+          android:layout_width="match_parent"
+          android:textColor="@color/appDefaultBlack"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/contentDateFiller" />
+    </GridLayout>
+
+    <GridLayout
+        android:columnCount="1"
+        android:rowCount="2"
+        android:layout_width="0dp"
+        android:layout_columnWeight="1"
+        android:background="@drawable/grid"
+        android:layout_height="wrap_content">
+      <TextView
+          android:id="@+id/sunHeader"
+          android:layout_width="match_parent"
+          android:textColor="@color/weekend_color"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/sunHeader"
+          />
+
+      <TextView
+          android:id="@+id/day6"
+          android:layout_width="match_parent"
+          android:textColor="@color/weekend_color"
+          android:layout_height="wrap_content"
+          android:textAlignment="center"
+          android:text="@string/contentDateFiller"/>
+    </GridLayout>
 
   </GridLayout>
 
@@ -170,7 +211,7 @@
         android:layout_gravity="fill"
         android:layout_columnWeight="1"
         android:layout_rowWeight="1"
-        android:background="@drawable/grid"
+        android:background="@drawable/grid_transparent"
         >
       <TextView
           android:id="@+id/firstCoupleHeader"
@@ -181,7 +222,7 @@
           android:layout_columnWeight="1"
           android:layout_rowWeight="2"
           android:text="@string/firstCoupleHeader"
-          android:layout_gravity="center_vertical"
+          android:layout_gravity="center_horizontal|center_vertical"
           />
       <TextView
           android:id="@+id/firstHalfFirstCoupleHeader"
@@ -191,7 +232,8 @@
           android:layout_rowWeight="1"
           android:layout_columnWeight="1"
           android:text="@string/firstHalfCoupleHeader"
-          android:layout_gravity="center_vertical"/>
+          android:layout_gravity="center_horizontal|center_vertical"
+          />
       <TextView
           android:id="@+id/secondHalfFirstCoupleHeader"
           android:layout_width="wrap_content"
@@ -200,7 +242,8 @@
           android:layout_rowWeight="1"
           android:layout_columnWeight="1"
           android:text="@string/secondHalfCoupleHeader"
-          android:layout_gravity="center_vertical"/>
+          android:layout_gravity="center_horizontal|center_vertical"
+          />
     </GridLayout>
 
     <GridLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -209,7 +252,8 @@
         android:layout_gravity="fill"
         android:layout_columnWeight="1"
         android:layout_rowWeight="1"
-        android:background="@drawable/grid">
+        android:background="@drawable/grid_transparent"
+        >
       <TextView
           android:id="@+id/secondCoupleHeader"
           android:layout_width="wrap_content"
@@ -219,7 +263,7 @@
           android:layout_columnWeight="1"
           android:layout_rowWeight="2"
           android:text="@string/secondCoupleHeader"
-          android:layout_gravity="center_vertical"
+          android:layout_gravity="center_horizontal|center_vertical"
           />
       <TextView
           android:id="@+id/firstHalfSecondCoupleHeader"
@@ -229,7 +273,8 @@
           android:layout_rowWeight="1"
           android:layout_columnWeight="1"
           android:text="@string/firstHalfCoupleHeader"
-          android:layout_gravity="center_vertical"/>
+          android:layout_gravity="center_horizontal|center_vertical"
+          />
       <TextView
           android:id="@+id/secondHalfSecondCoupleHeader"
           android:layout_width="wrap_content"
@@ -238,7 +283,8 @@
           android:layout_rowWeight="1"
           android:layout_columnWeight="1"
           android:text="@string/secondHalfCoupleHeader"
-          android:layout_gravity="center_vertical"/>
+          android:layout_gravity="center_horizontal|center_vertical"
+          />
     </GridLayout>
 
     <GridLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -247,7 +293,8 @@
         android:layout_gravity="fill"
         android:layout_columnWeight="1"
         android:layout_rowWeight="1"
-        android:background="@drawable/grid">
+        android:background="@drawable/grid_transparent"
+        >
       <TextView
           android:id="@+id/thirdCoupleHeader"
           android:layout_width="wrap_content"
@@ -256,7 +303,7 @@
           android:layout_rowSpan="2"
           android:layout_columnWeight="1"
           android:text="@string/thirdCoupleHeader"
-          android:layout_gravity="center_vertical"
+          android:layout_gravity="center_horizontal|center_vertical"
           />
       <TextView
           android:id="@+id/firstHalfThirdCoupleHeader"
@@ -266,7 +313,8 @@
           android:layout_columnWeight="1"
           android:layout_rowWeight="1"
           android:text="@string/firstHalfCoupleHeader"
-          android:layout_gravity="center_vertical"/>
+          android:layout_gravity="center_horizontal|center_vertical"
+          />
       <TextView
           android:id="@+id/secondHalfThirdCoupleHeader"
           android:layout_width="wrap_content"
@@ -275,7 +323,8 @@
           android:layout_columnWeight="1"
           android:layout_rowWeight="1"
           android:text="@string/secondHalfCoupleHeader"
-          android:layout_gravity="center_vertical"/>
+          android:layout_gravity="center_horizontal|center_vertical"
+          />
     </GridLayout>
 
     <GridLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -284,7 +333,8 @@
         android:layout_gravity="fill"
         android:layout_columnWeight="1"
         android:layout_rowWeight="1"
-        android:background="@drawable/grid">
+        android:background="@drawable/grid_transparent"
+        >
       <TextView
           android:id="@+id/fourthCoupleHeader"
           android:layout_width="wrap_content"
@@ -293,7 +343,7 @@
           android:layout_rowSpan="2"
           android:layout_columnWeight="1"
           android:text="@string/fourthCoupleHeader"
-          android:layout_gravity="center_vertical"
+          android:layout_gravity="center_horizontal|center_vertical"
           />
       <TextView
           android:id="@+id/firstHalfFourthCoupleHeader"
@@ -303,7 +353,8 @@
           android:layout_columnWeight="1"
           android:layout_rowWeight="1"
           android:text="@string/firstHalfCoupleHeader"
-          android:layout_gravity="center_vertical"/>
+          android:layout_gravity="center_horizontal|center_vertical"
+          />
       <TextView
           android:id="@+id/secondHalfFourthCoupleHeader"
           android:layout_width="wrap_content"
@@ -312,7 +363,8 @@
           android:layout_columnWeight="1"
           android:layout_rowWeight="1"
           android:text="@string/secondHalfCoupleHeader"
-          android:layout_gravity="center_vertical"/>
+          android:layout_gravity="center_horizontal|center_vertical"
+          />
     </GridLayout>
 
     <GridLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -321,7 +373,8 @@
         android:layout_gravity="fill"
         android:layout_columnWeight="1"
         android:layout_rowWeight="1"
-        android:background="@drawable/grid">
+        android:background="@drawable/grid_transparent"
+        >
       <TextView
           android:id="@+id/fifthCoupleHeader"
           android:layout_width="wrap_content"
@@ -331,7 +384,7 @@
           android:layout_columnWeight="1"
           android:layout_rowWeight="2"
           android:text="@string/fifthCoupleHeader"
-          android:layout_gravity="center_vertical"
+          android:layout_gravity="center_horizontal|center_vertical"
           />
       <TextView
           android:id="@+id/firstHalfFifthCoupleHeader"
@@ -341,7 +394,8 @@
           android:layout_columnWeight="1"
           android:layout_rowWeight="1"
           android:text="@string/firstHalfCoupleHeader"
-          android:layout_gravity="center_vertical"/>
+          android:layout_gravity="center_horizontal|center_vertical"
+          />
       <TextView
           android:id="@+id/secondHalfFifthCoupleHeader"
           android:layout_width="wrap_content"
@@ -350,7 +404,8 @@
           android:layout_columnWeight="1"
           android:layout_rowWeight="1"
           android:text="@string/secondHalfCoupleHeader"
-          android:layout_gravity="center_vertical"/>
+          android:layout_gravity="center_horizontal|center_vertical"
+          />
     </GridLayout>
 
   </GridLayout>

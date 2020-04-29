@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.ui.templates;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,6 +28,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
 import com.hpcc.kursovaya.dao.query.DBManager;
 
@@ -55,6 +59,7 @@ public class TemplatesFragment extends Fragment {
             setHasOptionsMenu(false);
             root = inflater.inflate(R.layout.fragment_templates, container, false);
             listView = root.findViewById(R.id.templatesLSV);
+            Context context = getActivity();
             getActivity().setTitle("");
             FloatingActionButton button = root.findViewById(R.id.fab);
             button.setOnClickListener(new View.OnClickListener() {
@@ -64,9 +69,20 @@ public class TemplatesFragment extends Fragment {
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
-
-                    Intent intent = new Intent(getActivity(), AddTemplateActivity.class);
-                    startActivityForResult(intent, ConstantApplication.ACTIVITY_ADD);
+                    if(DBManager.readAll(Speciality.class).size()!=0) {
+                        if(DBManager.readAll(Group.class).size()!=0) {
+                            if(DBManager.readAll(Subject.class).size()!=0) {
+                                Intent intent = new Intent(getActivity(), AddTemplateActivity.class);
+                                startActivityForResult(intent, ConstantApplication.ACTIVITY_ADD);
+                            } else {
+                                Toast.makeText(context, R.string.templates_fragment_no_subjects,Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            Toast.makeText(context, R.string.templates_fragment_no_groups,Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(context, R.string.templates_fragment_no_specialities,Toast.LENGTH_LONG).show();
+                    }
                 }
             });
 

@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -113,6 +114,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean isOverflowShown = true;
     private TemplateScheduleWeek upperTemplate;
     private TemplateScheduleWeek bottomTemplate;
+    private ImageButton backToCurrentDay;
+    private TextView currentDayText;
+    private int weeksFromCurrent;
+
+
+
+    public int getWeeksFromCurrent() {
+        return weeksFromCurrent;
+    }
+
+    public void setWeeksFromCurrent(int weeksFromCurrent) {
+        this.weeksFromCurrent = weeksFromCurrent;
+    }
+
 
     public boolean isLanguageChanged() {
         return isLanguageChanged;
@@ -138,6 +153,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
+        TextView textCont = findViewById(R.id.toolbar_title);
+        textCont.setOnClickListener(v -> {
+            if(isScheduleSelected){
+                prepareActionDatePicker();
+            }
+        });
+        backToCurrentDay = toolbar.findViewById(R.id.toCurrentDay);
+        currentDayText = toolbar.findViewById(R.id.currentDayText);
+        currentDayText.setText(Integer.toString(DateTime.now().getDayOfMonth()));
         toolbar1 = findViewById(R.id.toolbarEdit);
         toolbarCompleteClasses = findViewById(R.id.toolbarComplete);
         toolbarCanceledClasses = findViewById(R.id.toolbarCancel);
@@ -259,18 +283,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_schedule:
                 String specTag1 = getResources().getString(R.string.scheduleTag);
                 Fragment oldFragment1 = manager.findFragmentByTag(specTag1);
-                if (oldFragment1 != null) {
+                if (!isLanguageChanged() && oldFragment1 != null) {
                     transaction.replace(R.id.nav_host_fragment,oldFragment1);
+                    ((ScheduleFragment)oldFragment1).refreshGrid(weeksFromCurrent);
                     ((ScheduleFragment)oldFragment1).setActionBarTitle();
-                    ((ScheduleFragment)oldFragment1).setCoupleHeaders();// transaction.addToBackStack(null);
+                    ((ScheduleFragment)oldFragment1).setCoupleHeaders();
+                   // transaction.addToBackStack(null);
                 } else {
                     transaction.add(R.id.nav_host_fragment, new ScheduleFragment());
+                    isLanguageChanged = false;
                 }
                 isScheduleSelected = true;
                 break;
             case R.id.nav_templates:
                 String specTag2 = getResources().getString(R.string.templatesTag);
                 Fragment oldFragment2 = manager.findFragmentByTag(specTag2);
+                backToCurrentDay.setVisibility(View.GONE);
+                currentDayText.setVisibility(View.GONE);
                 if (oldFragment2 != null) {
                     transaction.replace(R.id.nav_host_fragment, oldFragment2);
                     ((TemplatesFragment) oldFragment2).setActionBarTitle();
@@ -282,6 +311,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_groups:
                 String specTag3 = getResources().getString(R.string.groupsTag);
                 Fragment oldFragment3 = manager.findFragmentByTag(specTag3);
+                backToCurrentDay.setVisibility(View.GONE);
+                currentDayText.setVisibility(View.GONE);
                 if (oldFragment3 != null) {
                     transaction.replace(R.id.nav_host_fragment, oldFragment3);
                     ((GroupsFragment) oldFragment3).setActionBarTitle();
@@ -293,6 +324,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_subjects:
                 String specTag4 = getResources().getString(R.string.subjectsTag);
                 Fragment oldFragment4 = manager.findFragmentByTag(specTag4);
+                backToCurrentDay.setVisibility(View.GONE);
+                currentDayText.setVisibility(View.GONE);
                 if (oldFragment4 != null) {
                     transaction.replace(R.id.nav_host_fragment, oldFragment4);
                     ((SubjectsFragment) oldFragment4).setActionBarTitle();
@@ -305,6 +338,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_settings:
                 String specTag5 = getResources().getString(R.string.settingsTag);
                 Fragment oldFragment5 = manager.findFragmentByTag(specTag5);
+                backToCurrentDay.setVisibility(View.GONE);
+                currentDayText.setVisibility(View.GONE);
                 if (oldFragment5 != null) {
                     transaction.replace(R.id.nav_host_fragment, oldFragment5);
                     ((SettingsFragment) oldFragment5).setActionBarTitle();
@@ -644,6 +679,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.action_importTemplates);
         AtomicBoolean isUpperFirst = new AtomicBoolean(true);
+        builder.setCancelable(false);
         builder.setPositiveButton(R.string.popup_import,new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -815,7 +851,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 FragmentManager manager = getSupportFragmentManager();
                 Fragment oldFragment1 = manager.findFragmentByTag(getResources().getString(R.string.scheduleTag));
                 if (oldFragment1 != null){
-                    ((ScheduleFragment)oldFragment1).refreshGrid(from.dayOfWeek().withMinimumValue(),from.dayOfWeek().withMinimumValue().plusDays(6));
+                    ((ScheduleFragment)oldFragment1).refreshGrid(/*from.dayOfWeek().withMinimumValue(),from.dayOfWeek().withMinimumValue().plusDays(6),*/weeksFromCurrent);
                 }
             }
         } else {
@@ -854,7 +890,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void prepareActionDatePicker() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.action_datePicker);
         builder.setPositiveButton(R.string.popup_Follow,new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {

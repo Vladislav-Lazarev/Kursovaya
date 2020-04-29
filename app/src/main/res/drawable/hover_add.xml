@@ -19,7 +19,8 @@
     </item>
 
     <item>
-        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+        <inset android:insetTop="-2dp" android:insetLeft="-2dp">
+        <shape
             android:shape="rectangle" >
 
             <solid android:color="@color/menuTextColor" />
@@ -29,5 +30,6 @@
                 android:color="@color/appDefaultBlack" />
 
         </shape>
+        </inset>
     </item>
 </selector>

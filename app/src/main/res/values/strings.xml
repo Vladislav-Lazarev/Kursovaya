@@ -103,7 +103,7 @@
     <string name="specialty_cours_length">Кількість курсів:</string>
 
 
-    <string name="specialty_name_label">Назва спеціальності:</string>
+    <string name="specialty_name_label">Назва:</string>
     <string name="specialty_label">Спеціальність:</string>
     <string name="course_label">Курс:</string>
     <string name="groupName_label">Назва:</string>
@@ -245,4 +245,10 @@
     <string name="activity_add_subject">Додавання предмету</string>
     <string name="activity_edit_subject">Редагування предмету</string>
     <string name="enter_the_number_of_hours">Введіть кількість годин</string>
+    <string name="course_spinner_hint">Оберіть спеціальність</string>
+    <string name="groups_fragment_no_specialities">\"Не додано жодної спеціальності! Додайте спеціальність в налаштуваннях! \"</string>
+    <string name="subjects_fragment_no_specialities">\"Не додано жодної спеціальності! Додайте спеціальність в налаштуваннях! \"</string>
+    <string name="templates_fragment_no_specialities">\"Не додано жодної спеціальності! Додайте спеціальність в налаштуваннях! \"</string>
+    <string name="templates_fragment_no_groups">Не додано жодної групи! Додайте групи в пункті меню \"Групи\"</string>
+    <string name="templates_fragment_no_subjects">Не додано жодного предмету! Додайти предмети в пункті меню \"Предмети\"</string>
 </resources>

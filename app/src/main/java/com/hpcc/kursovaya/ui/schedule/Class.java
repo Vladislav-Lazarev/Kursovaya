@@ -83,6 +83,7 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
         templateAcademicHourList = new ArrayList<>(Collections.singletonList(new TemplateAcademicHour()));
         currentAcademicHour = academicHourList.get(ConstantApplication.ZERO);
         currentTemplateAcademicHour = templateAcademicHourList.get(ConstantApplication.ZERO);
+        currentTemplateAcademicHour.setDayAndPair(Pair.create(classDay,classHour));
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_path_150));
         //here place for getting classDay, classHour and Group\Subject entities
@@ -299,9 +300,10 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
             intent.putExtra("secondHour",academicHourList.get(1));
         }
 
-        if(notificationBefore) {
-            DateTime now = DateTime.now();
-            Seconds difference = Seconds.secondsBetween(now,timeOfRing);
+        DateTime now = DateTime.now();
+        Seconds difference = Seconds.secondsBetween(now,timeOfRing);
+        if(notificationBefore && difference.getSeconds()>0) {
+
             Log.d(TAG,timeOfRing.toString());
             Log.d(TAG, difference.toString());
             Calendar calendar = Calendar.getInstance();
