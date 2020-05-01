@@ -408,12 +408,20 @@ public class WeekViewFragment extends Fragment {
                             public boolean onLongClick(View v) {
                                 if(!((MainActivity) getActivity()).isSelectMode() &&
                                         !classesButtonWrapperList.get(classHour).getBtn().getText().equals("")) {
-                                    classesButtonWrapperList.get(classHour).setSelectBackground();
+
+                                    if(classesButtonWrapperList.get(classHour).isGroupNameShown()){
+                                        classesButtonWrapperList.get(classHour).getBtn().setText(classesButtonWrapperList.get(classHour).getAcademicHour().getTemplateAcademicHour().getSubject().getName());
+                                        classesButtonWrapperList.get(classHour).setGroupNameShown(false);
+                                    } else {
+                                        classesButtonWrapperList.get(classHour).getBtn().setText(classesButtonWrapperList.get(classHour).getAcademicHour().getTemplateAcademicHour().getGroup().getName());
+                                        classesButtonWrapperList.get(classHour).setGroupNameShown(true);
+                                    }
+                                    /*  classesButtonWrapperList.get(classHour).setSelectBackground();
                                     selectedButtons.add(classesButtonWrapperList.get(classHour));
                                     classesButtonWrapperList.get(classHour).setSelected(true);
                                     ((MainActivity) getActivity()).setSelectMode(true);
                                     toolbar.setVisibility(View.GONE);
-                                    toolbar1.setVisibility(View.VISIBLE);
+                                    toolbar1.setVisibility(View.VISIBLE);*/
                                     return true;
                                 }
                                 return false;

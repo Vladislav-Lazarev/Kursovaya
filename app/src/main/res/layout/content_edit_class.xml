@@ -28,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/sideBar"
+        android:hint="@string/auto_complete_text_view_hint"
         android:textSize="16sp"
         android:textColor="@color/appDefaultBlack"
         android:layout_marginTop="15dp"

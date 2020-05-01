@@ -291,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                    // transaction.addToBackStack(null);
                 } else {
                     transaction.add(R.id.nav_host_fragment, new ScheduleFragment());
+                    showOverflowMenu(true);
                     isLanguageChanged = false;
                 }
                 isScheduleSelected = true;
@@ -366,8 +367,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
-            case R.id.action_datePicker:
-                prepareActionDatePicker();
+            case R.id.action_deleteClasses:
+                setSelectMode(true);
+                toolbar.setVisibility(View.GONE);
+                toolbar1.setVisibility(View.VISIBLE);
+                //prepareActionDatePicker();
                 return true;
             case R.id.action_importTemplates:
                 prepareActionImportTemplates();
@@ -383,7 +387,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 toolbarCanceledClasses.setVisibility(View.VISIBLE);
                 return true;
             case R.id.action_reportPeriod:
-                prepareReporDatePicker();
+                if(DBManager.readAll(Speciality.class).size()!=0) {
+                    prepareReporDatePicker();
+                } else {
+                    Toast.makeText(currentContext, R.string.toast_check_speciality_setting, Toast.LENGTH_LONG).show();
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -407,11 +415,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         builder.setPositiveButton(R.string.popup_gen_report, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (spinnerSpeciality.getCount() == ConstantApplication.ZERO){
-                    Toast.makeText(currentContext, R.string.toast_check_speciality_setting, Toast.LENGTH_LONG).show();
-                    prepareReporDatePicker();
-                    return;
-                }
                 onClickAcceptReportDates(dialog, which,specialities.get(0));
             }
         });

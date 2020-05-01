@@ -35,7 +35,7 @@
     <string name="nav_header_title" translatable="false">Android Studio</string>
     <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
-    <string name="action_datePicker">Перейти до дати</string>
+    <string name="action_deleteClasses">Видалити заняття</string>
     <string name="action_importTemplates">Імпортувати шаблони</string>
     <string name="action_report">Сформувати звіт</string>
     <string name="popup_Follow">Перейти</string>
@@ -246,9 +246,9 @@
     <string name="activity_edit_subject">Редагування предмету</string>
     <string name="enter_the_number_of_hours">Введіть кількість годин</string>
     <string name="course_spinner_hint">Оберіть спеціальність</string>
-    <string name="groups_fragment_no_specialities">\"Не додано жодної спеціальності! Додайте спеціальність в налаштуваннях! \"</string>
-    <string name="subjects_fragment_no_specialities">\"Не додано жодної спеціальності! Додайте спеціальність в налаштуваннях! \"</string>
-    <string name="templates_fragment_no_specialities">\"Не додано жодної спеціальності! Додайте спеціальність в налаштуваннях! \"</string>
+    <string name="groups_fragment_no_specialities">\Не додано жодної спеціальності! Додайте спеціальність в налаштуваннях! \</string>
+    <string name="subjects_fragment_no_specialities">\Не додано жодної спеціальності! Додайте спеціальність в налаштуваннях! \</string>
+    <string name="templates_fragment_no_specialities">\Не додано жодної спеціальності! Додайте спеціальність в налаштуваннях! \"</string>
     <string name="templates_fragment_no_groups">Не додано жодної групи! Додайте групи в пункті меню \"Групи\"</string>
     <string name="templates_fragment_no_subjects">Не додано жодного предмету! Додайти предмети в пункті меню \"Предмети\"</string>
 </resources>

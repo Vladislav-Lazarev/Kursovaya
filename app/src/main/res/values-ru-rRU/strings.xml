@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Дневник преподавателя</string>
-    <string name="action_datePicker">Перейти к дате</string>
+    <string name="action_deleteClasses">Удалить занятия</string>
     <string name="action_importTemplates">Импортировать шаблоны</string>
     <string name="action_report">Сгенерировать отчёт</string>
     <string name="popup_Follow">Перейти</string>
@@ -175,4 +175,9 @@
     <string name="toast_check_speciality_setting">Заполните \"Специальность\" в Настройках</string>
     <string name="toast_check_subject_menu_bar">Заполните \"Предмет\" в меню баре</string>
     <string name="course_spinner_hint">Выберите специальность</string>
+    <string name="groups_fragment_no_specialities">Не добавлены специальности! Добавьте специальность в настройках!</string>
+    <string name="subjects_fragment_no_specialities">Не добавлены специальности! Добавьте специальность в настройках!</string>
+    <string name="templates_fragment_no_specialities">Не добавлены специальности! Добавьте специальность в настройках!</string>
+    <string name="templates_fragment_no_groups">Не добавлено ни одной группы! Добавьте группы в пункте меню Группы</string>
+    <string name="templates_fragment_no_subjects">Не добавлено ни одного предмета! Добавьте предметы в пункте меню Предметы</string>
 </resources>

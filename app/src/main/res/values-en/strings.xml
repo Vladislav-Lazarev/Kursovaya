@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Teachers Diary</string>
-    <string name="action_datePicker">Go to date</string>
+    <string name="action_deleteClasses">Delete classes</string>
     <string name="action_importTemplates">Import templates</string>
     <string name="action_report">Generate report</string>
     <string name="popup_Follow">Forward</string>
@@ -175,4 +175,9 @@
     <string name="toast_check_speciality_setting">Fill in the \"Specialty\" in Settings</string>
     <string name="toast_check_subject_menu_bar">Fill in the \"Subject\" in the menu bar</string>
     <string name="course_spinner_hint">Choose speciality</string>
+    <string name="groups_fragment_no_specialities">Was not found any speciality! Add speciality in settings!</string>
+    <string name="subjects_fragment_no_specialities">Was not found any speciality! Add speciality in settings!</string>
+    <string name="templates_fragment_no_specialities">Was not found any speciality! Add speciality in settings!</string>
+    <string name="templates_fragment_no_groups">Was not found any group! Add group in groups menu!</string>
+    <string name="templates_fragment_no_subjects">Was not found any subject! Add subject in subjects menu!</string>
 </resources>

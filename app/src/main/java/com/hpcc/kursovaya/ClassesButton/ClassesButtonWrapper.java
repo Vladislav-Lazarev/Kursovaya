@@ -25,6 +25,16 @@ public class ClassesButtonWrapper {
     private boolean isSelected = false;
     private boolean isBackgroundChanged = false;
 
+    public boolean isGroupNameShown() {
+        return isGroupNameShown;
+    }
+
+    public void setGroupNameShown(boolean groupNameShown) {
+        isGroupNameShown = groupNameShown;
+    }
+
+    private boolean isGroupNameShown = true;
+
     public ClassesButtonWrapper(Button btn, Context context){
         this.btn = btn;
         this.context= context;
