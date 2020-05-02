@@ -111,7 +111,7 @@ public class EditSubjectActivity extends AppCompatActivity {
         LinearLayout parent = findViewById(R.id.spinnerSpeciality);
 
         Log.d(TAG, "specialityList = " + specialityList.toString());
-        for(int i = 0 ; i < specialityList.size();i++){
+        for(int i = 0 ; i < specialityList.size();i++) {
             LinearLayout specLayout = new LinearLayout(this);
             specLayout.setOrientation(LinearLayout.HORIZONTAL);
             specLayout.setWeightSum(10);
@@ -123,37 +123,35 @@ public class EditSubjectActivity extends AppCompatActivity {
             hourEditTxt.setEnabled(false);
 
             final Speciality finalSpeciality = specialityList.get(i);
-            if (subject.containsKeySpecialityCountHour(finalSpeciality)){
+            if (subject.containsKeySpecialityCountHour(finalSpeciality)) {
                 checkSpecHour.setClickable(true);
                 checkSpecHour.setChecked(true);
                 hourEditTxt.setEnabled(true);
                 hourEditTxt.setText(String.valueOf(subject.getSpecialityCountHour(finalSpeciality)));
                 map.put(finalSpeciality, hourEditTxt);
-                int currCountCourse = subject.getNumberCourse();
-                if(currCountCourse<=minCourseCount){
-                    minCourseCount = currCountCourse;
-                    spinnerCourse =
-                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                                    ConstantApplication.countCourse(minCourseCount));
-                    listenerSpinnerCourse(spinnerCourse);
-                }
+
+                spinnerCourse =
+                        ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                ConstantApplication.countCourse(minCourse(map)));
+                listenerSpinnerCourse(spinnerCourse);
+                ConstantApplication.setSpinnerText(spinnerCourse, String.valueOf(subject.getNumberCourse()));
             }
             fillingCheckBox(checkSpecHour, finalSpeciality, hourEditTxt);
 
-            LinearLayout.LayoutParams checkBoxParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,2);
+            LinearLayout.LayoutParams checkBoxParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 2);
             checkSpecHour.setLayoutParams(checkBoxParams);
             checkSpecHour.setWidth(0);
             checkSpecHour.setButtonTintList(getResources().getColorStateList(R.color.sideBar));
 
             TextView specUI = new TextView(this);
-            LinearLayout.LayoutParams textViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,6);
+            LinearLayout.LayoutParams textViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 6);
             specUI.setWidth(0);
             specUI.setLayoutParams(textViewParams);
             specUI.setText(specialityList.get(i).getName());
             specUI.setTextColor(getResources().getColor(R.color.appDefaultBlack));
-            specUI.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+            specUI.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 
-            LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,2);
+            LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 2);
             hourEditTxt.setWidth(0);
             hourEditTxt.setInputType(InputType.TYPE_CLASS_NUMBER);
             int maxLength = 3;
@@ -164,20 +162,13 @@ public class EditSubjectActivity extends AppCompatActivity {
             hourEditTxt.setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
             hourEditTxt.setLayoutParams(etParams);
             hourEditTxt.setHint(R.string.enter_the_number_of_hours);
-            hourEditTxt.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+            hourEditTxt.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 
             specLayout.addView(checkSpecHour);
             specLayout.addView(specUI);
             specLayout.addView(hourEditTxt);
 
             parent.addView(specLayout);
-
-            spinnerCourse = findViewById(R.id.spinnerCourse);
-            listenerSpinnerCourse(spinnerCourse);
-            spinnerCourse.setSelection(subject.getNumberCourse() - ConstantApplication.ONE);
-
-            subjectEditText = findViewById(R.id.editTextSubjectName);
-            subjectEditText.setText(subject.getName());
 
             ImageButton editButton = findViewById(R.id.edit_subject);
             editButton.setOnClickListener(new View.OnClickListener() {
@@ -191,67 +182,58 @@ public class EditSubjectActivity extends AppCompatActivity {
                 }
             });
         }
-       /* Spinner spinnerCourse =
-                ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                        Arrays.asList(getResources().getStringArray(R.array.courses)));
-        listenerSpinnerCourse(spinnerCourse);*/
+
+        subjectEditText = findViewById(R.id.editTextSubjectName);
+        subjectEditText.setText(subject.getName());
     }
 
     private void fillingCheckBox(CheckBox checkSpecHour, Speciality finalSpeciality, EditText hourEditTxt) {
         checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                spinnerCourse.setEnabled(true);
-                int currCountCourse = finalSpeciality.getCountCourse();
                 if (isChecked) {
                     map.put(finalSpeciality, hourEditTxt);
-                    if(currCountCourse<=minCourseCount){
-                        minCourseCount = currCountCourse;
-                    }
                 } else {
                     map.remove(finalSpeciality);
-                    currCountCourse = 4;
-                    for (Speciality sp : map.keySet()){
-                        if (sp.getCountCourse() <= currCountCourse){
-                            currCountCourse = sp.getCountCourse();
-                            break;
-                        }
-                    }
-                    minCourseCount = currCountCourse;
                 }
-                if(map.size()!=0) {
-                    spinnerCourse =
-                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                                    ConstantApplication.countCourse(minCourseCount));
-                    listenerSpinnerCourse(spinnerCourse);
-                } else {
-                    spinnerCourse =
-                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                                    new ArrayList<>(Collections.singleton(getString(R.string.course_spinner_hint))));
-                    spinnerCourse.setEnabled(false);
-                    spinnerCourse.setOnItemSelectedListener(null);
-                }
-
-                /*int countCourse = 1;
-                while (countCourse != 0 && ++countCourse <= 4) {
-                    for (Speciality sp : map.keySet()){
-                        if (countCourse > sp.getCountCourse()){
-
-                            Spinner spinnerCourse =
-                                    ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                                            ConstantApplication.countCourse(sp.getCountCourse()));
-                            countCourse = 0;
-                            listenerSpinnerCourse(spinnerCourse);
-                            break;
-                        }
-                    }
-                }*/
 
                 hourEditTxt.setEnabled(isChecked);
                 Log.d(TAG,"Filling out = " + map.toString());
-            }
 
+                if (map.isEmpty()){
+                    spinnerCourse =
+                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                    Collections.singletonList(getString(R.string.course_spinner_hint)));
+                    spinnerCourse.setEnabled(false);
+                    spinnerCourse.setOnItemSelectedListener(null);
+                    return;
+                } else {
+                    spinnerCourse.setEnabled(true);
+                    spinnerCourse.clearDisappearingChildren();
+                }
+
+
+                int countCourse = minCourse(map);
+                spinnerCourse =
+                        ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                ConstantApplication.countCourse(countCourse));
+                listenerSpinnerCourse(spinnerCourse);
+            }
         });
+    }
+
+    private static int minCourse(Map<Speciality, EditText> map){
+        int countCourse = 1;
+        for (int i = 1; i <= 4; i++) {
+            for (Speciality sp : map.keySet()) {
+                if (i >= sp.getCountCourse()) {
+                    countCourse = i;
+                    i = 0;
+                }
+            }
+            if (i == 0) break;
+        }
+        return countCourse;
     }
 
     @Override
@@ -277,7 +259,8 @@ public class EditSubjectActivity extends AppCompatActivity {
             return;
         }
         for (EditText editTextHour : map.values()){
-            if (Integer.parseInt(editTextHour.getText().toString()) > ConstantApplication.ONE) {
+            String strEditTextHour = editTextHour.getText().toString();
+            if (strEditTextHour.isEmpty() || Integer.parseInt(strEditTextHour) < ConstantApplication.ONE) {
                 Toast.makeText(currentContext, R.string.toast_check_speciality_and_number_of_hours, Toast.LENGTH_LONG).show();
                 checkSubject(strSubject);
                 return;

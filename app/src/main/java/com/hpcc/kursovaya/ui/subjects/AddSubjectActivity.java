@@ -176,57 +176,47 @@ public class AddSubjectActivity extends AppCompatActivity {
         checkSpecHour.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                spinnerCourse.setEnabled(true);
-                int currCountCourse = finalSpeciality.getCountCourse();
                 if (isChecked) {
                     map.put(finalSpeciality, hourEditTxt);
-                    if(currCountCourse<=minCourseCount){
-                        minCourseCount = currCountCourse;
-                    }
                 } else {
                     map.remove(finalSpeciality);
-                    currCountCourse = 4;
-                    for (Speciality sp : map.keySet()){
-                        if (sp.getCountCourse() <= currCountCourse){
-                            currCountCourse = sp.getCountCourse();
-                            break;
-                        }
-                    }
-                    minCourseCount = currCountCourse;
                 }
-                if(map.size()!=0) {
-                    spinnerCourse =
-                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                                    ConstantApplication.countCourse(minCourseCount));
-                    listenerSpinnerCourse(spinnerCourse);
-                } else {
-                    spinnerCourse =
-                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                                    new ArrayList<>(Collections.singleton(getString(R.string.course_spinner_hint))));
-                    spinnerCourse.setEnabled(false);
-                    spinnerCourse.setOnItemSelectedListener(null);
-                }
-
-
-
-              /* // while (countCourse != 0 && ++countCourse <= 4) {
-                    for (Speciality sp : map.keySet()){
-                        if (countCourse >= sp.getCountCourse()){
-                            spinnerCourse =
-                                    ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                                            ConstantApplication.countCourse(sp.getCountCourse()));
-                            countCourse = sp.getCountCourse();
-                            listenerSpinnerCourse(spinnerCourse);
-                            break;
-                        }
-                    }
-                //}*/
 
                 hourEditTxt.setEnabled(isChecked);
                 Log.d(TAG,"Filling out = " + map.toString());
-            }
 
+                if (map.isEmpty()){
+                    spinnerCourse =
+                            ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                    Collections.singletonList(getString(R.string.course_spinner_hint)));
+                    spinnerCourse.setEnabled(false);
+                    spinnerCourse.setOnItemSelectedListener(null);
+                    return;
+                } else {
+                    spinnerCourse.setEnabled(true);
+                    spinnerCourse.clearDisappearingChildren();
+                }
+
+                int countCourse = minCourse(map);
+                spinnerCourse =
+                        ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                                ConstantApplication.countCourse(countCourse));
+                listenerSpinnerCourse(spinnerCourse);
+            }
         });
+    }
+    private static int minCourse(Map<Speciality, EditText> map){
+        int countCourse = 1;
+        for (int i = 1; i <= 4; i++) {
+            for (Speciality sp : map.keySet()) {
+                if (i >= sp.getCountCourse()) {
+                    countCourse = i;
+                    i = 0;
+                }
+            }
+            if (i == 0) break;
+        }
+        return countCourse;
     }
 
     @Override
@@ -252,7 +242,8 @@ public class AddSubjectActivity extends AppCompatActivity {
             return;
         }
         for (EditText editTextHour : map.values()){
-            if (Integer.parseInt(editTextHour.getText().toString()) > ConstantApplication.ONE) {
+            String strEditTextHour = editTextHour.getText().toString();
+            if (strEditTextHour.isEmpty() || Integer.parseInt(strEditTextHour) < ConstantApplication.ONE) {
                 Toast.makeText(currentContext, R.string.toast_check_speciality_and_number_of_hours, Toast.LENGTH_LONG).show();
                 checkSubject(strSubject);
                 return;
