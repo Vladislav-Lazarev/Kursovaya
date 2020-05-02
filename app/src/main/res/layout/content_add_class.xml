@@ -36,7 +36,7 @@
         android:layout_toEndOf="@id/group_name_label"
         android:completionThreshold="1"
         android:maxLength="30"
-        />
+        android:inputType="textCapSentences"/>
     <TextView
         android:id="@+id/subject_name_label"
         android:layout_width="wrap_content"

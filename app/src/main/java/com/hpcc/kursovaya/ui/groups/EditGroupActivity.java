@@ -69,6 +69,8 @@ public class EditGroupActivity extends AppCompatActivity {
         Intent intent = getIntent();
         group = intent.getParcelableExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT));
 
+        groupEditText.setText(group.getName());
+
         spinnerSpeciality =
                 ConstantApplication.fillingSpinner(this, (Spinner) findViewById(R.id.spinnerSpeciality),
                         new Speciality().entityToNameList());
@@ -98,10 +100,10 @@ public class EditGroupActivity extends AppCompatActivity {
     private void editGroup(){
         String strGroup = groupEditText.getText().toString();
         if (spinnerSpeciality.getCount() == ConstantApplication.ZERO){
-            Toast.makeText(this, R.string.toast_check_speciality_setting, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.toast_fragment_no_specialities, Toast.LENGTH_LONG).show();
             return;
         }
-        if (!ConstantApplication.checkUIGroup(strGroup)){
+        if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP,  strGroup)){
             groupEditText.setError(getString(R.string.toast_check));
             return;
         }

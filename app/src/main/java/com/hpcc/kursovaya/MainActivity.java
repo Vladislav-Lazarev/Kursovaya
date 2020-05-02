@@ -390,7 +390,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(DBManager.readAll(Speciality.class).size()!=0) {
                     prepareReporDatePicker();
                 } else {
-                    Toast.makeText(currentContext, R.string.toast_check_speciality_setting, Toast.LENGTH_LONG).show();
+                    Toast.makeText(currentContext, R.string.toast_fragment_no_specialities, Toast.LENGTH_LONG).show();
                 }
             default:
                 return super.onOptionsItemSelected(item);

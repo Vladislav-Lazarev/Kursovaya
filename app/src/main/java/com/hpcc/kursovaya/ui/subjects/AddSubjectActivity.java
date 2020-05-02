@@ -235,14 +235,14 @@ public class AddSubjectActivity extends AppCompatActivity {
     }
 
     private void checkSubject(String str){
-        if (!ConstantApplication.checkUISubject(str)){
+        if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_SUBJECT, str)){
             subjectEditText.setError(getString(R.string.toast_check));
         }
     }
     private void addSubject(){
         String strSubject = subjectEditText.getText().toString();
         if (specialityList.isEmpty()){
-            Toast.makeText(currentContext, R.string.toast_check_speciality_setting, Toast.LENGTH_LONG).show();
+            Toast.makeText(currentContext, R.string.toast_fragment_no_specialities, Toast.LENGTH_LONG).show();
             checkSubject(strSubject);
             return;
         }
@@ -251,9 +251,8 @@ public class AddSubjectActivity extends AppCompatActivity {
             checkSubject(strSubject);
             return;
         }
-
         for (EditText editTextHour : map.values()){
-            if (!ConstantApplication.checkUISubjectHour(editTextHour.getText().toString())) {
+            if (Integer.parseInt(editTextHour.getText().toString()) > ConstantApplication.ONE) {
                 Toast.makeText(currentContext, R.string.toast_check_speciality_and_number_of_hours, Toast.LENGTH_LONG).show();
                 checkSubject(strSubject);
                 return;

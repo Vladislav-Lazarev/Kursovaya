@@ -186,7 +186,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
         String strSpeciality = specText.getText().toString();
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
 
-        if (!ConstantApplication.checkUISpeciality(strSpeciality)){
+        if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_SPECIALITY, strSpeciality)){
             Toast.makeText(currentContext, R.string.toast_check, Toast.LENGTH_LONG).show();
             onClickPrepareAddSpeciality();
             return;
@@ -247,7 +247,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
         String strSpeciality = specText.getText().toString();
         int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
 
-        if (!ConstantApplication.checkUISpeciality(strSpeciality)){
+        if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_SPECIALITY, strSpeciality)){
             Toast.makeText(currentContext, R.string.toast_check, Toast.LENGTH_LONG).show();
             onClickPrepareEditSpeciality(entity);
             return;

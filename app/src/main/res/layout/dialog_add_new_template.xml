@@ -23,6 +23,5 @@
         android:layout_marginEnd="15dp"
         android:layout_toEndOf="@id/template_name"
         android:maxLength="30"
-        android:inputType="text"
-        />
+        android:inputType="textCapSentences" />
 </RelativeLayout>

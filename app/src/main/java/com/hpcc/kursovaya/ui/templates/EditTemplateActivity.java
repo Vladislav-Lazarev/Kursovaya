@@ -76,13 +76,13 @@ public class EditTemplateActivity extends TemplateActivity {
     @Override
     protected void onClickAcceptClass(DialogInterface dialog, int which,int classDay, int classHour) {
         //здесь обработчик кнопки принять
-        if (!ConstantApplication.checkUIGroup(groupNameSuggest.getText().toString())){
+        if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, groupNameSuggest.getText().toString())){
             Toast.makeText(currentContext, R.string.toast_check_group, Toast.LENGTH_LONG).show();
             super.editClass(classDay, classHour);
             return;
         }
         if (subjectSpinner.getCount() == ConstantApplication.ZERO){
-            Toast.makeText(currentContext, R.string.toast_check_subject_menu_bar, Toast.LENGTH_LONG).show();
+            Toast.makeText(currentContext, R.string.toast_fragment_no_subjects, Toast.LENGTH_LONG).show();
             super.editClass(classDay, classHour);
             return;
         }

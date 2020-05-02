@@ -172,12 +172,10 @@
     <string name="activity_edit_group">Pедактирование группы</string>
     <string name="toast_check_group">Заполните корректно поле \"Группа\"</string>
     <string name="toast_check_subject">Заполните корректно поле \"Предмет\"</string>
-    <string name="toast_check_speciality_setting">Заполните \"Специальность\" в Настройках</string>
-    <string name="toast_check_subject_menu_bar">Заполните \"Предмет\" в меню баре</string>
     <string name="course_spinner_hint">Выберите специальность</string>
-    <string name="groups_fragment_no_specialities">Не добавлены специальности! Добавьте специальность в настройках!</string>
-    <string name="subjects_fragment_no_specialities">Не добавлены специальности! Добавьте специальность в настройках!</string>
-    <string name="templates_fragment_no_specialities">Не добавлены специальности! Добавьте специальность в настройках!</string>
-    <string name="templates_fragment_no_groups">Не добавлено ни одной группы! Добавьте группы в пункте меню Группы</string>
-    <string name="templates_fragment_no_subjects">Не добавлено ни одного предмета! Добавьте предметы в пункте меню Предметы</string>
+    <string name="toast_fragment_no_specialities">Не добавлены специальности! Добавьте специальность в настройках!</string>
+    <string name="toast_fragment_no_groups">Не добавлено ни одной группы! Добавьте группы в пункте меню Группы</string>
+    <string name="toast_fragment_no_subjects">Не добавлено ни одного предмета! Добавьте предметы в пункте меню Предметы</string>
+    <string name="hint_speciality">Разрешается писать коротко (через точку) или аббревиатурой</string>
+    <string name="action_datePicker">Перейти к дате</string>
 </resources>

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ConstantApplication {
@@ -107,14 +108,33 @@ public class ConstantApplication {
     public static final String PATTERN_DATE_TIME = "dd/MM/yyyy HH:mm:ss";
     public static final String MIN_DATE_TIME = "01/01/1990 00:00:00";
 
-    public static final String PATTERN_SPECIALITY = "^\\p{Upper}\\p{Lower}+\\.?([\\s-]\\p{Alpha}\\p{Lower}+\\.?)*|\\p{Upper}{2,}$";
-    public static final String PATTERN_GROUP = "^[\\p{Alnum}-]{2,}$";//"^\\p{Upper}+-?\\d{2,}$";
+    public static final String PATTERN_SPECIALITY = "^(\\p{Upper}\\p{Lower}+[.]?)(([\\s-])(\\p{Lower}{2,})[.]?)*|(\\p{Upper}{2,})$";
+    public static final String PATTERN_GROUP = "^([\\p{Alnum}-]{2,})$";
     public static final String PATTERN_SUBJECT = PATTERN_SPECIALITY;
-    public static final String PATTERN_SUBJECT_HOUR = "^\\d+$";
     public static final String PATTERN_TEMPLATE = "^[\\p{Alnum}\\p{Punct}][\\s\\p{Alnum}\\p{Punct}]*$";
 
     // checkUI
-    public static boolean checkUISpeciality(String str){
+    public static boolean checkUI(String pattern, String str){
+        return Pattern.matches(PATTERN_SPECIALITY, str);
+    }
+
+    public static boolean checkUIMatcher(String strPattern, String text, int numberGroup){
+        if (numberGroup > -1){
+            return false;
+        }
+
+        Pattern pattern = Pattern.compile(strPattern);
+        Matcher matcher = pattern.matcher(text);
+
+        if (matcher.find()){
+            String group = matcher.group(numberGroup);
+            return group != null;
+        } else {
+            return false;
+        }
+    }
+
+    /*public static boolean checkUISpeciality(String str){
         return Pattern.matches(PATTERN_SPECIALITY, str);
     }
     public static boolean checkUIGroup(String str){
@@ -128,6 +148,6 @@ public class ConstantApplication {
     }
     public static boolean checkUITemplate(String str){
         return Pattern.matches(PATTERN_TEMPLATE, str);
-    }
+    }*/
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

@@ -374,13 +374,13 @@ public class WeekViewFragment extends Fragment {
                                                     //intent.putExtra("subject",subjectEnt);
                                                 }
                                             }   else {
-                                                    Toast.makeText(cntxt, R.string.templates_fragment_no_subjects,Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(cntxt, R.string.toast_fragment_no_subjects,Toast.LENGTH_LONG).show();
                                                 }
                                             } else {
-                                                Toast.makeText(cntxt, R.string.templates_fragment_no_groups,Toast.LENGTH_LONG).show();
+                                                Toast.makeText(cntxt, R.string.toast_fragment_no_groups,Toast.LENGTH_LONG).show();
                                             }
                                         } else {
-                                            Toast.makeText(cntxt, R.string.templates_fragment_no_specialities,Toast.LENGTH_LONG).show();
+                                            Toast.makeText(cntxt, R.string.toast_fragment_no_specialities,Toast.LENGTH_LONG).show();
                                         }
 
 

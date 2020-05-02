@@ -43,8 +43,7 @@
                         android:textColor="@color/appDefaultBlack"
                         android:layout_marginTop="15dp"
                         android:layout_marginEnd="15dp"
-                        android:inputType="textCapWords"
-                        />
+                        android:inputType="textCapSentences" />
 
                 </HorizontalScrollView>
 

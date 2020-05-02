@@ -172,12 +172,10 @@
     <string name="activity_edit_group">Group editing</string>
     <string name="toast_check_subject">Correctly fill in the \"Subject\" field</string>
     <string name="toast_check_group">Correctly fill in the \"Group\" field</string>
-    <string name="toast_check_speciality_setting">Fill in the \"Specialty\" in Settings</string>
-    <string name="toast_check_subject_menu_bar">Fill in the \"Subject\" in the menu bar</string>
     <string name="course_spinner_hint">Choose speciality</string>
-    <string name="groups_fragment_no_specialities">Was not found any speciality! Add speciality in settings!</string>
-    <string name="subjects_fragment_no_specialities">Was not found any speciality! Add speciality in settings!</string>
-    <string name="templates_fragment_no_specialities">Was not found any speciality! Add speciality in settings!</string>
-    <string name="templates_fragment_no_groups">Was not found any group! Add group in groups menu!</string>
-    <string name="templates_fragment_no_subjects">Was not found any subject! Add subject in subjects menu!</string>
+    <string name="toast_fragment_no_specialities">Was not found any speciality! Add speciality in settings!</string>
+    <string name="toast_fragment_no_groups">Was not found any group! Add group in groups menu!</string>
+    <string name="toast_fragment_no_subjects">Was not found any subject! Add subject in subjects menu!</string>
+    <string name="hint_speciality">It is allowed to write briefly (dotted) or abbreviated</string>
+    <string name="action_datePicker">Go to date</string>
 </resources>

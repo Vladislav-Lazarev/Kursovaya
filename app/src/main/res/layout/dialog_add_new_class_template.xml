@@ -38,8 +38,7 @@
                     android:textColor="@color/appDefaultBlack"
                     android:textSize="16sp"
                     android:maxLength="30"
-                    android:inputType="textCapWords"
-                    />
+                    android:inputType="textCapSentences" />
             </HorizontalScrollView>
 
             <TextView

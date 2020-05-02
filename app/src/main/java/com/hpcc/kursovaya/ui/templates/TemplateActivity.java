@@ -378,7 +378,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
                 String strGroup = s.toString();
                 Group group = DBManager.read(Group.class, ConstantApplication.NAME, strGroup);
 
-                if (!ConstantApplication.checkUIGroup(strGroup) || group == null){
+                if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, strGroup) || group == null){
                     ConstantApplication.fillingSpinner(currentContext, subjectSpinner, new ArrayList<>());
                     return;
                 }
@@ -595,7 +595,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
     protected void onClickAcceptTemplate(DialogInterface dialog, int which){
         String strTemplate = templateNameEditText.getText().toString();
 
-        if (!ConstantApplication.checkUITemplate(strTemplate)){
+        if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_TEMPLATE, strTemplate)){
             Toast.makeText(this, R.string.toast_check, Toast.LENGTH_LONG);
             return;
         }

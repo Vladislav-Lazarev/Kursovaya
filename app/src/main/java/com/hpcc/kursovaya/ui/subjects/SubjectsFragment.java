@@ -68,7 +68,7 @@ public class SubjectsFragment extends Fragment {
                         Intent intent = new Intent(getActivity(), AddSubjectActivity.class);
                         startActivityForResult(intent, ConstantApplication.ACTIVITY_ADD);
                     } else {
-                        Toast.makeText(context, R.string.subjects_fragment_no_specialities,Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, R.string.toast_fragment_no_specialities,Toast.LENGTH_LONG).show();
                     }
                 }
             });

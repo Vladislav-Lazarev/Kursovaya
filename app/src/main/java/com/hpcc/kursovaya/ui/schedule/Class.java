@@ -129,7 +129,7 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
                 String strGroup = s.toString();
                 Group group = DBManager.read(Group.class, ConstantApplication.NAME, strGroup);
 
-                if (!ConstantApplication.checkUIGroup(strGroup) || group == null){
+                if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, strGroup) || group == null){
                     ConstantApplication.fillingSpinner(currentContext, subjectSpinner, new ArrayList<>());
                     return;
                 }
@@ -253,12 +253,12 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
     }
 
     protected void addClass() {
-        if (!ConstantApplication.checkUIGroup(groupNameSuggest.getText().toString())){
+        if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, groupNameSuggest.getText().toString())){
             groupNameSuggest.setError(getString(R.string.toast_check));
             return;
         }
         if (subjectSpinner.getCount() == ConstantApplication.ZERO){
-            Toast.makeText(this, R.string.toast_check_subject_menu_bar, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.toast_fragment_no_subjects, Toast.LENGTH_LONG).show();
             return;
         }
 

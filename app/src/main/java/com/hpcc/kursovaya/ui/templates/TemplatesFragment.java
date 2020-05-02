@@ -75,13 +75,13 @@ public class TemplatesFragment extends Fragment {
                                 Intent intent = new Intent(getActivity(), AddTemplateActivity.class);
                                 startActivityForResult(intent, ConstantApplication.ACTIVITY_ADD);
                             } else {
-                                Toast.makeText(context, R.string.templates_fragment_no_subjects,Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, R.string.toast_fragment_no_subjects,Toast.LENGTH_LONG).show();
                             }
                         } else {
-                            Toast.makeText(context, R.string.templates_fragment_no_groups,Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, R.string.toast_fragment_no_groups,Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(context, R.string.templates_fragment_no_specialities,Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, R.string.toast_fragment_no_specialities,Toast.LENGTH_LONG).show();
                     }
                 }
             });
