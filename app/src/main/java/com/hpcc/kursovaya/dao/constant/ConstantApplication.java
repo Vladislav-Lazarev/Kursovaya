@@ -94,7 +94,7 @@ public class ConstantApplication {
     }
     public static boolean setSpinnerText(Spinner spin, String str) {
         for(int i= 0; i < spin.getAdapter().getCount(); i++) {
-            if(spin.getAdapter().getItem(i).toString().contains(str)) {
+            if(String.valueOf(spin.getAdapter().getItem(i)).contains(str)) {
                 spin.setSelection(i);
                 return true;
             }

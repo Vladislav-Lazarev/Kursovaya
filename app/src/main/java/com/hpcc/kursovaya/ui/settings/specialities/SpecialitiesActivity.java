@@ -79,7 +79,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                onClickPrepareAddSpeciality();
+                onClickPrepareAddSpeciality("");
             }
         });
         specialityLSV = findViewById(R.id.specialitiesLSV);
@@ -140,7 +140,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
         });
     }
 
-    private void onClickPrepareAddSpeciality() {
+    private void onClickPrepareAddSpeciality(String strSpeciality) {
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.dialog_add_speciality);
         builder.setPositiveButton(R.string.dialog_button_add, new DialogInterface.OnClickListener() {
@@ -165,6 +165,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
 
         speciality = new Speciality();
         specText = addSpecialityView.findViewById(R.id.speciality_name_text);
+        specText.setText(strSpeciality);
         courseSpinner = addSpecialityView.findViewById(R.id.courseSpinner);
 
         final AlertDialog dialog = builder.create();
@@ -188,7 +189,7 @@ public class SpecialitiesActivity extends AppCompatActivity {
 
         if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_SPECIALITY, strSpeciality)){
             Toast.makeText(currentContext, R.string.toast_check, Toast.LENGTH_LONG).show();
-            onClickPrepareAddSpeciality();
+            onClickPrepareAddSpeciality(strSpeciality);
             return;
         }
 

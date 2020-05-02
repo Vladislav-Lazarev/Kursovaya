@@ -117,6 +117,7 @@ public class AddGroupActivity extends AppCompatActivity {
                         ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
                                 ConstantApplication.countCourse(speciality.getCountCourse()));
                 listenerSpinnerCourse(spinnerCourse);
+                ConstantApplication.setSpinnerText(spinnerCourse, String.valueOf(group.getNumberCourse()));
 
                 group.setSpecialty(speciality);
             }

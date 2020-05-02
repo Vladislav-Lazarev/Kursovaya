@@ -67,7 +67,8 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     }
 
     public Speciality getSpecialty() {
-        return DBManager.read(Speciality.class, ConstantApplication.ID, idSpeciality);
+        return DBManager.copyObjectFromRealm(
+                DBManager.read(Speciality.class, ConstantApplication.ID, idSpeciality));
     }
     public Group setSpecialty(@NotNull Speciality speciality) {
         if(speciality.getId() < ConstantApplication.ONE){

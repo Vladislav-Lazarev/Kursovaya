@@ -69,20 +69,23 @@ public class EditGroupActivity extends AppCompatActivity {
         Intent intent = getIntent();
         group = intent.getParcelableExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT));
 
+        groupEditText = findViewById(R.id.editTextGroupName);
         groupEditText.setText(group.getName());
 
+        spinnerSpeciality = findViewById(R.id.spinnerSpeciality);
+        spinnerCourse = findViewById(R.id.spinnerCourse);
+
         spinnerSpeciality =
-                ConstantApplication.fillingSpinner(this, (Spinner) findViewById(R.id.spinnerSpeciality),
+                ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerSpeciality),
                         new Speciality().entityToNameList());
         listenerSpinnerSpeciality(spinnerSpeciality);
         ConstantApplication.setSpinnerText(spinnerSpeciality, group.getSpecialty().getName());
 
-        spinnerCourse = findViewById(R.id.spinnerCourse);
+        spinnerCourse =
+                ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                        ConstantApplication.countCourse(group.getSpecialty().getCountCourse()));
         listenerSpinnerCourse(spinnerCourse);
-        spinnerCourse.setSelection(group.getNumberCourse() - ConstantApplication.ONE);
-
-        groupEditText = findViewById(R.id.editTextGroupName);
-        groupEditText.setText(group.getName());
+        ConstantApplication.setSpinnerText(spinnerCourse, String.valueOf(group.getNumberCourse()));
 
         ImageButton editButton = findViewById(R.id.edit_group);
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -122,12 +125,13 @@ public class EditGroupActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 String item = (String) parent.getItemAtPosition(selectedItemPosition);
-                Speciality speciality = DBManager.read(Speciality.class, ConstantApplication.NAME, item);
+                Speciality speciality = DBManager.copyObjectFromRealm(
+                        DBManager.read(Speciality.class, ConstantApplication.NAME, item));
 
-                spinnerCourse =
-                        ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                                ConstantApplication.countCourse(speciality.getCountCourse()));
+                spinnerCourse = ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
+                        ConstantApplication.countCourse(speciality.getCountCourse()));
                 listenerSpinnerCourse(spinnerCourse);
+                ConstantApplication.setSpinnerText(spinnerCourse, String.valueOf(group.getNumberCourse()));
 
                 group.setSpecialty(speciality);
             }

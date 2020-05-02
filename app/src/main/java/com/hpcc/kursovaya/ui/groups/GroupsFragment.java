@@ -56,10 +56,15 @@ public class GroupsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         LocaleManager.setLocale(getActivity());
         if(!isCreatedAlready) {
+
+            //creating elements for listview
             root = inflater.inflate(R.layout.fragment_groups, container, false);
             listView = root.findViewById(R.id.groupLSV);
+            groupList = DBManager.copyObjectFromRealm(
+                    DBManager.readAll(Group.class));
+            adapter = new GroupListAdapter(getActivity(), R.layout.list_view_item_group, groupList);
+            listView.setAdapter(adapter);
 
-            // getActivity().setTitle("");
             final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
             FloatingActionButton button = root.findViewById(R.id.fab);
             Context context = getActivity();
@@ -71,7 +76,7 @@ public class GroupsFragment extends Fragment {
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
 
-                    if(DBManager.readAll(Speciality.class).size()!=0) {
+                    if(DBManager.readAll(Speciality.class).size() != ConstantApplication.ZERO) {
                         Intent intent = new Intent(getActivity(), AddGroupActivity.class);
                         startActivityForResult(intent, ConstantApplication.ACTIVITY_ADD);
                     } else {
@@ -79,12 +84,6 @@ public class GroupsFragment extends Fragment {
                     }
                 }
             });
-
-            //creating elements for listview
-            groupList = DBManager.copyObjectFromRealm(
-                    DBManager.readAll(Group.class));
-            adapter = new GroupListAdapter(getActivity(), R.layout.list_view_item_group, groupList);
-            listView.setAdapter(adapter);
 
             isCreatedAlready=true;
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
