@@ -89,21 +89,21 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
         //here place for getting classDay, classHour and Group\Subject entities
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
-                setResult(1);
-                finish();
+        @Override
+        public void onClick(View v) {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                return;
             }
+            mLastClickTime = SystemClock.elapsedRealtime();
+            setResult(1);
+            finish();
+        }
         });
         actionBar(new ActionBarI() {
-            @Override
-            public void superClass() {
+        @Override
+        public void superClass() {
 
-            }
+        }
         });
 
         subjectSpinner = findViewById(R.id.spinnerSubject);
@@ -114,87 +114,87 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
         GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(this,R.layout.group_auto, groupList);
         groupNameSuggest.setAdapter(adapter);
         groupNameSuggest.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            String strGroup = s.toString();
+            Group group = DBManager.read(Group.class, ConstantApplication.NAME, strGroup);
+
+            if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, strGroup) || group == null){
+                ConstantApplication.fillingSpinner(currentContext, subjectSpinner, new ArrayList<>());
+                return;
             }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            currentTemplateAcademicHour.setGroup(group);
+            fillSpinnerByGroup(currentContext, subjectSpinner, group);
 
+            if (templateAcademicHourList.size() == ConstantApplication.TWO){
+                templateAcademicHourList.set(ConstantApplication.ONE,
+                        templateAcademicHourList.get(ConstantApplication.ONE).setGroup(group));
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String strGroup = s.toString();
-                Group group = DBManager.read(Group.class, ConstantApplication.NAME, strGroup);
-
-                if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, strGroup) || group == null){
-                    ConstantApplication.fillingSpinner(currentContext, subjectSpinner, new ArrayList<>());
-                    return;
-                }
-
-                currentTemplateAcademicHour.setGroup(group);
-                fillSpinnerByGroup(currentContext, subjectSpinner, group);
-
-                if (templateAcademicHourList.size() == ConstantApplication.TWO){
-                    templateAcademicHourList.set(ConstantApplication.ONE,
-                            templateAcademicHourList.get(ConstantApplication.ONE).setGroup(group));
-                }
-            }
+        }
         });
         groupNameSuggest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Group pressedGroup = (Group) adapterView.getItemAtPosition(i);
-                currentTemplateAcademicHour.setGroup(pressedGroup);
-                fillSpinnerByGroup(currentContext, subjectSpinner, pressedGroup);
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            Group pressedGroup = (Group) adapterView.getItemAtPosition(i);
+            currentTemplateAcademicHour.setGroup(pressedGroup);
+            fillSpinnerByGroup(currentContext, subjectSpinner, pressedGroup);
 
-                if (templateAcademicHourList.size() == ConstantApplication.TWO){
-                    templateAcademicHourList.set(ConstantApplication.ONE,
-                            templateAcademicHourList.get(ConstantApplication.ONE).setGroup(pressedGroup));
-                }
+            if (templateAcademicHourList.size() == ConstantApplication.TWO){
+                templateAcademicHourList.set(ConstantApplication.ONE,
+                        templateAcademicHourList.get(ConstantApplication.ONE).setGroup(pressedGroup));
             }
+        }
         });
 
         ((RadioButton)findViewById(R.id.duration_rgroup_short)).setChecked(true);
         radioGroup = findViewById(R.id.duration_rgroup);
+        currentTemplateAcademicHour.setDayAndPair(Pair.create(classDay, classHour));
         radioGroup.setOnCheckedChangeListener((rg, checkedId) -> {
-            currentTemplateAcademicHour.setDayAndPair(Pair.create(classDay, classHour));
-            final int posSecondCell = secondCellShift(classHour);
-            switch (checkedId){
-                case R.id.duration_rgroup_short:
-                    if (templateAcademicHourList.size() == ConstantApplication.TWO) {
-                        templateAcademicHourList.remove(ConstantApplication.ONE);
-                        academicHourList.remove(ConstantApplication.ONE);
+        final int posSecondCell = secondCellShift(classHour);
+        switch (checkedId){
+            case R.id.duration_rgroup_short:
+                if (templateAcademicHourList.size() == ConstantApplication.TWO) {
+                    templateAcademicHourList.remove(ConstantApplication.ONE);
+                    academicHourList.remove(ConstantApplication.ONE);
+                }
+                break;
+            case R.id.duration_rgroup_full:
+                if (templateAcademicHourList.size() == ConstantApplication.ONE){
+                    TemplateAcademicHour following = new TemplateAcademicHour();
+                    if (currentTemplateAcademicHour.getGroup() != null){
+                        following.setGroup(currentTemplateAcademicHour.getGroup())
+                                .setSubject(currentTemplateAcademicHour.getSubject())
+                                .setDayAndPair(Pair.create(classDay, classHour + posSecondCell));
                     }
-                    break;
-                case R.id.duration_rgroup_full:
-                    if (templateAcademicHourList.size() == ConstantApplication.ONE){
-                        TemplateAcademicHour following = new TemplateAcademicHour();
-                        if (currentTemplateAcademicHour.getGroup() != null){
-                            following.setGroup(currentTemplateAcademicHour.getGroup())
-                                    .setSubject(currentTemplateAcademicHour.getSubject())
-                                    .setDayAndPair(Pair.create(classDay, classHour + posSecondCell));
-                        }
-                        templateAcademicHourList.add(following);
-                        AcademicHour followingHour = new AcademicHour();
-                        followingHour.setDate(currentAcademicHour.getDate())
-                                     .setNote(currentAcademicHour.getNote());
-                        academicHourList.add(followingHour);
-                    } else if (templateAcademicHourList.size() == ConstantApplication.TWO) {
-                        templateAcademicHourList.set(ConstantApplication.ONE,
-                                templateAcademicHourList.get(ConstantApplication.ONE)
-                                        .setDayAndPair(Pair.create(classDay, classHour + posSecondCell)));
-                    }
-                    break;
-            }
+                    templateAcademicHourList.add(following);
+                    AcademicHour followingHour = new AcademicHour();
+                    followingHour.setDate(currentAcademicHour.getDate())
+                                 .setNote(currentAcademicHour.getNote());
+                    academicHourList.add(followingHour);
+                } else if (templateAcademicHourList.size() == ConstantApplication.TWO) {
+                    templateAcademicHourList.set(ConstantApplication.ONE,
+                            templateAcademicHourList.get(ConstantApplication.ONE)
+                                    .setDayAndPair(Pair.create(classDay, classHour + posSecondCell)));
+                }
+                break;
+        }
         });
-       classSummary = findViewById(R.id.description_editText);
-       notificationBeforeContent = findViewById(R.id.spinnerNotificationBefore);
-       repeatForNextWeekContent = findViewById(R.id.spinnerRepeatForWeeks);
-       notificationBeforeContent.setOnItemSelectedListener(this);
-       setHeader(R.string.super_class);
+        classSummary = findViewById(R.id.description_editText);
+        notificationBeforeContent = findViewById(R.id.spinnerNotificationBefore);
+        repeatForNextWeekContent = findViewById(R.id.spinnerRepeatForWeeks);
+        notificationBeforeContent.setOnItemSelectedListener(this);
+        setHeader(R.string.super_class);
     }
 
     protected void fillSpinnerByGroup(Context context, Spinner spinner, Group group){
@@ -253,7 +253,11 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
     }
 
     protected void addClass() {
-        if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, groupNameSuggest.getText().toString())){
+        Date entityDate = dayOfWeek.toDate();
+        String description = classSummary.getText().toString();
+        String groupNameStr = groupNameSuggest.getText().toString();
+
+        if (DBManager.read(Group.class, ConstantApplication.NAME, groupNameStr) == null){
             groupNameSuggest.setError(getString(R.string.toast_check));
             return;
         }
@@ -262,9 +266,6 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
             return;
         }
 
-        Date entityDate = dayOfWeek.toDate();
-        String description = classSummary.getText().toString();
-        String groupNameStr = groupNameSuggest.getText().toString();
         for (TemplateAcademicHour templateAcademicHour : templateAcademicHourList){
             try {
                 if(templateAcademicHour.getNumberHalfPairButton()==-1){

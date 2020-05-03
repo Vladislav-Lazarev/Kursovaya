@@ -1,14 +1,20 @@
 package com.hpcc.kursovaya.ui.schedule;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.query.DBManager;
 
 import org.joda.time.DateTime;
+
+import java.util.ArrayList;
 
 public class EditClass extends Class {
     private int savedHourSize = 0;
@@ -42,8 +48,36 @@ public class EditClass extends Class {
         final int maxCountButton = templateAcademicHourList.size();
 
         groupNameSuggest.setText(currentTemplateAcademicHour.getGroup().getName());
-        fillSpinnerByGroup(this, subjectSpinner, currentTemplateAcademicHour.getGroup());
-        ConstantApplication.setSpinnerText(subjectSpinner, currentTemplateAcademicHour.getSubject().getName());
+        groupNameSuggest.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String strGroup = s.toString();
+                Group group = DBManager.read(Group.class, ConstantApplication.NAME, strGroup);
+
+                if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, strGroup) || group == null){
+                    ConstantApplication.fillingSpinner(currentContext, subjectSpinner, new ArrayList<>());
+                    return;
+                }
+
+                currentTemplateAcademicHour.setGroup(DBManager.copyObjectFromRealm(group));
+                fillSpinnerByGroup(currentContext, subjectSpinner, group);
+
+                if (templateAcademicHourList.size() == ConstantApplication.TWO){
+                    templateAcademicHourList.set(ConstantApplication.ONE,
+                            templateAcademicHourList.get(ConstantApplication.ONE).setGroup(group));
+                }
+            }
+        });
         switch (maxCountButton){
             case ConstantApplication.ONE:
                 radioGroup.check(R.id.duration_rgroup_short);
