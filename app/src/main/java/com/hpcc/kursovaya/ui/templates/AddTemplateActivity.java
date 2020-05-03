@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
 import com.hpcc.kursovaya.dao.query.DBManager;
@@ -43,16 +44,19 @@ public class AddTemplateActivity extends TemplateActivity {
     @Override
     protected void onClickAcceptClass(DialogInterface dialog, int which,int classDay, int classHour) {
         //здесь обработчик кнопки принять
-        if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, groupNameSuggest.getText().toString())){
+        String strGroup = groupNameSuggest.getText().toString();
+
+        if (DBManager.read(Group.class, ConstantApplication.NAME, strGroup) == null){
             Toast.makeText(currentContext, R.string.toast_check_group, Toast.LENGTH_LONG).show();
-            super.addClass(classDay, classHour);
+            super.addClass(classDay, classHour, strGroup);
             return;
         }
         if (subjectSpinner.getCount() == ConstantApplication.ZERO){
             Toast.makeText(currentContext, R.string.toast_fragment_no_subjects, Toast.LENGTH_LONG).show();
-            super.addClass(classDay, classHour);
+            super.addClass(classDay, classHour, strGroup);
             return;
         }
+
         super.onClickAcceptClass(dialog, which, classDay, classHour);
     }
 

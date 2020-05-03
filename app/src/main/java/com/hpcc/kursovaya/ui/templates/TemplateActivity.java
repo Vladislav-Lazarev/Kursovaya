@@ -120,9 +120,9 @@ public abstract class TemplateActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 if(!isSelectMode) {
                                     if (buttonWrapperList.get(classDay).getBtn().getText()!=""){
-                                        editClass(classDay,classHour);
+                                        editClass(classDay,classHour, "");
                                     } else {
-                                        addClass(classDay, classHour);
+                                        addClass(classDay, classHour, "");
                                     }
                                 } else if(!buttonWrapperList.get(classHour).getBtn().getText().equals("") && !buttonWrapperList.get(classHour).isSelected()){
                                     buttonWrapperList.get(classHour).setSelectBackground();
@@ -308,8 +308,8 @@ public abstract class TemplateActivity extends AppCompatActivity {
         textCont.setText(getResources().getString(popup_super_template));
     }
     // Для конструирования getClassDialogBuilder
-    protected void addClass(final int classDay,final int classHour){
-        final AlertDialog dialog = getClassDialogBuilder(classDay,classHour).create();
+    protected void addClass(final int classDay,final int classHour, String strGroup){
+        final AlertDialog dialog = getClassDialogBuilder(classDay,classHour, strGroup).create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface arg0) {
@@ -324,9 +324,8 @@ public abstract class TemplateActivity extends AppCompatActivity {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-    protected void editClass(final int classDay,final int classHour){
-
-        final AlertDialog dialog = getClassDialogBuilder(classDay,classHour).create();
+    protected void editClass(final int classDay,final int classHour, String strGroup){
+        final AlertDialog dialog = getClassDialogBuilder(classDay,classHour, strGroup).create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface arg0) {
@@ -342,7 +341,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
         leftSpacer.setVisibility(View.GONE);
     }
     // Работа я ячейками
-    protected AlertDialog.Builder getClassDialogBuilder(final int classDay,final int classHour){
+    protected AlertDialog.Builder getClassDialogBuilder(final int classDay,final int classHour, String strGroup){
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.popup_add_class);
         builder.setCancelable(false);
@@ -358,6 +357,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
         listenerSpinnerSubject(subjectSpinner);
 
         groupNameSuggest = classView.findViewById(R.id.groupNameSuggestET);
+        groupNameSuggest.setText(strGroup);
         groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
         GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(currentContext,R.layout.group_auto, groupList);
         groupNameSuggest.setAdapter(adapter);
@@ -383,7 +383,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
                     return;
                 }
 
-                currentTemplate.setGroup(group);
+                currentTemplate.setGroup(DBManager.copyObjectFromRealm(group));
                 fillSpinnerByGroup(currentContext, subjectSpinner, group);
 
                 if (templateAcademicHourList.size() == ConstantApplication.TWO){
@@ -415,8 +415,8 @@ public abstract class TemplateActivity extends AppCompatActivity {
         ((RadioButton)classView
                 .findViewById(R.id.popup_duration_rgroup_short)).setChecked(true);
         radioGroup = classView.findViewById(R.id.popup_duration_rgroup);
+        currentTemplate.setDayAndPair(Pair.create(classDay, classHour));
         radioGroup.setOnCheckedChangeListener((radioGroup, checkedId) -> {
-            currentTemplate.setDayAndPair(Pair.create(classDay, classHour));
             switch (checkedId) {
                 case R.id.popup_duration_rgroup_short:
                     if (templateAcademicHourList.size() == ConstantApplication.TWO) {
@@ -467,8 +467,36 @@ public abstract class TemplateActivity extends AppCompatActivity {
             final int maxCountButton = templateAcademicHourList.size();
 
             groupNameSuggest.setText(currentTemplate.getGroup().getName());
-            fillSpinnerByGroup(currentContext, subjectSpinner, currentTemplate.getGroup());
-            ConstantApplication.setSpinnerText(subjectSpinner, currentTemplate.getSubject().getName());
+            groupNameSuggest.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    String strGroup = s.toString();
+                    Group group = DBManager.read(Group.class, ConstantApplication.NAME, strGroup);
+
+                    if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, strGroup) || group == null){
+                        ConstantApplication.fillingSpinner(currentContext, subjectSpinner, new ArrayList<>());
+                        return;
+                    }
+
+                    currentTemplate.setGroup(DBManager.copyObjectFromRealm(group));
+                    fillSpinnerByGroup(currentContext, subjectSpinner, group);
+
+                    if (templateAcademicHourList.size() == ConstantApplication.TWO){
+                        templateAcademicHourList.set(ConstantApplication.ONE,
+                                templateAcademicHourList.get(ConstantApplication.ONE).setGroup(group));
+                    }
+                }
+            });
 
             switch (maxCountButton){
                 case ConstantApplication.ONE:

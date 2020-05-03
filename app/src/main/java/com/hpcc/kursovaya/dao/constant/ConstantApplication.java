@@ -115,7 +115,7 @@ public class ConstantApplication {
 
     // checkUI
     public static boolean checkUI(String pattern, String str){
-        return Pattern.matches(PATTERN_SPECIALITY, str);
+        return Pattern.matches(pattern, str);
     }
 
     public static boolean checkUIMatcher(String strPattern, String text, int numberGroup){
@@ -133,21 +133,5 @@ public class ConstantApplication {
             return false;
         }
     }
-
-    /*public static boolean checkUISpeciality(String str){
-        return Pattern.matches(PATTERN_SPECIALITY, str);
-    }
-    public static boolean checkUIGroup(String str){
-        return Pattern.matches(PATTERN_GROUP, str);
-    }
-    public static boolean checkUISubject(String str){
-        return Pattern.matches(PATTERN_SUBJECT, str);
-    }
-    public static boolean checkUISubjectHour(String str){
-        return Pattern.matches(PATTERN_SUBJECT_HOUR, str);
-    }
-    public static boolean checkUITemplate(String str){
-        return Pattern.matches(PATTERN_TEMPLATE, str);
-    }*/
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

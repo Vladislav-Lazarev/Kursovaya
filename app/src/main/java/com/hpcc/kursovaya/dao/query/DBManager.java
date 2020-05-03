@@ -163,8 +163,8 @@ public class DBManager {
             result.add(query.findFirst());
             Log.v(TAG, "Success -> " + result.get(ConstantApplication.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantApplication.ZERO).toString());
         } catch (Throwable ex) {
-            result.add(null);
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
+            return null;
         }
 
         return (T)result.get(ConstantApplication.ZERO);

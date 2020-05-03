@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
+import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.EntityI;
 import com.hpcc.kursovaya.dao.entity.Group;
@@ -21,6 +22,8 @@ import java.util.Objects;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
+
+import static com.itextpdf.text.factories.RomanAlphabetFactory.getString;
 
 public class TemplateAcademicHour extends RealmObject implements EntityI<TemplateAcademicHour>, Parcelable, Cloneable {
     private static final String TAG = TemplateAcademicHour.class.getSimpleName();
@@ -63,28 +66,21 @@ public class TemplateAcademicHour extends RealmObject implements EntityI<Templat
         }
     }
 
-    @NotNull
     public Subject getSubject() {
-        return DBManager.read(Subject.class, ConstantApplication.ID, idSubject);
+        return DBManager.copyObjectFromRealm(
+                DBManager.read(Subject.class, ConstantApplication.ID, idSubject));
     }
     public TemplateAcademicHour setSubject(@NotNull Subject subject) {
-        if(subject.getId() < ConstantApplication.ONE){
-            Log.e(TAG, "Failed -> setSubject(" + subject.toString() + ")");
-            throw new RuntimeException("setSubject(" + subject.toString() + ")");
-        }
 
         this.idSubject = subject.getId();
         return this;
     }
 
     public Group getGroup() {
-        return DBManager.read(Group.class, ConstantApplication.ID, idGroup);
+        return DBManager.copyObjectFromRealm(
+                DBManager.read(Group.class, ConstantApplication.ID, idGroup));
     }
     public TemplateAcademicHour setGroup(@NotNull Group group) {
-        if(group.getId() < ConstantApplication.ONE){
-            Log.e(TAG, "Failed -> setGroup(" + group.toString() + ")");
-            throw new RuntimeException("setGroup(" + group.toString() + ")");
-        }
 
         this.idGroup = group.getId();
         return this;
@@ -187,8 +183,8 @@ public class TemplateAcademicHour extends RealmObject implements EntityI<Templat
             setGroup(getGroup());
             setSubject(getSubject());
             setDayAndPair(getDayAndPairButton());
-        } catch(RuntimeException ex) {
-            throw new Exception("Entity = ", ex);
+        } catch(Throwable ex) {
+            throw new Exception(ex);
         }
     }
     @Override
