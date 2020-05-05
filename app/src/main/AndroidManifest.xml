@@ -97,6 +97,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:theme="@style/mainActStyle"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
             >
             <intent-filter>
