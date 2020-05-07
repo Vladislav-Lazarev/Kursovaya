@@ -57,6 +57,7 @@ import com.hpcc.kursovaya.ui.groups.GroupsFragment;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
 import com.hpcc.kursovaya.ui.settings.SettingsFragment;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
+import com.hpcc.kursovaya.ui.specialites.SpecialitiesFragment;
 import com.hpcc.kursovaya.ui.subjects.SubjectsFragment;
 import com.hpcc.kursovaya.ui.templates.TemplatesFragment;
 import com.itextpdf.text.Chunk;
@@ -333,6 +334,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 } else {
                     transaction.add(R.id.nav_host_fragment, new SubjectsFragment());
+                }
+                isScheduleSelected = false;
+                break;
+            case R.id.nav_specialities:
+                String specTag6 = "Specialities";
+                Fragment oldFragment6 = manager.findFragmentByTag(specTag6);
+                backToCurrentDay.setVisibility(View.GONE);
+                currentDayText.setVisibility(View.GONE);
+                if(oldFragment6 != null){
+                    transaction.replace(R.id.nav_host_fragment,oldFragment6);
+                    ((SpecialitiesFragment) oldFragment6).setActionBarTitle();
+                } else {
+                    transaction.add(R.id.nav_host_fragment, new SpecialitiesFragment());
                 }
                 isScheduleSelected = false;
                 break;

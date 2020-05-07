@@ -35,7 +35,6 @@ public class SettingsFragment extends Fragment{
         if(!isCreatedAlready) {
             root = inflater.inflate(R.layout.fragment_settings, container, false);
             final String[] SETTINGS = { getResources().getString(R.string.schedule_alarm_title),
-                    getResources().getString(R.string.specialty_list_label),
                     getResources().getString(R.string.backup_title),
                     getResources().getString(R.string.language_title)};
             ListView lsv = root.findViewById(R.id.settingsLSV);
@@ -56,17 +55,14 @@ public class SettingsFragment extends Fragment{
                             startActivity(alarmInt);
                             break;
                         case 1:
-                            Intent specInt = new Intent(getActivity(), SpecialitiesActivity.class);
-                            startActivity(specInt);
-                            break;
-                        case 2:
                             Intent backInt = new Intent(getActivity(), BackupActivity.class);
                             startActivity(backInt);
                             break;
-                        case 3:
+                        case 2:
                             Intent langInt = new Intent(getActivity(), LanguageActivity.class);
                             startActivity(langInt);
                             break;
+
                         default:
                     }
                     String selectedItem = SETTINGS[position];

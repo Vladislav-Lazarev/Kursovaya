@@ -249,4 +249,6 @@
     <string name="course_spinner_hint">Оберіть спеціальність</string>
 
     <string name="hint_speciality">Дозволяється писати коротко (через крапку) чи абревіатурою</string>
+    <string name="speciality_code">Код:</string>
+    <string name="speciality_name_hint">Введіть назву спеціальності</string>
 </resources>
