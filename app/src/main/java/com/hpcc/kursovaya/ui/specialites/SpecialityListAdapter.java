@@ -25,12 +25,12 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
 
     private Context mContext;
     private int mResource;
-    private int lastPosition = -1;
     private List<Speciality> specialityList;
 
     static class ViewHolder {
         TextView name;
         TextView courseQuantity;
+        TextView code;
     }
 
     public SpecialityListAdapter(@NonNull Context context, int resource, @NonNull List<Speciality> objects) {
@@ -44,7 +44,7 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         String templateName = getItem(position).getName();
-        String courseQuantity = Integer.toString(getItem(position).getCountCourse());
+        String code = Integer.toString(getItem(position).getCode());
 
         final View result;
         ViewHolder holder;
@@ -54,7 +54,7 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
             convertView = inflater.inflate(mResource,parent,false);
             holder = new ViewHolder();
             holder.name = convertView.findViewById(R.id.specialities_text);
-            holder.courseQuantity = convertView.findViewById(R.id.courses_quantity_text);
+            holder.code = convertView.findViewById(R.id.speciality_code_text);
             result = convertView;
 
             convertView.setTag(holder);
@@ -65,10 +65,8 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
        /* Animation animation = AnimationUtils.loadAnimation(mContext,(position>lastPosition) ? R.anim.load_down_anim:R.anim.load_up_anim);
         result.startAnimation(animation);*/
 
-        lastPosition = position;
-
         holder.name.setText(templateName);
-        holder.courseQuantity.setText(courseQuantity);
+        holder.code.setText(code);
         return convertView;
     }
 

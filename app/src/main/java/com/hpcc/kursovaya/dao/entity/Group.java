@@ -167,7 +167,7 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
         RealmResults<Group> existingEntities =
                 DBManager.readAll(Group.class, ConstantApplication.NAME, this.getName(), ConstantApplication.NAME);
         for (Group entity : existingEntities) {
-            if (this.getName().equals(entity.getName()) || this.getId() != entity.getId()) {
+            if (this.getName().equals(entity.getName()) && this.getId() != entity.getId()) {
                 Log.d(TAG, "DB Group = " + entity);
                 return true;
             }

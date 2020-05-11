@@ -85,7 +85,7 @@ public class GroupsFragment extends Fragment {
                 }
             });
 
-            isCreatedAlready=true;
+            isCreatedAlready = true;
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
             listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
                 @Override

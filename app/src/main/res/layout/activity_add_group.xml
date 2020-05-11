@@ -28,8 +28,8 @@
                 android:id="@+id/create_group"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:adjustViewBounds="true"
                 android:scaleType="centerInside"
+                android:adjustViewBounds="true"
                 android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_path_161"
                 android:layout_gravity="right"/>

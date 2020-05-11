@@ -21,7 +21,6 @@ import com.hpcc.kursovaya.ui.settings.alarms.AlarmsActivity;
 import com.hpcc.kursovaya.ui.settings.backup.BackupActivity;
 import com.hpcc.kursovaya.ui.settings.language.LanguageActivity;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
-import com.hpcc.kursovaya.ui.settings.specialities.SpecialitiesActivity;
 
 public class SettingsFragment extends Fragment{
     boolean isCreatedAlready = false;

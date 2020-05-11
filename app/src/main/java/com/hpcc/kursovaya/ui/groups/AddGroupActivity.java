@@ -87,11 +87,13 @@ public class AddGroupActivity extends AppCompatActivity {
     }
 
     private void addGroup(){
-        String strGroup = groupEditText.getText().toString();
+        String strGroup = groupEditText.getText().toString().trim();
+
         if (spinnerSpeciality.getCount() == ConstantApplication.ZERO){
             Toast.makeText(this, R.string.toast_fragment_no_specialities, Toast.LENGTH_LONG).show();
             return;
         }
+
         if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, strGroup)){
             groupEditText.setError(getString(R.string.toast_check));
             return;

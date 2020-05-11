@@ -13,6 +13,18 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/editGroupNameLabel"
+                android:text="@string/groupName_label"
+                android:textColor="@color/appDefaultBlack"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="26dp"
+                />
+
             <TextView
                 android:id="@+id/editSpecialityLabel"
                 android:text="@string/specialty_label"
@@ -20,8 +32,9 @@
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="26dp"
-                android:layout_marginStart="15dp"/>
+                android:layout_marginTop="23dp"
+                android:layout_marginStart="15dp"
+                android:layout_below="@id/editGroupNameLabel"/>
 
             <TextView
                 android:id="@+id/editCourseLabel"
@@ -34,16 +47,19 @@
                 android:layout_marginTop="23dp"
                 android:layout_below="@id/editSpecialityLabel"/>
 
-            <TextView
-                android:id="@+id/editGroupNameLabel"
-                android:text="@string/groupName_label"
-                android:textColor="@color/appDefaultBlack"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/editTextGroupName"
+                android:layout_width="match_parent"
+                android:layout_marginEnd="15dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="23dp"
-                android:layout_below="@id/editCourseLabel"/>
+                android:layout_marginStart="71dp"
+                android:layout_marginTop="12dp"
+                android:layout_toEndOf="@id/editCourseLabel"
+                android:hint="@string/groupName_hint"
+                android:textSize="16sp"
+                android:maxLength="30"
+                android:inputType="textCapSentences"
+                />
 
             <Spinner
                 android:id="@+id/spinnerSpeciality"
@@ -52,7 +68,8 @@
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/editSpecialityLabel"
                 android:layout_marginStart="9dp"
-                android:layout_marginTop="23dp"/>
+                android:layout_marginTop="17dp"
+                android:layout_below="@id/editTextGroupName"/>
 
             <Spinner
                 android:id="@+id/spinnerCourse"
@@ -61,22 +78,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/spinnerSpeciality"
                 android:layout_marginStart="71dp"
-                android:layout_marginTop="23dp"
+                android:layout_marginTop="17dp"
                 android:layout_toEndOf="@id/editCourseLabel"/>
 
-            <EditText
-                android:id="@+id/editTextGroupName"
-                android:layout_width="match_parent"
-                android:layout_marginEnd="15dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/spinnerCourse"
-                android:layout_marginStart="71dp"
-                android:layout_marginTop="15dp"
-                android:layout_toEndOf="@id/editCourseLabel"
-                android:hint="@string/groupName_hint"
-                android:textSize="16sp"
-                android:maxLength="30"
-                android:inputType="textCapSentences" />
 
         </RelativeLayout>
     </ScrollView>

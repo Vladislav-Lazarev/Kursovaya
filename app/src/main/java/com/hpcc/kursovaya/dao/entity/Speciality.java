@@ -29,21 +29,24 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
     private int id;// ID speciality
     private String name;// Name speciality
     private int countCourse;// The number of courses in a particular specialty
+    private int code; //Code speciality
 
     {
         id = 0;
         name = "";
         countCourse = 0;
+        code = 0;
     }
     public Speciality() {
 
     }
-    public Speciality(@NotNull String name, int countCourse) {
+    public Speciality(@NotNull String name, int code) {
         this();
-
         setName(name);
-        setCountCourse(countCourse);
+        setCountCourse(ConstantApplication.FOUR);
+        setCode(code);
     }
+
 
     private void setId(int id) {
         if (id < ConstantApplication.ONE){
@@ -78,12 +81,20 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         return this;
     }
 
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null) return false;
         Speciality that = (Speciality) obj;
-        return countCourse == that.countCourse &&
+        return code == that.code &&
                 name.equals(that.name);
     }
 
@@ -98,6 +109,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", countCourse=" + countCourse +
+                ", code = " + code +
                 '}';
     }
 
@@ -172,7 +184,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         RealmResults<Speciality> existingEntities =
                 DBManager.readAll(Speciality.class, ConstantApplication.NAME, this.getName(), ConstantApplication.NAME);
         for (Speciality entity : existingEntities) {
-            if (this.getName().equals(entity.getName()) && this.getId() != entity.getId()) {
+            if ((this.getName().equals(entity.getName()) || this.getCode() == entity.getCode()) && this.getId() != entity.getId()) {
                 Log.d(TAG, "DB Speciality = " + entity);
                 return true;
             }
@@ -189,6 +201,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         try {
             setName(getName());
             setCountCourse(getCountCourse());
+            setCode(getCode());
         } catch(RuntimeException ex) {
             throw new Exception("Entity = ", ex);
         }
@@ -225,6 +238,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         id = in.readInt();
         name = in.readString();
         countCourse = in.readInt();
+        code = in.readInt();
     }
     public static final Creator<Speciality> CREATOR = new Creator<Speciality>() {
         @Override
@@ -247,6 +261,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         dest.writeInt(id);
         dest.writeString(name);
         dest.writeInt(countCourse);
+        dest.writeInt(code);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -256,4 +271,5 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
     public Speciality clone() throws CloneNotSupportedException {
         return (Speciality) super.clone();
     }
+
 }

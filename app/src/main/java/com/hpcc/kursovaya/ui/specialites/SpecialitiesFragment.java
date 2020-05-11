@@ -49,8 +49,7 @@ public class SpecialitiesFragment extends Fragment {
     private long mLastClickTime = 0;
 
     private EditText specText;
-    private Spinner courseSpinner;
-    Speciality speciality;
+    private EditText code;
     List<Speciality> specialityList;
 
 
@@ -72,7 +71,7 @@ public class SpecialitiesFragment extends Fragment {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                onClickPrepareAddSpeciality("");
+                onClickPrepareAddSpeciality();
             }
         });
         specialityList = DBManager.copyObjectFromRealm(
@@ -138,7 +137,7 @@ public class SpecialitiesFragment extends Fragment {
         ((MainActivity) getActivity()).showOverflowMenu(false);
     }
 
-    private void onClickPrepareAddSpeciality(String strSpeciality) {
+    private void onClickPrepareAddSpeciality() {
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.dialog_add_speciality);
         builder.setPositiveButton(R.string.dialog_button_add, new DialogInterface.OnClickListener() {
@@ -161,11 +160,6 @@ public class SpecialitiesFragment extends Fragment {
         addSpecialityView = getLayoutInflater().inflate(R.layout.dialog_speciality, null);
         builder.setView(addSpecialityView);
 
-        speciality = new Speciality();
-        specText = addSpecialityView.findViewById(R.id.speciality_name_text);
-        specText.setText(strSpeciality);
-        courseSpinner = addSpecialityView.findViewById(R.id.courseSpinner);
-
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -183,17 +177,22 @@ public class SpecialitiesFragment extends Fragment {
     }
 
     private void onClickAcceptAddSpeciality(DialogInterface dialog, int which) {
-        String strSpeciality = specText.getText().toString();
-        int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
+       specText = addSpecialityView.findViewById(R.id.speciality_name_text);
+       code = addSpecialityView.findViewById(R.id.code_text);
 
-        if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_SPECIALITY, strSpeciality)){
+       String strSpeciality = specText.getText().toString().trim();
+       String strCode = code.getText().toString().trim();
+
+       if (strSpeciality.isEmpty() || strCode.isEmpty() ||
+               !ConstantApplication.checkUI(ConstantApplication.PATTERN_SPECIALITY, strSpeciality)){
             Toast.makeText(currentContext, R.string.toast_check, Toast.LENGTH_LONG).show();
-            onClickPrepareAddSpeciality(strSpeciality);
+            onClickPrepareAddSpeciality();
             return;
         }
 
-        speciality.setName(strSpeciality)
-                .setCountCourse(countCourse);
+        int codeSpeciality = Integer.parseInt(code.getText().toString());
+        Speciality speciality = new Speciality(strSpeciality, codeSpeciality);
+
         adapter.write(speciality);
         adapter.update(ConstantApplication.NAME);
     }
@@ -275,11 +274,11 @@ public class SpecialitiesFragment extends Fragment {
         editSpecialityView = getLayoutInflater().inflate(R.layout.dialog_speciality, null);
         builder.setView(editSpecialityView);
 
-        speciality = entity;
         specText = editSpecialityView.findViewById(R.id.speciality_name_text);
-        specText.setText(speciality.getName());
-        courseSpinner = editSpecialityView.findViewById(R.id.courseSpinner);
-        ConstantApplication.setSpinnerText(courseSpinner, String.valueOf(speciality.getCountCourse()));
+        code = editSpecialityView.findViewById(R.id.code_text);
+
+        specText.setText(entity.getName());
+        code.setText(Integer.toString(entity.getCode()));
 
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -298,18 +297,21 @@ public class SpecialitiesFragment extends Fragment {
     }
 
     private void onClickAcceptEditSpeciality(DialogInterface dialog, int which, Speciality entity) {
-        String strSpeciality = specText.getText().toString();
-        int countCourse = Integer.parseInt(courseSpinner.getSelectedItem().toString());
+        String strSpeciality = specText.getText().toString().trim();
+        String strCode = code.getText().toString().trim();
 
-        if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_SPECIALITY, strSpeciality)){
+        if (strSpeciality.isEmpty() ||
+                strCode.isEmpty() ||
+                !ConstantApplication.checkUI(ConstantApplication.PATTERN_SPECIALITY, strSpeciality)){
             Toast.makeText(currentContext, R.string.toast_check, Toast.LENGTH_LONG).show();
             onClickPrepareEditSpeciality(entity);
             return;
         }
 
-        speciality.setName(strSpeciality)
-                .setCountCourse(countCourse);
-        adapter.write(speciality);
+        int codeSpeciality = Integer.parseInt(code.getText().toString());
+        entity.setName(strSpeciality).setCode(codeSpeciality);
+
+        adapter.write(entity);
         adapter.update(ConstantApplication.NAME);
     }
 }
