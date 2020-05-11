@@ -60,6 +60,7 @@
             android:layout_height="wrap_content"
             android:text="@string/popup_firstWeek"
             android:textSize="16sp"
+            android:visibility="gone"
             android:textColor="@color/appDefaultBlack"
             android:layout_alignParentStart="true"
             android:layout_marginTop="26dp"
@@ -71,19 +72,20 @@
             android:layout_width="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:orientation="horizontal"
             android:layout_below="@id/popupBottomTemplate"
             android:layout_marginStart="10dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="15dp">
+
             <RadioButton
                 android:id="@+id/popup_firstWeek_rgroup_upper"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/popup_upperWeekLabel"
-                android:checked="true"
+                android:layout_height="19dp"
                 android:buttonTint="@color/sideBar"
-                />
+                android:checked="true"
+                android:text="@string/popup_upperWeekLabel" />
             <RadioButton
                 android:id="@+id/popup_firstWeek_rgroup_bottom"
                 android:layout_width="wrap_content"

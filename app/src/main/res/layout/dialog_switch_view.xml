@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="wrap_content"
+
+    android:layout_height="wrap_content">
+
+    <RadioGroup
+        android:id="@+id/rg"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/week"
+            android:textSize="16sp"
+            android:text="@string/schedule_mode_week"
+            android:buttonTint="@color/sideBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <RadioButton
+            android:id="@+id/month"
+            android:textSize="16sp"
+            android:text="@string/schedule_mode_month"
+            android:buttonTint="@color/sideBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RadioGroup>
+</RelativeLayout>

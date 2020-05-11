@@ -3,6 +3,7 @@ package com.hpcc.kursovaya.ClassesButton;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.widget.Button;
 
 import com.hpcc.kursovaya.R;
@@ -80,9 +81,14 @@ public class TemplateClassesButtonWrapper {
 
     public void setTemplateAcademicHour(TemplateAcademicHour templateAcademicHour) {
         this.templateAcademicHour = templateAcademicHour;
-        btn.setBackgroundColor(templateAcademicHour.getSubject().getColor());
         btn.setText(templateAcademicHour.getGroup().getName());
         btn.setTextColor(Color.WHITE);
+        GradientDrawable shape = new GradientDrawable();
+        shape.setShape(GradientDrawable.RECTANGLE);
+        shape.setCornerRadii(new float[] { 0, 0, 0, 0, 0, 0, 0, 0 });
+        shape.setColor(templateAcademicHour.getSubject().getColor());
+        shape.setStroke(1, Color.BLACK);
+        btn.setBackground(shape);
         btn.setShadowLayer(5,4,4,Color.BLACK);
         isBackgroundChanged = true;
     }

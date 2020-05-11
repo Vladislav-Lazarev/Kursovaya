@@ -54,6 +54,8 @@ import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
+import com.hpcc.kursovaya.ui.schedule.MonthScheduleFragment;
+import com.hpcc.kursovaya.ui.schedule.MonthViewPager.MonthViewFragment;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
 import com.hpcc.kursovaya.ui.settings.SettingsFragment;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
@@ -76,6 +78,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 
 import org.joda.time.DateTime;
+import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -86,6 +89,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -102,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AppBarConfiguration mAppBarConfiguration;
     private boolean isSelectMode = false;
     private boolean isScheduleSelected = true;
+    private boolean isWeekViewSelected = true;
     private DrawerLayout drawer;
     private Toolbar toolbar1;
     private Toolbar toolbarCompleteClasses;
@@ -157,7 +162,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView textCont = findViewById(R.id.toolbar_title);
         textCont.setOnClickListener(v -> {
             if(isScheduleSelected){
-                prepareActionDatePicker();
+                prepareModeSelection();
+                //prepareActionDatePicker();
             }
         });
         backToCurrentDay = toolbar.findViewById(R.id.toCurrentDay);
@@ -190,6 +196,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             isLanguageChanged = true;
         }
     }
+
+    private void prepareModeSelection() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.schedule_mode_dialog_title);
+        View modeChooserView = getLayoutInflater().inflate(R.layout.dialog_switch_view,null);
+        RadioGroup rg = modeChooserView.findViewById(R.id.rg);
+        if(isWeekViewSelected) {
+            rg.check(R.id.week);
+        } else {
+            rg.check(R.id.month);
+        }
+        builder.setPositiveButton("Прийняти", (dialog, which) -> {
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.setCustomAnimations(R.anim.slide_in_top,R.anim.slide_out_bottom);
+            Fragment fragment = null;
+            DateTime startDate = DateTime.parse(ConstantApplication.MIN_DATE_TIME, DateTimeFormat.forPattern(ConstantApplication.PATTERN_DATE_TIME));
+            DateTime firstDate = DateTime.now().withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+            switch(rg.getCheckedRadioButtonId()){
+                case R.id.week:
+                    isWeekViewSelected = true;
+                    int weekFromCurrent = Weeks.weeksBetween(startDate.dayOfWeek().withMinimumValue().minusDays(1), firstDate.dayOfWeek().withMaximumValue().plusDays(1)).getWeeks();
+                    fragment = new ScheduleFragment();
+                    break;
+                case R.id.month:
+                    isWeekViewSelected = false;
+                    int monthFromCurrent = Months.monthsBetween(startDate,firstDate.withDayOfMonth(1)).getMonths();
+                    fragment = new MonthScheduleFragment(monthFromCurrent);
+
+            }
+            transaction.replace(R.id.nav_host_fragment,fragment);
+            transaction.commit();
+        });
+        builder.setNegativeButton("Відміна", ((dialog, which) -> dialog.cancel()));
+        builder.setView(modeChooserView);
+        builder.create().show();
+
+    }
+
     //This method creates folder in external storage for backups
     private void createBackupFolder() {
         String externalStorage = "TeachersDiaryBackups";
@@ -897,11 +942,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void bottomSpinnerOnItemSelected(AdapterView<?> parent, int position) {
         String item = (String) parent.getItemAtPosition(position);
         bottomTemplate = DBManager.read(TemplateScheduleWeek.class,ConstantApplication.NAME,item);
+        RadioGroup rg = importTemplates.findViewById(R.id.popup_firstWeek_rgroup);
+        TextView label = importTemplates.findViewById(R.id.popupFirstWeek);
+        if(bottomTemplate.equals(upperTemplate)){
+            rg.setVisibility(View.GONE);
+            label.setVisibility(View.GONE);
+        } else {
+            rg.setVisibility(View.VISIBLE);
+            label.setVisibility(View.VISIBLE);
+        }
     }
 
     private void upperSpinnerOnItemSelected(AdapterView<?> parent, int position) {
         String item = (String) parent.getItemAtPosition(position);
         upperTemplate = DBManager.read(TemplateScheduleWeek.class,ConstantApplication.NAME,item);
+        RadioGroup rg = importTemplates.findViewById(R.id.popup_firstWeek_rgroup);
+        TextView label = importTemplates.findViewById(R.id.popupFirstWeek);
+        if(upperTemplate.equals(bottomTemplate)){
+            rg.setVisibility(View.GONE);
+            label.setVisibility(View.GONE);
+        } else {
+            rg.setVisibility(View.VISIBLE);
+            label.setVisibility(View.VISIBLE);
+        }
     }
 
 

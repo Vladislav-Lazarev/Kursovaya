@@ -251,4 +251,7 @@
     <string name="hint_speciality">Дозволяється писати коротко (через крапку) чи абревіатурою</string>
     <string name="speciality_code">Код:</string>
     <string name="speciality_name_hint">Введіть назву спеціальності</string>
+    <string name="schedule_mode_week">Тиждень</string>
+    <string name="schedule_mode_month">Місяць</string>
+    <string name="schedule_mode_dialog_title">Обрати режим відображення</string>
 </resources>
