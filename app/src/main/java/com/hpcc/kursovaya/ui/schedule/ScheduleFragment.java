@@ -4,10 +4,12 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -19,6 +21,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewFragment;
 import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewPagerAdapter;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
@@ -39,6 +43,12 @@ public class ScheduleFragment extends Fragment {
 
     private long mLastClickTime = 0;
     private int weekDifference;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -126,6 +136,41 @@ public class ScheduleFragment extends Fragment {
             //setActionBarTitle();
         }
         return root;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        MainActivity activity = (MainActivity) getActivity();
+        switch (item.getItemId()){
+            case R.id.action_deleteClasses:
+                activity.setSelectMode(true);
+                activity.getToolbar().setVisibility(View.GONE);
+                activity.getToolbar1().setVisibility(View.VISIBLE);
+                //prepareActionDatePicker();
+                return true;
+            case R.id.action_importTemplates:
+                activity.prepareActionImportTemplates();
+                return true;
+            case R.id.action_checkRead:
+                activity.setSelectMode(true);
+                activity.getToolbar().setVisibility(View.GONE);
+                activity.getToolbarCompleteClasses().setVisibility(View.VISIBLE);
+                return true;
+            case R.id.action_checkCanceled:
+                activity.setSelectMode(true);
+                activity.getToolbar().setVisibility(View.GONE);
+                activity.getToolbarCanceledClasses().setVisibility(View.VISIBLE);
+                return true;
+            case R.id.action_reportPeriod:
+                if(DBManager.readAll(Speciality.class).size()!=0) {
+                    activity.prepareReporDatePicker();
+                } else {
+                    Toast.makeText(getActivity(), R.string.toast_fragment_no_specialities, Toast.LENGTH_LONG).show();
+                }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public void setCoupleHeaders(){

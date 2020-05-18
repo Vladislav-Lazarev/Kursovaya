@@ -8,6 +8,7 @@
     <color name="menuTextColor">#FFFFFF</color>
     <color name="appDefaultBlack">#000000</color>
     <color name="calendarBlack">#323232</color>
+    <color name="colorStatusBar">#999999</color>
     <color name="appDefaultIconTint">#A5A5A5</color>
     <color name="listViewItemBackground">#F3F6FB</color>
     <color name="weekend_color">#CD0000</color>

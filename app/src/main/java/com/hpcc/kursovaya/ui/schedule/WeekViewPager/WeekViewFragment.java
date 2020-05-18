@@ -12,6 +12,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -52,7 +53,7 @@ public class WeekViewFragment extends Fragment {
     private static final int ADD_CLASS = 1;
     private static final int EDIT_CLASS = 2;
 
-    private final String TAG = "WeekViewFragment";
+    private static final String TAG = "WeekViewFragment";
     public static final String ARGUMENT_WEEK_FROM_CURRENT="arg_week_from_current";
     private int weekFromCurrent;
     private DateTime firstDayOfWeek;
@@ -92,6 +93,7 @@ public class WeekViewFragment extends Fragment {
     }
 
     public int getWeekFromCurrent(){ return weekFromCurrent; }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -738,12 +740,12 @@ public class WeekViewFragment extends Fragment {
                     AcademicHour academicHourFirst = data.getParcelableExtra("firstHour");
                     classes.get(classDay).get(classHour).setAcademicHour(academicHourFirst);
 
-                    repeatForWeeks(academicHourFirst,classDay,classHour);
+                    repeatForWeeks(academicHourFirst,classDay,classHour, getActivity());
                     if(isTwoHours){
                         AcademicHour academicHourSecond = data.getParcelableExtra("secondHour");
                         int secondCellShift = data.getIntExtra("secondCellPosition",0);
                         classes.get(classDay).get(classHour+secondCellShift).setAcademicHour(academicHourSecond);
-                        repeatForWeeks(academicHourSecond,classDay,classHour+secondCellShift);
+                        repeatForWeeks(academicHourSecond,classDay,classHour+secondCellShift,getActivity());
                     }
                     Log.d(TAG,classDay + " " + classHour);
                     break;
@@ -751,7 +753,7 @@ public class WeekViewFragment extends Fragment {
                     AcademicHour academicHourEditedFirst = data.getParcelableExtra("firstHour");
                     boolean isHourChanged = data.getBooleanExtra("clearSecondCell",false);
                     classes.get(classDay).get(classHour).setAcademicHour(academicHourEditedFirst);
-                    repeatForWeeks(academicHourEditedFirst,classDay,classHour);
+                    repeatForWeeks(academicHourEditedFirst,classDay,classHour,getActivity());
                     if(isHourChanged){
                         int secondCellShift = data.getIntExtra("secondClassHour",0);
                         classes.get(classDay).get(secondCellShift).clearButtonContent();
@@ -760,7 +762,7 @@ public class WeekViewFragment extends Fragment {
                         AcademicHour academicHourEditedSecond = data.getParcelableExtra("secondHour");
                         int secondCellShift = data.getIntExtra("secondClassHour",0);
                         classes.get(classDay).get(secondCellShift).setAcademicHour(academicHourEditedSecond);
-                        repeatForWeeks(academicHourEditedSecond,classDay,secondCellShift);
+                        repeatForWeeks(academicHourEditedSecond,classDay,secondCellShift,getActivity());
                     }
 
                     Log.d(TAG,classDay + " " + classHour);
@@ -771,9 +773,9 @@ public class WeekViewFragment extends Fragment {
         }
     }
 
-    private void repeatForWeeks(AcademicHour academicHour, int classDay, int classHour) {
+    public static void repeatForWeeks(AcademicHour academicHour, int classDay, int classHour, Context context) {
         int numberOfWeeks = academicHour.getRepeatForNextWeek();
-       DateTime start = new DateTime(academicHour.getDate());
+        DateTime start = new DateTime(academicHour.getDate());
         List<AcademicHour> academicHours = AcademicHour.academicHourListFromPeriod(start.plusDays(1).toDate(),start.plusWeeks(3).toDate());
         for(AcademicHour academicHourToDelete: academicHours){
             TemplateAcademicHour templateAcHour = academicHourToDelete.getTemplateAcademicHour();
@@ -807,7 +809,7 @@ public class WeekViewFragment extends Fragment {
                     // TODO Оповещение о не правильности\корректности
                     e.printStackTrace();
                 }
-                AcademicHour.setNotifaction(getActivity().getApplicationContext(),nextAcademicHour);
+                AcademicHour.setNotifaction(context.getApplicationContext(),nextAcademicHour);
             }
         }
     }
@@ -840,7 +842,7 @@ public class WeekViewFragment extends Fragment {
     public void onResume(){
         super.onResume();
         currentDayText.setVisibility(View.GONE);
-        Log.d(TAG,Boolean.toString(((MainActivity)getActivity()).isLanguageChanged()) );
+        Log.d(TAG,Boolean.toString(((MainActivity)getActivity()).isLanguageChanged()));
         if (isResumed() && !((MainActivity)getActivity()).isLanguageChanged()) {
             ((MainActivity)getActivity()).setWeeksFromCurrent(weekFromCurrent);
             if(((MainActivity)getActivity()).isScheduleSelected()) {

@@ -254,4 +254,7 @@
     <string name="schedule_mode_week">Тиждень</string>
     <string name="schedule_mode_month">Місяць</string>
     <string name="schedule_mode_dialog_title">Обрати режим відображення</string>
+    <string name="day_fragment_no_group">Немає групи</string>
+    <string name="day_fragment_class_free">Заняття вільне</string>
+    <string name="day_fragment_class_no_description">Опис відсутній</string>
 </resources>

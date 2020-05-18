@@ -20,52 +20,55 @@ import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.query.DBManager;
-import com.hpcc.kursovaya.ui.schedule.MonthViewPager.MonthViewPagerAdapter;
+import com.hpcc.kursovaya.ui.schedule.DayViewPager.CustomViewPager;
+import com.hpcc.kursovaya.ui.schedule.DayViewPager.DayViewPagerAdapter;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-public class MonthScheduleFragment extends Fragment {
-    private static String TAG = MonthScheduleFragment.class.getSimpleName();
-    private ViewPager pager;
+public class DayScheduleFragment extends Fragment {
+    private static final String TAG = DayScheduleFragment.class.getSimpleName();
+    private CustomViewPager pager;
     private View root;
-    private MonthViewPagerAdapter pagerAdapter;
-    private int monthDifference;
+    private DayViewPagerAdapter pagerAdapter;
+    private int dayDifference;
 
-    public MonthScheduleFragment(){
+    public DayScheduleFragment(){
         super();
     }
 
-    public MonthScheduleFragment(int monthDifference){
+    public DayScheduleFragment(int dayDifference){
         super();
-        this.monthDifference = monthDifference;
+        this.dayDifference = dayDifference;
     }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        MainActivity activity = (MainActivity) getActivity();
-        switch (item.getItemId()){
-            case R.id.action_importTemplates:
-                activity.prepareActionImportTemplates();
-                return true;
-            case R.id.action_reportPeriod:
-                if(DBManager.readAll(Speciality.class).size()!=0) {
-                    activity.prepareReporDatePicker();
-                } else {
-                    Toast.makeText(getActivity(), R.string.toast_fragment_no_specialities, Toast.LENGTH_LONG).show();
-                }
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        MainActivity activity = (MainActivity) getActivity();
+        activity.setCurrentViewSelected(MainActivity.DAY);
         setHasOptionsMenu(true);
+        activity.invalidateOptionsMenu();
+    }
+
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanseState){
+        //LocaleManager.setLocale(getActivity());
+        root = inflater.inflate(R.layout.fragment_day_schedule,container,false);
+        pager = root.findViewById(R.id.pager);
+        pagerAdapter = new DayViewPagerAdapter(getChildFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        pager.setAdapter(pagerAdapter);
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+        DateTime startDate = formatter.parseDateTime("01/01/1990 00:00:00");
+        /*DateTime currentDate = DateTime.now();
+        dayDifference = Days.daysBetween(startDate,currentDate).getDays();*/
+        Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
+        ImageButton toCurrentDayButton = toolbar.findViewById(R.id.toCurrentDay);
+        toCurrentDayButton.setOnClickListener(v -> pager.setCurrentItem(Days.daysBetween(startDate,DateTime.now()).getDays()));
+        pager.setCurrentItem(dayDifference);
+        setActionBarTitle();
+        return root;
     }
 
     private String monthNumberToString(int monthNumber) {
@@ -111,34 +114,25 @@ public class MonthScheduleFragment extends Fragment {
         return monthStr;
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanseState) {
-        root = inflater.inflate(R.layout.fragment_month_schedule,container,false);
-        pager = root.findViewById(R.id.pager);
-        pagerAdapter = new MonthViewPagerAdapter(getChildFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        pager.setAdapter(pagerAdapter);
-        Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
-        ImageButton toCurrentDayButton = toolbar.findViewById(R.id.toCurrentDay);
-        toCurrentDayButton.setOnClickListener(v -> pager.setCurrentItem(monthDifference));
-        pager.setCurrentItem(monthDifference);
-        setActionBarTitle();
-        return root;
-    }
-
     public void setActionBarTitle(){
         if(!((MainActivity) getActivity()).isLanguageChanged()) {
             Log.d(TAG, "setActionBar title in schedule called");
             DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
             DateTime from = formatter.parseDateTime("01/01/1990 00:00:00");
             StringBuilder title = new StringBuilder();
-            title.append(monthNumberToString(from.plusMonths(monthDifference).getMonthOfYear()))
+            title.append(monthNumberToString(from.plusDays(dayDifference).getMonthOfYear()))
                     .append(", ")
-                    .append(from.plusMonths(monthDifference).getYear());
+                    .append(from.plusDays(dayDifference).getYear());
             ((MainActivity) getActivity()).setActionBarTitle(title.toString());
             ((MainActivity) getActivity()).showOverflowMenu(true);
         } else {
             Log.d(TAG, "setActionBar title in schedule called (language changed true)");
             ((MainActivity) getActivity()).showOverflowMenu(false);
-           // ((MainActivity) getActivity()).setLanguageChanged(false);
+            // ((MainActivity) getActivity()).setLanguageChanged(false);
         }
+    }
+
+    public CustomViewPager getViewPager() {
+        return pager;
     }
 }

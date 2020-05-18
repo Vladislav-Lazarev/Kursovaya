@@ -2,7 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/grid_transparent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp"
     android:orientation="vertical">
@@ -21,30 +24,34 @@
         android:layout_height="15dp"
         android:orientation="horizontal">
         <androidx.cardview.widget.CardView
+            android:id="@+id/card0"
             android:layout_weight="0.5"
             android:layout_width="0dp"
             app:cardCornerRadius="5dp"
             android:layout_height="match_parent">
             <TextView
+                android:id="@+id/class0"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
                 android:layout_height="match_parent"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:background="@android:color/holo_red_light"
                 android:text="П-61"/>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/card1"
             android:layout_weight="0.5"
             android:layout_width="0dp"
             app:cardCornerRadius="5dp"
             android:layout_height="match_parent">
             <TextView
+                android:id="@+id/class1"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
                 android:layout_height="match_parent"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:background="@android:color/holo_red_light"
                 android:text="П-61"/>
@@ -56,29 +63,33 @@
         android:layout_height="15dp"
         android:orientation="horizontal">
         <androidx.cardview.widget.CardView
+            android:id="@+id/card2"
             android:layout_weight="0.5"
             android:layout_width="0dp"
             app:cardCornerRadius="5dp"
             android:layout_height="match_parent">
             <TextView
+                android:id="@+id/class2"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
                 android:layout_height="match_parent"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:background="@android:color/holo_orange_dark"
                 android:text="П-62"/>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
+            android:id="@+id/card3"
             android:layout_weight="0.5"
             android:layout_width="0dp"
             app:cardCornerRadius="5dp"
             android:layout_height="match_parent">
             <TextView
+                android:id="@+id/class3"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
                 android:layout_height="match_parent"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:background="@android:color/holo_orange_dark"
                 android:text="П-62"/>
@@ -89,29 +100,33 @@
         android:layout_height="15dp"
         android:orientation="horizontal">
         <androidx.cardview.widget.CardView
+            android:id="@+id/card4"
             android:layout_weight="0.5"
             android:layout_width="0dp"
             app:cardCornerRadius="5dp"
             android:layout_height="match_parent">
             <TextView
+                android:id="@+id/class4"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
                 android:layout_height="match_parent"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:background="@android:color/holo_green_dark"
                 android:text="П-63"/>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
+            android:id="@+id/card5"
             android:layout_weight="0.5"
             android:layout_width="0dp"
             app:cardCornerRadius="5dp"
             android:layout_height="match_parent">
             <TextView
+                android:id="@+id/class5"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
                 android:layout_height="match_parent"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:background="@android:color/holo_green_dark"
                 android:text="П-63"/>
@@ -122,29 +137,33 @@
         android:layout_height="15dp"
         android:orientation="horizontal">
         <androidx.cardview.widget.CardView
+            android:id="@+id/card6"
             android:layout_weight="0.5"
             android:layout_width="0dp"
             app:cardCornerRadius="5dp"
             android:layout_height="match_parent">
             <TextView
+                android:id="@+id/class6"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
                 android:layout_height="match_parent"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:background="@android:color/holo_blue_light"
                 android:text="П-71"/>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
+            android:id="@+id/card7"
             android:layout_weight="0.5"
             android:layout_width="0dp"
             app:cardCornerRadius="5dp"
             android:layout_height="match_parent">
             <TextView
+                android:id="@+id/class7"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
                 android:layout_height="match_parent"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:background="@android:color/holo_blue_light"
                 android:text="П-71"/>
@@ -155,29 +174,33 @@
         android:layout_height="15dp"
         android:orientation="horizontal">
         <androidx.cardview.widget.CardView
+            android:id="@+id/card8"
             android:layout_weight="0.5"
             android:layout_width="0dp"
             app:cardCornerRadius="5dp"
             android:layout_height="match_parent">
             <TextView
+                android:id="@+id/class8"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
                 android:layout_height="match_parent"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:background="@android:color/holo_purple"
                 android:text="П-72"/>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
+            android:id="@+id/card9"
             android:layout_weight="0.5"
             android:layout_width="0dp"
             app:cardCornerRadius="5dp"
             android:layout_height="match_parent">
             <TextView
+                android:id="@+id/class9"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
                 android:layout_height="match_parent"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:background="@android:color/holo_purple"
                 android:text="П-72"/>

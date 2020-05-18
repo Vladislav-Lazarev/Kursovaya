@@ -283,6 +283,20 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
         DBManager.delete(Group.class, ConstantApplication.ID, getId());
     }
 
+    public int getPlanHours(Subject subject, List<AcademicHour> academicHourList){
+        int result = 0;
+        for(AcademicHour academicHour : academicHourList){
+            TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+            if(templateAcademicHour!=null){
+                Subject subjectFromHour = templateAcademicHour.getSubject();
+                if(subjectFromHour!=null && subject.equals(subjectFromHour)){
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+
     public int getReadHours(Subject subject, List<AcademicHour> academicHourList){
         int result = 0;
         for(AcademicHour academicHour : academicHourList){

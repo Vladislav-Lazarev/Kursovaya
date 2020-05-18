@@ -54,6 +54,7 @@ import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
+import com.hpcc.kursovaya.ui.schedule.DayScheduleFragment;
 import com.hpcc.kursovaya.ui.schedule.MonthScheduleFragment;
 import com.hpcc.kursovaya.ui.schedule.MonthViewPager.MonthViewFragment;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
@@ -78,6 +79,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.format.DateTimeFormat;
@@ -99,14 +101,21 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    public static final String DAY_TAG = "DAYVIEW";
     private final Context currentContext = this;
+    public static final String WEEKVIEW_TAG="WEEKVIEW";
+    public static final String MONTH_TAG = "MONTHVIEW";
     private static final int REQUEST_CODE = 26;
+    public static final int WEEKVIEW = 1;
+    public static final int MONTH = 2;
+    public static final int DAY = 3;
+    private int currentViewSelected = WEEKVIEW;
+
     private Menu fuckingMenu;
     private final String TAG = MainActivity.class.getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
     private boolean isSelectMode = false;
     private boolean isScheduleSelected = true;
-    private boolean isWeekViewSelected = true;
     private DrawerLayout drawer;
     private Toolbar toolbar1;
     private Toolbar toolbarCompleteClasses;
@@ -188,21 +197,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(savedInstanceState==null) {
             Log.d(TAG,"Чо теперь сейвд инстанс стейт?");
             getSupportFragmentManager().beginTransaction().add(R.id.nav_host_fragment,
-                    new ScheduleFragment(), getResources().getString(R.string.scheduleTag)).commit();
+                    new ScheduleFragment(), WEEKVIEW_TAG).commit();
             navigationView.setCheckedItem(R.id.nav_schedule);
 
         } else {
             Log.d(TAG,"открывай сука");
             isLanguageChanged = true;
+            backToCurrentDay.setVisibility(View.GONE);
+            currentDayText.setVisibility(View.GONE);
         }
     }
+
+
+    public int getCurrentViewSelected() {
+        return currentViewSelected;
+    }
+
+    public void setCurrentViewSelected(int currentViewSelected) {
+        this.currentViewSelected = currentViewSelected;
+    }
+
 
     private void prepareModeSelection() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.schedule_mode_dialog_title);
         View modeChooserView = getLayoutInflater().inflate(R.layout.dialog_switch_view,null);
         RadioGroup rg = modeChooserView.findViewById(R.id.rg);
-        if(isWeekViewSelected) {
+        if(currentViewSelected==WEEKVIEW) {
             rg.check(R.id.week);
         } else {
             rg.check(R.id.month);
@@ -214,19 +235,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Fragment fragment = null;
             DateTime startDate = DateTime.parse(ConstantApplication.MIN_DATE_TIME, DateTimeFormat.forPattern(ConstantApplication.PATTERN_DATE_TIME));
             DateTime firstDate = DateTime.now().withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+            String tag = "";
             switch(rg.getCheckedRadioButtonId()){
                 case R.id.week:
-                    isWeekViewSelected = true;
+                    currentViewSelected = WEEKVIEW;
+                    tag = WEEKVIEW_TAG;
                     int weekFromCurrent = Weeks.weeksBetween(startDate.dayOfWeek().withMinimumValue().minusDays(1), firstDate.dayOfWeek().withMaximumValue().plusDays(1)).getWeeks();
                     fragment = new ScheduleFragment();
                     break;
                 case R.id.month:
-                    isWeekViewSelected = false;
+                    currentViewSelected = MONTH;
+                    tag = MONTH_TAG;
                     int monthFromCurrent = Months.monthsBetween(startDate,firstDate.withDayOfMonth(1)).getMonths();
                     fragment = new MonthScheduleFragment(monthFromCurrent);
 
             }
-            transaction.replace(R.id.nav_host_fragment,fragment);
+            invalidateOptionsMenu();
+            transaction.replace(R.id.nav_host_fragment,fragment,tag);
             transaction.commit();
         });
         builder.setNegativeButton("Відміна", ((dialog, which) -> dialog.cancel()));
@@ -327,16 +352,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction transaction = manager.beginTransaction();
         switch(menuItem.getItemId()){
             case R.id.nav_schedule:
-                String specTag1 = getResources().getString(R.string.scheduleTag);
-                Fragment oldFragment1 = manager.findFragmentByTag(specTag1);
-                if (!isLanguageChanged() && oldFragment1 != null) {
-                    transaction.replace(R.id.nav_host_fragment,oldFragment1);
-                    ((ScheduleFragment)oldFragment1).refreshGrid(weeksFromCurrent);
-                    ((ScheduleFragment)oldFragment1).setActionBarTitle();
-                    ((ScheduleFragment)oldFragment1).setCoupleHeaders();
-                   // transaction.addToBackStack(null);
+                DateTime startDate = DateTime.parse(ConstantApplication.MIN_DATE_TIME, DateTimeFormat.forPattern(ConstantApplication.PATTERN_DATE_TIME));
+                DateTime firstDate = DateTime.now().withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+                Fragment oldWeek = manager.findFragmentByTag(WEEKVIEW_TAG);
+                Fragment oldMonth = manager.findFragmentByTag(MONTH_TAG);
+                Fragment oldDay = manager.findFragmentByTag(DAY_TAG);
+                if (!isLanguageChanged()) {
+                    if(currentViewSelected == WEEKVIEW && oldWeek!=null){
+                        transaction.replace(R.id.nav_host_fragment,oldWeek,WEEKVIEW_TAG);
+                        ((ScheduleFragment)oldWeek).refreshGrid(weeksFromCurrent);
+                        ((ScheduleFragment)oldWeek).setActionBarTitle();
+                        ((ScheduleFragment)oldWeek).setCoupleHeaders();
+                    } else if(currentViewSelected==MONTH && oldMonth!=null){
+                        transaction.replace(R.id.nav_host_fragment,oldMonth,MONTH_TAG);
+                        ((MonthScheduleFragment)oldMonth).setActionBarTitle();
+                    } else if (currentViewSelected==DAY && oldDay!=null) {
+                        transaction.replace(R.id.nav_host_fragment,oldDay,DAY_TAG);
+                        ((DayScheduleFragment)oldDay).setActionBarTitle();
+                    }
                 } else {
-                    transaction.add(R.id.nav_host_fragment, new ScheduleFragment());
+                    if(currentViewSelected==WEEKVIEW) {
+                        transaction.add(R.id.nav_host_fragment, new ScheduleFragment(),WEEKVIEW_TAG);
+                    } else if(currentViewSelected==MONTH){
+                        int monthFromCurrent = Months.monthsBetween(startDate,firstDate.withDayOfMonth(1)).getMonths();
+                        transaction.add(R.id.nav_host_fragment,new MonthScheduleFragment(monthFromCurrent),MONTH_TAG);
+                    } else {
+                        int daysFromCurrent = Days.daysBetween(startDate,firstDate).getDays();
+                        transaction.add(R.id.nav_host_fragment,new DayScheduleFragment(daysFromCurrent),DAY_TAG);
+                    }
                     showOverflowMenu(true);
                     isLanguageChanged = false;
                 }
@@ -424,9 +467,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        if(currentViewSelected==MONTH){
+            menu.findItem(R.id.action_deleteClasses).setEnabled(false);
+            menu.findItem(R.id.action_checkRead).setEnabled(false);
+            menu.findItem(R.id.action_checkCanceled).setEnabled(false);
+        }
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
-            case R.id.action_deleteClasses:
+            /*case R.id.action_deleteClasses:
                 setSelectMode(true);
                 toolbar.setVisibility(View.GONE);
                 toolbar1.setVisibility(View.VISIBLE);
@@ -450,13 +503,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     prepareReporDatePicker();
                 } else {
                     Toast.makeText(currentContext, R.string.toast_fragment_no_specialities, Toast.LENGTH_LONG).show();
-                }
+                }*/
             default:
-                return super.onOptionsItemSelected(item);
+                return false;
         }
     }
 
-    private void prepareReporDatePicker() {
+    public void prepareReporDatePicker() {
         List<Speciality> specialities = new ArrayList<>();
         specialities.add(new Speciality());
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -701,7 +754,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 table.addCell(inOutPadding);
                 for (int j = 0; j < groupList.size(); j++) {
                     PdfPTable hoursTable = new PdfPTable(1);
-                    int planHours = subjectList.get(i).getSpecialityCountHourMap().get(speciality);
+                    int planHours = groupList.get(j).getPlanHours(subjectList.get(i),academicHoursOfGroup.get(groupList.get(j)));
                     int factHours = groupList.get(j).getReadHours(subjectList.get(i),academicHoursOfGroup.get(groupList.get(j)));
                     int cancelledHours = groupList.get(j).getCanceledHours(subjectList.get(i),academicHoursOfGroup.get(groupList.get(j)));
                     hoursTable.addCell(new Phrase(Integer.toString(planHours)/*plan hours*/, fontSmall));
@@ -737,7 +790,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    private void prepareActionImportTemplates() {
+    public void prepareActionImportTemplates() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.action_importTemplates);
         AtomicBoolean isUpperFirst = new AtomicBoolean(true);
@@ -1080,6 +1133,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (fuckingMenu == null){
             isOverflowShown = showMenu;
             return;
+        } else if(isLanguageChanged){
+            isOverflowShown = showMenu;
         }
         fuckingMenu.setGroupVisible(R.id.main_menu_group, showMenu);
     }

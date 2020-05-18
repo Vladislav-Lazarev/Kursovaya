@@ -3,19 +3,27 @@ package com.hpcc.kursovaya.ui.schedule.MonthViewPager;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.query.DBManager;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MonthViewAdapter extends RecyclerView.Adapter<MonthViewAdapter.ViewHolder>{
     private int[] mData;
@@ -44,14 +52,31 @@ public class MonthViewAdapter extends RecyclerView.Adapter<MonthViewAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DateTime dateAtPos = startDate.plusDays(mData[position]);
         DateTime now = DateTime.now().withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+        List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class,"date",dateAtPos.toDate()));
         if(dateAtPos.getMonthOfYear()==currentMonth){
-            holder.myTextView.setTextColor(context.getResources().getColor(R.color.calendarBlack));
+            holder.dayText.setTextColor(context.getResources().getColor(R.color.calendarBlack));
         }
         if(dateAtPos.equals(now)){
-            holder.myTextView.setTextColor(Color.WHITE);
-            holder.myTextView.setBackground(context.getResources().getDrawable(R.drawable.current_day_circle));
+            holder.dayText.setTextColor(Color.WHITE);
+            holder.dayText.setBackground(context.getResources().getDrawable(R.drawable.current_day_circle));
         }
-        holder.myTextView.setText(Integer.toString(startDate.plusDays(mData[position]).getDayOfMonth()));
+        holder.dayText.setText(Integer.toString(startDate.plusDays(mData[position]).getDayOfMonth()));
+        for(AcademicHour academicHour : academicHours){
+            TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+            if(templateAcademicHour!=null) {
+                holder.cards.get(templateAcademicHour.getNumberHalfPairButton()).setVisibility(View.VISIBLE);
+                holder.classes.get(templateAcademicHour.getNumberHalfPairButton()).setText(templateAcademicHour.getGroup().getName());
+                holder.classes.get(templateAcademicHour.getNumberHalfPairButton()).setBackgroundColor(templateAcademicHour.getSubject().getColor());
+                if(academicHour.hasCanceled()){
+                    holder.classes.get(templateAcademicHour.getNumberHalfPairButton()).setTextColor(Color.GRAY);
+                    holder.classes.get(templateAcademicHour.getNumberHalfPairButton()).setPaintFlags(holder.classes.get(templateAcademicHour.getNumberHalfPairButton()).getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG );
+                }
+                if(academicHour.hasCompleted()){
+                    holder.classes.get(templateAcademicHour.getNumberHalfPairButton()).setTextColor(Color.GREEN);
+                }
+            }
+
+        }
     }
 
     // total number of cells
@@ -61,11 +86,30 @@ public class MonthViewAdapter extends RecyclerView.Adapter<MonthViewAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView myTextView;
+        TextView dayText;
+        List<TextView> classes;
+        List<CardView> cards;
 
         ViewHolder(View itemView) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.dayText);
+            classes = new ArrayList<>();
+            cards = new ArrayList<>();
+            for(int i = 0; i<10;i++){
+                StringBuilder cardName = new StringBuilder("card");
+                StringBuilder className = new StringBuilder("class");
+                className.append(i);
+                cardName.append(i);
+                int classRes = context.getResources().getIdentifier(className.toString(),"id",context.getPackageName());
+                int cardRes = context.getResources().getIdentifier(cardName.toString(),"id",context.getPackageName());
+                TextView clazz = itemView.findViewById(classRes);
+                clazz.setTextColor(Color.WHITE);
+                clazz.setShadowLayer(5,4,4,Color.BLACK);
+                CardView card = itemView.findViewById(cardRes);
+                card.setVisibility(View.INVISIBLE);
+                cards.add(card);
+                classes.add(clazz);
+            }
+            dayText = itemView.findViewById(R.id.dayText);
             itemView.setOnClickListener(this);
         }
 

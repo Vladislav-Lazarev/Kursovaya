@@ -6,15 +6,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.ui.schedule.DayScheduleFragment;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -26,6 +32,8 @@ public class MonthViewFragment extends Fragment implements MonthViewAdapter.Item
     private DateTime firstDay;
     int dayDifference;
     private View root;
+    private ImageButton toCurrentDay;
+    private TextView currentDayText;
 
     public static Fragment newInstance(int position) {
         MonthViewFragment pageFragment = new MonthViewFragment();
@@ -48,13 +56,17 @@ public class MonthViewFragment extends Fragment implements MonthViewAdapter.Item
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanseState) {
         super.onCreate(savedInstanseState);
+        final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
+        toCurrentDay = toolbar.findViewById(R.id.toCurrentDay);
+        currentDayText = toolbar.findViewById(R.id.currentDayText);
         root = inflater.inflate(R.layout.fragment_month,null);
         RecyclerView rv = root.findViewById(R.id.rv);
         rv.setHasFixedSize(true);
         int[] data = new int[42];
+        DateTime firstDayCopy = new DateTime(firstDay);
         for(int i=0;i<42;i++){
             data[i] = i+dayDifference;
-            firstDay = firstDay.plusDays(1);
+            firstDayCopy = firstDayCopy.plusDays(1);
         }
         rv.setLayoutManager(new GridLayoutManager(getActivity(), 7));
         adapter = new MonthViewAdapter(getActivity(),data);
@@ -65,13 +77,11 @@ public class MonthViewFragment extends Fragment implements MonthViewAdapter.Item
 
     @Override
     public void onItemClick(View view, int position) {
-        /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        RecyclerView rv = findViewById(R.id.rv);
-        FrameLayout fl = findViewById(R.id.host);
-        rv.setVisibility(View.GONE);
-        fl.setVisibility(View.VISIBLE);
-        ft.add(R.id.host, new DayScheduleFragment(adapter.getItem(position)));
-        ft.commit();*/
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_in_top,R.anim.slide_out_bottom);
+        ((MainActivity)getActivity()).setCurrentViewSelected(MainActivity.DAY);
+        ft.replace(R.id.nav_host_fragment, new DayScheduleFragment(adapter.getItem(position)),MainActivity.DAY_TAG);
+        ft.commit();
     }
 
     @Override
@@ -81,7 +91,14 @@ public class MonthViewFragment extends Fragment implements MonthViewAdapter.Item
             //((MainActivity)getActivity()).setWeeksFromCurrent();
             if(((MainActivity)getActivity()).isScheduleSelected()) {
                 StringBuilder title = new StringBuilder();
-                title.append(monthNumberToString(firstDay.getMonthOfYear()-1)).append(", ").append(firstDay.getYear());
+                title.append(monthNumberToString(firstDay.plusDays(42).getMonthOfYear()-1)).append(", ").append(firstDay.getYear());
+                if (firstDay.getYear()==DateTime.now().getYear() && firstDay.plusDays(14).getMonthOfYear()==DateTime.now().getMonthOfYear()){
+                    toCurrentDay.setVisibility(View.GONE);
+                    currentDayText.setVisibility(View.GONE);
+                } else {
+                    toCurrentDay.setVisibility(View.VISIBLE);
+                    currentDayText.setVisibility(View.VISIBLE);
+                }
                 //Log.d(TAG, firstDayOfWeek.toString());
                 //refreshGrid(firstDayOfWeek,firstDayOfWeek.plusDays(6));
                 ((MainActivity) getActivity()).setActionBarTitle(title.toString());
