@@ -14,13 +14,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.query.DBManager;
+import com.hpcc.kursovaya.ui.schedule.MonthViewPager.MonthViewFragment;
 import com.hpcc.kursovaya.ui.schedule.MonthViewPager.MonthViewPagerAdapter;
+import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewFragment;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -141,4 +144,14 @@ public class MonthScheduleFragment extends Fragment {
            // ((MainActivity) getActivity()).setLanguageChanged(false);
         }
     }
+
+    public void invokeRefresh() {
+        refreshGrid(pager.getCurrentItem());
+    }
+    public void refreshGrid(int page){
+       FragmentStatePagerAdapter a = (FragmentStatePagerAdapter) pager.getAdapter();
+       MonthViewFragment currentPage = (MonthViewFragment) a.instantiateItem(pager,page);
+       currentPage.refreshGrid();
+    }
+
 }

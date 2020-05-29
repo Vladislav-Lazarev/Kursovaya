@@ -178,4 +178,25 @@
     <string name="toast_fragment_no_subjects">Не добавлено ни одного предмета! Добавьте предметы в пункте меню Предметы</string>
     <string name="hint_speciality">Разрешается писать коротко (через точку) или аббревиатурой</string>
     <string name="action_datePicker">Перейти к дате</string>
+    <string name="speciality_code">Код:</string>
+    <string name="speciality_name_hint">Введите название специальности</string>
+    <string name="schedule_mode_week">Неделя</string>
+    <string name="schedule_mode_month">Месяц</string>
+    <string name="schedule_mode_dialog_title">Выберите режим календаря</string>
+    <string name="day_fragment_no_group">Нет группы</string>
+    <string name="day_fragment_class_free">Занятие свободно</string>
+    <string name="day_fragment_class_no_description">Описание отсутсвует</string>
+    <string name="accept">Принять</string>
+    <string name="cancel">Отмена</string>
+    <string name="open_pdf">Открыть отчёт</string>
+    <string name="choose_speciality">Выберите специальность</string>
+    <string name="class_cant_be_read">Невозможно обозначить вычитанным снятое занятие</string>
+    <string name="class_cant_be_unread">Невозможно обозначить невычитанным снятое занятие или занятие, что не является вычитанным</string>
+    <string name="class_cant_be_eaded">Невозможно обозначить снятым вычытанное занятие</string>
+    <string name="class_cant_be_readed">Невозможно обозначить вычитанным не снятое вычитанное занятие</string>
+    <string name="readed_class_cant_be_cancelled_day">Невозможно обозначить снятым вычытанное занятие</string>
+    <string name="class_cant_be_unread_cancelled_day">Невозможно обозначить невычитанным снятое занятие или занятие, что не является вычитанным</string>
+    <string name="class_cant_be_unread_day">Невозможно обозначить вычитанным снятое занятие</string>
+    <string name="class_cant_be_cancelled_day">Невозможно отменить снятие занятие, поскольку занятие не является снятым</string>
+    <string name="cant_select_empty_class">Вы не можете выбрать пустое занятие</string>
 </resources>

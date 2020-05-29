@@ -151,6 +151,7 @@ public class ScheduleFragment extends Fragment {
                 return true;
             case R.id.action_importTemplates:
                 activity.prepareActionImportTemplates();
+                refreshGrid(weekDifference);
                 return true;
             case R.id.action_checkRead:
                 activity.setSelectMode(true);

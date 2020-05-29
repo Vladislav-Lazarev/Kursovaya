@@ -249,7 +249,7 @@
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:id="@+id/class06"
@@ -258,7 +258,7 @@
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
 
 
@@ -314,7 +314,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:id="@+id/class16"
@@ -323,7 +323,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
 
         <Button
@@ -378,7 +378,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:id="@+id/class26"
@@ -387,7 +387,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
 
         <Button
@@ -442,7 +442,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:id="@+id/class36"
@@ -451,7 +451,7 @@
             android:layout_rowWeight="1"
             android:textColor="@color/appDefaultBlack"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:id="@+id/class40"
@@ -505,7 +505,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:id="@+id/class46"
@@ -514,7 +514,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
 
         <Button
@@ -569,7 +569,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:id="@+id/class56"
@@ -578,7 +578,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
 
         <Button
@@ -633,7 +633,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:id="@+id/class66"
@@ -642,7 +642,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
 
         <Button
@@ -697,7 +697,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:id="@+id/class76"
@@ -706,7 +706,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
 
         <Button
@@ -761,7 +761,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:id="@+id/class86"
@@ -770,7 +770,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
 
         <Button
@@ -825,7 +825,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:id="@+id/class96"
@@ -834,7 +834,7 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:background="@drawable/hover_add"
+            android:background="@drawable/hover_add_weekend"
             style="?android:attr/borderlessButtonStyle"/>
     </GridLayout>
 

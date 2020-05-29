@@ -168,7 +168,7 @@ public class AddSubjectActivity extends AppCompatActivity {
 
         spinnerCourse =
                 ConstantApplication.fillingSpinner(currentContext, findViewById(R.id.spinnerCourse),
-                        new ArrayList<>(Collections.singleton("Оберіть спеціальність")));
+                        new ArrayList<>(Collections.singleton(getString(R.string.choose_speciality))));
         spinnerCourse.setEnabled(false);
     }
 

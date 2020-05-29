@@ -203,7 +203,7 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
             }
         } else {
             if(academicHour==null){
-                Toast.makeText(context,"Ви не можете обрати порожнє заняття", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.cant_select_empty_class, Toast.LENGTH_SHORT).show();
             } else {
                 toggleSelection(position);
             }
@@ -217,7 +217,7 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
 
     private void enableActionMode() {
         FragmentManager manager = getActivity().getSupportFragmentManager();
-        DayScheduleFragment daySchedule = (DayScheduleFragment) manager.findFragmentByTag("daySchedule");
+        DayScheduleFragment daySchedule = (DayScheduleFragment) manager.findFragmentByTag(MainActivity.DAY_TAG);
         customViewPager = daySchedule.getViewPager();
         customViewPager.setPageScrollEnabled(false);
         customViewPager.invalidate();
@@ -235,7 +235,7 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
         customViewPager.setPageScrollEnabled(false);
         customViewPager.invalidate();
         if(adapter.getItem(position)==null){
-            Toast.makeText(context,"Ви не можете обрати порожнє заняття", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.cant_select_empty_class, Toast.LENGTH_SHORT).show();
         } else {
             if (actionMode == null) {
                 ((MainActivity) getActivity()).getToolbar().setVisibility(View.GONE);
@@ -309,6 +309,15 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
             }
             adapter.notifyDataSetChanged();
         }
+    }
+
+    public void refreshGrid() {
+        List<AcademicHour> actualAcademicHours = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class,"date",currentDate.toDate()));
+        for(AcademicHour academicHour:actualAcademicHours){
+            TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+            academicHourList.set(templateAcademicHour.getNumberHalfPairButton(),academicHour);
+        }
+        adapter.notifyDataSetChanged();
     }
 
     private class ActionModeCallback implements ActionMode.Callback{
@@ -584,7 +593,7 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
             //((MainActivity)getActivity()).setWeeksFromCurrent();
             if (((MainActivity) getActivity()).isScheduleSelected()) {
                 StringBuilder title = new StringBuilder();
-                title.append(monthNumberToString(currentDate.getMonthOfYear() - 1)).append(", ").append(currentDate.getYear());
+                title.append(monthNumberToString(currentDate.getMonthOfYear())).append(", ").append(currentDate.getYear());
                 if (currentDate.getYear() == DateTime.now().getYear() && currentDate.getMonthOfYear() == DateTime.now().getMonthOfYear() && currentDate.getDayOfMonth()==DateTime.now().getDayOfMonth()) {
                     toCurrentDay.setVisibility(View.GONE);
                     currentDayText.setVisibility(View.GONE);

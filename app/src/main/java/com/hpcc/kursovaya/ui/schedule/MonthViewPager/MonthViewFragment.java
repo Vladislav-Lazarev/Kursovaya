@@ -62,6 +62,11 @@ public class MonthViewFragment extends Fragment implements MonthViewAdapter.Item
         root = inflater.inflate(R.layout.fragment_month,null);
         RecyclerView rv = root.findViewById(R.id.rv);
         rv.setHasFixedSize(true);
+        RecyclerView rvHeader = root.findViewById(R.id.rvDayHeader);
+        rvHeader.setHasFixedSize(true);
+        rvHeader.setLayoutManager(new GridLayoutManager(getActivity(),7));
+        DayHeaderAdapter headerAdapter = new DayHeaderAdapter(getActivity());
+        rvHeader.setAdapter(headerAdapter);
         int[] data = new int[42];
         DateTime firstDayCopy = new DateTime(firstDay);
         for(int i=0;i<42;i++){
@@ -149,5 +154,9 @@ public class MonthViewFragment extends Fragment implements MonthViewAdapter.Item
                 monthStr = res.getString(R.string.December);
         }
         return monthStr;
+    }
+
+    public void refreshGrid() {
+        adapter.notifyDataSetChanged();
     }
 }

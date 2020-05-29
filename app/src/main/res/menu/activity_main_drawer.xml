@@ -23,7 +23,7 @@
             android:title="@string/menu_subjects" />
         <item
             android:id="@+id/nav_specialities"
-            android:icon="@drawable/ic_group_24px"
+            android:icon="@drawable/ic_speciality"
             android:title="@string/specialty_list_label"/>
         <item
             android:id="@+id/nav_settings"

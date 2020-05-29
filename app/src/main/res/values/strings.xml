@@ -126,10 +126,10 @@
     <string name="report">Звіт</string>
     <string name="tableDisciplineHeader">Дисципліна</string>
     <string name="tableGroupHeader">Група</string>
-    <string name="tablePlanHeader">За планом</string>
-    <string name="tableFactHeader">Фактично</string>
-    <string name="tableCanceledHeader">Знято</string>
-    <string name="tableRestHeader">Залишок</string>
+    <string name="tablePlanHeader">За планом(у періоді)</string>
+    <string name="tableFactHeader">Фактично(у періоді)</string>
+    <string name="tableCanceledHeader">Знято(у періоді)</string>
+    <string name="tableRestHeader">Залишок(у періоді)</string>
     <string name="ok_button" translatable="false">ОК</string>
 
 
@@ -257,4 +257,17 @@
     <string name="day_fragment_no_group">Немає групи</string>
     <string name="day_fragment_class_free">Заняття вільне</string>
     <string name="day_fragment_class_no_description">Опис відсутній</string>
+    <string name="accept">Прийняти</string>
+    <string name="cancel">Відміна</string>
+    <string name="open_pdf">Відкрити звіт</string>
+    <string name="class_cant_be_read">Неможливо позначити вичитаним зняте заняття</string>
+    <string name="class_cant_be_unread">Неможливо позначити невичитаним зняте заняття чи заняття що не є вичитанним</string>
+    <string name="class_cant_be_eaded">Неможливо позначити знятим вичитане заняття</string>
+    <string name="class_cant_be_readed">Неможливо позначити вичитаним не знятим вичитане заняття</string>
+    <string name="class_cant_be_cancelled_day">Неможливо відмінити зняття заняття, оскільки заняття не є знятим</string>
+    <string name="readed_class_cant_be_cancelled_day">Неможливо позначити знятим вичитане заняття</string>
+    <string name="class_cant_be_unread_cancelled_day">Неможливо позначити невичитаним зняте заняття чи заняття що не є вичитанним</string>
+    <string name="class_cant_be_unread_day">Неможливо позначити вичитаним зняте заняття</string>
+    <string name="cant_select_empty_class">Ви не можете обрати порожнє заняття</string>
+    <string name="choose_speciality">Оберіть спеціальність</string>
 </resources>

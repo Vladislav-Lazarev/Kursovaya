@@ -8,6 +8,7 @@ import android.util.Log;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.query.DBManager;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 public class EditClass extends Class {
     private int savedHourSize = 0;
 
+    private Subject currentSubject;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         intent = getIntent();
@@ -31,6 +33,7 @@ public class EditClass extends Class {
         templateAcademicHourList.clear();
         currentAcademicHour = intent.getParcelableExtra("currentCell");
         currentTemplateAcademicHour = currentAcademicHour.getTemplateAcademicHour();
+        currentSubject = currentTemplateAcademicHour.getSubject();
         academicHourList.add(currentAcademicHour);
         templateAcademicHourList.add(currentTemplateAcademicHour);
         AcademicHour secondCell = intent.getParcelableExtra("secondCell");
@@ -114,4 +117,17 @@ public class EditClass extends Class {
         super.setHeader(R.string.edit_class);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        for(int i = 0; i < subjectSpinner.getAdapter().getCount();i++){
+            if(subjectSpinner.getItemAtPosition(i).equals(currentSubject.getName())){
+                subjectSpinner.setSelection(i);
+                for(TemplateAcademicHour templateAcademicHour : templateAcademicHourList){
+                    templateAcademicHour.setSubject(currentSubject);
+                }
+                break;
+            }
+        }
+    }
 }

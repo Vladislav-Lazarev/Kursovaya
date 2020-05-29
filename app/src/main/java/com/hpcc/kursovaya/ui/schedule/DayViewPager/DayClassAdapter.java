@@ -182,7 +182,7 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
         AcademicHour selected = academicHourList.get(position);
         if(b){
             if(selected.hasCanceled()){
-                Toast.makeText(context,"Неможливо позначити вичитаним зняте заняття" ,Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.class_cant_be_unread_day ,Toast.LENGTH_LONG).show();
             } else {
                 academicHourList.get(position).setCompleted(b);
             }
@@ -190,7 +190,7 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
             if(selected.hasCompleted()){
                 academicHourList.get(position).setCompleted(b);
             } else {
-                Toast.makeText(context,"Неможливо позначити невичитаним зняте заняття чи заняття що не є вичитанним" ,Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.class_cant_be_unread_cancelled_day ,Toast.LENGTH_LONG).show();
             }
         }
         DBManager.write(selected);
@@ -200,7 +200,7 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
         AcademicHour selected = academicHourList.get(position);
         if(b){
             if(selected.hasCompleted()){
-                Toast.makeText(context,"Неможливо позначити знятим вичитане заняття" ,Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.readed_class_cant_be_cancelled_day ,Toast.LENGTH_LONG).show();
             } else {
                 selected.setCanceled(b);
             }
@@ -208,7 +208,7 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
             if(selected.hasCanceled()){
                 selected.setCanceled(b);
             } else {
-                Toast.makeText(context,"Неможливо відмінити зняття заняття, оскільки заняття не є знятим" ,Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.class_cant_be_cancelled_day ,Toast.LENGTH_LONG).show();
             }
         }
         DBManager.write(selected);

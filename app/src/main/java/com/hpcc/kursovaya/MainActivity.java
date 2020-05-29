@@ -79,6 +79,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
@@ -93,6 +94,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -151,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void setLanguageChanged(boolean languageChanged) {
         isLanguageChanged = languageChanged;
     }
+
 
     private boolean isLanguageChanged = false;
 
@@ -228,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             rg.check(R.id.month);
         }
-        builder.setPositiveButton("Прийняти", (dialog, which) -> {
+        builder.setPositiveButton(R.string.accept, (dialog, which) -> {
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_in_top,R.anim.slide_out_bottom);
@@ -254,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             transaction.replace(R.id.nav_host_fragment,fragment,tag);
             transaction.commit();
         });
-        builder.setNegativeButton("Відміна", ((dialog, which) -> dialog.cancel()));
+        builder.setNegativeButton(R.string.cancel, ((dialog, which) -> dialog.cancel()));
         builder.setView(modeChooserView);
         builder.create().show();
 
@@ -777,7 +780,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             intent.setDataAndType(FileProvider.getUriForFile(MainActivity.this,BuildConfig.APPLICATION_ID+".provider",file),"application/pdf");
             intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Intent intentOpen = Intent.createChooser(intent,"Open PDF");
+            Intent intentOpen = Intent.createChooser(intent,getString(R.string.open_pdf));
             try {
                 startActivity(intentOpen);
             } catch (ActivityNotFoundException e) {
@@ -896,14 +899,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             isDatesCorrect = false;
         }
         if(isDatesCorrect){
+            int weekCount = countWeeks(from,to);
             List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(from.toDate(),to.toDate()));
-            for(AcademicHour academicHour : academicHours){
-                TemplateAcademicHour templateAcHour = academicHour.getTemplateAcademicHour();
-                DBManager.delete(AcademicHour.class, ConstantApplication.ID,academicHour.getId());
-                DBManager.delete(TemplateAcademicHour.class,ConstantApplication.ID,templateAcHour.getId());
+            Collections.sort(academicHours, (o1, o2) -> {
+                if (o1.getDate() == null || o2.getDate() == null)
+                    return 0;
+                return o1.getDate().compareTo(o2.getDate());
+            });
+            boolean isUpperCopy = isUpperTemplate;
+            for(int i = 0; i<weekCount;i++){
+                if(isUpperCopy) {
+                    for (int j = 0; j<academicHours.size();j++) {
+                        AcademicHour academicHour = academicHours.get(j);
+                        TemplateAcademicHour templateAcHour = academicHour.getTemplateAcademicHour();
+                        for(TemplateAcademicHour templateAcademicHour:templateListUpper){
+                            if(templateAcademicHour.getNumberDayOfWeek()==templateAcHour.getNumberDayOfWeek() && templateAcademicHour.getNumberHalfPairButton() == templateAcHour.getNumberHalfPairButton()) {
+                                DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcHour.getId());
+                                DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+                                academicHours.remove(academicHour);
+                            }
+                        }
+                        if((new DateTime(academicHour.getDate())).getDayOfWeek()== DateTimeConstants.SUNDAY){
+                            isUpperCopy = false;
+                        }
+                    }
+                } else {
+                    for (int j = 0; j<academicHours.size();j++) {
+                        AcademicHour academicHour = academicHours.get(j);
+                        TemplateAcademicHour templateAcHour = academicHour.getTemplateAcademicHour();
+                        for(TemplateAcademicHour templateAcademicHour:templateListUpper){
+                            if(templateAcademicHour.getNumberDayOfWeek()==templateAcHour.getNumberDayOfWeek() && templateAcademicHour.getNumberHalfPairButton() == templateAcHour.getNumberHalfPairButton()) {
+                                DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcHour.getId());
+                                DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+                                academicHours.remove(academicHour);
+                            }
+                        }
+                        if((new DateTime(academicHour.getDate())).getDayOfWeek()== DateTimeConstants.SUNDAY){
+                            isUpperCopy = true;
+                        }
+                    }
+                }
             }
 
-            int weekCount = countWeeks(from,to);
+
+
             DateTime current = new DateTime(from);
             List<AcademicHour> academicHourList = new ArrayList<>();
             for(int i = 0; i<weekCount;i++){
@@ -964,9 +1003,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             if(academicHourList.size()>0){
                 FragmentManager manager = getSupportFragmentManager();
-                Fragment oldFragment1 = manager.findFragmentByTag(getResources().getString(R.string.scheduleTag));
+                Fragment oldFragment1 = manager.findFragmentByTag(WEEKVIEW_TAG);
+                Fragment oldFragment2 = manager.findFragmentByTag(MONTH_TAG);
+                Fragment oldFragment3 = manager.findFragmentByTag(DAY_TAG);
                 if (oldFragment1 != null){
                     ((ScheduleFragment)oldFragment1).refreshGrid(/*from.dayOfWeek().withMinimumValue(),from.dayOfWeek().withMinimumValue().plusDays(6),*/weeksFromCurrent);
+                } else if(oldFragment2!=null){
+                    ((MonthScheduleFragment)oldFragment2).invokeRefresh();
+                } else if (oldFragment3!=null){
+                    ((DayScheduleFragment)oldFragment3).invokeRefresh();
                 }
             }
         } else {

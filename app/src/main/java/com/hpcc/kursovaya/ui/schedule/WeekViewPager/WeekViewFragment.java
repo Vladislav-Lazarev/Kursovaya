@@ -536,7 +536,7 @@ public class WeekViewFragment extends Fragment {
             if(!b.getAcademicHour().hasCompleted()) {
                 b.setCanceled(false);
             } else {
-                Toast.makeText(getActivity(),"Неможливо позначити вичитаним не знятим вичитане заняття" ,Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.class_cant_be_readed ,Toast.LENGTH_LONG).show();
             }
         }
         cancelSelectCanceled.performClick();
@@ -580,7 +580,7 @@ public class WeekViewFragment extends Fragment {
             if(!b.getAcademicHour().hasCompleted()) {
                 b.setCanceled(true);
             } else {
-                Toast.makeText(getActivity(),"Неможливо позначити знятим вичитане заняття" ,Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.class_cant_be_eaded ,Toast.LENGTH_LONG).show();
             }
         }
         cancelSelectCanceled.performClick();
@@ -628,7 +628,7 @@ public class WeekViewFragment extends Fragment {
             if(b.getAcademicHour().hasCompleted() && !b.getAcademicHour().hasCanceled()) {
                 b.setCompleted(false);
             } else {
-                Toast.makeText(getActivity(),"Неможливо позначити невичитаним зняте заняття чи заняття що не є вичитанним" ,Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.class_cant_be_unread ,Toast.LENGTH_LONG).show();
             }
         }
         cancelSelectCompleted.performClick();
@@ -676,7 +676,7 @@ public class WeekViewFragment extends Fragment {
             if(!b.getAcademicHour().hasCanceled()) {
                 b.setCompleted(true);
             } else {
-                Toast.makeText(getActivity(),"Неможливо позначити вичитаним зняте заняття" ,Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.class_cant_be_read ,Toast.LENGTH_LONG).show();
             }
         }
         cancelSelectCompleted.performClick();

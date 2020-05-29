@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.hpcc.kursovaya.MainActivity;
@@ -21,6 +22,7 @@ import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.schedule.DayViewPager.CustomViewPager;
+import com.hpcc.kursovaya.ui.schedule.DayViewPager.DayViewFragment;
 import com.hpcc.kursovaya.ui.schedule.DayViewPager.DayViewPagerAdapter;
 
 import org.joda.time.DateTime;
@@ -134,5 +136,14 @@ public class DayScheduleFragment extends Fragment {
 
     public CustomViewPager getViewPager() {
         return pager;
+    }
+
+    public void invokeRefresh() {
+        refreshGrid(pager.getCurrentItem());
+    }
+    public void refreshGrid(int page){
+        FragmentStatePagerAdapter a = (FragmentStatePagerAdapter) pager.getAdapter();
+        DayViewFragment currentPage = (DayViewFragment) a.instantiateItem(pager,page);
+        currentPage.refreshGrid();
     }
 }

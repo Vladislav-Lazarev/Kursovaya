@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
@@ -95,22 +96,26 @@ public class ClassesButtonWrapper {
     }
 
     public void setAcademicHour(AcademicHour academicHour) {
-        this.academicHour = academicHour;
-        GradientDrawable shape = new GradientDrawable();
-        shape.setShape(GradientDrawable.RECTANGLE);
-        shape.setCornerRadii(new float[] { 0, 0, 0, 0, 0, 0, 0, 0 });
-        shape.setColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
-        shape.setStroke(1, Color.BLACK);
-        btn.setBackground(shape);
-       // btn.setBackgroundColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
-        btn.setText(academicHour.getTemplateAcademicHour().getGroup().getName());
-        btn.setTextColor(Color.WHITE);
-        btn.setShadowLayer(5,4,4,Color.BLACK);
-        setCompleted(academicHour.hasCompleted());
-        if(!academicHour.hasCompleted()) {
-            setCanceled(academicHour.hasCanceled());
+        if(academicHour!=null && academicHour.getTemplateAcademicHour()!=null) {
+            this.academicHour = academicHour;
+            GradientDrawable shape = new GradientDrawable();
+            shape.setShape(GradientDrawable.RECTANGLE);
+            shape.setCornerRadii(new float[]{0, 0, 0, 0, 0, 0, 0, 0});
+            shape.setColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
+            shape.setStroke(1, Color.BLACK);
+            btn.setBackground(shape);
+            // btn.setBackgroundColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
+            btn.setText(academicHour.getTemplateAcademicHour().getGroup().getName());
+            btn.setTextColor(Color.WHITE);
+            btn.setShadowLayer(5, 4, 4, Color.BLACK);
+            setCompleted(academicHour.hasCompleted());
+            if (!academicHour.hasCompleted()) {
+                setCanceled(academicHour.hasCanceled());
+            }
+            isBackgroundChanged = true;
+        } else {
+            Toast.makeText(context,"Заняття не додано оскільки в обраній групі з обраного предмету досягнуто максимум годин",Toast.LENGTH_SHORT).show();
         }
-        isBackgroundChanged = true;
     }
 
     public boolean isSelected() {

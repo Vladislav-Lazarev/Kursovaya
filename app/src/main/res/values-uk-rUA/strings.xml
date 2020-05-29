@@ -252,4 +252,25 @@
     <string name="toast_fragment_no_subjects">Не додано жодного предмету! Додайти предмети в пункті меню Предмети</string>
     <string name="hint_speciality">Дозволяється писати коротко (через крапку) чи абревіатурою</string>
     <string name="action_datePicker">Перейти до дати</string>
+    <string name="speciality_code">Код:</string>
+    <string name="speciality_name_hint">Введіть назву спеціальності</string>
+    <string name="schedule_mode_week">Тиждень</string>
+    <string name="schedule_mode_dialog_title">Обрати режим відображення</string>
+    <string name="schedule_mode_month">Місяць</string>
+    <string name="day_fragment_no_group">Немає групи</string>
+    <string name="day_fragment_class_free">Заняття вільне</string>
+    <string name="day_fragment_class_no_description">Опис відсутній</string>
+    <string name="accept">Прийняти</string>
+    <string name="cancel">Відміна</string>
+    <string name="open_pdf">Відкрити звіт</string>
+    <string name="choose_speciality">Оберіть спеціальність</string>
+    <string name="class_cant_be_read">Неможливо позначити вичитаним зняте заняття</string>
+    <string name="class_cant_be_unread">Неможливо позначити невичитаним зняте заняття чи заняття що не є вичитанним</string>
+    <string name="class_cant_be_eaded">Неможливо позначити знятим вичитане заняття</string>
+    <string name="class_cant_be_readed">Неможливо позначити вичитаним не знятим вичитане заняття</string>
+    <string name="readed_class_cant_be_cancelled_day">Неможливо позначити знятим вичитане заняття</string>
+    <string name="class_cant_be_unread_cancelled_day">Неможливо позначити знятим вичитане заняття</string>
+    <string name="class_cant_be_unread_day">Неможливо позначити вичитаним зняте заняття</string>
+    <string name="class_cant_be_cancelled_day">Неможливо відмінити зняття заняття, оскільки заняття не є знятим</string>
+    <string name="cant_select_empty_class">Ви не можете обрати порожнє заняття</string>
 </resources>
