@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/popup_group_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="26dp"
+            android:text="@string/subjectName_label"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/asc_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/popup_group_name"
+            android:layout_alignStart="@+id/popup_group_name"
+            android:layout_alignEnd="@+id/popup_group_name"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_add_24px_white"
+            android:src="@drawable/ic_az" />
+
+        <ImageButton
+            android:id="@+id/desc_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/asc_name"
+            android:layout_alignStart="@+id/popup_group_name"
+            android:layout_alignEnd="@+id/popup_group_name"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/ic_add_24px_white"
+            android:src="@drawable/ic_az" />
+
+        <TextView
+            android:id="@+id/popup_subject_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/popup_group_name"
+            android:layout_alignStart="@+id/popup_group_name"
+            android:layout_marginStart="62dp"
+            android:layout_marginTop="-24dp"
+            android:text="@string/course_label"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/asc_course"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/popup_group_name"
+            android:layout_alignStart="@+id/popup_subject_name"
+            android:layout_alignEnd="@+id/popup_subject_name"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_add_24px_white"
+            android:src="@drawable/ic_1n" />
+
+        <ImageButton
+            android:id="@+id/desc_course"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/asc_course"
+            android:layout_alignStart="@+id/popup_subject_name"
+            android:layout_alignEnd="@+id/popup_subject_name"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/ic_add_24px_white"
+            android:src="@drawable/ic_n1" />
+
+        <TextView
+            android:id="@+id/popup_duration_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/popup_subject_name"
+            android:layout_alignTop="@+id/popup_subject_name"
+            android:layout_marginStart="55dp"
+            android:layout_marginTop="0dp"
+            android:text="@string/specialty_label"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/asc_speciality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/popup_duration_label"
+            android:layout_alignStart="@+id/popup_duration_label"
+            android:layout_alignEnd="@+id/popup_duration_label"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_add_24px_white"
+            android:src="@drawable/ic_az" />
+        <ImageButton
+            android:id="@+id/desc_speciality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/asc_speciality"
+            android:layout_alignStart="@+id/popup_duration_label"
+            android:layout_alignEnd="@+id/popup_duration_label"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/ic_add_24px_white"
+            android:src="@drawable/ic_az" />
+
+    </RelativeLayout>
+</RelativeLayout>

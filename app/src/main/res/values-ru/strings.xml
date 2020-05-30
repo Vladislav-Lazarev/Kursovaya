@@ -59,7 +59,7 @@
     <string name="dialog_button_add">Добавить</string>
     <string name="specialty_list_label">Специальности</string>
     <string name="specialty_cours_length">Количество курсов:</string>
-    <string name="specialty_name_label">Название:</string>
+    <string name="specialtyName_label">Название:</string>
     <string name="specialty_label">Специальность:</string>
     <string name="course_label">Курс:</string>
     <string name="groupName_label">Название:</string>

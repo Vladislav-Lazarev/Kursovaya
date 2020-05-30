@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.ui.subjects;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +49,48 @@ public class SubjectsFragment extends Fragment {
     private SubjectListAdapter adapter;
     private List<Subject> subjectList;
     private long mLastClickTime = 0;
+
+    public void setActionBarTitle(){
+        ((MainActivity) getActivity()).setActionBarTitle(getContext().getString(R.string.menu_subjects));
+        ((MainActivity) getActivity()).showOverflowMenu(false);
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(getContext());
+        // заголовок
+        adb.setTitle(R.string.popup_sort);
+        // сообщение
+        adb.setMessage("Popitka");
+        // иконка
+        adb.setIcon(android.R.drawable.ic_dialog_info);
+        // кнопка положительного ответа
+        DialogInterface.OnClickListener myClickListener = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    // положительная кнопка
+                    case Dialog.BUTTON_POSITIVE:
+                        break;
+                    // негативная кнопка
+                    case Dialog.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+
+        adb.setPositiveButton("name_asc", myClickListener);
+        adb.setPositiveButton("course_asc", myClickListener);
+        adb.setPositiveButton("speciality_asc", myClickListener);
+
+        adb.setNegativeButton("name_desc", myClickListener);
+        adb.setNegativeButton("course_desc", myClickListener);
+        adb.setNegativeButton("speciality_desc", myClickListener);
+        adb.create();
+        adb.show();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.popup_subject_listview, menu);
+    }
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -137,11 +181,6 @@ public class SubjectsFragment extends Fragment {
         return root;
     }
 
-    public void setActionBarTitle(){
-        ((MainActivity) getActivity()).setActionBarTitle(getContext().getString(R.string.menu_subjects));
-        ((MainActivity) getActivity()).showOverflowMenu(false);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode== Activity.RESULT_OK){
@@ -213,5 +252,4 @@ public class SubjectsFragment extends Fragment {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-
 }

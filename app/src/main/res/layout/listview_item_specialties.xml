@@ -8,7 +8,7 @@
             android:id="@+id/specialities_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/specialty_label"
+            android:text="@string/specialtyName_label"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
             android:layout_marginTop="10dp"

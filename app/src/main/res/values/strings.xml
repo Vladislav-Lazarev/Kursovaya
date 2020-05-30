@@ -103,9 +103,8 @@
     <string name="specialty_cours_length">Кількість курсів:</string>
 
 
-    <string name="specialty_name_label">Назва:</string>
-    <string name="specialty_label">Спеціальність:</string>
     <string name="course_label">Курс:</string>
+    <string name="specialtyName_label">Назва:</string>
     <string name="groupName_label">Назва:</string>
     <string name="subjectName_label">Назва:</string>
     <string name="color_label">Колір:</string>

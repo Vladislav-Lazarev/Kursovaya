@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hpcc.kursovaya">
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".dao.ApplicationRealm"
-        android:hardwareAccelerated="true"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.actions"
+            android:resource="@xml/actions" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -23,34 +26,37 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
+
         <activity
             android:name=".ui.schedule.AddClass"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
-            android:label="@string/title_activity_add_class"/>
+            android:label="@string/title_activity_add_class" />
+
         <receiver android:name=".AlarmClassReceiver">
             <intent-filter>
-                <action android:name="class.action.DISPLAY_NOTIFICATION"/>
+                <action android:name="class.action.DISPLAY_NOTIFICATION" />
             </intent-filter>
         </receiver>
         <receiver android:name=".DeviceBootReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
         <activity
             android:name=".ui.report.GeneratedReportActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
-            android:label="@string/title_activity_genreport"/>
+            android:label="@string/title_activity_genreport" />
         <activity
             android:name=".ui.schedule.EditClass"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
-            android:label="@string/edit_class"/>
+            android:label="@string/edit_class" />
         <activity
             android:name=".ui.settings.language.LanguageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
-            android:label="LanguageActivity"/>
+            android:label="LanguageActivity" />
         <activity
             android:name=".ui.subjects.EditSubjectActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
@@ -75,33 +81,30 @@
             android:name=".ui.templates.AddTemplateActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
             android:label="@string/title_activity_add_template" />
-        <activity android:name=".ui.settings.alarms.AlarmsActivity"
+        <activity
+            android:name=".ui.settings.alarms.AlarmsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
-            android:label="AlarmsActivity"/>
+            android:label="AlarmsActivity" />
         <activity
             android:name=".ui.templates.EditTemplateActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
             android:label="@string/title_activity_edit_template" />
-
-
         <activity
             android:name=".ui.subjects.SubjectGroupsListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
             android:label="SubjectGroupsActivity" />
-
         <activity
             android:name=".ui.settings.backup.BackupActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
             android:label="SettingsActivity" />
-
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/mainActStyle"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
-            >
+            android:label="@string/app_name"
+            android:theme="@style/mainActStyle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
