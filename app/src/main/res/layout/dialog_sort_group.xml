@@ -42,7 +42,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
             android:background="@drawable/ic_add_24px_white"
-            android:src="@drawable/ic_az" />
+            android:src="@drawable/ic_za" />
 
         <TextView
             android:id="@+id/popup_subject_name"
@@ -113,7 +113,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
             android:background="@drawable/ic_add_24px_white"
-            android:src="@drawable/ic_az" />
+            android:src="@drawable/ic_za" />
 
     </RelativeLayout>
 </RelativeLayout>
