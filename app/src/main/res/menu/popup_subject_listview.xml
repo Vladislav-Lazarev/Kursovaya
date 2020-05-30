@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/edit_subject"
-        android:title="@string/popup_edit"
-        android:icon="@drawable/ic_path_154"/>
+        android:id="@+id/popup_sort"
+        android:title="@string/popup_sort"
+        android:icon="@drawable/ic_path_150"/>
 
     <item
-        android:id="@+id/edit_delete"
-        android:title="@string/popup_delete"
-        android:icon="@drawable/ic_path_156"/>
+        android:id="@+id/filter"
+        android:title="@string/popup_filter"
+        android:icon="@drawable/ic_path_150"/>
 </menu>

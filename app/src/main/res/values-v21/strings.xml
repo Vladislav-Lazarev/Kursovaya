@@ -49,14 +49,14 @@
     <string name="popup_rangeFromLabel">З:</string>
     <string name="popup_rangeToLabel">До:</string>
     <string name="popup_import">Імпорт</string>
-    <string name="popup_edit">Редагувати</string>
+    <string name="popup_sort">Сортувати</string>
     <string name="popup_groupName_label">Група:</string>
     <string name="popup_subjectName_label">Предмет:</string>
     <string name="popup_duration_label">Тривалість:</string>
     <string name="description_label">Опис:</string>
     <string name="notification_label">Нагадування до початку:</string>
     <string name="repeat_for_next_weeks_label">Повторити на наступні тижні:</string>
-    <string name="popup_delete">Видалити</string>
+    <string name="popup_filter">Фільтр</string>
     <string name="popup_delete_classes_template">Видалити заняття</string>
     <string name="popup_delete_classes_content">Ви дійсно хочете видалити обрані заняття?</string>
     <string name="popup_complete_classes_template">Вичитані заняття</string>

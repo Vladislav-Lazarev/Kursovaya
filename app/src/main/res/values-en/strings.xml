@@ -10,14 +10,14 @@
     <string name="popup_choose_date_report">Choose report period</string>
     <string name="popup_gen_report">Generate report</string>
     <string name="popup_dates_wrong">Input dates or course are wrong! Please repeat input.</string>
-    <string name="popup_edit">Edit</string>
+    <string name="popup_sort">Sort</string>
     <string name="popup_groupName_label">Group:</string>
     <string name="popup_subjectName_label">Discipline:</string>
     <string name="popup_duration_label">Duration:</string>
     <string name="description_label">Description:</string>
     <string name="notification_label">Notification before start:</string>
     <string name="repeat_for_next_weeks_label">Repeat for next weeks:</string>
-    <string name="popup_delete">Delete</string>
+    <string name="popup_filter">Filter</string>
     <string name="popup_delete_subject_title">Delete disciplines</string>
     <string name="popup_delete_subject_content">Do you really want to delete selected disciplines? Lessons with this disciplines will be deleted from schedule and templates</string>
     <string name="popup_delete_group_title">Delete groups</string>

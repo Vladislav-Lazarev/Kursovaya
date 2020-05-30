@@ -10,14 +10,14 @@
     <string name="popup_choose_date_report">Выберите период отчета</string>
     <string name="popup_gen_report">Генерировать отчёт</string>
     <string name="popup_dates_wrong">Введенный диапазон дат неверный или введенный курс, повторите ввод!</string>
-    <string name="popup_edit">Редактировать</string>
+    <string name="popup_sort">Сортировать</string>
     <string name="popup_groupName_label">Группа:</string>
     <string name="popup_subjectName_label">Предмет:</string>
     <string name="popup_duration_label">Длительность:</string>
     <string name="description_label">Описание:</string>
     <string name="notification_label">Напоминание перед началом:</string>
     <string name="repeat_for_next_weeks_label">Повторить на следующих неделях:</string>
-    <string name="popup_delete">Удалить</string>
+    <string name="popup_filter">Фильтр</string>
     <string name="popup_delete_subject_title">Удалить предметы</string>
     <string name="popup_delete_subject_content">Ви правда хотите удалить выбранные предметы? Занятия этих предметов будут удалены из расписания и шаблонов</string>
     <string name="popup_delete_group_title">Удалить группы</string>

@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -140,7 +139,7 @@ public class SpecialitiesFragment extends Fragment {
     private void onClickPrepareAddSpeciality() {
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.dialog_add_speciality);
-        builder.setPositiveButton(R.string.dialog_button_add, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.popup_accept, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
@@ -253,7 +252,7 @@ public class SpecialitiesFragment extends Fragment {
     private void onClickPrepareEditSpeciality(Speciality entity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.dialog_edit_speciality);
-        builder.setPositiveButton(R.string.popup_edit, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.popup_accept, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){

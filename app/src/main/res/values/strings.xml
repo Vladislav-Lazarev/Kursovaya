@@ -42,18 +42,18 @@
     <string name="template_activity_close_alert_title">Ви дійсно хочете вийти?</string>
     <string name="template_activity_close_alert_content">Всі внесені дані будуть втрачені</string>
 
+    <string name="popup_sort">Сортувати</string>
+    <string name="popup_filter">Фільтр</string>
 
     <string name="popup_choose_date_report">Оберіть період звіту</string>
     <string name="popup_gen_report">Згенерувати звіт</string>
     <string name="popup_dates_wrong">Введений діпазон дат невірний або введений курс, повторіть введення!</string>
-    <string name="popup_edit">Редагувати</string>
     <string name="popup_groupName_label">Група:</string>
     <string name="popup_subjectName_label">Предмет:</string>
     <string name="popup_duration_label">Тривалість:</string>
     <string name="description_label">Опис:</string>
     <string name="notification_label">Нагадування до початку:</string>
     <string name="repeat_for_next_weeks_label">Повторити на наступні тижні:</string>
-    <string name="popup_delete">Видалити</string>
     <string name="popup_delete_subject_title">Видалити предмети</string>
     <string name="popup_delete_subject_content">Ви дійсно хочете видалити обрані предмети? Заняття з цих предметів будуть видалені з розкладу та шаблонів</string>
     <string name="popup_delete_group_title">Видалити групи</string>

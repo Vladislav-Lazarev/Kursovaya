@@ -11,14 +11,13 @@ import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.joda.time.Weeks;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
@@ -324,5 +323,24 @@ public class DBManager {
     }
     public static <T extends RealmObject> List<T> copyObjectFromRealm(List<T> obj){
         return realm.copyFromRealm(obj);
+    }
+
+    public static  <T extends RealmObject> RealmResults<T> search(@NotNull Class<T> clazz,
+                              @NotNull final String fieldName, @NotNull String value, @NotNull Case casing,
+                              @NotNull final String nameSort, Sort sort){
+        result.clear();
+
+        try {
+            RealmResults<T> model = realm.where(clazz)
+                    .like(fieldName, value, casing)
+                    .sort(nameSort, sort).findAll();
+            result.add(model);
+            Log.v(TAG, "Success -> " + result.get(ConstantApplication.ZERO).getClass().getSimpleName() + " was search: " + result.get(ConstantApplication.ZERO).toString());
+        } catch (Throwable ex) {
+            result.add(null);
+            Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
+        }
+
+        return (RealmResults<T>) result.get(ConstantApplication.ZERO);
     }
 }

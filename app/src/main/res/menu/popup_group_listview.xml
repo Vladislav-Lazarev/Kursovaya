@@ -3,12 +3,12 @@
 
     <item
         android:id="@+id/edit_group"
-        android:title="@string/popup_edit"
+        android:title="@string/popup_sort"
         android:icon="@drawable/ic_path_154"/>
 
     <item
         android:id="@+id/edit_delete"
-        android:title="@string/popup_delete"
+        android:title="@string/popup_filter"
         android:icon="@drawable/ic_path_156"/>
 
 </menu>

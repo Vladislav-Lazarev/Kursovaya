@@ -275,7 +275,7 @@ public class BackupActivity  extends AppCompatActivity {
     private void onClickPrepareEditBackup(final BackupDB editBackupDB, final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.edit_name_of_backup);
-        builder.setPositiveButton(R.string.popup_edit,(dialog, which) ->{
+        builder.setPositiveButton(R.string.popup_accept,(dialog, which) ->{
             if(SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                 return;
             }
