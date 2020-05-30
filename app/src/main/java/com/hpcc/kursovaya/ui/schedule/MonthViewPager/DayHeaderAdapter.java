@@ -37,7 +37,7 @@ public class DayHeaderAdapter extends RecyclerView.Adapter<DayHeaderAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DateTime firstDayOfWeek = DateTime.parse("01/01/1990 00:00:00", DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss")).plusDays(position);
-        String lang = LocaleManager.getLanguage(context).split("-")[0];
+        String lang = LocaleManager.getLocale(context.getResources()).getLanguage().split("-")[0];
         SimpleDateFormat dayOfWeekFormat = new SimpleDateFormat("EEE", new Locale(lang));
         holder.dayHeader.setText(dayOfWeekFormat.format(firstDayOfWeek.toDate()));
     }

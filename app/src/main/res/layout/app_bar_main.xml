@@ -14,7 +14,6 @@
         android:textAlignment="center"
         >
 
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -156,6 +155,26 @@
                 android:layout_gravity="right"
                 android:src="@drawable/ic_cancel_24px"  />
 
+        </androidx.appcompat.widget.Toolbar>
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarSearch"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.AppActionBarTheme">
+
+            <AutoCompleteTextView
+                android:id="@+id/textView_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/sideBar"
+                android:completionThreshold="1"
+                android:hint="@string/auto_complete_text_view_hint"
+                android:inputType="textCapSentences"
+                android:maxLength="100"
+                android:textColor="@color/appDefaultBlack"
+                android:textSize="19sp" />
         </androidx.appcompat.widget.Toolbar>
 
         <View

@@ -56,11 +56,10 @@ import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
 import com.hpcc.kursovaya.ui.schedule.DayScheduleFragment;
 import com.hpcc.kursovaya.ui.schedule.MonthScheduleFragment;
-import com.hpcc.kursovaya.ui.schedule.MonthViewPager.MonthViewFragment;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
 import com.hpcc.kursovaya.ui.settings.SettingsFragment;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
-import com.hpcc.kursovaya.ui.specialites.SpecialitiesFragment;
+import com.hpcc.kursovaya.ui.specialities.SpecialitiesFragment;
 import com.hpcc.kursovaya.ui.subjects.SubjectsFragment;
 import com.hpcc.kursovaya.ui.templates.TemplatesFragment;
 import com.itextpdf.text.Chunk;
@@ -92,7 +91,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -122,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar1;
     private Toolbar toolbarCompleteClasses;
     private Toolbar toolbarCanceledClasses;
+    private Toolbar toolbarSearch;
     private Toolbar toolbar;
     private View actionDatePicker;
     private View importTemplates;
@@ -184,8 +183,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar1 = findViewById(R.id.toolbarEdit);
         toolbarCompleteClasses = findViewById(R.id.toolbarComplete);
         toolbarCanceledClasses = findViewById(R.id.toolbarCancel);
+        toolbarSearch = findViewById(R.id.toolbarSearch);
         toolbarCanceledClasses.setVisibility(View.GONE);
         toolbarCompleteClasses.setVisibility(View.GONE);
+        toolbarSearch.setVisibility(View.GONE);
         toolbar1.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
@@ -387,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     isLanguageChanged = false;
                 }
                 isScheduleSelected = true;
+                toolbarSearch.setVisibility(View.GONE);
                 break;
             case R.id.nav_templates:
                 String specTag2 = getResources().getString(R.string.templatesTag);
@@ -400,6 +402,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     transaction.add(R.id.nav_host_fragment, new TemplatesFragment());
                 }
                 isScheduleSelected = false;
+                toolbarSearch.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_groups:
                 String specTag3 = getResources().getString(R.string.groupsTag);
@@ -413,6 +416,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     transaction.add(R.id.nav_host_fragment, new GroupsFragment());
                 }
                 isScheduleSelected = false;
+                toolbarSearch.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_subjects:
                 String specTag4 = getResources().getString(R.string.subjectsTag);
@@ -427,6 +431,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     transaction.add(R.id.nav_host_fragment, new SubjectsFragment());
                 }
                 isScheduleSelected = false;
+                toolbarSearch.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_specialities:
                 String specTag6 = "Specialities";
@@ -440,6 +445,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     transaction.add(R.id.nav_host_fragment, new SpecialitiesFragment());
                 }
                 isScheduleSelected = false;
+                toolbarSearch.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_settings:
                 String specTag5 = getResources().getString(R.string.settingsTag);
@@ -453,6 +459,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     transaction.add(R.id.nav_host_fragment, new SettingsFragment());
                 }
                 isScheduleSelected = false;
+                toolbarSearch.setVisibility(View.GONE);
                 break;
         }
         transaction.commit();

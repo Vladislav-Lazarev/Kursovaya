@@ -1,4 +1,4 @@
-package com.hpcc.kursovaya.ui.specialites;
+package com.hpcc.kursovaya.ui.specialities;
 
 import android.content.Context;
 import android.util.Log;

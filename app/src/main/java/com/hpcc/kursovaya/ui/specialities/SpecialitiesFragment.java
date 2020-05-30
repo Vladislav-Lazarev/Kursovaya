@@ -1,4 +1,4 @@
-package com.hpcc.kursovaya.ui.specialites;
+package com.hpcc.kursovaya.ui.specialities;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -139,7 +139,7 @@ public class SpecialitiesFragment extends Fragment {
     private void onClickPrepareAddSpeciality() {
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.dialog_add_speciality);
-        builder.setPositiveButton(R.string.popup_accept, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.dialog_button_add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
