@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -19,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -38,6 +41,9 @@ import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.List;
 
+import io.realm.Case;
+import io.realm.Sort;
+
 public class SubjectsFragment extends Fragment {
     private static final String TAG = SubjectsFragment.class.getSimpleName();
 
@@ -49,7 +55,7 @@ public class SubjectsFragment extends Fragment {
     private long mLastClickTime = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+                             ViewGroup  container, Bundle savedInstanceState) {
         LocaleManager.setLocale(getActivity());
         if(!isCreatedAlready) {
             root = inflater.inflate(R.layout.fragment_subjects, container, false);
@@ -73,8 +79,54 @@ public class SubjectsFragment extends Fragment {
                 }
             });
 
+            View rootSearch = inflater.inflate(R.layout.app_bar_main, container, false);
+            EditText textSearch = rootSearch.findViewById(R.id.textView_search);
+            textSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    listView.setAdapter(null);
+                    adapter.clear();
+                    adapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    listView.setAdapter(null);
+                    adapter.clear();
+                    adapter.notifyDataSetChanged();
+
+                    if (s.toString().isEmpty()){
+                        subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+                        Log.d(TAG, "DBManager.copyObjectFromRealm = " + subjectList.toString());
+                    } else {
+                        subjectList = DBManager.copyObjectFromRealm(DBManager
+                                .search(Subject.class, ConstantApplication.NAME, s.toString(),
+                                        Case.INSENSITIVE, ConstantApplication.NAME, Sort.ASCENDING));
+                    }
+                    adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
+                    listView.setAdapter(adapter);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    listView.setAdapter(null);
+                    adapter.clear();
+                    adapter.notifyDataSetChanged();
+
+                    if (s.toString().isEmpty()){
+                        subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+                        Log.d(TAG, "DBManager.copyObjectFromRealm = " + subjectList.toString());
+                    } else {
+                        subjectList = DBManager.copyObjectFromRealm(DBManager
+                                .search(Subject.class, ConstantApplication.NAME, s.toString(),
+                                        Case.INSENSITIVE, ConstantApplication.NAME, Sort.ASCENDING));
+                    }
+                    adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
+                    listView.setAdapter(adapter);
+                }
+            });
+
             subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
-            Log.d(TAG, "DBManager.copyObjectFromRealm = " + subjectList.toString());
             adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
             listView.setAdapter(adapter);
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -128,7 +180,6 @@ public class SubjectsFragment extends Fragment {
                     startActivityForResult(intent, ConstantApplication.ACTIVITY_EDIT);
                 }
             });
-
 
             listView.setItemsCanFocus(false);
         }

@@ -63,6 +63,7 @@ public class SpecialitiesFragment extends Fragment {
         specialityLSV = root.findViewById(R.id.specialitiesLSV);
         addSpeciality = root.findViewById(R.id.fab);
         final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
+
         addSpeciality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

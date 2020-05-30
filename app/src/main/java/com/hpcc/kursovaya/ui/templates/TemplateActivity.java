@@ -370,11 +370,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
                 String strGroup = s.toString();
                 Group group = DBManager.read(Group.class, ConstantApplication.NAME, strGroup);
 
@@ -390,6 +385,11 @@ public abstract class TemplateActivity extends AppCompatActivity {
                     templateAcademicHourList.set(ConstantApplication.ONE,
                             templateAcademicHourList.get(ConstantApplication.ONE).setGroup(group));
                 }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 

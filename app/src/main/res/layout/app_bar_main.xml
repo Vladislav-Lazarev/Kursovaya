@@ -163,7 +163,7 @@
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.AppActionBarTheme">
 
-            <AutoCompleteTextView
+            <EditText
                 android:id="@+id/textView_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
