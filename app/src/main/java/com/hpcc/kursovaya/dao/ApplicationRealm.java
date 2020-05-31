@@ -22,6 +22,7 @@ public class ApplicationRealm extends Application {
         LocaleManager.setLocale(this);
 
         Realm.init(this);
+
         File directory = new File(
                 getExternalFilesDir(null).getAbsolutePath() +
                 ConstantApplication.DIR_DELIMITER +

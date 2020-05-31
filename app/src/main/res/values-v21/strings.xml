@@ -140,4 +140,5 @@
 
     <string name="firstHalfCoupleHeader" translatable="false">1</string>
     <string name="secondHalfCoupleHeader" translatable="false">2</string>
+    <string name="hour_subject">год.\n</string>
 </resources>

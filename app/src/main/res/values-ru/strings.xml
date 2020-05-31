@@ -199,4 +199,5 @@
     <string name="class_cant_be_unread_day">Невозможно обозначить вычитанным снятое занятие</string>
     <string name="class_cant_be_cancelled_day">Невозможно отменить снятие занятие, поскольку занятие не является снятым</string>
     <string name="cant_select_empty_class">Вы не можете выбрать пустое занятие</string>
+    <string name="hour_subject">час.\n</string>
 </resources>

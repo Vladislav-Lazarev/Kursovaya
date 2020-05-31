@@ -358,7 +358,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
         groupNameSuggest = classView.findViewById(R.id.groupNameSuggestET);
         groupNameSuggest.setText(strGroup);
-        groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
+        groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantApplication.NAME));
         GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(currentContext,R.layout.group_auto, groupList);
         groupNameSuggest.setAdapter(adapter);
 
@@ -612,6 +612,8 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
         View view = getLayoutInflater().inflate(R.layout.dialog_add_new_template,null);
         templateNameEditText = view.findViewById(R.id.template_name_text);
+        templateNameEditText.setText(ConstantApplication
+                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, scheduleWeek.getName()));
         builder.setView(view);
 
         return builder;
@@ -628,6 +630,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
             return;
         }
 
-        scheduleWeek.setName(strTemplate);
+        scheduleWeek.setName(strTemplate.toLowerCase());
     }
 }

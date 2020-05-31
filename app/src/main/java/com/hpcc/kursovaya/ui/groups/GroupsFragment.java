@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -19,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -37,6 +40,9 @@ import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.List;
+
+import io.realm.Case;
+import io.realm.Sort;
 
 public class GroupsFragment extends Fragment {
     private static final String TAG = GroupsFragment.class.getSimpleName();
@@ -60,6 +66,34 @@ public class GroupsFragment extends Fragment {
             //creating elements for listview
             root = inflater.inflate(R.layout.fragment_groups, container, false);
             listView = root.findViewById(R.id.groupLSV);
+            final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
+            EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
+            textSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    adapter.clear();
+                    adapter.notifyDataSetChanged();
+
+                    if (s.toString().isEmpty()){
+                        groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantApplication.NAME));
+                    } else {
+                        groupList = DBManager.copyObjectFromRealm(DBManager
+                                .search(Group.class, ConstantApplication.NAME, s.toString(),
+                                        Case.INSENSITIVE, ConstantApplication.NAME, Sort.ASCENDING));
+                    }
+                    adapter.addAll(groupList);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
             groupList = DBManager.copyObjectFromRealm(
                     DBManager.readAll(Group.class));
             adapter = new GroupListAdapter(getActivity(), R.layout.list_view_item_group, groupList);

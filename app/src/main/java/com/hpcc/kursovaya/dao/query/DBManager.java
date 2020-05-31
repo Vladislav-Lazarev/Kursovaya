@@ -225,7 +225,7 @@ public class DBManager {
         return (int)result.get(ConstantApplication.ZERO);
     }
 
-    public static <T extends RealmObject, V> T read(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final V value){
+    public static <T extends RealmObject, V> T read(@NotNull final Class<T> clazz, @NotNull String fieldName, @NotNull V value){
         result.clear();
 
         try {
@@ -235,7 +235,7 @@ public class DBManager {
                 if (value instanceof Integer) {
                     query.equalTo(fieldName, (Integer) value);
                 } else if (value instanceof String) {
-                    query.equalTo(fieldName, (String) value);
+                    query.equalTo(fieldName, ((String) value).toLowerCase());
                 } else if (value instanceof Date) {
                     query.equalTo(fieldName, (Date) value);
                 } else {
@@ -282,7 +282,7 @@ public class DBManager {
                 if (value instanceof Integer) {
                     query.equalTo(fieldName, (Integer) value);
                 } else if (value instanceof String) {
-                    query.equalTo(fieldName, (String) value);
+                    query.equalTo(fieldName, ((String) value).toLowerCase());
                 } else if (value instanceof Date) {
                     query.equalTo(fieldName, (Date) value);
                 } else {
@@ -325,14 +325,13 @@ public class DBManager {
         return realm.copyFromRealm(obj);
     }
 
-    public static  <T extends RealmObject> RealmResults<T> search(@NotNull Class<T> clazz,
-                                                                  @NotNull final String fieldName, @NotNull String value, @NotNull Case casing,
-                                                                  @NotNull final String nameSort, Sort sort){
+    public static  <T extends RealmObject> RealmResults<T> search(@NotNull Class<T> clazz, @NotNull final String fieldName, @NotNull String value,
+                                                                  @NotNull Case casing, @NotNull final String nameSort, Sort sort){
         result.clear();
 
         try {
             RealmResults<T> model = realm.where(clazz)
-                    .like(fieldName, value, casing)
+                    .like(fieldName, "*" + value.toLowerCase() + "*", casing)
                     .sort(nameSort, sort).findAll();
             result.add(model);
             Log.v(TAG, "Success -> " + result.get(ConstantApplication.ZERO).getClass().getSimpleName() + " was search: " + result.get(ConstantApplication.ZERO).toString());

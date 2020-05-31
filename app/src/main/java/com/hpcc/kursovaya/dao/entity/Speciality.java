@@ -220,14 +220,13 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         List<String> result = new ArrayList<>();
 
         for (Speciality speciality : entityList){
-            result.add(speciality.getName());
+            result.add(ConstantApplication
+                    .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, speciality.getName()));
         }
         return result;
     }
     @Override
     public List<String> entityToNameList() {
-
-
         return entityToNameList(DBManager.readAll(Speciality.class, ConstantApplication.COUNT_COURSE));
     }
 

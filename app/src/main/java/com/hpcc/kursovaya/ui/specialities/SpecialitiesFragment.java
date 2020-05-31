@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -36,6 +38,9 @@ import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.List;
 
+import io.realm.Case;
+import io.realm.Sort;
+
 public class SpecialitiesFragment extends Fragment {
     private static final String TAG = SpecialitiesFragment.class.getSimpleName();
     private Context currentContext = null;
@@ -63,7 +68,34 @@ public class SpecialitiesFragment extends Fragment {
         specialityLSV = root.findViewById(R.id.specialitiesLSV);
         addSpeciality = root.findViewById(R.id.fab);
         final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
+        final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
+        EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
+        textSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.clear();
+                adapter.notifyDataSetChanged();
+
+                if (s.toString().isEmpty()){
+                    specialityList = DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class, ConstantApplication.NAME));
+                } else {
+                    specialityList = DBManager.copyObjectFromRealm(DBManager
+                            .search(Speciality.class, ConstantApplication.NAME, s.toString(),
+                                    Case.INSENSITIVE, ConstantApplication.NAME, Sort.ASCENDING));
+                }
+                adapter.addAll(specialityList);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         addSpeciality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,7 +223,7 @@ public class SpecialitiesFragment extends Fragment {
         }
 
         int codeSpeciality = Integer.parseInt(code.getText().toString());
-        Speciality speciality = new Speciality(strSpeciality, codeSpeciality);
+        Speciality speciality = new Speciality(strSpeciality.toLowerCase(), codeSpeciality);
 
         adapter.write(speciality);
         adapter.update(ConstantApplication.NAME);
@@ -277,7 +309,8 @@ public class SpecialitiesFragment extends Fragment {
         specText = editSpecialityView.findViewById(R.id.speciality_name_text);
         code = editSpecialityView.findViewById(R.id.code_text);
 
-        specText.setText(entity.getName());
+        specText.setText(
+                ConstantApplication.textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, entity.getName()));
         code.setText(Integer.toString(entity.getCode()));
 
         final AlertDialog dialog = builder.create();
@@ -309,7 +342,7 @@ public class SpecialitiesFragment extends Fragment {
         }
 
         int codeSpeciality = Integer.parseInt(code.getText().toString());
-        entity.setName(strSpeciality).setCode(codeSpeciality);
+        entity.setName(strSpeciality.toLowerCase()).setCode(codeSpeciality);
 
         adapter.write(entity);
         adapter.update(ConstantApplication.NAME);

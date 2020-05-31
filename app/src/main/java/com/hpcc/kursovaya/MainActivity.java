@@ -134,8 +134,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView currentDayText;
     private int weeksFromCurrent;
 
-
-
     public int getWeeksFromCurrent() {
         return weeksFromCurrent;
     }
@@ -143,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void setWeeksFromCurrent(int weeksFromCurrent) {
         this.weeksFromCurrent = weeksFromCurrent;
     }
-
 
     public boolean isLanguageChanged() {
         return isLanguageChanged;
@@ -1231,4 +1228,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.toolbarCanceledClasses = toolbarCanceledClasses;
     }
 
+    public Toolbar getToolbarSearch() {
+        return toolbarSearch;
+    }
 }

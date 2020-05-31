@@ -389,13 +389,14 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         List<String> result = new ArrayList<>();
 
         for (Subject subject : entityList){
-            result.add(subject.getName());
+            result.add(ConstantApplication
+                    .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, subject.getName()));
         }
         return result;
     }
     @Override
     public List<String> entityToNameList() {
-        return entityToNameList(DBManager.readAll(Subject.class, this.getName()));
+        return entityToNameList(DBManager.readAll(Subject.class, this.getName().toLowerCase()));
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

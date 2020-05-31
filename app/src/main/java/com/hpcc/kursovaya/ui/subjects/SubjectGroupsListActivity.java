@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.SubjectGroupsInfo;
@@ -52,7 +53,8 @@ public class SubjectGroupsListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Subject subject = intent.getParcelableExtra("entry");
         TextView header = toolbar.findViewById(R.id.toolbar_title);
-        header.setText(header.getText()+" "+subject.getName());
+        header.setText(header.getText() +" "+ ConstantApplication
+                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, subject.getName()));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

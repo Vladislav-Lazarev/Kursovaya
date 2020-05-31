@@ -70,7 +70,8 @@ public class EditGroupActivity extends AppCompatActivity {
         group = intent.getParcelableExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT));
 
         groupEditText = findViewById(R.id.editTextGroupName);
-        groupEditText.setText(group.getName());
+        groupEditText.setText(ConstantApplication
+                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, group.getName()));
 
         spinnerSpeciality = findViewById(R.id.spinnerSpeciality);
         spinnerCourse = findViewById(R.id.spinnerCourse);
@@ -113,7 +114,7 @@ public class EditGroupActivity extends AppCompatActivity {
             return;
         }
 
-        group.setName(strGroup);
+        group.setName(strGroup.toLowerCase());
 
         Intent intent = getIntent();
         intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT), group);

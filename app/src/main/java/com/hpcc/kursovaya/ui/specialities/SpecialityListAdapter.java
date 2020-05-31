@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
+import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.query.DBManager;
 
@@ -43,7 +44,7 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        String templateName = getItem(position).getName();
+        String name = ConstantApplication.textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, getItem(position).getName());
         String code = Integer.toString(getItem(position).getCode());
 
         final View result;
@@ -65,7 +66,7 @@ class SpecialityListAdapter extends ArrayAdapter<Speciality> {
        /* Animation animation = AnimationUtils.loadAnimation(mContext,(position>lastPosition) ? R.anim.load_down_anim:R.anim.load_up_anim);
         result.startAnimation(animation);*/
 
-        holder.name.setText(templateName);
+        holder.name.setText(name);
         holder.code.setText(code);
         return convertView;
     }

@@ -99,7 +99,7 @@ public class AddGroupActivity extends AppCompatActivity {
             return;
         }
 
-        group.setName(strGroup);
+        group.setName(strGroup.toLowerCase());
 
         Intent intent = getIntent();
         intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_ADD), group);

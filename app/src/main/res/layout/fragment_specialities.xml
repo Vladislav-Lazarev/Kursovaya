@@ -6,7 +6,7 @@
     android:background="@color/menuTextColor">
 
     <ListView
-        android:id="@+id/subjectsLSV"
+        android:id="@+id/specialitiesLSV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start|top"

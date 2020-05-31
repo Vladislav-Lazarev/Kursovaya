@@ -137,7 +137,7 @@
     <string name="toast_del_many_entity">Records were successfully removed</string>
     <string name="toast_empty_template">Fill the schedule!</string>
     <string name="action_read">Choose/Remove read classes</string>
-    <string name="action_canceled">Choose/Remove selected classes</string>
+    <string name="action_canceled">Name:</string>
     <string name="popup_upperWeekTemplate">Upper template:</string>
     <string name="popup_bottomWeekTemplate">Bottom template:</string>
     <string name="popup_firstWeek">Fisrt week:</string>
@@ -199,4 +199,5 @@
     <string name="class_cant_be_unread_day">Невозможно обозначить невычитанным снятое занятие или занятие, что не является вычитанным</string>
     <string name="class_cant_be_cancelled_day">It is not possible to cancel a lesson because the lesson is not canceled</string>
     <string name="cant_select_empty_class">You can\'t choose empty class</string>
+    <string name="hour_subject">hour\n</string>
 </resources>

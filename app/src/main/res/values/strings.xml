@@ -269,4 +269,5 @@
     <string name="class_cant_be_unread_day">Неможливо позначити вичитаним зняте заняття</string>
     <string name="cant_select_empty_class">Ви не можете обрати порожнє заняття</string>
     <string name="choose_speciality">Оберіть спеціальність</string>
+    <string name="hour_subject">год.\n</string>
 </resources>

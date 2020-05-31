@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/menuTextColor"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.settings.specialities.SpecialitiesActivity"
+    tools:context=".ui.specialities.SpecialitiesFragment"
     tools:showIn="@layout/activity_list_specialties">
     <ListView
         android:id="@+id/specialitiesLSV"

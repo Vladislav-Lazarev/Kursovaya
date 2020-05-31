@@ -1,11 +1,14 @@
 package com.hpcc.kursovaya.dao.constant;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.hpcc.kursovaya.dao.entity.Speciality;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -113,26 +116,22 @@ public class ConstantApplication {
     public static final String PATTERN_GROUP = "^([\\p{Alnum}-]{2,})$";
     public static final String PATTERN_SUBJECT = PATTERN_SPECIALITY;
     public static final String PATTERN_TEMPLATE = "^[\\p{Alnum}\\p{Punct}][\\s\\p{Alnum}\\p{Punct}]*$";
+    public static final String PATTERN_TEXT_VISUAL = "^(\\p{Alnum})(.+)";
 
     // checkUI
-    public static boolean checkUI(String pattern, String str){
+    public static boolean checkUI(@NotNull String pattern, @NotNull String str){
         return Pattern.matches(pattern, str);
     }
 
-    public static boolean checkUIMatcher(String strPattern, String text, int numberGroup){
-        if (numberGroup > -1){
-            return false;
-        }
-
+    public static String textVisual(@NotNull String strPattern, @NotNull String text){
         Pattern pattern = Pattern.compile(strPattern);
         Matcher matcher = pattern.matcher(text);
 
         if (matcher.find()){
-            String group = matcher.group(numberGroup);
-            return group != null;
-        } else {
-            return false;
+            text = text.replace(matcher.group(), matcher.group(1).toUpperCase() + matcher.group(2));
         }
+        Log.d("textVisual", text);
+        return text;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

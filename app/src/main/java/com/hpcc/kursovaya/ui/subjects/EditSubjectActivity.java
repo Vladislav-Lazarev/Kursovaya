@@ -35,7 +35,6 @@ import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -147,7 +146,8 @@ public class EditSubjectActivity extends AppCompatActivity {
             LinearLayout.LayoutParams textViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 6);
             specUI.setWidth(0);
             specUI.setLayoutParams(textViewParams);
-            specUI.setText(specialityList.get(i).getName());
+            specUI.setText(ConstantApplication
+                    .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, finalSpeciality.getName()));
             specUI.setTextColor(getResources().getColor(R.color.appDefaultBlack));
             specUI.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 
@@ -184,7 +184,8 @@ public class EditSubjectActivity extends AppCompatActivity {
         }
 
         subjectEditText = findViewById(R.id.editTextSubjectName);
-        subjectEditText.setText(subject.getName());
+        subjectEditText.setText(ConstantApplication
+                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, subject.getName()));
     }
 
     private void fillingCheckBox(CheckBox checkSpecHour, Speciality finalSpeciality, EditText hourEditTxt) {
@@ -270,7 +271,7 @@ public class EditSubjectActivity extends AppCompatActivity {
 
         Map<Speciality, Integer> resultMap = ConstantApplication.convertMapEditTextToMapInt(map);
 
-        subject.setName(strSubject)
+        subject.setName(strSubject.toLowerCase())
                 .setSpecialityCountHourMap(resultMap);
 
         Intent intent = getIntent();

@@ -57,12 +57,43 @@ public class SubjectsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup  container, Bundle savedInstanceState) {
         LocaleManager.setLocale(getActivity());
+
+
         if(!isCreatedAlready) {
             root = inflater.inflate(R.layout.fragment_subjects, container, false);
             listView = root.findViewById(R.id.subjectsLSV);
-            FloatingActionButton button = root.findViewById(R.id.fab);
-            Context context = getActivity();
+
             final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
+            Context context = getActivity();
+            final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
+            EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
+            textSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    adapter.clear();
+                    adapter.notifyDataSetChanged();
+
+                    if (s.toString().isEmpty()){
+                        subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantApplication.NAME));
+                    } else {
+                        subjectList = DBManager.copyObjectFromRealm(DBManager
+                                .search(Subject.class, ConstantApplication.NAME, s.toString(),
+                                        Case.INSENSITIVE, ConstantApplication.NAME, Sort.ASCENDING));
+                    }
+                    adapter.addAll(subjectList);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+            FloatingActionButton button = root.findViewById(R.id.fab);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -79,54 +110,7 @@ public class SubjectsFragment extends Fragment {
                 }
             });
 
-            View rootSearch = inflater.inflate(R.layout.app_bar_main, container, false);
-            EditText textSearch = rootSearch.findViewById(R.id.textView_search);
-            textSearch.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    listView.setAdapter(null);
-                    adapter.clear();
-                    adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    listView.setAdapter(null);
-                    adapter.clear();
-                    adapter.notifyDataSetChanged();
-
-                    if (s.toString().isEmpty()){
-                        subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
-                        Log.d(TAG, "DBManager.copyObjectFromRealm = " + subjectList.toString());
-                    } else {
-                        subjectList = DBManager.copyObjectFromRealm(DBManager
-                                .search(Subject.class, ConstantApplication.NAME, s.toString(),
-                                        Case.INSENSITIVE, ConstantApplication.NAME, Sort.ASCENDING));
-                    }
-                    adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
-                    listView.setAdapter(adapter);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    listView.setAdapter(null);
-                    adapter.clear();
-                    adapter.notifyDataSetChanged();
-
-                    if (s.toString().isEmpty()){
-                        subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
-                        Log.d(TAG, "DBManager.copyObjectFromRealm = " + subjectList.toString());
-                    } else {
-                        subjectList = DBManager.copyObjectFromRealm(DBManager
-                                .search(Subject.class, ConstantApplication.NAME, s.toString(),
-                                        Case.INSENSITIVE, ConstantApplication.NAME, Sort.ASCENDING));
-                    }
-                    adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
-                    listView.setAdapter(adapter);
-                }
-            });
-
-            subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+            subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantApplication.NAME));
             adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
             listView.setAdapter(adapter);
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -180,7 +164,6 @@ public class SubjectsFragment extends Fragment {
                     startActivityForResult(intent, ConstantApplication.ACTIVITY_EDIT);
                 }
             });
-
             listView.setItemsCanFocus(false);
         }
         isCreatedAlready=true;

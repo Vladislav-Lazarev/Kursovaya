@@ -56,82 +56,6 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
             convertView = inflater.inflate(mResource,parent,false);
             holder = new ViewHolder();
             holder.name = (TextView) convertView.findViewById(R.id.template_text);
-            /*//setting onclick action on button
-            final Button button = (Button) convertView.findViewById(R.id.btn_lsvOptions);
-            button.setOnClickListener(new View.OnClickListener(){
-                public void onClick(View view){
-                    PopupMenu popupMenu = new PopupMenu(mContext,button);
-                    //enabling icons in menu
-                    try {
-                        Field[] fields = popupMenu.getClass().getDeclaredFields();
-                        for (Field field : fields) {
-                            if ("mPopup".equals(field.getName())) {
-                                field.setAccessible(true);
-                                Object menuPopupHelper = field.get(popupMenu);
-                                Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
-                                Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
-                                setForceIcons.invoke(menuPopupHelper, true);
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    popupMenu.getMenuInflater().inflate(R.menu.popup_templates_listview,popupMenu.getMenu());
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()){
-                                case R.id.edit_template:
-                                    Intent intent = new Intent(mContext, EditTemplateActivity.class);
-                                    mContext.startActivity(intent);
-                                    return true;
-                                case R.id.edit_delete:
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                                    builder.setTitle(mContext.getString(R.string.delete_alert_header))
-                                            .setMessage(R.string.delete_alert_msg)
-                                            .setPositiveButton(R.string.delete_positive,
-                                                    new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int id) {
-                                                            dialog.cancel();
-                                                        }
-                                                    })
-                                            .setNegativeButton(R.string.delete_negative, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.cancel();
-                                                }
-                                            });
-                                    final AlertDialog alert = builder.create();
-                                    alert.setOnShowListener(new DialogInterface.OnShowListener() {
-                                        @Override
-                                        public void onShow(DialogInterface arg0) {
-                                            alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(mContext.getResources().getColor(R.color.sideBar));
-                                            alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(mContext.getResources().getColor(R.color.sideBar));
-                                        }
-                                    });
-                                    alert.show();
-                                    return true;
-                                default:
-                                    return false;
-                            }
-                        }
-                    });
-                    popupMenu.show();
-                }
-            });
-            //increasing hit area
-            final View parentEl = (View) button.getParent();  // button: the view you want to enlarge hit area
-            parent.post( new Runnable() {
-                public void run() {
-                    final Rect rect = new Rect();
-                    button.getHitRect(rect);
-                    rect.left += 2300;   // increase left hit area
-                    rect.right += 2300;  // increase right hit area
-                    parent.setTouchDelegate( new TouchDelegate( rect , button));
-                }
-            });
-*/
             result = convertView;
 
             convertView.setTag(holder);
@@ -145,7 +69,8 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
 
         lastPosition = position;
 
-        holder.name.setText(scheduleWeek.getName());
+        holder.name.setText(ConstantApplication
+                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, scheduleWeek.getName()));
 
         return convertView;
     }

@@ -139,7 +139,8 @@ public class AddSubjectActivity extends AppCompatActivity {
             LinearLayout.LayoutParams textViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,6);
             specUI.setWidth(0);
             specUI.setLayoutParams(textViewParams);
-            specUI.setText(specialityList.get(i).getName());
+            specUI.setText(ConstantApplication
+                    .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, finalSpeciality.getName()));
             specUI.setTextColor(getResources().getColor(R.color.appDefaultBlack));
             specUI.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
 
@@ -252,7 +253,7 @@ public class AddSubjectActivity extends AppCompatActivity {
         checkSubject(strSubject);
 
         Map<Speciality, Integer> resultMap = ConstantApplication.convertMapEditTextToMapInt(map);
-        subject.setName(strSubject)
+        subject.setName(strSubject.toLowerCase())
                 .setSpecialityCountHourMap(resultMap);
 
         Intent intent = getIntent();

@@ -101,7 +101,7 @@ public class EditTemplateActivity extends TemplateActivity {
     protected void onClickAcceptTemplate(DialogInterface dialog, int which) {
         super.onClickAcceptTemplate(dialog, which);
         scheduleWeek.setTemplateAcademicHourList(convert2DimensionalTo1Dimensional(classes));
-        templateNameEditText.setText(scheduleWeek.getName());
+        templateNameEditText.setText(scheduleWeek.getName().toLowerCase());
 
         intent = getIntent();
         intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT), scheduleWeek);
