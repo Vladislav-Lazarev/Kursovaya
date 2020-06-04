@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/filterSpecialityLabel"
+                android:text="@string/specialty_label"
+                android:textColor="@color/appDefaultBlack"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="23dp"
+                android:layout_marginStart="15dp"
+                />
+
+            <TextView
+                android:id="@+id/filterCourseLabel"
+                android:text="@string/course_label"
+                android:textColor="@color/appDefaultBlack"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="23dp"
+                android:layout_below="@id/filterSpecialityLabel"/>
+
+
+            <Spinner
+                android:id="@+id/spinnerSpeciality"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/filterSpecialityLabel"
+                android:layout_marginStart="9dp"
+                android:layout_marginTop="26dp"
+                />
+
+            <Spinner
+                android:id="@+id/spinnerCourse"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/spinnerSpeciality"
+                android:layout_marginStart="71dp"
+                android:layout_marginTop="19dp"
+                android:layout_toEndOf="@id/filterCourseLabel"/>
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

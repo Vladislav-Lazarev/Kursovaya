@@ -58,7 +58,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
 
     @NotNull
     public String getName() {
-        return name;
+        return ConstantApplication.textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, name);
     }
     public Speciality setName(@NotNull String name) {
         if("".equals(name)){
@@ -199,7 +199,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
     @Override
     public void checkEntity() throws Exception{
         try {
-            setName(getName());
+            setName(name);
             setCountCourse(getCountCourse());
             setCode(getCode());
         } catch(RuntimeException ex) {
@@ -220,8 +220,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
         List<String> result = new ArrayList<>();
 
         for (Speciality speciality : entityList){
-            result.add(ConstantApplication
-                    .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, speciality.getName()));
+            result.add(speciality.getName());
         }
         return result;
     }

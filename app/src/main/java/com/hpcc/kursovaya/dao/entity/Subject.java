@@ -95,7 +95,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
 
     @NotNull
     public String getName() {
-        return name;
+        return ConstantApplication.textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, name);
     }
     public Subject setName(@NotNull String name) {
         if("".equals(name)){
@@ -327,7 +327,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
 
         result = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class,
                 ConstantApplication.NUMBER_COURSE, this.getNumberCourse(),
-                "idSpeciality"));
+                ConstantApplication.ID_SPECIALITY));
 
         for (int i = 0; i < result.size(); i++){
             if (!specialityList.contains(result.get(i).getSpecialty())){
@@ -389,14 +389,25 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
         List<String> result = new ArrayList<>();
 
         for (Subject subject : entityList){
-            result.add(ConstantApplication
-                    .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, subject.getName()));
+            result.add(subject.getName());
         }
         return result;
     }
     @Override
     public List<String> entityToNameList() {
         return entityToNameList(DBManager.readAll(Subject.class, this.getName().toLowerCase()));
+    }
+
+    public static int findMaxNumberCourse(List<Subject> subjectList){
+        int maxNumberCourse = 1;
+
+        for(Subject subject: subjectList){
+            if(subject.getNumberCourse() > maxNumberCourse){
+                maxNumberCourse = subject.getNumberCourse();
+            }
+        }
+
+        return maxNumberCourse;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -476,7 +487,5 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
 
         // Удаление дисциплины
         DBManager.delete(Subject.class, ConstantApplication.ID, getId());
-
-
     }
 }

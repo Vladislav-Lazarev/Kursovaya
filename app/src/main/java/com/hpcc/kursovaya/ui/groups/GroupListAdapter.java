@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.query.DBManager;
 
@@ -76,10 +75,8 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
 
         lastPosition = position;
 
-        holder.name.setText(ConstantApplication
-                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, group.getName()));
-        holder.speciality.setText(ConstantApplication
-                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, group.getSpecialty().getName()));
+        holder.name.setText(group.getName());
+        holder.speciality.setText(group.getSpecialty().getName());
         holder.course.setText(String.valueOf(group.getNumberCourse()));
 
         return convertView;

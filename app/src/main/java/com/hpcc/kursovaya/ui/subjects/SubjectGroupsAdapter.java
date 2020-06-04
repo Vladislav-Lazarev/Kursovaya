@@ -76,10 +76,8 @@ public class SubjectGroupsAdapter extends ArrayAdapter<SubjectGroupsInfo> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.name.setText(ConstantApplication
-                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, name));
-        holder.speciality.setText(ConstantApplication
-                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, speciality));
+        holder.name.setText(name);
+        holder.speciality.setText(speciality);
         holder.totalHours.setText(totalHours);
         holder.readHours.setText(readHours);
         holder.canceledHours.setText(canceledHours);

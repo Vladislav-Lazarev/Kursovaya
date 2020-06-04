@@ -305,6 +305,44 @@ public class DBManager {
         return (RealmResults<T>) result.get(ConstantApplication.ZERO);
     }
 
+    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz, @NotNull final List <String> fieldsName, @NotNull final List<Object> values){
+        result.clear();
+
+        try {
+            final RealmQuery<T> query = realm.where(clazz);
+
+            for(String field: fieldsName) {
+                int index = fieldsName.indexOf(field);
+                Object value = values.get(index);
+
+                if (field != null) {
+                    if (value instanceof Integer) {
+                        query.equalTo(field, (Integer) value);
+                    } else if (value instanceof String) {
+                        query.equalTo(field, (String) value);
+                    } else if (value instanceof Date) {
+                        query.equalTo(field, (Date) value);
+                    } else {
+                        throw new Exception("Error type!");
+                    }
+                }
+
+                if(index < (fieldsName.size() - 1)){
+                    query.and();
+                }
+
+            }
+
+            result.add(query.findAll());
+            Log.v(TAG, "Success -> " + result.get(ConstantApplication.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantApplication.ZERO).toString());
+        } catch (Throwable ex) {
+            Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
+            return null;
+        }
+
+        return (RealmResults<T>) result.get(ConstantApplication.ZERO);
+    }
+
     public static <T extends RealmObject> int findMaxID(@NotNull Class<T> clazz){
         Number maxID = realm.where(clazz).max(ConstantApplication.ID);
 

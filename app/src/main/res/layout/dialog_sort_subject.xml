@@ -2,113 +2,121 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ScrollView>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/sortGroupLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="26dp"
+                android:text="@string/groupName_label"
+                android:textColor="@color/appDefaultBlack"
+                android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/popup_group_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="26dp"
-            android:text="@string/subjectName_label"
-            android:textColor="@color/appDefaultBlack"
-            android:textSize="16sp" />
-        <ImageButton
-            android:id="@+id/asc_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/popup_group_name"
-            android:layout_alignStart="@+id/popup_group_name"
-            android:layout_alignEnd="@+id/popup_group_name"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/ic_add_24px_white"
-            android:src="@drawable/ic_az" />
-        <ImageButton
-            android:id="@+id/desc_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/asc_name"
-            android:layout_alignStart="@+id/popup_group_name"
-            android:layout_alignEnd="@+id/popup_group_name"
-            android:layout_gravity="center"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/ic_add_24px_white"
-            android:src="@drawable/ic_za" />
+            <RadioGroup
+                android:id="@+id/nameGroup"
+                android:layout_below="@+id/sortGroupLabel"
+                android:layout_alignStart="@+id/sortGroupLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/ascName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="10dp"
+                    android:checked="false"
+                    android:button="@drawable/rb_selector_name_az" />
 
-        <TextView
-            android:id="@+id/popup_subject_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/popup_group_name"
-            android:layout_alignStart="@+id/popup_group_name"
-            android:layout_marginStart="62dp"
-            android:layout_marginTop="-24dp"
-            android:text="@string/course_label"
-            android:textColor="@color/appDefaultBlack"
-            android:textSize="16sp" />
-        <ImageButton
-            android:id="@+id/asc_course"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/popup_group_name"
-            android:layout_alignStart="@+id/popup_subject_name"
-            android:layout_alignEnd="@+id/popup_subject_name"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/ic_add_24px_white"
-            android:src="@drawable/ic_1n" />
-        <ImageButton
-            android:id="@+id/desc_course"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/asc_course"
-            android:layout_alignStart="@+id/popup_subject_name"
-            android:layout_alignEnd="@+id/popup_subject_name"
-            android:layout_gravity="center"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/ic_add_24px_white"
-            android:src="@drawable/ic_n1" />
+                <RadioButton
+                    android:id="@+id/descName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="10dp"
+                    android:checked="false"
+                    android:button="@drawable/rb_selector_name_za" />
+            </RadioGroup>
 
-        <TextView
-            android:id="@+id/popup_duration_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/popup_subject_name"
-            android:layout_alignTop="@+id/popup_subject_name"
-            android:layout_marginStart="55dp"
-            android:layout_marginTop="0dp"
-            android:text="@string/specialty_label"
-            android:textColor="@color/appDefaultBlack"
-            android:textSize="16sp" />
-        <ImageButton
-            android:id="@+id/asc_speciality"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/popup_duration_label"
-            android:layout_alignStart="@+id/popup_duration_label"
-            android:layout_alignEnd="@+id/popup_duration_label"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/ic_add_24px_white"
-            android:src="@drawable/ic_az" />
-        <ImageButton
-            android:id="@+id/desc_speciality"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/asc_speciality"
-            android:layout_alignStart="@+id/popup_duration_label"
-            android:layout_alignEnd="@+id/popup_duration_label"
-            android:layout_gravity="center"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/ic_add_24px_white"
-            android:src="@drawable/ic_za" />
+            <TextView
+                android:id="@+id/sortCourseLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/sortGroupLabel"
+                android:layout_marginStart="19dp"
+                android:layout_marginTop="26dp"
+                android:text="@string/course_label"
+                android:textColor="@color/appDefaultBlack"
+                android:textSize="16sp" />
 
-    </RelativeLayout>
+            <RadioGroup
+                android:id="@+id/courseGroup"
+                android:layout_below="@+id/sortCourseLabel"
+                android:layout_alignStart="@+id/sortCourseLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/ascCourse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="10dp"
+                    android:checked="false"
+                    android:button="@drawable/rb_selector_name_1n"/>
+
+                <RadioButton
+                    android:id="@+id/descCourse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:checked="false"
+                    android:layout_marginTop="10dp"
+                    android:button="@drawable/rb_selector_name_n1" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/sortSpecialityLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/sortCourseLabel"
+                android:layout_marginStart="19dp"
+                android:layout_marginTop="26dp"
+                android:text="@string/specialty_label"
+                android:textColor="@color/appDefaultBlack"
+                android:textSize="16sp" />
+
+            <RadioGroup
+                android:id="@+id/specialitiesGroup"
+                android:layout_below="@+id/sortSpecialityLabel"
+                android:layout_alignStart="@+id/sortSpecialityLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/ascSpeciality"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="10dp"
+                    android:checked="false"
+                    android:button="@drawable/rb_selector_name_az" />
+                <RadioButton
+                    android:id="@+id/descSpeciality"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="10dp"
+                    android:checked="false"
+                    android:button="@drawable/rb_selector_name_za" />
+            </RadioGroup>
+        </RelativeLayout>
+
+    </ScrollView>
+
 </RelativeLayout>

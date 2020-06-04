@@ -55,7 +55,7 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     }
 
     public String getName() {
-        return name;
+        return ConstantApplication.textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, name);
     }
     public Group setName(@NotNull String name) {
         if("".equals(name)){
@@ -182,7 +182,7 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     @Override
     public void checkEntity() throws Exception {
         try {
-            setName(getName());
+            setName(name);
             setSpecialty(getSpecialty());
             setNumberCourse(getNumberCourse());
         } catch(RuntimeException ex) {
@@ -210,6 +210,18 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     @Override
     public List<String> entityToNameList() {
         return entityToNameList(DBManager.readAll(Group.class, ConstantApplication.COUNT_COURSE));
+    }
+
+    public static int findMaxNumberCourse(List<Group> groupList){
+        int maxNumberCourse = 1;
+
+        for(Group group: groupList){
+            if(group.getNumberCourse() > maxNumberCourse){
+                maxNumberCourse = group.getNumberCourse();
+            }
+        }
+
+        return maxNumberCourse;
     }
 
     // Parcelable

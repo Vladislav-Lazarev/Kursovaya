@@ -69,8 +69,7 @@ public class TemplateListAdapter extends ArrayAdapter<TemplateScheduleWeek> {
 
         lastPosition = position;
 
-        holder.name.setText(ConstantApplication
-                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, scheduleWeek.getName()));
+        holder.name.setText(scheduleWeek.getName());
 
         return convertView;
     }

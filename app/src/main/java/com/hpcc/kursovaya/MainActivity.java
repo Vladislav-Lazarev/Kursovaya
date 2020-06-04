@@ -1043,7 +1043,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void bottomSpinnerOnItemSelected(AdapterView<?> parent, int position) {
         String item = (String) parent.getItemAtPosition(position);
-        bottomTemplate = DBManager.read(TemplateScheduleWeek.class,ConstantApplication.NAME,item);
+        bottomTemplate = DBManager.read(TemplateScheduleWeek.class, ConstantApplication.NAME, item);
         RadioGroup rg = importTemplates.findViewById(R.id.popup_firstWeek_rgroup);
         TextView label = importTemplates.findViewById(R.id.popupFirstWeek);
         if(bottomTemplate.equals(upperTemplate)){

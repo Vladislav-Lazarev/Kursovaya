@@ -67,7 +67,6 @@ public class AddTemplateActivity extends TemplateActivity {
     @Override
     protected void onClickAcceptTemplate(DialogInterface dialog, int which) {
         super.onClickAcceptTemplate(dialog, which);
-        scheduleWeek.setTemplateAcademicHourList(convert2DimensionalTo1Dimensional(classes));
 
         intent = getIntent();
         intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_ADD), scheduleWeek);

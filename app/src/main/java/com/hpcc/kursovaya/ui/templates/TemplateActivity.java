@@ -612,8 +612,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
         View view = getLayoutInflater().inflate(R.layout.dialog_add_new_template,null);
         templateNameEditText = view.findViewById(R.id.template_name_text);
-        templateNameEditText.setText(ConstantApplication
-                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, scheduleWeek.getName()));
+        templateNameEditText.setText(scheduleWeek.getName());
         builder.setView(view);
 
         return builder;
@@ -624,12 +623,11 @@ public abstract class TemplateActivity extends AppCompatActivity {
     }
     protected void onClickAcceptTemplate(DialogInterface dialog, int which){
         String strTemplate = templateNameEditText.getText().toString();
-
         if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_TEMPLATE, strTemplate)){
             Toast.makeText(this, R.string.toast_check, Toast.LENGTH_LONG);
             return;
         }
-
-        scheduleWeek.setName(strTemplate.toLowerCase());
+        scheduleWeek.setName(strTemplate.toLowerCase())
+                .setTemplateAcademicHourList(convert2DimensionalTo1Dimensional(classes));
     }
 }

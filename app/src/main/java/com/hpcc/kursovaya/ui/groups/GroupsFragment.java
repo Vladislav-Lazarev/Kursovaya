@@ -15,6 +15,7 @@ import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +42,7 @@ import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Case;
@@ -53,6 +57,11 @@ public class GroupsFragment extends Fragment {
     private long mLastClickTime = 0;
     private GroupListAdapter adapter;
     private List<Group> groupList;
+    private View filterGroupView;
+    private View sortGroupView;
+    private Spinner spinnerSpeciality;
+    private Spinner spinnerCourse;
+    private AlertDialog sortGroupDialog;
 
     public void setActionBarTitle(){
         ((MainActivity)getActivity()).setActionBarTitle(getContext().getString(R.string.menu_groups));
@@ -175,8 +184,34 @@ public class GroupsFragment extends Fragment {
         }
         isCreatedAlready=true;
         setActionBarTitle();
-
+        setHasOptionsMenu(true);
         return root;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_group, menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        List<Group> groupList = DBManager.copyObjectFromRealm(
+                DBManager.readAll(Group.class));
+
+        if(groupList.size() == ConstantApplication.ZERO){
+            Toast.makeText(getContext(), R.string.toast_fragment_no_groups, Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        switch (item.getItemId()){
+            case R.id.filter_group:
+                onClickPrepareFilterGroup();
+                break;
+            case R.id.sort_group:
+                onClickPrepareSortGroup();
+                break;
+        }
+        return false;
     }
 
     @Override
@@ -195,6 +230,199 @@ public class GroupsFragment extends Fragment {
             adapter.write(group);
             adapter.update(ConstantApplication.NAME);
         }
+    }
+
+    private void onClickPrepareFilterGroup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.dialog_filter_group);
+        builder.setPositiveButton(R.string.popup_accept, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
+                String specialityName = String.valueOf(spinnerSpeciality.getSelectedItem());
+                String course = String.valueOf(spinnerCourse.getSelectedItem());
+                List<String> fieldName = new ArrayList<>();
+                List<Object> value = new ArrayList<>();
+
+                if(!specialityName.equals(getString(R.string.spinner_all))){
+                    Speciality speciality = DBManager.copyObjectFromRealm(
+                            DBManager.read(Speciality.class, ConstantApplication.NAME, specialityName));
+                    fieldName.add(ConstantApplication.ID_SPECIALITY);
+                    value.add(speciality.getId());
+                }
+
+                if(!course.equals(getString(R.string.spinner_all))){
+                    fieldName.add(ConstantApplication.NUMBER_COURSE);
+                    value.add(Integer.parseInt(course));
+                }
+
+
+                List<Group> groupList = new ArrayList<>();
+                groupList.addAll(DBManager.copyObjectFromRealm(
+                        DBManager.readAll(Group.class, fieldName, value)));
+
+
+                adapter.clear();
+
+                adapter.addAll(groupList);
+            }
+        });
+        builder.setCancelable(false);
+        builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        filterGroupView = getLayoutInflater().inflate(R.layout.dialog_filter_group, null);
+        builder.setView(filterGroupView);
+
+        List<String> specialityNameList = new ArrayList<>();
+
+        List<Speciality> specialityList = DBManager.copyObjectFromRealm(
+                DBManager.readAll(Speciality.class));
+
+        List<Group> groupList = DBManager.copyObjectFromRealm(
+                DBManager.readAll(Group.class));
+
+        for (Group group: groupList){
+            for (Speciality speciality: specialityList){
+                if(group.getSpecialty().equals(speciality) &&
+                        !specialityNameList.contains(speciality.getName())){
+                    specialityNameList.add(speciality.getName());
+                }
+            }
+        }
+
+
+        if(specialityNameList.size() > 1){
+            specialityNameList.add(getString(R.string.spinner_all));
+        }
+
+        spinnerSpeciality =
+                ConstantApplication.fillingSpinner(getContext(), filterGroupView.findViewById(R.id.spinnerSpeciality),
+                        specialityNameList);
+        listenerSpinnerSpeciality(spinnerSpeciality);
+
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+            }
+        });
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout parent = (LinearLayout) positiveButton.getParent();
+        parent.setGravity(Gravity.CENTER_HORIZONTAL);
+        View leftSpacer = parent.getChildAt(1);
+        leftSpacer.setVisibility(View.GONE);
+    }
+    private void onClickPrepareSortGroup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.dialog_sort_group);
+        builder.setCancelable(false);
+        builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        sortGroupView = getLayoutInflater().inflate(R.layout.dialog_sort_group, null);
+        builder.setView(sortGroupView);
+
+        List<RadioButton> sortBtnList = new ArrayList<>();
+
+        sortBtnList.add(sortGroupView.findViewById(R.id.ascName));
+        sortBtnList.add(sortGroupView.findViewById(R.id.descName));
+        sortBtnList.add(sortGroupView.findViewById(R.id.ascCourse));
+        sortBtnList.add(sortGroupView.findViewById(R.id.descCourse));
+        sortBtnList.add(sortGroupView.findViewById(R.id.ascSpeciality));
+        sortBtnList.add(sortGroupView.findViewById(R.id.descSpeciality));
+
+        for(RadioButton sortBtn: sortBtnList){
+            sortBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
+
+                    String fieldName = "";
+                    Sort sort = Sort.ASCENDING;
+
+                    switch (v.getId()){
+                        case R.id.ascName:
+                            fieldName = ConstantApplication.NAME;
+                            sort = Sort.ASCENDING;
+                            break;
+                        case R.id.descName:
+                            fieldName = ConstantApplication.NAME;
+                            sort = Sort.DESCENDING;
+                            break;
+                        case R.id.ascCourse:
+                            fieldName = ConstantApplication.NUMBER_COURSE;
+                            sort = Sort.ASCENDING;
+                            break;
+                        case R.id.descCourse:
+                            fieldName = ConstantApplication.NUMBER_COURSE;
+                            sort = Sort.DESCENDING;
+                            break;
+                        case R.id.ascSpeciality:
+                            fieldName = ConstantApplication.ID_SPECIALITY;
+                            sort = Sort.ASCENDING;
+                            break;
+                        case R.id.descSpeciality:
+                            fieldName = ConstantApplication.ID_SPECIALITY;
+                            sort = Sort.DESCENDING;
+                            break;
+                    }
+
+                    List<Group> groupList = new ArrayList<>();
+
+                    if(fieldName.equals(ConstantApplication.ID_SPECIALITY)){
+                        fieldName = ConstantApplication.NAME;
+                        List<Speciality> specialityList = DBManager.copyObjectFromRealm(
+                                DBManager.readAll(Speciality.class, fieldName, sort));
+
+                        for(Speciality speciality: specialityList){
+                            groupList.addAll(DBManager.copyObjectFromRealm(
+                                    DBManager.readAll(Group.class, ConstantApplication.ID_SPECIALITY, speciality.getId())));
+                        }
+                    }else{
+                        groupList = DBManager.copyObjectFromRealm(
+                                DBManager.readAll(Group.class, fieldName, sort));
+                    }
+
+                    adapter.clear();
+
+                    adapter.addAll(groupList);
+
+                    sortGroupDialog.cancel();
+                }
+            });
+        }
+
+
+        sortGroupDialog = builder.create();
+        sortGroupDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                sortGroupDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+            }
+        });
+        sortGroupDialog.show();
+        Button positiveButton = sortGroupDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout parent = (LinearLayout) positiveButton.getParent();
+        parent.setGravity(Gravity.CENTER_HORIZONTAL);
+        View leftSpacer = parent.getChildAt(1);
+        leftSpacer.setVisibility(View.GONE);
     }
 
     private void prepareDeleteDialog(final ActionMode mode) {
@@ -249,6 +477,46 @@ public class GroupsFragment extends Fragment {
         parent.setGravity(Gravity.CENTER_HORIZONTAL);
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
+    }
+
+    private void listenerSpinnerSpeciality(Spinner spinner) {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent,
+                                       View itemSelected, int selectedItemPosition, long selectedId) {
+                String item = (String) parent.getItemAtPosition(selectedItemPosition);
+                List<String> courseList = new ArrayList<>();
+                List<Group> groupList = new ArrayList<>();
+
+                if(item.equals(getString(R.string.spinner_all))){
+                    groupList = DBManager.copyObjectFromRealm(
+                            DBManager.readAll(Group.class, ConstantApplication.NUMBER_COURSE, Sort.ASCENDING));
+                }else{
+                    Speciality speciality = DBManager.read(Speciality.class, ConstantApplication.NAME, item);
+                    groupList = DBManager.copyObjectFromRealm(
+                            DBManager.readAll(Group.class, ConstantApplication.ID_SPECIALITY, speciality.getId(), ConstantApplication.NUMBER_COURSE, Sort.ASCENDING));
+                }
+
+                if(groupList != null){
+                    for(Group group: groupList){
+                        if(!courseList.contains(Integer.toString(group.getNumberCourse()))){
+                            courseList.add(Integer.toString(group.getNumberCourse()));
+                        }
+                    }
+                }
+
+                if(courseList.size() > 1){
+                    courseList.add(getString(R.string.spinner_all));
+                }
+
+                spinnerCourse =
+                        ConstantApplication.fillingSpinner(getContext(), filterGroupView.findViewById(R.id.spinnerCourse),
+                                courseList);
+                ConstantApplication.setSpinnerText(spinnerCourse, String.valueOf(spinnerCourse.getSelectedItem()));
+
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
 }

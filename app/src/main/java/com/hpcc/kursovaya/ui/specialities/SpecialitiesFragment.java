@@ -309,8 +309,7 @@ public class SpecialitiesFragment extends Fragment {
         specText = editSpecialityView.findViewById(R.id.speciality_name_text);
         code = editSpecialityView.findViewById(R.id.code_text);
 
-        specText.setText(
-                ConstantApplication.textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, entity.getName()));
+        specText.setText(entity.getName());
         code.setText(Integer.toString(entity.getCode()));
 
         final AlertDialog dialog = builder.create();

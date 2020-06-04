@@ -75,14 +75,11 @@ public class SubjectListAdapter extends ArrayAdapter<Subject> {
       /* Animation animation = AnimationUtils.loadAnimation(mContext,(position>lastPosition) ? R.anim.load_down_anim:R.anim.load_up_anim);
        result.startAnimation(animation);*/
 
-        holder.name.setText(ConstantApplication
-                .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, subject.getName()));
+        holder.name.setText(subject.getName());
         if (!subject.isEmptySpecialtyCountHour()){
             StringBuilder str = new StringBuilder();
             for (Map.Entry<Speciality, Integer> set : subject.getSpecialityCountHourMap().entrySet()) {
-                str.append(ConstantApplication
-                        .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, set.getKey().getName())
-                        + " - " + set.getValue() + " " + mContext.getString(R.string.hour_subject));
+                str.append(set.getKey().getName() + " - " + set.getValue() + " " + mContext.getString(R.string.hour_subject));
             }
             str.deleteCharAt(str.length() - ConstantApplication.ONE);
             holder.speciality.setText(str.toString());

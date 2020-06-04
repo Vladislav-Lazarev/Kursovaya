@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.R;
-import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
 
 import java.util.ArrayList;
@@ -48,8 +47,7 @@ public class GroupAutoCompleteAdapter extends ArrayAdapter<Group> implements Fil
             TextView groupNameLabel = (TextView) v.findViewById(R.id.groupNameLabel);
             if (groupNameLabel != null) {
                 Log.d(TAG,"performFilteringAtTheStart"+group.getName());
-                groupNameLabel.setText(ConstantApplication
-                        .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, group.getName()));
+                groupNameLabel.setText(group.getName());
             }
         }
         return v;
@@ -59,8 +57,7 @@ public class GroupAutoCompleteAdapter extends ArrayAdapter<Group> implements Fil
     Filter nameFilter = new Filter() {
         @Override
         public String convertResultToString(Object resultValue) {
-            return ConstantApplication
-                    .textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, ((Group)(resultValue)).getName());
+            return ((Group)(resultValue)).getName();
         }
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
@@ -68,11 +65,10 @@ public class GroupAutoCompleteAdapter extends ArrayAdapter<Group> implements Fil
             if(constraint!=null) {
                 ArrayList<Group> suggestions = new ArrayList<>();
                 for (Group group : itemsAll) {
-                    if (group.getName().toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+                    if (group.getName().toLowerCase().contains(constraint.toString().toLowerCase())) {
                         suggestions.add(group);
                     }
                 }
-
                 results.values = suggestions;
                 results.count = suggestions.size();
             }

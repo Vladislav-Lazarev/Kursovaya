@@ -43,17 +43,19 @@
     <string name="template_activity_close_alert_content">Всі внесені дані будуть втрачені</string>
 
     <string name="popup_sort">Сортувати</string>
-    <string name="popup_filter">Фільтр</string>
+    <string name="popup_filter">Фільтрувати</string>
 
     <string name="popup_choose_date_report">Оберіть період звіту</string>
     <string name="popup_gen_report">Згенерувати звіт</string>
     <string name="popup_dates_wrong">Введений діпазон дат невірний або введений курс, повторіть введення!</string>
+    <string name="popup_edit">Редагувати</string>
     <string name="popup_groupName_label">Група:</string>
     <string name="popup_subjectName_label">Предмет:</string>
     <string name="popup_duration_label">Тривалість:</string>
     <string name="description_label">Опис:</string>
     <string name="notification_label">Нагадування до початку:</string>
     <string name="repeat_for_next_weeks_label">Повторити на наступні тижні:</string>
+    <string name="popup_delete">Видалити</string>
     <string name="popup_delete_subject_title">Видалити предмети</string>
     <string name="popup_delete_subject_content">Ви дійсно хочете видалити обрані предмети? Заняття з цих предметів будуть видалені з розкладу та шаблонів</string>
     <string name="popup_delete_group_title">Видалити групи</string>
@@ -96,6 +98,12 @@
     <string name="week_upper_label">Верхня</string>
     <string name="week_down_label">Нижня</string>
 
+    <string name="dialog_filter_group">Фільтрувати групи</string>
+    <string name="dialog_filter_subject">Фільтрувати предмети</string>
+    <string name="dialog_sort_group">Сортувати групи</string>
+    <string name="dialog_sort_subject">Сортувати предмети</string>
+    <string name="spinner_all">Всі</string>
+
     <string name="dialog_edit_speciality">Редагувати спеціальність</string>
     <string name="dialog_add_speciality">Додати спеціальність</string>
     <string name="dialog_button_add">Додати</string>
@@ -103,8 +111,9 @@
     <string name="specialty_cours_length">Кількість курсів:</string>
 
 
-    <string name="course_label">Курс:</string>
     <string name="specialtyName_label">Назва:</string>
+    <string name="specialty_label">Спеціальність:</string>
+    <string name="course_label">Курс:</string>
     <string name="groupName_label">Назва:</string>
     <string name="subjectName_label">Назва:</string>
     <string name="color_label">Колір:</string>

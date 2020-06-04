@@ -15,6 +15,7 @@ import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +42,7 @@ import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Case;
@@ -53,6 +57,11 @@ public class SubjectsFragment extends Fragment {
     private SubjectListAdapter adapter;
     private List<Subject> subjectList;
     private long mLastClickTime = 0;
+    private View filterSubjectView;
+    private View sortSubjectView;
+    private Spinner spinnerSpeciality;
+    private Spinner spinnerCourse;
+    private AlertDialog sortDialogSubject;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup  container, Bundle savedInstanceState) {
@@ -168,6 +177,7 @@ public class SubjectsFragment extends Fragment {
         }
         isCreatedAlready=true;
         setActionBarTitle();
+        setHasOptionsMenu(true);
         return root;
     }
 
@@ -248,4 +258,264 @@ public class SubjectsFragment extends Fragment {
         leftSpacer.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_subject, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+
+        if(subjectList.size() == ConstantApplication.ZERO){
+            Toast.makeText(getContext(), R.string.toast_fragment_no_subjects, Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        switch (item.getItemId()){
+            case R.id.filter_subject:
+                onClickPrepareFilterSubject();
+                break;
+            case R.id.sort_subject:
+                onClickPrepareSortSubject();
+                break;
+        }
+        return false;
+    }
+
+    private void onClickPrepareFilterSubject() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.dialog_filter_subject);
+        builder.setPositiveButton(R.string.popup_accept, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
+                String specialityName = String.valueOf(spinnerSpeciality.getSelectedItem());
+                String course = String.valueOf(spinnerCourse.getSelectedItem());
+                List<Subject> subjectList = new ArrayList<>();
+
+                if(course.equals(getString(R.string.spinner_all))){
+                    subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+                }else{
+                    subjectList = DBManager.copyObjectFromRealm(
+                            DBManager.readAll(Subject.class, ConstantApplication.NUMBER_COURSE, Integer.parseInt(course)));
+                }
+
+                if(!specialityName.equals(getString(R.string.spinner_all))){
+                    for(Subject subject: subjectList){
+                        if(!subject.containsKeySpecialityCountHour(new Speciality().setName(specialityName))){
+                            subjectList.remove(subject);
+                        }
+                    }
+                }
+
+                adapter.clear();
+
+                adapter.addAll(subjectList);
+            }
+        });
+        builder.setCancelable(false);
+        builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        filterSubjectView = getLayoutInflater().inflate(R.layout.dialog_filter_subject, null);
+        builder.setView(filterSubjectView);
+        List<String> specialityNameList = new ArrayList<>();
+
+        List<Speciality> specialityList = DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class));
+
+        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+
+        for (Subject subject: subjectList){
+            for(Speciality speciality: specialityList){
+                if(subject.getSpecialityList().contains(speciality) &&
+                        !specialityNameList.contains(speciality.getName())){
+                    specialityNameList.add(speciality.getName());
+                }
+            }
+        }
+
+        if(specialityNameList.size() > 1){
+            specialityNameList.add(getString(R.string.spinner_all));
+        }
+
+        spinnerSpeciality =
+                ConstantApplication.fillingSpinner(getContext(), filterSubjectView.findViewById(R.id.spinnerSpeciality),
+                        specialityNameList);
+        listenerSpinnerSpeciality(spinnerSpeciality);
+
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+            }
+        });
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout parent = (LinearLayout) positiveButton.getParent();
+        parent.setGravity(Gravity.CENTER_HORIZONTAL);
+        View leftSpacer = parent.getChildAt(1);
+        leftSpacer.setVisibility(View.GONE);
+    }
+
+    private void onClickPrepareSortSubject() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.dialog_sort_subject);
+        builder.setCancelable(false);
+        builder.setNegativeButton(R.string.popup_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        sortSubjectView = getLayoutInflater().inflate(R.layout.dialog_sort_subject, null);
+        builder.setView(sortSubjectView);
+
+        List<RadioButton> sortBtnList = new ArrayList<>();
+
+        sortBtnList.add(sortSubjectView.findViewById(R.id.ascName));
+        sortBtnList.add(sortSubjectView.findViewById(R.id.descName));
+        sortBtnList.add(sortSubjectView.findViewById(R.id.ascCourse));
+        sortBtnList.add(sortSubjectView.findViewById(R.id.descCourse));
+        sortBtnList.add(sortSubjectView.findViewById(R.id.ascSpeciality));
+        sortBtnList.add(sortSubjectView.findViewById(R.id.descSpeciality));
+
+        for(RadioButton sortBtn: sortBtnList){
+            sortBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                        return;
+                    }
+
+                    String fieldName = "";
+                    Sort sort = Sort.ASCENDING;
+
+                    switch (v.getId()){
+                        case R.id.ascName:
+                            fieldName = ConstantApplication.NAME;
+                            sort = Sort.ASCENDING;
+                            break;
+                        case R.id.descName:
+                            fieldName = ConstantApplication.NAME;
+                            sort = Sort.DESCENDING;
+                            break;
+                        case R.id.ascCourse:
+                            fieldName = ConstantApplication.NUMBER_COURSE;
+                            sort = Sort.ASCENDING;
+                            break;
+                        case R.id.descCourse:
+                            fieldName = ConstantApplication.NUMBER_COURSE;
+                            sort = Sort.DESCENDING;
+                            break;
+                        case R.id.ascSpeciality:
+                            fieldName = ConstantApplication.ID_SPECIALITY;
+                            sort = Sort.ASCENDING;
+                            break;
+                        case R.id.descSpeciality:
+                            fieldName = ConstantApplication.ID_SPECIALITY;
+                            sort = Sort.DESCENDING;
+                            break;
+                    }
+
+                    List<Subject> sortSubjectList = new ArrayList<>();
+
+                    if(fieldName.equals(ConstantApplication.ID_SPECIALITY)){
+                        fieldName = ConstantApplication.NAME;
+                        List<Speciality> specialityList = DBManager.copyObjectFromRealm(
+                                DBManager.readAll(Speciality.class, fieldName, sort));
+                        List<Subject> subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
+
+                        for(Speciality speciality: specialityList){
+                            for(Subject subject: subjectList){
+                                if(subject.getSpecialityList().contains(speciality)){
+                                    if(sortSubjectList.contains(subject)){
+                                        int index = sortSubjectList.indexOf(subject);
+                                        sortSubjectList.remove(subject);
+                                        sortSubjectList.add(index, subject);
+                                    }
+                                    else{
+                                        sortSubjectList.add(subject);
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        sortSubjectList = DBManager.copyObjectFromRealm(
+                                DBManager.readAll(Subject.class, fieldName, sort));
+                    }
+
+                    adapter.clear();
+
+                    adapter.addAll(sortSubjectList);
+
+                    sortDialogSubject.cancel();
+                }
+            });
+        }
+
+        sortDialogSubject = builder.create();
+        sortDialogSubject.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                sortDialogSubject.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+            }
+        });
+        sortDialogSubject.show();
+        Button positiveButton = sortDialogSubject.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout parent = (LinearLayout) positiveButton.getParent();
+        parent.setGravity(Gravity.CENTER_HORIZONTAL);
+        View leftSpacer = parent.getChildAt(1);
+        leftSpacer.setVisibility(View.GONE);
+    }
+
+    private void listenerSpinnerSpeciality(Spinner spinner) {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent,
+                                       View itemSelected, int selectedItemPosition, long selectedId) {
+                String item = (String) parent.getItemAtPosition(selectedItemPosition);
+                List<String>  courseList = new ArrayList<>();
+                List<Subject> subjectList = DBManager.copyObjectFromRealm(
+                        DBManager.readAll(Subject.class, ConstantApplication.NUMBER_COURSE, Sort.ASCENDING));
+                List<Subject> findSubjectList = new ArrayList<>();
+
+
+                if(!item.equals(getString(R.string.spinner_all))){
+                    Speciality speciality = DBManager.copyObjectFromRealm(DBManager.read(Speciality.class, ConstantApplication.NAME, item));
+
+                    for(Subject subject: subjectList){
+                        if(subject.getSpecialityList().contains(speciality)){
+                            findSubjectList.add(subject);
+                        }
+                    }
+                }else{
+                    findSubjectList.addAll(subjectList);
+                }
+
+                for (Subject subject: findSubjectList){
+                    if(!courseList.contains(Integer.toString(subject.getNumberCourse()))){
+                        courseList.add(Integer.toString(subject.getNumberCourse()));
+                    }
+                }
+
+                spinnerCourse =
+                        ConstantApplication.fillingSpinner(getContext(), filterSubjectView.findViewById(R.id.spinnerCourse),
+                                courseList);
+                ConstantApplication.setSpinnerText(spinnerCourse, String.valueOf(spinnerCourse.getSelectedItem()));
+
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
 }
