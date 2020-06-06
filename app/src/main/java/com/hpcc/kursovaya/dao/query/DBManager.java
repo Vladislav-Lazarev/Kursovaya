@@ -3,17 +3,10 @@ package com.hpcc.kursovaya.dao.query;
 import android.util.Log;
 
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.Subject;
-import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
-import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 
 import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -55,7 +48,7 @@ public class DBManager {
 
         int returnValue = (int)result.get(ConstantApplication.ZERO);
 
-        if(model instanceof AcademicHour && !((AcademicHour) model).hasCanceled() && !((AcademicHour) model).hasCompleted()){
+        /*if(model instanceof AcademicHour && !((AcademicHour) model).hasCanceled() && !((AcademicHour) model).hasCompleted()){
             Realm realm = Realm.getDefaultInstance();
             List<RealmResults<AcademicHour>> resultPeriod = new ArrayList<>();
             DateTime begin = DateTime.now();
@@ -121,7 +114,7 @@ public class DBManager {
                     DBManager.delete(AcademicHour.class, ConstantApplication.ID,restList.get(restList.size()-1).getId());
                 }
             }
-        }
+        }*/
 
 
         return returnValue;

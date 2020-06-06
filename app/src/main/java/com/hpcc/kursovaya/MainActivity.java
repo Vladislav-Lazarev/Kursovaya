@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -131,8 +132,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TemplateScheduleWeek upperTemplate;
     private TemplateScheduleWeek bottomTemplate;
     private ImageButton backToCurrentDay;
+    private ImageButton searchButton;
     private TextView currentDayText;
     private int weeksFromCurrent;
+
+    public void setToolbarSearch(Toolbar toolbarSearch) {
+        this.toolbarSearch = toolbarSearch;
+    }
+
 
     public int getWeeksFromCurrent() {
         return weeksFromCurrent;
@@ -183,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbarSearch = findViewById(R.id.toolbarSearch);
         toolbarCanceledClasses.setVisibility(View.GONE);
         toolbarCompleteClasses.setVisibility(View.GONE);
+        searchButton = findViewById(R.id.search_button);
         toolbarSearch.setVisibility(View.GONE);
         toolbar1.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
@@ -207,6 +215,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             backToCurrentDay.setVisibility(View.GONE);
             currentDayText.setVisibility(View.GONE);
         }
+        ImageButton searchButton = toolbar.findViewById(R.id.search_button);
+        ImageButton turnOffSearch = toolbarSearch.findViewById(R.id.turnOff_search);ImageButton clearButton = toolbarSearch.findViewById(R.id.clear_search);
+        EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
+        clearButton.setOnClickListener(v -> {
+            textSearch.setText("");
+        });
+        turnOffSearch.setOnClickListener(v ->{
+            toolbar.setVisibility(View.VISIBLE);
+            toolbarSearch.setVisibility(View.GONE);
+        });
+        searchButton.setOnClickListener(v -> {
+            toolbar.setVisibility(View.GONE);
+            toolbarSearch.setVisibility(View.VISIBLE);
+        });
     }
 
 
@@ -381,11 +403,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         int daysFromCurrent = Days.daysBetween(startDate,firstDate).getDays();
                         transaction.add(R.id.nav_host_fragment,new DayScheduleFragment(daysFromCurrent),DAY_TAG);
                     }
-                    showOverflowMenu(true);
+
                     isLanguageChanged = false;
                 }
                 isScheduleSelected = true;
+                searchButton.setVisibility(View.GONE);
                 toolbarSearch.setVisibility(View.GONE);
+                toolbar.setVisibility(View.VISIBLE);
+                showOverflowMenu(true);
                 break;
             case R.id.nav_templates:
                 String specTag2 = getResources().getString(R.string.templatesTag);
@@ -399,7 +424,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     transaction.add(R.id.nav_host_fragment, new TemplatesFragment());
                 }
                 isScheduleSelected = false;
-                toolbarSearch.setVisibility(View.VISIBLE);
+                toolbar.setVisibility(View.VISIBLE);
+                toolbarSearch.setVisibility(View.GONE);
+                searchButton.setVisibility(View.VISIBLE);
+                showOverflowMenu(false);
                 break;
             case R.id.nav_groups:
                 String specTag3 = getResources().getString(R.string.groupsTag);
@@ -413,7 +441,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     transaction.add(R.id.nav_host_fragment, new GroupsFragment());
                 }
                 isScheduleSelected = false;
-                toolbarSearch.setVisibility(View.VISIBLE);
+                toolbar.setVisibility(View.VISIBLE);
+                toolbarSearch.setVisibility(View.GONE);
+                searchButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_subjects:
                 String specTag4 = getResources().getString(R.string.subjectsTag);
@@ -428,7 +458,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     transaction.add(R.id.nav_host_fragment, new SubjectsFragment());
                 }
                 isScheduleSelected = false;
-                toolbarSearch.setVisibility(View.VISIBLE);
+                toolbar.setVisibility(View.VISIBLE);
+                toolbarSearch.setVisibility(View.GONE);
+                searchButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_specialities:
                 String specTag6 = "Specialities";
@@ -442,7 +474,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     transaction.add(R.id.nav_host_fragment, new SpecialitiesFragment());
                 }
                 isScheduleSelected = false;
-                toolbarSearch.setVisibility(View.VISIBLE);
+                toolbar.setVisibility(View.VISIBLE);
+                toolbarSearch.setVisibility(View.GONE);
+                searchButton.setVisibility(View.VISIBLE);
+                showOverflowMenu(false);
                 break;
             case R.id.nav_settings:
                 String specTag5 = getResources().getString(R.string.settingsTag);
@@ -456,7 +491,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     transaction.add(R.id.nav_host_fragment, new SettingsFragment());
                 }
                 isScheduleSelected = false;
+                toolbar.setVisibility(View.VISIBLE);
+                searchButton.setVisibility(View.GONE);
                 toolbarSearch.setVisibility(View.GONE);
+                showOverflowMenu(false);
                 break;
         }
         transaction.commit();
@@ -1186,6 +1224,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             isOverflowShown = showMenu;
         }
         fuckingMenu.setGroupVisible(R.id.main_menu_group, showMenu);
+        fuckingMenu.setGroupVisible(R.id.menu_subject, showMenu);
+        fuckingMenu.setGroupVisible(R.id.menu_group, showMenu);
     }
 
     public Toolbar getToolbar1() {

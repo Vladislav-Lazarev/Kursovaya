@@ -13,6 +13,7 @@ import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -345,5 +346,11 @@ public class SpecialitiesFragment extends Fragment {
 
         adapter.write(entity);
         adapter.update(ConstantApplication.NAME);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.setGroupVisible(R.menu.menu_subject,false);
+        menu.setGroupVisible(R.menu.menu_group,false);
     }
 }

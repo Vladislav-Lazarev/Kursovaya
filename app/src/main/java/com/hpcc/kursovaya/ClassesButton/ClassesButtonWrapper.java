@@ -6,20 +6,24 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.AnotherEvent;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAnotherEvent;
 import com.hpcc.kursovaya.dao.query.DBManager;
 
 public class ClassesButtonWrapper {
     private Button btn;
+    private TextView textNumber;
     private Context context;
     private Drawable drawableDef;
 
 
+    private AnotherEvent anotherEvent;
     private AcademicHour academicHour;
 
     private int selectColorList = R.color.sideBarTransp;
@@ -40,6 +44,16 @@ public class ClassesButtonWrapper {
         this.btn = btn;
         this.context= context;
         drawableDef = btn.getBackground();
+    }
+    public ClassesButtonWrapper(Button btn,TextView textNumber, Context context){
+        this.btn = btn;
+        this.textNumber = textNumber;
+        this.context= context;
+        drawableDef = btn.getBackground();
+    }
+
+    public void setTextNumber(String text){
+        textNumber.setText(text);
     }
 
     public Button getBtn() {
@@ -65,7 +79,11 @@ public class ClassesButtonWrapper {
 
     public void setUnselectBackground(){
         if(isBackgroundChanged) {
-            btn.setBackgroundColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
+            if(academicHour!=null) {
+                btn.setBackgroundColor(academicHour.getTemplateAcademicHour().getSubject().getColor());
+            } else if(anotherEvent != null){
+                btn.setBackgroundColor(anotherEvent.getTemplateAnotherEvent().getColor());
+            }
         } else {
             btn.setBackground(drawableDef);
         }
@@ -73,20 +91,30 @@ public class ClassesButtonWrapper {
     }
 
     public void clearButtonContent(){
-        drawableDef = context.getResources().getDrawable(R.drawable.hover_add);
-        if(academicHour!=null && academicHour.getTemplateAcademicHour()!=null) {
-            DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, academicHour.getTemplateAcademicHour().getId());
-            DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+        if(academicHour!=null && anotherEvent==null) {
+            drawableDef = context.getResources().getDrawable(R.drawable.hover_add);
+            if (academicHour.getTemplateAcademicHour() != null) {
+                DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, academicHour.getTemplateAcademicHour().getId());
+                DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+            }
+        } else if(anotherEvent!=null && academicHour==null){
+            drawableDef = context.getResources().getDrawable(R.drawable.hover_add);
+            if(anotherEvent.getTemplateAnotherEvent()!=null){
+                DBManager.delete(TemplateAnotherEvent.class,"id",anotherEvent.getTemplateAnotherEvent().getId());
+                DBManager.delete(AnotherEvent.class,"id",anotherEvent.getId());
+            }
         }
         btn.setBackground(drawableDef);
-        academicHour = null;
+        anotherEvent = null;
         isBackgroundChanged = false;
         btn.setText("");
-        isSelected=false;
+        isSelected = false;
+        textNumber.setText("");
     }
     public void clearButtonContentWithoutDeleting(){
         btn.setBackground(drawableDef);
         academicHour = null;
+        anotherEvent = null;
         isBackgroundChanged = false;
         btn.setText("");
         isSelected=false;
@@ -95,8 +123,24 @@ public class ClassesButtonWrapper {
         return academicHour;
     }
 
+    public void setAnotherEvent(AnotherEvent anotherEvent){
+        if(anotherEvent.getTemplateAnotherEvent()!=null){
+            this.anotherEvent = anotherEvent;
+            GradientDrawable shape = new GradientDrawable();
+            shape.setShape(GradientDrawable.RECTANGLE);
+            shape.setCornerRadii(new float[]{0, 0, 0, 0, 0, 0, 0, 0});
+            shape.setColor(anotherEvent.getTemplateAnotherEvent().getColor());
+            shape.setStroke(1,Color.BLACK);
+            btn.setBackground(shape);
+            btn.setText(anotherEvent.getTemplateAnotherEvent().getTitle());
+            btn.setTextColor(Color.WHITE);
+            btn.setShadowLayer(5, 4, 4, Color.BLACK);
+            isBackgroundChanged = true;
+        }
+    }
+
     public void setAcademicHour(AcademicHour academicHour) {
-        if(academicHour!=null && academicHour.getTemplateAcademicHour()!=null) {
+        ///if(academicHour!=null && academicHour.getTemplateAcademicHour()!=null) {
             this.academicHour = academicHour;
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
@@ -113,9 +157,9 @@ public class ClassesButtonWrapper {
                 setCanceled(academicHour.hasCanceled());
             }
             isBackgroundChanged = true;
-        } else {
-            Toast.makeText(context,"Заняття не додано оскільки в обраній групі з обраного предмету досягнуто максимум годин",Toast.LENGTH_SHORT).show();
-        }
+       // } else {
+        //    Toast.makeText(context,"Заняття не додано оскільки в обраній групі з обраного предмету досягнуто максимум годин",Toast.LENGTH_SHORT).show();
+        //}
     }
 
     public boolean isSelected() {
@@ -148,5 +192,9 @@ public class ClassesButtonWrapper {
             academicHour.setCanceled(isCanceled);
             DBManager.write(academicHour);
         }
+    }
+
+    public AnotherEvent getEvent() {
+        return  anotherEvent;
     }
 }

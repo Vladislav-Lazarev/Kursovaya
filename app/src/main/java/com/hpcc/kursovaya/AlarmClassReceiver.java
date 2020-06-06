@@ -29,7 +29,9 @@ public class AlarmClassReceiver extends BroadcastReceiver {
 
         int monthOfYear = Integer.valueOf(intent.getStringExtra("monthOfYearNot"));
         int dayOfMonthNot = Integer.valueOf(intent.getStringExtra("dayOfMonthNot"));
-        String description = intent.getStringExtra("groupName")+": "+intent.getStringExtra("description");
+        String eventDescription = intent.getStringExtra("groupName");
+        String description;
+        description = eventDescription+": "+intent.getStringExtra("description");
         StringBuilder notificationHeader = new StringBuilder();
        notificationHeader.append(intent.getStringExtra("yearOfNot"))
                            .append(".")

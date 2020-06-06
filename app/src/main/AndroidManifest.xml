@@ -29,6 +29,10 @@
             android:name=".ui.schedule.AddClass"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
             android:label="@string/title_activity_add_class"/>
+        <activity
+            android:name=".ui.schedule.AddEvent"
+            android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
+            android:label="@string/title_activity_add_event"/>
         <receiver android:name=".AlarmClassReceiver">
             <intent-filter>
                 <action android:name="class.action.DISPLAY_NOTIFICATION"/>
@@ -47,6 +51,10 @@
             android:name=".ui.schedule.EditClass"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
             android:label="@string/edit_class"/>
+        <activity
+            android:name=".ui.schedule.EditEvent"
+            android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"
+            android:label="@string/edit_event"/>
         <activity
             android:name=".ui.settings.language.LanguageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|locale"

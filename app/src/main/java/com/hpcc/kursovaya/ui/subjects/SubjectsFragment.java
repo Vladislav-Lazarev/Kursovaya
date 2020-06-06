@@ -62,6 +62,8 @@ public class SubjectsFragment extends Fragment {
     private Spinner spinnerSpeciality;
     private Spinner spinnerCourse;
     private AlertDialog sortDialogSubject;
+    private boolean isOverflowShown;
+    private Menu subjectMenu;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup  container, Bundle savedInstanceState) {
@@ -262,6 +264,7 @@ public class SubjectsFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.menu_subject, menu);
+        subjectMenu = menu;
     }
 
     @Override
@@ -518,4 +521,15 @@ public class SubjectsFragment extends Fragment {
             }
         });
     }
+
+
+    /*public void showOverflowMenu(boolean showMenu) {
+        if (subjectMenu == null){
+            isOverflowShown = showMenu;
+            return;
+        } else if(isLanguageChanged){
+            isOverflowShown = showMenu;
+        }
+        subjectMenu.setGroupVisible(R.id.main_menu_group, showMenu);
+    }*/
 }

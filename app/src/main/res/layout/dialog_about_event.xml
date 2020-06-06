@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/labelName"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/calendarBlack"
+        android:textSize="16sp"
+        android:text="@string/dialog_about_event_label_name"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/contentName"
+        android:layout_toEndOf="@id/labelName"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="ТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТ"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:id="@+id/labelDescription"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/calendarBlack"
+        android:textSize="16sp"
+        android:layout_below="@id/contentName"
+        android:layout_toStartOf="@id/contentDescription"
+        android:text="@string/dialog_about_event_label_desc"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/contentDescription"
+        android:layout_below="@id/contentName"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="ТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТТЕКСТ"
+        android:layout_alignStart="@id/contentName"
+        android:layout_alignParentEnd="true"/>
+
+</RelativeLayout>

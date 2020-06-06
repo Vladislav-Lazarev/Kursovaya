@@ -12,7 +12,6 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
@@ -34,10 +34,13 @@ import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.AnotherEvent;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAnotherEvent;
 import com.hpcc.kursovaya.dao.query.DBManager;
-import com.hpcc.kursovaya.ui.schedule.AddClass;
-import com.hpcc.kursovaya.ui.schedule.EditClass;
+import com.hpcc.kursovaya.ui.schedule.AddEventDialog;
+import com.hpcc.kursovaya.ui.schedule.HandleClassDialog;
+import com.hpcc.kursovaya.ui.schedule.HandleEventDialog;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import org.joda.time.DateTime;
@@ -50,8 +53,10 @@ import java.util.List;
 
 
 public class WeekViewFragment extends Fragment {
-    private static final int ADD_CLASS = 1;
-    private static final int EDIT_CLASS = 2;
+    public static final int ADD_CLASS = 1;
+    public static final int EDIT_CLASS = 2;
+    public static final int ADD_EVENT = 3;
+    public static final int EDIT_EVENT = 4;
 
     private static final String TAG = "WeekViewFragment";
     public static final String ARGUMENT_WEEK_FROM_CURRENT="arg_week_from_current";
@@ -331,6 +336,7 @@ public class WeekViewFragment extends Fragment {
                 prepareDeleteDialog();
             }
         });
+        Fragment thisFragment = this;
         Thread t = new Thread(){
             public void run(){
 
@@ -341,9 +347,13 @@ public class WeekViewFragment extends Fragment {
                         className.append(j).append(i);
                         final int classDay = i;
                         final int classHour = j;
+                        StringBuilder classNumber = new StringBuilder("class");
+                        classNumber.append(j).append(i).append('n');
 
                         int classRes = getResources().getIdentifier(className.toString(),"id",getActivity().getPackageName());
-                        classesButtonWrapperList.add(new ClassesButtonWrapper((Button)view.findViewById(classRes),getContext()));
+                        int classNumRes = getResources().getIdentifier(classNumber.toString(),"id",getActivity().getPackageName());
+                        TextView classNumberTextV = view.findViewById(classNumRes);
+                        classesButtonWrapperList.add(new ClassesButtonWrapper((Button)view.findViewById(classRes),classNumberTextV,getContext()));
                         classesButtonWrapperList.get(classHour).getBtn().setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -356,22 +366,26 @@ public class WeekViewFragment extends Fragment {
                                     if(DBManager.readAll(Speciality.class).size()!=0) {
                                         if(DBManager.readAll(Group.class).size()!=0) {
                                             if(DBManager.readAll(Subject.class).size()!=0) {
+                                                DateTime dayOfWeek = firstDayOfWeek.plusDays(classDay).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
                                                 if (classesButtonWrapperList.get(classHour).getBtn().getText().equals("")) {
-                                                    intent = new Intent(getActivity(), AddClass.class);
+                                                    AddEventDialog eventDialog = AddEventDialog.newInstance(getActivity(),classDay,classHour,dayOfWeek);
+                                                    eventDialog.setTargetFragment(WeekViewFragment.this,1);
+                                                    eventDialog.show(getFragmentManager(),"addEvent");
+                                                    /*intent = new Intent(getActivity(), AddClass.class);
                                                     intent.putExtra("classDay", classDay);
                                                     intent.putExtra("classHour", classHour);
                                                     intent.putExtra("dayOfWeek", firstDayOfWeek.plusDays(classDay).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
-                                                    startActivityForResult(intent, ADD_CLASS);
+                                                    startActivityForResult(intent, ADD_CLASS);*/
                                                 } else {
-                                                    intent = new Intent(getActivity(), EditClass.class);
-                                                    intent.putExtra("classDay", classDay);
-                                                    intent.putExtra("classHour", classHour);
-                                                    intent.putExtra("dayOfWeek", firstDayOfWeek.plusDays(classDay).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
-                                                    intent.putExtra("currentCell", classes.get(classDay).get(classHour).getAcademicHour());
-                                                    int secondCellHour = classHour + ((classHour % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1);
-                                                    intent.putExtra("secondClassHour", secondCellHour);
-                                                    intent.putExtra("secondCell", classes.get(classDay).get(secondCellHour).getAcademicHour());
-                                                    startActivityForResult(intent, EDIT_CLASS);
+                                                    DialogFragment handleDialog= null;
+                                                    if(classesButtonWrapperList.get(classHour).getEvent()==null){
+                                                        int secondCellHour = classHour + ((classHour % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1);
+                                                        handleDialog = HandleClassDialog.newInstance(getActivity(),classDay,classHour,dayOfWeek, classes.get(classDay).get(classHour).getAcademicHour(),
+                                                                secondCellHour,classes.get(classDay).get(secondCellHour).getAcademicHour(),classes.get(classDay).get(classHour));
+                                                    } else if (classesButtonWrapperList.get(classHour).getAcademicHour()==null){
+                                                        handleDialog = HandleEventDialog.newInstance(getActivity(),classHour,classDay,dayOfWeek,classesButtonWrapperList.get(classHour));
+                                                    }
+                                                    handleDialog.show(getActivity().getSupportFragmentManager(),"handleDialog");
                                                     //intent.putExtra("group",groupEnt);
                                                     //intent.putExtra("subject",subjectEnt);
                                                 }
@@ -411,10 +425,10 @@ public class WeekViewFragment extends Fragment {
                                 if(!((MainActivity) getActivity()).isSelectMode() &&
                                         !classesButtonWrapperList.get(classHour).getBtn().getText().equals("")) {
 
-                                    if(classesButtonWrapperList.get(classHour).isGroupNameShown()){
+                                    if(classesButtonWrapperList.get(classHour).isGroupNameShown() && classesButtonWrapperList.get(classHour).getEvent()==null){
                                         classesButtonWrapperList.get(classHour).getBtn().setText(classesButtonWrapperList.get(classHour).getAcademicHour().getTemplateAcademicHour().getSubject().getName());
                                         classesButtonWrapperList.get(classHour).setGroupNameShown(false);
-                                    } else {
+                                    } else if(classesButtonWrapperList.get(classHour).getEvent()==null) {
                                         classesButtonWrapperList.get(classHour).getBtn().setText(classesButtonWrapperList.get(classHour).getAcademicHour().getTemplateAcademicHour().getGroup().getName());
                                         classesButtonWrapperList.get(classHour).setGroupNameShown(true);
                                     }
@@ -767,6 +781,12 @@ public class WeekViewFragment extends Fragment {
 
                     Log.d(TAG,classDay + " " + classHour);
                     break;
+                case EDIT_EVENT:
+
+                case ADD_EVENT:
+                    AnotherEvent anotherEvent = data.getParcelableExtra("anotherEvent");
+                    classes.get(classDay).get(classHour).setAnotherEvent(anotherEvent);
+                    break;
                 default:
                     return;
             }
@@ -823,6 +843,7 @@ public class WeekViewFragment extends Fragment {
             currentDayText.setVisibility(View.VISIBLE);
         }
         List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(from.toDate(),to.toDate()));
+        List<AnotherEvent> anotherEvents = DBManager.copyObjectFromRealm(AnotherEvent.anotherEventsFromPeriod(from.toDate(),to.toDate()));
         for(List<ClassesButtonWrapper> classs : classes ){
             for(ClassesButtonWrapper clazz : classs){
                 if(clazz!=null) {
@@ -833,6 +854,11 @@ public class WeekViewFragment extends Fragment {
         for(AcademicHour hour: academicHours){
             TemplateAcademicHour templateAcademicHour = hour.getTemplateAcademicHour();
             classes.get(templateAcademicHour.getNumberDayOfWeek()).get(templateAcademicHour.getNumberHalfPairButton()).setAcademicHour(hour);
+            classes.get(templateAcademicHour.getNumberDayOfWeek()).get(templateAcademicHour.getNumberHalfPairButton()).setTextNumber("105");
+        }
+        for(AnotherEvent event: anotherEvents){
+            TemplateAnotherEvent templateAnotherEvent = event.getTemplateAnotherEvent();
+            classes.get(templateAnotherEvent.getNumberDayOfWeek()).get(templateAnotherEvent.getNumberHalfPairButton()).setAnotherEvent(event);
         }
     }
 

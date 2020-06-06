@@ -65,9 +65,15 @@
     <string name="popup_delete_speciality_content">Ви дійсно хочете видалити обрані спеціальності?</string>
     <string name="popup_delete_classes_content">Ви дійсно хочете видалити обрані заняття?</string>
     <string name="popup_complete_classes_template">Вичитані заняття</string>
+    <string name="popup_complete_single_title">Вичитати заняття</string>
+    <string name="popup_complete_single_content">Ви дійсно хочете позначити вичитаним обране заняття?</string>
+    <string name="popup_uncomplete_single_title">Не вичитане заняття</string>
+    <string name="popup_uncomplete_single_content">Ви дійсно хочете позначити не вичитаним обране заняття?</string>
     <string name="popup_complete_classes_content">Ви дійсно хочете позначити вичитаними обрані заняття?</string>
     <string name="popup_uncomplete_classes_content">Ви дійсно хочете позначити не вичитаними обрані заняття?</string>
     <string name="popup_cut_classes_template">Зняти заняття</string>
+    <string name="popup_cut_classes_single_title">Зняти заняття</string>
+    <string name="popup_cut_classes_single_content">Ви дійсно хочете зняти обране заняття?</string>
     <string name="popup_cut_classes_content">Ви дійсно хочете зняти обрані заняття?</string>
     <string name="popup_uncut_classes_content">Ви дійсно хочете повернути обраним заняттям статус невичитаних?</string>
     <string name="popup_super_template">Super шаблон</string>
@@ -279,4 +285,20 @@
     <string name="cant_select_empty_class">Ви не можете обрати порожнє заняття</string>
     <string name="choose_speciality">Оберіть спеціальність</string>
     <string name="hour_subject">год.\n</string>
+    <string name="add_event">Додати подію</string>
+    <string name="add">Додавання</string>
+    <string name="handle">Керування подією</string>
+    <string name="details">Детально про подію</string>
+    <string name="delete_class">Видалити заняття</string>
+    <string name="check_uncheck_as_read">Відмітити/зняти відмітку про вичитане заняття</string>
+    <string name="check_uncheck_as_canceled">Відмітити/зняти відмітку про відмінене заняття</string>
+    <string name="substitution">Провести заміну</string>
+    <string name="name_event">Назва:</string>
+    <string name="auto_complete_text_view_event_hint">Введіть назву події</string>
+    <string name="edit_event">Редагувати подію</string>
+    <string name="title_activity_add_event">Додати заняття</string>
+    <string name="delete_event">Видалити подію</string>
+    <string name="about_event_dialog_title">Інформація про подію</string>
+    <string name="dialog_about_event_label_name">Назва події:</string>
+    <string name="dialog_about_event_label_desc">Опис події:</string>
 </resources>

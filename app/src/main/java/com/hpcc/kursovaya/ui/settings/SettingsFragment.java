@@ -78,4 +78,5 @@ public class SettingsFragment extends Fragment{
         ((MainActivity) getActivity()).setActionBarTitle(getContext().getString(R.string.menu_settings));
         ((MainActivity) getActivity()).showOverflowMenu(false);
     }
+
 }

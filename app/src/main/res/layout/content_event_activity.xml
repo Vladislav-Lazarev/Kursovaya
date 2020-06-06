@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+xmlns:tools="http://schemas.android.com/tools"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+app:layout_behavior="@string/appbar_scrolling_view_behavior"
+tools:context=".ui.schedule.Event"
+tools:showIn="@layout/activity_event">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/name_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/name_event"
+            android:textSize="16sp"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="26dp"
+            android:layout_marginStart="15dp"/>
+        <EditText
+            android:id="@+id/nameSuggestET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/sideBar"
+            android:textSize="16sp"
+            android:hint="@string/auto_complete_text_view_event_hint"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="44dp"
+            android:layout_marginEnd="15dp"
+            android:layout_toEndOf="@id/name_label"
+            android:completionThreshold="1"
+            android:maxLength="30"
+            android:inputType="textCapSentences"/>
+
+        <TextView
+            android:id="@+id/description_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/description_label"
+            android:textSize="16sp"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_below="@id/nameSuggestET"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="23dp"
+            />
+
+        <EditText
+            android:id="@+id/description_editText"
+            android:layout_below="@id/nameSuggestET"
+            android:layout_toEndOf="@id/description_label"
+            android:layout_alignLeft="@id/nameSuggestET"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="15dp"
+            android:inputType="textMultiLine"
+            android:lines="4"
+            android:minLines="4"
+            android:maxLines="7"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:scrollbars="vertical"/>
+
+        <TextView
+            android:id="@+id/notification_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notification_label"
+            android:textSize="16sp"
+            android:textColor="@color/appDefaultBlack"
+            android:layout_below="@id/description_editText"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="23dp"
+            />
+
+        <Spinner
+            android:id="@+id/spinnerNotificationBefore"
+            android:entries="@array/notification_before_variants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/notification_label"
+            android:layout_below="@id/description_editText"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="15dp" />
+
+        <TextView
+            android:id="@+id/addColorLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinnerNotificationBefore"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="23dp"
+            android:text="@string/color_label"
+            android:textColor="@color/appDefaultBlack"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/pickColorBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="65dp"
+            android:layout_below="@id/spinnerNotificationBefore"
+            android:layout_toEndOf="@id/addColorLabel"
+            android:background="@drawable/round_button" />
+    </RelativeLayout>
+</ScrollView>
+</RelativeLayout>
