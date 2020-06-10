@@ -382,16 +382,9 @@ public class WeekViewFragment extends Fragment {
                                                 } else {
                                                     DialogFragment handleDialog= null;
                                                     if(classesButtonWrapperList.get(classHour).getEvent()==null){
-                                                        ArrayList<AcademicHour> academicHourList = new ArrayList<>();
-                                                        academicHourList.add(classes.get(classDay).get(classHour).getAcademicHour());
-
-                                                        int secondCellHour = classHour + ConstantApplication.secondCellShift(classHour);
-                                                        if (classes.get(classDay).get(secondCellHour).getAcademicHour() != null){
-                                                            academicHourList.add(classes.get(classDay).get(secondCellHour).getAcademicHour());
-                                                        }
-                                                        handleDialog = HandleClassDialog.newInstance(getActivity(),classDay,classHour,dayOfWeek,
-                                                                academicHourList,
-                                                                classes.get(classDay).get(classHour));
+                                                        int secondCellHour = classHour + ((classHour % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1);
+                                                        handleDialog = HandleClassDialog.newInstance(getActivity(),classDay,classHour,dayOfWeek, classes.get(classDay).get(classHour).getAcademicHour(),
+                                                                secondCellHour,classes.get(classDay).get(secondCellHour).getAcademicHour(),classes.get(classDay).get(classHour));
                                                     } else if (classesButtonWrapperList.get(classHour).getAcademicHour()==null){
                                                         handleDialog = HandleEventDialog.newInstance(getActivity(),classHour,classDay,dayOfWeek,classesButtonWrapperList.get(classHour));
                                                     }

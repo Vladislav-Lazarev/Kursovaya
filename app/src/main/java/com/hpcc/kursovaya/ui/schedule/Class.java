@@ -84,36 +84,60 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
         //intent = getIntent();
         setContentView(R.layout.activity_add_class);
 
-        academicHourList = new ArrayList<>(Collections.singletonList(new AcademicHour()));
-        templateAcademicHourList = new ArrayList<>(Collections
-                .singletonList(new TemplateAcademicHour().setDayAndPair(Pair.create(classDay, classHour))));
-        currentAcademicHour = academicHourList.get(ConstantApplication.ZERO);
-        currentTemplateAcademicHour = templateAcademicHourList.get(ConstantApplication.ZERO);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_path_150));
         //here place for getting classDay, classHour and Group\Subject entities
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
-                return;
+            @Override
+            public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                setResult(1);
+                finish();
             }
-            mLastClickTime = SystemClock.elapsedRealtime();
-            setResult(1);
-            finish();
-        }
         });
         actionBar(new ActionBarI() {
-        @Override
-        public void superClass() {
+            @Override
+            public void superClass() {
 
-        }
+            }
         });
 
-        subjectSpinner = findViewById(R.id.spinnerSubject);
-        listenerSpinnerSubject(subjectSpinner);
+        if (academicHourList == null){
+            academicHourList = new ArrayList<>(Collections.singletonList(new AcademicHour()));
+            templateAcademicHourList = new ArrayList<>(Collections
+                    .singletonList(new TemplateAcademicHour().setDayAndPair(Pair.create(classDay, classHour))));
+
+            currentAcademicHour = academicHourList.get(ConstantApplication.ZERO);
+            currentTemplateAcademicHour = templateAcademicHourList.get(ConstantApplication.ZERO);
+
+            ((RadioButton)findViewById(R.id.duration_rgroup_short)).setChecked(true);
+        } else {
+            currentAcademicHour = academicHourList.get(ConstantApplication.ZERO);
+            currentTemplateAcademicHour = currentAcademicHour.getTemplateAcademicHour();
+            templateAcademicHourList.add(currentTemplateAcademicHour);
+
+            switch (academicHourList.size()){
+                case ConstantApplication.ONE:
+                    ((RadioButton)findViewById(R.id.duration_rgroup_short)).setChecked(true);
+                    break;
+                case ConstantApplication.TWO:
+                    AcademicHour secondCell = academicHourList.get(ConstantApplication.ONE);
+                    TemplateAcademicHour secondCellTemplate = secondCell.getTemplateAcademicHour();
+
+                    if(currentTemplateAcademicHour.getGroup().equals(secondCellTemplate.getGroup()) &&
+                            currentTemplateAcademicHour.getSubject().equals(secondCellTemplate.getSubject()) &&
+                            currentAcademicHour.getRepeatForNextWeek() == secondCell.getRepeatForNextWeek() &&
+                            secondCell.getNote().equals(currentAcademicHour.getNote())){
+                        templateAcademicHourList.add(secondCellTemplate);
+                    }
+                    ((RadioButton)findViewById(R.id.duration_rgroup_full)).setChecked(true);
+                    break;
+            }
+        }
 
         groupNameSuggest = findViewById(R.id.groupNameSuggestET);
         List<Group> groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class));
@@ -163,7 +187,9 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
         }
         });
 
-        ((RadioButton)findViewById(R.id.duration_rgroup_short)).setChecked(true);
+        subjectSpinner = findViewById(R.id.spinnerSubject);
+        listenerSpinnerSubject(subjectSpinner);
+
         radioGroup = findViewById(R.id.duration_rgroup);
         posSecondCell = ConstantApplication.secondCellShift(numberOfLesson);
         radioGroup.setOnCheckedChangeListener((rg, checkedId) -> {
@@ -221,6 +247,8 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
             return;
         }
 
+        int num = -1;
+
         academicHourList.get(ConstantApplication.ZERO)
                 .setNotificationBefore(notificationBeforeContent.getSelectedItemPosition());
         for (int i = 0; templateAcademicHourList.size() == academicHourList.size() && i < academicHourList.size(); i++){
@@ -235,12 +263,20 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
 
             academicHourList.get(i).setRepeatForNextWeek(repeatForNextWeekContent.getSelectedItemPosition());
             academicHourList.get(i).setNote(description);
-            academicHourList.get(i).setDate(entityDate);
+            ///
+            int halfPosition = templateAcademicHourList.get(i).getNumberHalfPairButton();
+            int hourOfDay = ConstantApplication.timeArray[halfPosition/2][((halfPosition+1) % 2 == 0)? 1 : 0][0];
+            int minuteOfHour = ConstantApplication.timeArray[halfPosition/2][((halfPosition+1) % 2 == 0)? 1 : 0][1];
+            DateTime time = dayOfWeek.withHourOfDay(hourOfDay).withMinuteOfHour(minuteOfHour);
+            academicHourList.get(i).setDate(time.toDate());
+            ///
             academicHourList.get(i).setTemplateAcademicHour(currentTemplate);
             try {
                 DBManager.write(academicHourList.get(i).createEntity());
                 Log.d(TAG, "templateAcademicHour = " + academicHourList.get(i).toString());
                 academicHourList.get(i).refreshAllNumberPair(null);
+                num = academicHourList.get(i).getNumberPair();
+                Log.d("num = ", num + "");
             } catch (Exception e) {
                 e.printStackTrace();
             }

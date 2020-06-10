@@ -45,22 +45,26 @@ public class HandleClassDialog extends DialogFragment {
     protected AcademicHour secondCell;
     protected ClassesButtonWrapper classesButton;
     protected DayClassAdapter dayClassAdapter;
+    private ArrayList<AcademicHour> academicHourList = new ArrayList<>();
 
     public static HandleClassDialog newInstance(Context context, int classDay, int classHour, DateTime dayOfWeek,
-                                                ArrayList<AcademicHour> academicHourList,
-                                                ClassesButtonWrapper classesButtonWrapper) {
+                                                AcademicHour currentCell, int secondClassHour, AcademicHour secondCell, ClassesButtonWrapper classesButtonWrapper) {
         Bundle args = new Bundle();
         HandleClassDialog fragment = new HandleClassDialog();
         fragment.context = context;
         fragment.classHour = classHour;
         fragment.classDay = classDay;
         fragment.dayOfWeek = dayOfWeek;
-        fragment.currentCell = academicHourList.get(0);
-        if(academicHourList.size()>1){
-            fragment.secondClassHour = academicHourList.get(1).getTemplateAcademicHour().getNumberHalfPairButton();
-            fragment.secondCell = academicHourList.get(1);
-        }
+        fragment.currentCell = currentCell;
+        fragment.secondClassHour = secondClassHour;
+        fragment.secondCell = secondCell;
         fragment.classesButton = classesButtonWrapper;
+
+        fragment.academicHourList.add(currentCell);
+        if (secondCell != null){
+            fragment.academicHourList.add(secondCell);
+        }
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,9 +81,16 @@ public class HandleClassDialog extends DialogFragment {
         fragment.secondClassHour = secondClassHour;
         fragment.secondCell = secondCell;
         fragment.dayClassAdapter = adapter;
+
+        fragment.academicHourList.add(currentCell);
+        if (secondCell != null){
+            fragment.academicHourList.add(secondCell);
+        }
+
         fragment.setArguments(args);
         return fragment;
     }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -91,46 +102,44 @@ public class HandleClassDialog extends DialogFragment {
                 getResources().getString(R.string.edit_class),
                 getResources().getString(R.string.check_uncheck_as_read),
                 getResources().getString(R.string.check_uncheck_as_canceled),
-                getResources().getString(R.string.delete_class)
-                /*getResources().getString(R.string.substitution)*/};
+                getResources().getString(R.string.delete_class),
+                getResources().getString(R.string.substitution)};
         ArrayAdapter<String> adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, HANDLE_CLASS);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
                 Intent intent;
                 switch (position){
                     case 0:
-                        DialogFragment dialogFragment = AboutClassDialog.newInstance(context,currentCell);
+                        DialogFragment dialogFragment = AboutClassDialog.newInstance(context, academicHourList.get(ConstantApplication.ZERO));
                         dialogFragment.show(getParentFragmentManager(),"info");
                         break;
                     case 1:
-                        intent = new Intent(context, EditClass.class);
+                        intent = new Intent(getActivity(), EditClass.class);
                         intent.putExtra("classDay", classDay);
                         intent.putExtra("classHour", classHour);
                         intent.putExtra("dayOfWeek", dayOfWeek);
-                        intent.putExtra("currentCell",currentCell);
-                        intent.putExtra("secondClassHour", secondClassHour);
-                        intent.putExtra("secondCell", secondCell);
+                        intent.putParcelableArrayListExtra("academicHourList", academicHourList);
                         startActivityForResult(intent, WeekViewFragment.EDIT_CLASS);
                         break;
                     case 2:
-                        if(currentCell.hasCompleted()){
+                        if(classesButton.getAcademicHour().hasCompleted()){
                             prepareCancelCompletedClassesDialog();
-                        } else if(!currentCell.hasCanceled()) {
+                        } else if(!classesButton.getAcademicHour().hasCanceled()) {
                             prepareCompletedClassesDialog();
                         } else {
                             Toast.makeText(getActivity(), R.string.class_cant_be_read ,Toast.LENGTH_LONG).show();
                         }
                         break;
                     case 3:
-                        if(currentCell.hasCanceled()){
+                        if(classesButton.getAcademicHour().hasCanceled()){
                             prepareUncancelledClasses();
-                        } else if(!currentCell.hasCompleted()){
+                        } else if(!classesButton.getAcademicHour().hasCompleted()){
                             prepareCancelledClassesDialog();
                         } else {
                             Toast.makeText(getActivity(), R.string.class_cant_be_eaded ,Toast.LENGTH_LONG).show();
@@ -142,7 +151,7 @@ public class HandleClassDialog extends DialogFragment {
 
                     default:
                 }
-                if(position!=0 && position!=1){
+                if(position!=0){
                     dismiss();
                 }
                 String selectedItem = HANDLE_CLASS[position];
@@ -153,14 +162,7 @@ public class HandleClassDialog extends DialogFragment {
         return  builder.create();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        dismiss();
-        if(getTargetFragment()!=null){
-            getTargetFragment().onActivityResult(requestCode,resultCode,data);}
-    }
-
-    protected void prepareUncancelledClasses() {
+    private void prepareUncancelledClasses() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_cut_classes_template);
         builder.setMessage(R.string.popup_uncut_classes_content);
@@ -172,13 +174,8 @@ public class HandleClassDialog extends DialogFragment {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                if(!currentCell.hasCompleted()) {
-                    if(classesButton!=null) {
-                        classesButton.setCanceled(false);
-                    } else {
-                        dayClassAdapter.setCanceled(classHour,false);
-                        dayClassAdapter.notifyDataSetChanged();
-                    }
+                if(!classesButton.getAcademicHour().hasCompleted()) {
+                    classesButton.setCanceled(false);
                 } else {
                     Toast.makeText(getActivity(), R.string.class_cant_be_readed ,Toast.LENGTH_LONG).show();
                 }
@@ -206,7 +203,7 @@ public class HandleClassDialog extends DialogFragment {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    protected void prepareCancelledClassesDialog() {
+    private void prepareCancelledClassesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_cut_classes_single_title);
         builder.setMessage(R.string.popup_cut_classes_single_content);
@@ -214,13 +211,8 @@ public class HandleClassDialog extends DialogFragment {
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(!currentCell.hasCompleted()) {
-                    if(classesButton!=null) {
-                        classesButton.setCanceled(true);
-                    } else {
-                        dayClassAdapter.setCanceled(classHour,true);
-                        dayClassAdapter.notifyDataSetChanged();
-                    }
+                if(!classesButton.getAcademicHour().hasCompleted()) {
+                    classesButton.setCanceled(true);
                 } else {
                     Toast.makeText(getActivity(), R.string.class_cant_be_eaded ,Toast.LENGTH_LONG).show();
                 }
@@ -248,7 +240,7 @@ public class HandleClassDialog extends DialogFragment {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    protected void prepareCancelCompletedClassesDialog() {
+    private void prepareCancelCompletedClassesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_uncomplete_single_title);
         builder.setMessage(R.string.popup_uncomplete_single_content);
@@ -260,13 +252,8 @@ public class HandleClassDialog extends DialogFragment {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                if(currentCell.hasCompleted() && !currentCell.hasCanceled()) {
-                    if(classesButton!=null) {
-                        classesButton.setCompleted(false);
-                    } else {
-                        dayClassAdapter.setCompleted(classHour,false);
-                        dayClassAdapter.notifyDataSetChanged();
-                    }
+                if(classesButton.getAcademicHour().hasCompleted() && !classesButton.getAcademicHour().hasCanceled()) {
+                    classesButton.setCompleted(false);
                 } else {
                     Toast.makeText(getActivity(), R.string.class_cant_be_unread ,Toast.LENGTH_LONG).show();
                 }
@@ -294,7 +281,7 @@ public class HandleClassDialog extends DialogFragment {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    protected void prepareCompletedClassesDialog() {
+    private void prepareCompletedClassesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_complete_single_title);
         builder.setCancelable(false);
@@ -306,13 +293,8 @@ public class HandleClassDialog extends DialogFragment {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                if(!currentCell.hasCanceled()) {
-                    if(classesButton!=null) {
-                        classesButton.setCompleted(true);
-                    } else {
-                        dayClassAdapter.setCompleted(classHour,true);
-                        dayClassAdapter.notifyDataSetChanged();
-                    }
+                if(!classesButton.getAcademicHour().hasCanceled()) {
+                    classesButton.setCompleted(true);
                 } else {
                     Toast.makeText(getActivity(), R.string.class_cant_be_read ,Toast.LENGTH_LONG).show();
                 }
@@ -340,7 +322,7 @@ public class HandleClassDialog extends DialogFragment {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    protected void prepareDeleteDialog() {
+    private void prepareDeleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_delete_classes_template);
         builder.setMessage(R.string.popup_delete_classes_content);
@@ -351,13 +333,7 @@ public class HandleClassDialog extends DialogFragment {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                if(classesButton!=null) {
-                    classesButton.clearButtonContent();
-                } else{
-                    dayClassAdapter.delete(classHour);
-                    dayClassAdapter.notifyDataSetChanged();
-                }
-
+                classesButton.clearButtonContent();
             }
         });
         builder.setCancelable(false);

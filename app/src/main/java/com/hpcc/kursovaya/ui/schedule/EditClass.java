@@ -12,6 +12,8 @@ import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
+
 public class EditClass extends Class {
     private int savedHourSize = 0;
 
@@ -24,35 +26,14 @@ public class EditClass extends Class {
         classDay = intent.getIntExtra("classDay",0);
         classHour = intent.getIntExtra("classHour",0);
 
-        super.onCreate(savedInstanceState);
-
-        templateAcademicHourList.clear();
         academicHourList = intent.getParcelableArrayListExtra("academicHourList");
+        templateAcademicHourList = new ArrayList<>();
+
         savedHourSize = academicHourList.size();
         currentAcademicHour = academicHourList.get(ConstantApplication.ZERO);
         currentTemplateAcademicHour = currentAcademicHour.getTemplateAcademicHour();
 
-        switch (academicHourList.size()){
-            case ConstantApplication.ONE:
-                templateAcademicHourList.add(currentTemplateAcademicHour);
-                ((RadioButton)findViewById(R.id.duration_rgroup_short)).setChecked(true);
-                break;
-            case ConstantApplication.TWO:
-                AcademicHour secondCell = academicHourList.get(ConstantApplication.ONE);
-                TemplateAcademicHour secondCellTemplate = secondCell.getTemplateAcademicHour();
-
-                if(currentTemplateAcademicHour.getGroup().equals(secondCellTemplate.getGroup()) &&
-                        currentTemplateAcademicHour.getSubject().equals(secondCellTemplate.getSubject()) &&
-                        currentAcademicHour.getRepeatForNextWeek() == secondCell.getRepeatForNextWeek() &&
-                        secondCell.getNote().equals(currentAcademicHour.getNote())){
-                    templateAcademicHourList.add(secondCellTemplate);
-                }
-
-                ((RadioButton)findViewById(R.id.duration_rgroup_full)).setChecked(true);
-                break;
-            default:
-                throw new RuntimeException("EditClass - onCreate - academicHourList.size() = " + academicHourList.size());
-        }
+        super.onCreate(savedInstanceState);
 
         groupNameSuggest.setText(currentTemplateAcademicHour.getGroup().getName());
         ConstantApplication.setSpinnerText(subjectSpinner, currentTemplateAcademicHour.getSubject().getName());

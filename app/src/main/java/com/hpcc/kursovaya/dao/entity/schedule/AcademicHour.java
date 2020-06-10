@@ -259,15 +259,18 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
                     beforeСhangeAcademicHour.getTemplateAcademicHour().getSubject());
         }
 
-        dateSorting(getTemplateAcademicHour().getGroup(),
+        final List<AcademicHour> academicHourList = dateSorting(getTemplateAcademicHour().getGroup(),
                 getTemplateAcademicHour().getSubject());
+        Log.d("academicHourList", academicHourList.toString());
 
     }
     private List<AcademicHour> dateSorting(@NotNull Group group, @NotNull Subject subject){
         List<String> fieldsNameGroupAndSubject = Arrays.asList("idGroup", "idSubject");
         List<Object> valuesGroupAndSubject = Arrays.asList(group.getId(), subject.getId());
-        List<String> fieldsSort = Arrays.asList("numberDayOfWeek", "numberHalfPair");
-        List<Sort> sorts = Arrays.asList(Sort.ASCENDING, Sort.ASCENDING);
+        List<String> fieldsSort = Arrays.asList("numberDayOfWeek");
+        List<Sort> sorts = Arrays.asList(Sort.ASCENDING);
+        /*List<String> fieldsSort = Arrays.asList("numberDayOfWeek", "numberHalfPair");
+        List<Sort> sorts = Arrays.asList(Sort.ASCENDING, Sort.ASCENDING);*/
 
         final List<TemplateAcademicHour> templateAcademicHourList = DBManager.readAll(TemplateAcademicHour.class,
                 fieldsNameGroupAndSubject, valuesGroupAndSubject,
@@ -299,17 +302,12 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
         });
 
         List<AcademicHour> academicHourList = DBManager.copyObjectFromRealm(academicHourRealmResults.get(0));
-        final Date currentDate = getDate();
         final Pair<Integer, Integer> currentDayAndPair_1hour = getTemplateAcademicHour().getDayAndPairButton();
 
         for (int i = 0, numberPair = 1; i < academicHourList.size(); i++, numberPair++) {
             Pair<Integer, Integer> dayAndPair_1hour =
                     academicHourList.get(i).getTemplateAcademicHour().getDayAndPairButton();
-
-            if (currentDate.equals(academicHourList.get(i).getDate()) &&
-                    currentDayAndPair_1hour.equals(dayAndPair_1hour)){
-                setNumberPair(numberPair);
-            }
+            Pair<Integer, Integer> dayAndPair_2hour = null;
 
             switch (dayAndPair_1hour.second){
                 case 0:
@@ -321,11 +319,9 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
                     if (i == academicHourList.size() - ConstantApplication.ONE) break;
 
                     final int iNext = ConstantApplication.ONE;
-                    Pair<Integer, Integer> dayAndPair_2hour =
-                            academicHourList.get(i + iNext).getTemplateAcademicHour().getDayAndPairButton();
-
+                    dayAndPair_2hour = academicHourList.get(i + iNext).getTemplateAcademicHour().getDayAndPairButton();
                     if (dayAndPair_1hour.first.equals(dayAndPair_2hour.first) &&
-                            dayAndPair_1hour.second.equals(dayAndPair_2hour.second - ConstantApplication.ONE)){
+                            dayAndPair_1hour.second.equals(dayAndPair_2hour.second - ConstantApplication.secondCellShift(dayAndPair_1hour.second))){
                         i++;
                     } else {
                         break;
@@ -339,6 +335,10 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
                     break;
                 default:
                     Log.d("dayAndPair", "error");
+            }
+
+            if (currentDayAndPair_1hour.equals(dayAndPair_1hour) || currentDayAndPair_1hour.equals(dayAndPair_2hour)){
+                setNumberPair(numberPair);
             }
         }
 
