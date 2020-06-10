@@ -92,6 +92,6 @@ public class AddEventDialog extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         dismiss();
         if(getTargetFragment()!=null){
-        getTargetFragment().onActivityResult(requestCode,resultCode,data);}
+            getTargetFragment().onActivityResult(requestCode,resultCode,data);}
     }
 }

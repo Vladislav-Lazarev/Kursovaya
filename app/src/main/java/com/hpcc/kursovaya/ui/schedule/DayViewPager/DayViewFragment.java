@@ -7,12 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
-
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -23,13 +18,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,11 +36,14 @@ import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.AnotherEvent;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAnotherEvent;
 import com.hpcc.kursovaya.dao.query.DBManager;
-import com.hpcc.kursovaya.ui.schedule.AddClass;
+import com.hpcc.kursovaya.ui.schedule.AddEventDialog;
 import com.hpcc.kursovaya.ui.schedule.DayScheduleFragment;
-import com.hpcc.kursovaya.ui.schedule.EditClass;
+import com.hpcc.kursovaya.ui.schedule.HandleClassDialog;
+import com.hpcc.kursovaya.ui.schedule.HandleEventDialog;
 import com.hpcc.kursovaya.ui.schedule.MonthScheduleFragment;
 import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewFragment;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
@@ -54,7 +53,6 @@ import org.joda.time.Months;
 import org.joda.time.format.DateTimeFormat;
 
 import java.text.SimpleDateFormat;
-import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -71,7 +69,7 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
     private View root;
     private RecyclerView rv;
     private DayClassAdapter adapter;
-    private List<AcademicHour> academicHourList;
+    private List<EventAgregator> academicHourList;
     private Context context;
     private CustomViewPager customViewPager;
     private int currentActionMode = DELETE;
@@ -81,6 +79,11 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
     private ActionModeCallback actionModeCallback;
     private ImageButton  toCurrentDay;
     private TextView currentDayText;
+
+    public static class EventAgregator{
+        public AcademicHour academicHour;
+        public AnotherEvent anotherEvent;
+    }
 
     public static Fragment newInstance(int position) {
         DayViewFragment pageFragment = new DayViewFragment();
@@ -125,7 +128,7 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         int dayFromCurrent = getArguments().getInt(ARGUMENT_DAY_FROM_CURRENT);
-        DateTime firstDayOfWeek = DateTime.parse("01/01/1990 00:00:00", DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss"));
+        DateTime firstDayOfWeek = DateTime.parse("01/01/1990 23:59:59:999", DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss:SSS"));
         currentDate = firstDayOfWeek.plusDays(dayFromCurrent);
     }
 
@@ -164,11 +167,21 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
         currentDayText = toolbar.findViewById(R.id.currentDayText);
         rv = root.findViewById(R.id.rv);
         rv.setHasFixedSize(true);
-        academicHourList = Arrays.asList(new AcademicHour[10]);
-        List<AcademicHour> actualAcademicHours = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class,"date",currentDate.toDate()));
+        academicHourList = Arrays.asList(new EventAgregator[10]);
+        List<AcademicHour> actualAcademicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(currentDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDate(),currentDate.toDate()));
+        List<AnotherEvent> actualAnotherEvent = DBManager.copyObjectFromRealm(AnotherEvent.anotherEventListFromPeriod(currentDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDate(),currentDate.toDate()));
         for(AcademicHour academicHour:actualAcademicHours){
             TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
-            academicHourList.set(templateAcademicHour.getNumberHalfPairButton(),academicHour);
+            EventAgregator event = new EventAgregator();
+            event.academicHour = academicHour;
+            academicHourList.set(templateAcademicHour.getNumberHalfPairButton(),event);
+        }
+        for(AnotherEvent anotherEvent:actualAnotherEvent){
+            TemplateAnotherEvent templateAnotherEvent = anotherEvent.getTemplateAnotherEvent();
+            EventAgregator event = new EventAgregator();
+            event.anotherEvent = anotherEvent;
+            academicHourList.set(templateAnotherEvent.getNumberHalfPairButton(),event);
+
         }
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter = new DayClassAdapter(getActivity(),academicHourList);
@@ -180,29 +193,37 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
 
     @Override
     public void onItemClick(View view, int position) {
-        AcademicHour academicHour = adapter.getItem(position);
+        EventAgregator event = adapter.getItem(position);
         if(actionMode==null) {
             Intent intent;
-            if (academicHour == null) {
-                intent = new Intent(getActivity(), AddClass.class);
-                intent.putExtra("classDay", currentDate.getDayOfWeek() - 1);
-                intent.putExtra("classHour", position);
-                intent.putExtra("dayOfWeek", currentDate);
-                startActivityForResult(intent, ADD_CLASS);
+            if (event==null) {
+                AddEventDialog eventDialog = AddEventDialog.newInstance(getActivity(),currentDate.getDayOfWeek() - 1,position,currentDate);
+                eventDialog.setTargetFragment(DayViewFragment.this,1);
+                eventDialog.show(getFragmentManager(),"addEvent");
             } else {
-                intent = new Intent(getActivity(), EditClass.class);
-                intent.putExtra("classDay", currentDate.getDayOfWeek() - 1);
-                intent.putExtra("classHour", position);
-                intent.putExtra("dayOfWeek", currentDate);
-                intent.putExtra("currentCell", academicHour);
-                int secondCellHour = position + ((position % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1);
-                intent.putExtra("secondClassHour", secondCellHour);
-                AcademicHour secondAcademicHour = adapter.getItem(secondCellHour);
-                intent.putExtra("secondCell", secondAcademicHour);
-                startActivityForResult(intent, EDIT_CLASS);
+                DialogFragment handleDialog= null;
+                if(event.academicHour!=null) {
+                    int secondCellHour = position + ((position % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1);
+                    AcademicHour secondAcademicHour = (adapter.getItem(secondCellHour)==null) ? null : adapter.getItem(secondCellHour).academicHour;
+                    handleDialog = HandleClassDialog.newInstance(getActivity(),currentDate.getDayOfWeek() - 1,position,currentDate, event.academicHour,
+                            secondCellHour,secondAcademicHour,adapter);
+                    /*intent = new Intent(getActivity(), EditClass.class);
+                    intent.putExtra("classDay", currentDate.getDayOfWeek() - 1);
+                    intent.putExtra("classHour", position);
+                    intent.putExtra("dayOfWeek", currentDate);
+                    intent.putExtra("currentCell", event.academicHour);
+                    intent.putExtra("secondClassHour", secondCellHour);
+                    intent.putExtra("secondCell", secondAcademicHour);
+                    startActivityForResult(intent, EDIT_CLASS);*/
+                } else if(event.anotherEvent!=null){
+                    handleDialog = HandleEventDialog.newInstance(getActivity(),position,currentDate.getDayOfWeek() - 1,currentDate,adapter,event.anotherEvent);
+
+                }
+                handleDialog.setTargetFragment(DayViewFragment.this,1);
+                handleDialog.show(getFragmentManager(),"handleDialog");
             }
         } else {
-            if(academicHour==null){
+            if(event.academicHour==null || event.anotherEvent==null){
                 Toast.makeText(context, R.string.cant_select_empty_class, Toast.LENGTH_SHORT).show();
             } else {
                 toggleSelection(position);
@@ -264,16 +285,20 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
             boolean isTwoHours = data.getBooleanExtra("isTwoHour",false);
             int classDay = data.getIntExtra("classDay", 0);
             int classHour = data.getIntExtra("classHour", 0);
+            EventAgregator eventAgregator = new EventAgregator();
+            EventAgregator secondHour = new EventAgregator();
             switch (requestCode){
                 case ADD_CLASS:
                     AcademicHour academicHourFirst = data.getParcelableExtra("firstHour");
-                    academicHourList.set(classHour,academicHourFirst);
+                    eventAgregator.academicHour = academicHourFirst;
+                    academicHourList.set(classHour,eventAgregator);
 
                     WeekViewFragment.repeatForWeeks(academicHourFirst,classDay,classHour,getActivity());
                     if(isTwoHours){
                         AcademicHour academicHourSecond = data.getParcelableExtra("secondHour");
                         int secondCellShift = data.getIntExtra("secondCellPosition",0);
-                        academicHourList.set(classHour+secondCellShift,academicHourSecond);
+                        secondHour.academicHour = academicHourSecond;
+                        academicHourList.set(classHour+secondCellShift,secondHour);
                         WeekViewFragment.repeatForWeeks(academicHourSecond,classDay,classHour+secondCellShift,getActivity());
                     }
                     Log.d(TAG,classDay + " " + classHour);
@@ -281,12 +306,13 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
                 case EDIT_CLASS:
                     AcademicHour academicHourEditedFirst = data.getParcelableExtra("firstHour");
                     boolean isHourChanged = data.getBooleanExtra("clearSecondCell",false);
-                    academicHourList.set(classHour,academicHourEditedFirst);
+                    eventAgregator.academicHour = academicHourEditedFirst;
+                    academicHourList.set(classHour,eventAgregator);
                     //classes.get(classDay).get(classHour).setAcademicHour(academicHourEditedFirst);
                     WeekViewFragment.repeatForWeeks(academicHourEditedFirst,classDay,classHour,getActivity());
                     if(isHourChanged){
                         int secondCellShift = data.getIntExtra("secondClassHour",0);
-                        AcademicHour academicHourSecond = academicHourList.get(secondCellShift);
+                        AcademicHour academicHourSecond = academicHourList.get(secondCellShift).academicHour;
                         if(academicHourSecond!=null && academicHourSecond.getTemplateAcademicHour()!=null) {
                             DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, academicHourSecond.getTemplateAcademicHour().getId());
                             DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHourSecond.getId());
@@ -296,13 +322,21 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
                     }
                     if(isTwoHours){
                         AcademicHour academicHourEditedSecond = data.getParcelableExtra("secondHour");
+                        secondHour.academicHour = academicHourEditedSecond;
                         int secondCellShift = data.getIntExtra("secondClassHour",0);
-                        academicHourList.set(secondCellShift,academicHourEditedSecond);
+                        academicHourList.set(secondCellShift,secondHour);
                         //classes.get(classDay).get(secondCellShift).setAcademicHour(academicHourEditedSecond);
                         WeekViewFragment.repeatForWeeks(academicHourEditedSecond,classDay,secondCellShift,getActivity());
                     }
 
                     Log.d(TAG,classDay + " " + classHour);
+                    break;
+                case WeekViewFragment.EDIT_EVENT:
+
+                case WeekViewFragment.ADD_EVENT:
+                    AnotherEvent anotherEvent = data.getParcelableExtra("anotherEvent");
+                    eventAgregator.anotherEvent = anotherEvent;
+                    academicHourList.set(classHour,eventAgregator);
                     break;
                 default:
                     return;
@@ -315,7 +349,9 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
         List<AcademicHour> actualAcademicHours = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class,"date",currentDate.toDate()));
         for(AcademicHour academicHour:actualAcademicHours){
             TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
-            academicHourList.set(templateAcademicHour.getNumberHalfPairButton(),academicHour);
+            EventAgregator event = new EventAgregator();
+            event.academicHour = academicHour;
+            academicHourList.set(templateAcademicHour.getNumberHalfPairButton(),event);
         }
         adapter.notifyDataSetChanged();
     }

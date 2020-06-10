@@ -68,8 +68,18 @@ public class AboutClassDialog extends DialogFragment {
             } catch (Exception ex){
                 Log.e(TAG, "reportGen:"+ex.toString());
             }
-
         }
+
+        int readHoursQuantity = 0;
+        int cancelledHoursQuantity = 0;
+        for(AcademicHour academicHour: academicHourList){
+            if(academicHour.hasCompleted()){
+                readHoursQuantity++;
+            } else if(academicHour.hasCanceled()){
+                cancelledHoursQuantity++;
+            }
+        }
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setTitle(R.string.about_class_dialog_title);
@@ -83,6 +93,8 @@ public class AboutClassDialog extends DialogFragment {
         TextView totalReadParaQuantity = view.findViewById(R.id.contentReadParaQuantity);
         TextView totalLeftHours = view.findViewById(R.id.contentLeftHours);
         TextView totalLeftParaQuantity = view.findViewById(R.id.contentLeftParaQuantity);
+        TextView contentCancelledHours = view.findViewById(R.id.contentCancelledHours);
+        TextView contentCancelledParaQuantity = view.findViewById(R.id.contentCancelledParaQuantity);
         groupName.setText(academicHour.getTemplateAcademicHour().getGroup().getName());
         subjectName.setText(academicHour.getTemplateAcademicHour().getSubject().getName());
         descriptionText.setText(academicHour.getNote());
@@ -91,6 +103,12 @@ public class AboutClassDialog extends DialogFragment {
         int totHours = subject.initMap().getSpecialityCountHour(speciality);
         totalHours.setText(Integer.toString(totHours));
         totalParaQuantity.setText(Integer.toString(totHours/2+1));
+        totalReadHours.setText(Integer.toString(readHoursQuantity));
+        totalLeftHours.setText(Integer.toString(totHours-readHoursQuantity-cancelledHoursQuantity));
+        totalReadParaQuantity.setText(Integer.toString(readHoursQuantity/2+1));
+        totalLeftParaQuantity.setText(Integer.toString((totHours-readHoursQuantity-cancelledHoursQuantity)/2 + 1));
+        contentCancelledHours.setText(Integer.toString(cancelledHoursQuantity));
+        contentCancelledParaQuantity.setText(Integer.toString(cancelledHoursQuantity/2+1));
         builder.setView(view);
         return builder.create();
     }

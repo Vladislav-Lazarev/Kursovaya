@@ -102,7 +102,7 @@
             android:text="@string/popup_rangeLabel"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="20dp"
             android:layout_below="@id/popup_firstWeek_rgroup"
             android:layout_marginStart="15dp"/>
 
@@ -115,48 +115,52 @@
             android:textColor="@color/appDefaultBlack"
             android:layout_marginTop="26dp"
             android:layout_below="@id/periodLabel"
-            android:layout_toEndOf="@id/periodLabel"
-            android:layout_marginStart="-40dp"/>
+            android:layout_alignStart="@id/periodLabel"
+            android:layout_marginStart="10dp"/>
 
-        <DatePicker
+        <Button
             android:id="@+id/dateFromPicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/periodLabel"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginStart="-40dp"
-            android:layout_marginTop="-42dp"
+            android:layout_alignTop="@id/periodFromLabel"
+            android:layout_alignStart="@id/dateToPicker"
             android:layout_toEndOf="@id/periodFromLabel"
-            android:calendarViewShown="false"
-            android:datePickerMode="spinner"
-            android:scaleX="0.5"
-            android:scaleY="0.5"
+            android:text="27.05.2020"
+            android:textSize="16sp"
             android:theme="@style/NumberPickerStyle" />
 
         <TextView
             android:id="@+id/periodToLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@id/dateToPicker"
+            android:layout_alignStart="@id/periodFromLabel"
             android:layout_below="@id/periodFromLabel"
-            android:layout_marginTop="90dp"
-            android:layout_marginStart="28dp"
             android:text="@string/popup_rangeToLabel"
             android:textColor="@color/appDefaultBlack"
             android:textSize="16sp" />
 
-        <DatePicker
+        <Button
             android:id="@+id/dateToPicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/dateFromPicker"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="-100dp"
-            android:calendarViewShown="false"
-            android:datePickerMode="spinner"
-            android:scaleX="0.5"
-            android:scaleY="0.5"
+            android:layout_toEndOf="@id/periodToLabel"
+            android:layout_marginStart="5dp"
+            android:textSize="16sp"
+            android:text="27.05.2020"
             android:theme="@style/NumberPickerStyle" />
+        <ProgressBar
+            android:id="@+id/bar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            android:layout_below="@id/dateToPicker"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+
     </RelativeLayout>
 </ScrollView>
 

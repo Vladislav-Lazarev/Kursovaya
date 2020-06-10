@@ -370,7 +370,7 @@ public class WeekViewFragment extends Fragment {
                                                 int hourOfDay = ConstantApplication.timeArray[classHour/2][((classHour+1) % 2 == 0)? 1 : 0][0];
                                                 int minuteOfHour = ConstantApplication.timeArray[classHour/2][((classHour+1) % 2 == 0)? 1 : 0][1];
                                                 dayOfWeek = dayOfWeek.withHourOfDay(hourOfDay).withMinuteOfHour(minuteOfHour);
-                                                if (classesButtonWrapperList.get(classHour).getBtn().getText().toString().isEmpty()) {
+                                                if (classesButtonWrapperList.get(classHour).getBtn().getText().equals("")) {
                                                     AddEventDialog eventDialog = AddEventDialog.newInstance(getActivity(),classDay,classHour,dayOfWeek);
                                                     eventDialog.setTargetFragment(WeekViewFragment.this,1);
                                                     eventDialog.show(getFragmentManager(),"addEvent");
@@ -395,7 +395,8 @@ public class WeekViewFragment extends Fragment {
                                                     } else if (classesButtonWrapperList.get(classHour).getAcademicHour()==null){
                                                         handleDialog = HandleEventDialog.newInstance(getActivity(),classHour,classDay,dayOfWeek,classesButtonWrapperList.get(classHour));
                                                     }
-                                                    handleDialog.show(getActivity().getSupportFragmentManager(),"handleDialog");
+                                                    handleDialog.setTargetFragment(WeekViewFragment.this,1);
+                                                    handleDialog.show(getFragmentManager(),"handleDialog");
                                                     //intent.putExtra("group",groupEnt);
                                                     //intent.putExtra("subject",subjectEnt);
                                                 }
@@ -895,7 +896,7 @@ public class WeekViewFragment extends Fragment {
                 ((MainActivity) getActivity()).setActionBarTitle(title.toString());
             }
         } else if (((MainActivity)getActivity()).isLanguageChanged()) {
-            ((MainActivity) getActivity()).showOverflowMenu(false);
+
         }
     }
    /* @Override

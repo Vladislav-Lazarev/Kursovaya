@@ -76,7 +76,15 @@ public class SettingsFragment extends Fragment{
 
     public void setActionBarTitle() {
         ((MainActivity) getActivity()).setActionBarTitle(getContext().getString(R.string.menu_settings));
-        ((MainActivity) getActivity()).showOverflowMenu(false);
+        //((MainActivity) getActivity()).showOverflowMenu(false);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(((MainActivity)getActivity()).isLanguageChanged()) {
+            ((MainActivity) getActivity()).openGroupCheckActivity.setVisibility(View.GONE);
+            ((MainActivity) getActivity()).showOverflowMenu(false);
+        }
+    }
 }

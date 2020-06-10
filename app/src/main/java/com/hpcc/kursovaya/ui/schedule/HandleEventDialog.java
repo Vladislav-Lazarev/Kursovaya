@@ -24,6 +24,7 @@ import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.schedule.AnotherEvent;
+import com.hpcc.kursovaya.ui.schedule.DayViewPager.DayClassAdapter;
 import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewFragment;
 
 import org.joda.time.DateTime;
@@ -37,6 +38,7 @@ public class HandleEventDialog extends DialogFragment {
     private AnotherEvent event;
     private ClassesButtonWrapper classesButton;
     private long mLastClickTime = 0;
+    private DayClassAdapter adapter;
 
 
     public static HandleEventDialog newInstance(Context context, int classDay, int classHour, DateTime dayOfWeek, ClassesButtonWrapper classesButtonWrapper) {
@@ -48,6 +50,19 @@ public class HandleEventDialog extends DialogFragment {
         fragment.dayOfWeek = dayOfWeek;
         fragment.event = classesButtonWrapper.getEvent();
         fragment.classesButton = classesButtonWrapper;
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static HandleEventDialog newInstance(Context context, int classDay, int classHour, DateTime dayOfWeek, DayClassAdapter adapter, AnotherEvent event) {
+        Bundle args = new Bundle();
+        HandleEventDialog fragment = new HandleEventDialog();
+        fragment.context = context;
+        fragment.classHour = classHour;
+        fragment.classDay = classDay;
+        fragment.dayOfWeek = dayOfWeek;
+        fragment.event = event;
+        fragment.adapter = adapter;
         fragment.setArguments(args);
         return fragment;
     }
@@ -92,7 +107,7 @@ public class HandleEventDialog extends DialogFragment {
                         break;
                     default:
                 }
-                if(position!=0) {
+                if(position!=0 && position!=1) {
                     dismiss();
                 }
                 String selectedItem = HANDLE_CLASS[position];
@@ -103,9 +118,16 @@ public class HandleEventDialog extends DialogFragment {
         return  builder.create();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        dismiss();
+        if(getTargetFragment()!=null){
+            getTargetFragment().onActivityResult(requestCode,resultCode,data);}
+    }
+
     private void prepareDeleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(R.string.popup_delete_classes_template);
+        builder.setTitle(R.string.popup_delete_event_template);
         builder.setMessage(R.string.popup_delete_classes_content);
         builder.setPositiveButton(R.string.delete_positive, new DialogInterface.OnClickListener() {
             @Override
@@ -114,7 +136,11 @@ public class HandleEventDialog extends DialogFragment {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                classesButton.clearButtonContent();
+                if(classesButton!=null) {
+                    classesButton.clearButtonContent();
+                } else {
+                    adapter.delete(classHour);
+                }
 
             }
         });

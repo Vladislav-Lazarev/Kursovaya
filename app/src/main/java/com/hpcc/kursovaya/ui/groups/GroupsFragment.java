@@ -233,7 +233,7 @@ public class GroupsFragment extends Fragment {
     }
 
     private void onClickPrepareFilterGroup() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+       AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.dialog_filter_group);
         builder.setPositiveButton(R.string.popup_accept, new DialogInterface.OnClickListener() {
             @Override

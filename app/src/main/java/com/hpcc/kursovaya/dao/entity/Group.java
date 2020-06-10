@@ -349,4 +349,12 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
         result.setHoursDeducted(hourCompleted);
         return result;
     }
+
+    public int getIdSpeciality() {
+        return idSpeciality;
+    }
+
+    public void setIdSpeciality(int idSpeciality) {
+        this.idSpeciality = idSpeciality;
+    }
 }

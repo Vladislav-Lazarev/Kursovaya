@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.AnotherEvent;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAnotherEvent;
 import com.hpcc.kursovaya.dao.query.DBManager;
 
 import org.joda.time.DateTime;
@@ -52,7 +54,8 @@ public class MonthViewAdapter extends RecyclerView.Adapter<MonthViewAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DateTime dateAtPos = startDate.plusDays(mData[position]);
         DateTime now = DateTime.now().withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-        List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class,"date",dateAtPos.toDate()));
+        List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(dateAtPos.toDate(),dateAtPos.withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).withMillisOfSecond(999).toDate()));
+        List<AnotherEvent> anotherEvents = DBManager.copyObjectFromRealm(AnotherEvent.anotherEventListFromPeriod(dateAtPos.toDate(),dateAtPos.withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).withMillisOfSecond(999).toDate()));
         if(dateAtPos.getMonthOfYear()==currentMonth){
             holder.dayText.setTextColor(context.getResources().getColor(R.color.calendarBlack));
         }
@@ -76,6 +79,14 @@ public class MonthViewAdapter extends RecyclerView.Adapter<MonthViewAdapter.View
                 }
             }
 
+        }
+        for (AnotherEvent anotherEvent: anotherEvents){
+            TemplateAnotherEvent templateAnotherEvent = anotherEvent.getTemplateAnotherEvent();
+            if(templateAnotherEvent!=null){
+                holder.cards.get(templateAnotherEvent.getNumberHalfPairButton()).setVisibility(View.VISIBLE);
+                holder.classes.get(templateAnotherEvent.getNumberHalfPairButton()).setText(templateAnotherEvent.getTitle());
+                holder.classes.get(templateAnotherEvent.getNumberHalfPairButton()).setBackgroundColor(templateAnotherEvent.getColor());
+            }
         }
     }
 

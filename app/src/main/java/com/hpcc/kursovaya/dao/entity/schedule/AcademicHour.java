@@ -451,4 +451,11 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
     public AcademicHour clone() throws CloneNotSupportedException {
         return (AcademicHour) super.clone();
     }
+
+    public AcademicHour createEntityWithoutChecking() throws Exception {
+        int maxID = DBManager.findMaxID(this.getClass());
+        setId((maxID > ConstantApplication.ZERO)? ++maxID : ++countObj);
+        return this;
+    }
+
 }

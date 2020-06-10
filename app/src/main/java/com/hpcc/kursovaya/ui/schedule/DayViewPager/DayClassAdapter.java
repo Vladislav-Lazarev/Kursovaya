@@ -1,56 +1,43 @@
 package com.hpcc.kursovaya.ui.schedule.DayViewPager;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
-import androidx.appcompat.view.ActionMode;
-
 import android.graphics.Paint;
-import android.os.SystemClock;
 import android.util.SparseBooleanArray;
-import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.AnotherEvent;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAnotherEvent;
 import com.hpcc.kursovaya.dao.query.DBManager;
-import com.hpcc.kursovaya.ui.schedule.MonthViewPager.MonthViewAdapter;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHolder> {
-    private Context context;
-    private LayoutInflater mInflater;
-    private List<AcademicHour> academicHourList;
-    private ItemClickListener mClickListener;
-    private SparseBooleanArray selectedItems;
+public class DayClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    protected Context context;
+    protected LayoutInflater mInflater;
+    protected List<DayViewFragment.EventAgregator> academicHourList;
+    protected ItemClickListener mClickListener;
+    protected SparseBooleanArray selectedItems;
 
 
     public void delete(Integer position) {
-       AcademicHour academicHour = academicHourList.get(position);
+       AcademicHour academicHour = academicHourList.get(position).academicHour;
         if(academicHour!=null){
             DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, academicHour.getTemplateAcademicHour().getId());
             DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
@@ -59,7 +46,7 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
     }
 
 
-    public DayClassAdapter(Context context, List<AcademicHour> actualAcademicHours){
+    public DayClassAdapter(Context context, List<DayViewFragment.EventAgregator> actualAcademicHours){
         this.context = context;
         mInflater = LayoutInflater.from(context);
         academicHourList = actualAcademicHours;
@@ -70,6 +57,7 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
         }*/
     }
 
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -78,11 +66,22 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        AcademicHour academicHour = academicHourList.get(position);
-        int couple = position/2;
-        int half = ((position+1)%2==0) ? 1:0;
-        String timeHeader = getCoupleHeader(couple,half);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder baseHolder, int position) {
+        AcademicHour academicHour = null;
+        AnotherEvent anotherEvent = null;
+        ViewHolder holder = (ViewHolder) baseHolder;
+        if(academicHourList.get(position)!=null){
+            academicHour = academicHourList.get(position).academicHour;
+            anotherEvent = academicHourList.get(position).anotherEvent;
+        }
+        int couple = position / 2;
+        int half = ((position + 1) % 2 == 0) ? 1 : 0;
+        if(academicHour!=null){
+            int numberHalfPair = academicHour.getTemplateAcademicHour().getNumberHalfPairButton();
+            couple = numberHalfPair/2;
+            half= ((position+1)%2 ==0) ? 1: 0;
+        }
+        String timeHeader = getCoupleHeader(couple, half);
         holder.timeHeader.setText(timeHeader);
         holder.groupName.setText(context.getResources().getString(R.string.day_fragment_no_group));
         holder.subjectName.setText(context.getResources().getString(R.string.day_fragment_class_free));
@@ -101,6 +100,8 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
             if(!description.equals("")){
                 holder.description.setText(description);
             }
+            holder.numberPair.setText(academicHour.getNumberPair()+"");
+            holder.numberPair.setVisibility(View.VISIBLE);
             holder.subjectName.setText(subject.getName());
             if(academicHour.hasCompleted()){
                 holder.subjectName.setTextColor(Color.GREEN);
@@ -120,6 +121,22 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
             holder.groupName.setText(group.getName());
             if(!selectedItems.get(position,false)) {
                 holder.rl.setBackgroundColor(subject.getColor());
+            } else {
+                holder.rl.setBackgroundColor(context.getResources().getColor(R.color.sideBarTransp));
+            }
+        }
+        if(anotherEvent!=null){
+            TemplateAnotherEvent templateAnotherEvent = anotherEvent.getTemplateAnotherEvent();
+
+            String description = anotherEvent.getNote();
+            if(!description.equals("")){
+                holder.description.setText(description);
+            }
+            //holder.subjectName.setText(subject.getName());
+            holder.subjectName.setVisibility(View.GONE);
+            holder.groupName.setText(templateAnotherEvent.getTitle());
+            if(!selectedItems.get(position,false)) {
+                holder.rl.setBackgroundColor(templateAnotherEvent.getColor());
             } else {
                 holder.rl.setBackgroundColor(context.getResources().getColor(R.color.sideBarTransp));
             }
@@ -179,16 +196,16 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
     }
 
     public void setCompleted(int position,boolean b) {
-        AcademicHour selected = academicHourList.get(position);
-        if(b){
+        AcademicHour selected = academicHourList.get(position).academicHour;
+        if(b && selected!=null){
             if(selected.hasCanceled()){
                 Toast.makeText(context, R.string.class_cant_be_unread_day ,Toast.LENGTH_LONG).show();
             } else {
-                academicHourList.get(position).setCompleted(b);
+                academicHourList.get(position).academicHour.setCompleted(b);
             }
-        } else {
+        } else if(selected!=null){
             if(selected.hasCompleted()){
-                academicHourList.get(position).setCompleted(b);
+                academicHourList.get(position).academicHour.setCompleted(b);
             } else {
                 Toast.makeText(context, R.string.class_cant_be_unread_cancelled_day ,Toast.LENGTH_LONG).show();
             }
@@ -197,14 +214,14 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
     }
 
     public void setCanceled(int position,boolean b) {
-        AcademicHour selected = academicHourList.get(position);
-        if(b){
+        AcademicHour selected = academicHourList.get(position).academicHour;
+        if(b && selected!=null){
             if(selected.hasCompleted()){
                 Toast.makeText(context, R.string.readed_class_cant_be_cancelled_day ,Toast.LENGTH_LONG).show();
             } else {
                 selected.setCanceled(b);
             }
-        } else {
+        } else if(selected!=null) {
             if(selected.hasCanceled()){
                 selected.setCanceled(b);
             } else {
@@ -215,19 +232,24 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        RelativeLayout rl;
+        protected RelativeLayout rl;
 
-        TextView timeHeader;
+        protected TextView timeHeader;
 
-        TextView groupName;
-        TextView subjectName;
-        TextView description;
+        protected TextView numberPair;
+        protected TextView groupName;
+        protected TextView subjectName;
+        protected TextView description;
 
 
-        ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
             rl = itemView.findViewById(R.id.button);
             rl.setBackgroundColor(context.getResources().getColor(R.color.colorStatusBar));
+            numberPair = itemView.findViewById(R.id.numberPair);
+            numberPair.setTextColor(Color.WHITE);
+            numberPair.setShadowLayer(5,4,4,Color.BLACK);
+            numberPair.setVisibility(View.GONE);
             groupName = itemView.findViewById(R.id.groupName);
             groupName.setTextColor(Color.WHITE);
             groupName.setShadowLayer(5,4,4,Color.BLACK);
@@ -258,7 +280,7 @@ public class DayClassAdapter extends RecyclerView.Adapter<DayClassAdapter.ViewHo
         }
     }
 
-    public AcademicHour getItem(int id) {
+    public DayViewFragment.EventAgregator getItem(int id) {
         return academicHourList.get(id);
     }
 

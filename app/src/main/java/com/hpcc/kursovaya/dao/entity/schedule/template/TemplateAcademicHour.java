@@ -2,12 +2,10 @@ package com.hpcc.kursovaya.dao.entity.schedule.template;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
-import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.EntityI;
 import com.hpcc.kursovaya.dao.entity.Group;
@@ -22,8 +20,6 @@ import java.util.Objects;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
-
-import static com.itextpdf.text.factories.RomanAlphabetFactory.getString;
 
 public class TemplateAcademicHour extends RealmObject implements EntityI<TemplateAcademicHour>, Parcelable, Cloneable {
     private static final String TAG = TemplateAcademicHour.class.getSimpleName();
@@ -64,6 +60,14 @@ public class TemplateAcademicHour extends RealmObject implements EntityI<Templat
             System.out.println(ex.getMessage());
             ex.printStackTrace();
         }
+    }
+
+    public int getIdSubject(){
+        return idSubject;
+    }
+
+    public int getIdGroup(){
+        return idGroup;
     }
 
     public Subject getSubject() {

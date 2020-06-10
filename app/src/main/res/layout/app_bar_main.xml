@@ -48,16 +48,24 @@
                     android:textAlignment="center"
                     android:layout_gravity="center_vertical|center_horizontal"
                     android:text="16"/>
-                <ImageButton
-                    android:id="@+id/search_button"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:visibility="gone"
-                    android:adjustViewBounds="true"
-                    android:layout_gravity="right"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_search_black_24dp" />
             </FrameLayout>
+            <ImageButton
+                android:id="@+id/search_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:visibility="gone"
+                android:adjustViewBounds="true"
+                android:layout_gravity="right"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_search_black_24dp" />
+            <ImageButton
+                android:id="@+id/group_check_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:adjustViewBounds="true"
+                android:layout_gravity="right"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_error_black_24dp" />
 
         </androidx.appcompat.widget.Toolbar>
 

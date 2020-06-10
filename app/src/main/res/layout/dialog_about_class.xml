@@ -2,6 +2,12 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
+<ScrollView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/labelGroupName"
@@ -86,61 +92,54 @@
         android:textSize="16sp"
         android:layout_below="@id/contentDescription"
         android:text="@string/label_plan_hours_part1"
-        android:layout_toStartOf="@id/contentPlanHours"
+        android:layout_toStartOf="@id/labelPlanBlock"
         android:layout_alignParentStart="true"/>
-    <TextView
-        android:id="@+id/contentPlanHours"
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
+    <HorizontalScrollView
+        android:id="@+id/labelPlanBlock"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="10dp"
         android:layout_below="@id/contentDescription"
-        android:layout_alignStart="@id/contentDescription"
         android:layout_alignBottom="@id/labelPlanHoursPart1"
-        android:gravity="bottom|left"
-        android:text="72"/>
+        android:layout_alignStart="@id/contentDescription">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/contentPlanHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="72"/>
 
-    <TextView
-        android:id="@+id/labelPlanHoursPart2"
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/calendarBlack"
-        android:textSize="16sp"
-        android:layout_marginStart="3dp"
-        android:layout_below="@id/contentDescription"
-        android:layout_toEndOf="@id/contentPlanHours"
-        android:layout_alignBottom="@id/labelPlanHoursPart1"
-        android:gravity="bottom|left"
-        android:text="@string/label_plan_hours_part2"/>
+        <TextView
+            android:id="@+id/labelPlanHoursPart2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/calendarBlack"
+            android:layout_marginStart="3dp"
+            android:textSize="16sp"
+            android:text="@string/label_plan_hours_part2"/>
 
-    <TextView
-        android:id="@+id/contentParaQuantity"
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginStart="3dp"
-        android:layout_below="@id/contentDescription"
-        android:layout_toEndOf="@id/labelPlanHoursPart2"
-        android:layout_alignBottom="@id/labelPlanHoursPart1"
-        android:gravity="bottom|left"
-        android:text="72"/>
+        <TextView
+            android:id="@+id/contentParaQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginStart="3dp" />
 
-    <TextView
-        android:id="@+id/labelPlanHoursPart3"
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/calendarBlack"
-        android:textSize="16sp"
-        android:layout_marginStart="3dp"
-        android:layout_below="@id/contentDescription"
-        android:layout_toEndOf="@id/contentParaQuantity"
-        android:layout_alignBottom="@id/labelPlanHoursPart1"
-        android:text="@string/label_plan_hours_part3"
-        android:gravity="bottom|left"
-        android:layout_alignParentEnd="true"/>
+        <TextView
+            android:id="@+id/labelPlanHoursPart3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/calendarBlack"
+            android:textSize="16sp"
+            android:layout_marginStart="3dp"
+            android:text="@string/label_plan_hours_part3" />
+    </LinearLayout>
+    </HorizontalScrollView>
 
     <TextView
         android:id="@+id/labelReadHoursPart1"
@@ -150,7 +149,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/calendarBlack"
         android:textSize="16sp"
-        android:layout_below="@id/labelPlanHoursPart3"
+        android:layout_below="@id/labelPlanBlock"
         android:text="@string/label_read_hours_part1"
         android:layout_toStartOf="@id/contentReadHours"
         android:layout_alignParentStart="true"/>
@@ -162,7 +161,7 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:layout_below="@id/labelPlanHoursPart1"
-        android:layout_alignStart="@id/contentPlanHours"
+        android:layout_alignStart="@id/labelPlanBlock"
         android:layout_alignBottom="@id/labelReadHoursPart1"
         android:gravity="bottom|left"
         android:text="72"/>
@@ -210,13 +209,81 @@
         android:layout_alignParentEnd="true"/>
 
     <TextView
-        android:id="@+id/labelLeftHoursPart1"
+        android:id="@+id/labelCancelledHoursPart1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/labelReadHoursPart1"
         android:layout_alignParentStart="true"
         android:layout_marginStart="15dp"
         android:layout_marginTop="9dp"
+        android:layout_marginEnd="0dp"
+        android:layout_toStartOf="@id/contentLeftHours"
+        android:text="@string/label_cancelled_hours_part1"
+        android:textColor="@color/calendarBlack"
+        android:textSize="16sp"
+        android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:id="@+id/contentCancelledHours"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_below="@id/labelReadHoursPart1"
+        android:layout_alignStart="@id/contentReadHours"
+        android:layout_alignBottom="@id/labelCancelledHoursPart1"
+        android:gravity="bottom|left"
+        android:text="72"/>
+
+    <TextView
+        android:id="@+id/labelCancelledHoursPart2"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginStart="3dp"
+        android:textColor="@color/calendarBlack"
+        android:layout_below="@id/labelReadHoursPart1"
+        android:layout_toEndOf="@id/contentCancelledHours"
+        android:layout_alignBottom="@id/labelCancelledHoursPart1"
+        android:text="@string/label_read_hours_part2"
+        android:gravity="bottom|left"/>
+
+    <TextView
+        android:id="@+id/contentCancelledParaQuantity"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginStart="3dp"
+        android:layout_below="@id/labelReadHoursPart1"
+        android:layout_toEndOf="@id/labelCancelledHoursPart2"
+        android:layout_alignBottom="@id/labelCancelledHoursPart1"
+        android:gravity="bottom|left"
+        android:text="72"/>
+
+    <TextView
+        android:id="@+id/labelCancelledHoursPart3"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginStart="3dp"
+        android:textColor="@color/calendarBlack"
+        android:layout_below="@id/labelReadHoursPart1"
+        android:layout_toEndOf="@id/contentLeftParaQuantity"
+        android:text="@string/label_read_hours_part3"
+        android:layout_alignBottom="@id/labelCancelledHoursPart1"
+        android:gravity="bottom|left"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:id="@+id/labelLeftHoursPart1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/labelCancelledHoursPart1"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="15dp"
         android:layout_marginEnd="0dp"
         android:layout_toStartOf="@id/contentLeftHours"
         android:text="@string/label_left_hours_part1"
@@ -226,13 +293,13 @@
 
     <TextView
         android:id="@+id/contentLeftHours"
-        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:layout_below="@id/labelReadHoursPart1"
+        android:layout_below="@id/labelCancelledHoursPart1"
         android:layout_alignStart="@id/contentReadHours"
         android:layout_alignBottom="@id/labelLeftHoursPart1"
+        android:layout_alignTop="@id/labelLeftHoursPart1"
         android:gravity="bottom|left"
         android:text="72"/>
 
@@ -244,7 +311,7 @@
         android:textSize="16sp"
         android:layout_marginStart="3dp"
         android:textColor="@color/calendarBlack"
-        android:layout_below="@id/labelReadHoursPart1"
+        android:layout_below="@id/labelCancelledHoursPart1"
         android:layout_toEndOf="@id/contentLeftHours"
         android:layout_alignBottom="@id/labelLeftHoursPart1"
         android:text="@string/label_read_hours_part2"
@@ -257,7 +324,7 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:layout_marginStart="3dp"
-        android:layout_below="@id/labelReadHoursPart1"
+        android:layout_below="@id/labelCancelledHoursPart1"
         android:layout_toEndOf="@id/labelLeftHoursPart2"
         android:layout_alignBottom="@id/labelLeftHoursPart1"
         android:gravity="bottom|left"
@@ -271,10 +338,12 @@
         android:textSize="16sp"
         android:layout_marginStart="3dp"
         android:textColor="@color/calendarBlack"
-        android:layout_below="@id/labelReadHoursPart1"
+        android:layout_below="@id/labelCancelledHoursPart1"
         android:layout_toEndOf="@id/contentLeftParaQuantity"
         android:text="@string/label_read_hours_part3"
         android:layout_alignBottom="@id/labelLeftHoursPart1"
         android:gravity="bottom|left"
         android:layout_alignParentEnd="true"/>
+</RelativeLayout>
+</ScrollView>
 </RelativeLayout>

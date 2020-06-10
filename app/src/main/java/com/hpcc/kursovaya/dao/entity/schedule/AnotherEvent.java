@@ -58,6 +58,19 @@ public class AnotherEvent extends RealmObject implements EntityI<AnotherEvent>, 
         setRepeatForNextWeek(repeatForNextWeek);
     }
 
+    public static RealmResults<AnotherEvent> anotherEventListFromPeriod(Date from, Date to){
+        Realm realm = Realm.getDefaultInstance();
+        List<RealmResults<AnotherEvent>> list = new ArrayList<>();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                list.add(realm.where(AnotherEvent.class).between("date", from, to).findAll());
+            }
+        });
+        Log.d(TAG,  "anotherEventListFromPeriod" + list.get(ConstantApplication.ZERO).toString());
+        return (list.get(ConstantApplication.ZERO));
+    }
+
     public int getRepeatForNextWeek() {
         return repeatForNextWeek;
     }

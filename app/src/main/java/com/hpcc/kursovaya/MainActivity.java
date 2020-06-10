@@ -3,6 +3,7 @@ package com.hpcc.kursovaya;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,6 +24,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -55,6 +57,7 @@ import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.groups.GroupsFragment;
+import com.hpcc.kursovaya.ui.hourChecker.activity.GroupCheckActivity;
 import com.hpcc.kursovaya.ui.schedule.DayScheduleFragment;
 import com.hpcc.kursovaya.ui.schedule.MonthScheduleFragment;
 import com.hpcc.kursovaya.ui.schedule.ScheduleFragment;
@@ -92,6 +95,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -100,6 +104,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String DAY_TAG = "DAYVIEW";
@@ -132,9 +137,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TemplateScheduleWeek upperTemplate;
     private TemplateScheduleWeek bottomTemplate;
     private ImageButton backToCurrentDay;
+    public ImageButton openGroupCheckActivity;
     private ImageButton searchButton;
     private TextView currentDayText;
     private int weeksFromCurrent;
+
+    private DateTime dateFrom = DateTime.now().withMillisOfDay(0);
+    private DateTime dateTo = DateTime.now().withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).withMillisOfSecond(999);
 
     public void setToolbarSearch(Toolbar toolbarSearch) {
         this.toolbarSearch = toolbarSearch;
@@ -182,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         backToCurrentDay = toolbar.findViewById(R.id.toCurrentDay);
+        openGroupCheckActivity = toolbar.findViewById(R.id.group_check_button);
         currentDayText = toolbar.findViewById(R.id.currentDayText);
         currentDayText.setText(Integer.toString(DateTime.now().getDayOfMonth()));
         toolbar1 = findViewById(R.id.toolbarEdit);
@@ -228,6 +238,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         searchButton.setOnClickListener(v -> {
             toolbar.setVisibility(View.GONE);
             toolbarSearch.setVisibility(View.VISIBLE);
+        });
+
+        openGroupCheckActivity.setOnClickListener(v->{
+            Intent intent = new Intent(getApplicationContext(), GroupCheckActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -408,6 +423,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 isScheduleSelected = true;
                 searchButton.setVisibility(View.GONE);
+                openGroupCheckActivity.setVisibility(View.VISIBLE);
                 toolbarSearch.setVisibility(View.GONE);
                 toolbar.setVisibility(View.VISIBLE);
                 showOverflowMenu(true);
@@ -426,6 +442,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 isScheduleSelected = false;
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarSearch.setVisibility(View.GONE);
+                openGroupCheckActivity.setVisibility(View.GONE);
                 searchButton.setVisibility(View.VISIBLE);
                 showOverflowMenu(false);
                 break;
@@ -443,6 +460,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 isScheduleSelected = false;
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarSearch.setVisibility(View.GONE);
+                openGroupCheckActivity.setVisibility(View.GONE);
                 searchButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_subjects:
@@ -460,6 +478,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 isScheduleSelected = false;
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarSearch.setVisibility(View.GONE);
+                openGroupCheckActivity.setVisibility(View.GONE);
                 searchButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_specialities:
@@ -476,6 +495,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 isScheduleSelected = false;
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarSearch.setVisibility(View.GONE);
+                openGroupCheckActivity.setVisibility(View.GONE);
                 searchButton.setVisibility(View.VISIBLE);
                 showOverflowMenu(false);
                 break;
@@ -493,6 +513,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 isScheduleSelected = false;
                 toolbar.setVisibility(View.VISIBLE);
                 searchButton.setVisibility(View.GONE);
+                openGroupCheckActivity.setVisibility(View.GONE);
                 toolbarSearch.setVisibility(View.GONE);
                 showOverflowMenu(false);
                 break;
@@ -563,6 +584,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         genReport = getLayoutInflater().inflate(R.layout.dialog_choose_report_period, null);
         builder.setView(genReport);
 
+        dateFrom = DateTime.now();
+        dateTo = DateTime.now();
+        pickerFrom = genReport.findViewById(R.id.dateFromPicker);
+        pickerFrom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(currentContext, dFromListener, dateFrom.getYear(),dateFrom.getMonthOfYear()-1,dateFrom.getDayOfMonth()).show();
+            }
+        });
+        pickerTo = genReport.findViewById(R.id.dateToPicker);
+        pickerTo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(currentContext, dToListener, dateTo.getYear(),dateTo.getMonthOfYear()-1,dateTo.getDayOfMonth()).show();
+            }
+        });
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy",LocaleManager.getLocale(getResources()));
+        pickerFrom.setText(simpleDateFormat.format(dateFrom.toDate()));
+        pickerTo.setText(simpleDateFormat.format(dateTo.toDate()));
         Spinner spinnerSpeciality =
                 ConstantApplication.fillingSpinner(currentContext, genReport.findViewById(R.id.specialitySpinner),
                         new Speciality().entityToNameList());
@@ -605,9 +645,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String item = (String) parent.getItemAtPosition(selectedItemPosition);
                 Speciality speciality = DBManager.read(Speciality.class, ConstantApplication.NAME, item);
                 specialities.set(0,speciality);
-
-                ConstantApplication.fillingSpinner(currentContext,spinnerCourse,
-                        ConstantApplication.countCourse(speciality.getCountCourse()));
+                List<String> courses = new ArrayList<>();
+                for(int i=1; i<5;i++){
+                    courses.add(Integer.toString(i));
+                }
+                courses.add(getResources().getString(R.string.all_courses));
+                ConstantApplication.fillingSpinner(currentContext,spinnerCourse, courses);
             }
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -615,30 +658,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void onClickAcceptReportDates(DialogInterface dialog, int which,Speciality speciality) {
-        final DatePicker pickerFrom = genReport.findViewById(R.id.dateFromPicker);
+        /*final DatePicker pickerFrom = genReport.findViewById(R.id.dateFromPicker);
         final DatePicker pickerTo = genReport.findViewById(R.id.dateToPicker);
-        final Spinner courseSpinner = genReport.findViewById(R.id.courseSpinner);
         int fromYear = pickerFrom.getYear();
         int fromMonth = pickerFrom.getMonth();
-        int fromDay = pickerFrom.getDayOfMonth();
-        DateTime from = new DateTime(fromYear,fromMonth+1,fromDay,0,0);
+        int fromDay = pickerFrom.getDayOfMonth();*/
+        SimpleDateFormat fileNameFormat = new SimpleDateFormat("ddMMyyyyHHmmss",LocaleManager.getLocale(getResources()));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy",LocaleManager.getLocale(getResources()));
+        DateTime from = dateFrom;
+        final Spinner courseSpinner = genReport.findViewById(R.id.courseSpinner);
 
-        int toYear = pickerTo.getYear();
+        /*int toYear = pickerTo.getYear();
         int toMonth = pickerTo.getMonth();
-        int toDay = pickerTo.getDayOfMonth();
-        DateTime to = new DateTime(toYear,toMonth+1,toDay,0,0);
+        int toDay = pickerTo.getDayOfMonth();*/
+        DateTime to = dateTo;
 
         boolean isDataCorrect = true;
-        if(speciality.getCountCourse()<Integer.valueOf(courseSpinner.getSelectedItem().toString())){
-            isDataCorrect = false;
-        }
-        if(pickerFrom.getYear()<1990 && (pickerFrom.getMonth())+1<1 && pickerFrom.getDayOfMonth()<1
-                && pickerTo.getYear()<1990 && pickerTo.getMonth()+1<1 && pickerTo.getDayOfMonth()<1
+        if(dateFrom.getYear()<1990 && (dateFrom.getMonthOfYear())+1<1 && dateFrom.getDayOfMonth()<1
+                && dateTo.getYear()<1990 && dateTo.getMonthOfYear()+1<1 && dateTo.getDayOfMonth()<1
                 && from.isBefore(to)) {
             isDataCorrect = false;
         }
         if(isDataCorrect){
-            String existstoragedir = getExternalFilesDir(null).getAbsolutePath() + "/report.pdf";
+
+
+            StringBuilder reportName = new StringBuilder("/report")
+                    .append(fileNameFormat.format(DateTime.now().toDate()))
+                    .append(".pdf");
+
+            String existstoragedir = getExternalFilesDir(null).getAbsolutePath() + reportName.toString();
             File file = new File(existstoragedir);
 
 
@@ -660,162 +708,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             Font fontSmall = new Font(bf, 10, Font.NORMAL);
             Document document = new Document();
+            PdfWriter writer = null;
             try {
-                PdfWriter.getInstance(document, new FileOutputStream(file.getAbsoluteFile()));
+                writer = PdfWriter.getInstance(document, new FileOutputStream(file.getAbsoluteFile()));
             } catch (DocumentException e) {
                 e.printStackTrace();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
             document.open();
-
             document.setPageSize(PageSize.A4);
-            Paragraph paragraphCourse = new Paragraph();
-            paragraphCourse.setSpacingAfter(32);
-
-            Chunk course = new Chunk(getString(R.string.courseLabelPDF)+" "+courseSpinner.getSelectedItem().toString(),fontSmall);
-            paragraphCourse.add(course);
-            paragraphCourse.setAlignment(Element.ALIGN_CENTER);
-
-            Paragraph paragraphSpeciality = new Paragraph();
-            paragraphSpeciality.setSpacingAfter(32);
-
-            Chunk specialityLabel = new Chunk(getString(R.string.specialityLabelPDF)+" "+speciality.getName(),fontSmall);
-            paragraphSpeciality.add(specialityLabel);
-            paragraphSpeciality.setAlignment(Element.ALIGN_CENTER);
-            try {
-                document.add(paragraphCourse);
-                document.add(paragraphSpeciality);
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
-
-            DateTime currentDate = DateTime.now();
-
-            Paragraph paragraphDates = new Paragraph();
-            paragraphDates.setIndentationLeft(100f);
-            paragraphDates.setIndentationRight(100f);
-            paragraphDates.setSpacingAfter(32);
-            Chunk glue = new Chunk(new VerticalPositionMark());
-            Phrase dates = new Phrase("",fontSmall);
-            String currentDayOfMonth = (currentDate.getDayOfMonth()<10) ? "0"+currentDate.getDayOfMonth() : currentDate.getDayOfMonth()+"";
-            String currentMonth = (currentDate.getMonthOfYear()<10) ? "0"+currentDate.getMonthOfYear() : currentDate.getMonthOfYear()+"";
-            String fromMonthStr = (fromMonth < 10) ? "0"+fromMonth : fromMonth+"";
-            String fromDayStr = (fromDay < 10) ? "0"+fromDay : fromDay+"";
-            String toMonthStr = (toMonth < 10) ? "0"+toMonth : toMonth+"";
-            String toDayStr = (toDay < 10) ? "0" + toDay : toDay + "";
-
-            dates.add(getString(R.string.creationDatePDF)+" "+currentDayOfMonth+"."+currentMonth+"."+currentDate.getYear());
-            dates.add(glue);
-            dates.add(getString(R.string.periodLabelPDF)+" "+fromDayStr+"."+fromMonthStr+"."+fromYear+" - "+toDayStr+"."+toMonthStr+"."+toYear);
-            paragraphDates.add(dates);
-            try {
-                document.add(paragraphDates);
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
-
-            List<AcademicHour> academicHourList = new ArrayList<>();
-            List<Group> groupList = new ArrayList<>();
-            List<Subject> subjectList = new ArrayList<>();
-            for(AcademicHour academicHour : AcademicHour.academicHourListFromPeriod(from.toDate(),to.plusDays(1).toDate())){
-                try{
-                    TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
-                    if(templateAcademicHour!=null){
-                        Group group = templateAcademicHour.getGroup();
-                        Subject subject = templateAcademicHour.getSubject();
-                        if(group!=null && subject!=null){
-                            Speciality specialityFromHour = group.getSpecialty();
-                            if(specialityFromHour!=null && speciality.equals(specialityFromHour) && group.getNumberCourse()==Integer.valueOf(courseSpinner.getSelectedItem().toString())){
-                                groupList.add(group);
-                                subjectList.add(subject);
-                                academicHourList.add(academicHour);
-                            }
-                        }
-                    }
-                } catch (Exception ex){
-                    Log.e(TAG, "reportGen:"+ex.toString());
+            if(courseSpinner.getSelectedItem().toString().equals(getResources().getString(R.string.all_courses))){
+                for(int i=1; i<5;i++){
+                    genDocument(document,i,fontSmall,speciality);
+                    document.newPage();
                 }
-
-            }
-            groupList = new ArrayList<>(new LinkedHashSet<>(groupList));
-            subjectList = new ArrayList<>(new LinkedHashSet<>(subjectList));
-
-            Map<Group,List<AcademicHour>> academicHoursOfGroup = new HashMap<>();
-            for(Group group : groupList){
-                List<AcademicHour> academicHours = new ArrayList<>();
-                for(AcademicHour academicHour : academicHourList){
-                    TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
-                    if(templateAcademicHour.getGroup()!=null && group.equals(templateAcademicHour.getGroup())){
-                        academicHours.add(academicHour);
-                    }
-                }
-                academicHoursOfGroup.put(group,academicHours);
-            }
-
-
-            PdfPTable table = new PdfPTable(groupList.size() + 1);
-            float[] relWidths = new float[groupList.size() + 1];
-            relWidths[0] = 12f;
-            for (int i = 1; i < groupList.size() + 1; i++) {
-                relWidths[i] = 2f;
-            }
-            try {
-                table.setWidths(relWidths);
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
-
-
-            PdfPCell cellDiscipline = new PdfPCell(new Phrase(getResources().getString(R.string.tableDisciplineHeader), fontSmall));
-            cellDiscipline.setRowspan(2);
-            cellDiscipline.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cellDiscipline.setVerticalAlignment(Element.ALIGN_CENTER);
-            table.addCell(cellDiscipline);
-            PdfPCell cellGroupHeader = new PdfPCell(new Phrase(getResources().getString(R.string.tableGroupHeader), fontSmall));
-            cellGroupHeader.setColspan(groupList.size());
-            cellGroupHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cellGroupHeader.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table.addCell(cellGroupHeader);
-
-            for (int i = 0; i < groupList.size(); i++) {
-                PdfPCell cellGroupName = new PdfPCell(new Phrase(groupList.get(i).getName(), fontSmall));
-                cellGroupName.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cellGroupName.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                table.addCell(cellGroupName);
-            }
-            for(int i = 0 ;i<subjectList.size();i++) {
-                PdfPTable innerTable = new PdfPTable(2);
-                PdfPCell subjectCell = new PdfPCell(new Phrase(subjectList.get(i).getName(), fontSmall));
-                subjectCell.setRowspan(4);
-                subjectCell.setBorder(Rectangle.NO_BORDER);
-                innerTable.addCell(subjectCell);
-                innerTable.addCell(new Phrase(getResources().getString(R.string.tablePlanHeader), fontSmall));
-                innerTable.addCell(new Phrase(getResources().getString(R.string.tableFactHeader), fontSmall));
-                innerTable.addCell(new Phrase(getResources().getString(R.string.tableCanceledHeader), fontSmall));
-                innerTable.addCell(new Phrase(getResources().getString(R.string.tableRestHeader), fontSmall));
-                PdfPCell inOutPadding = new PdfPCell(innerTable);
-                inOutPadding.setPadding(0);
-                table.addCell(inOutPadding);
-                for (int j = 0; j < groupList.size(); j++) {
-                    PdfPTable hoursTable = new PdfPTable(1);
-                    int planHours = groupList.get(j).getPlanHours(subjectList.get(i),academicHoursOfGroup.get(groupList.get(j)));
-                    int factHours = groupList.get(j).getReadHours(subjectList.get(i),academicHoursOfGroup.get(groupList.get(j)));
-                    int cancelledHours = groupList.get(j).getCanceledHours(subjectList.get(i),academicHoursOfGroup.get(groupList.get(j)));
-                    hoursTable.addCell(new Phrase(Integer.toString(planHours)/*plan hours*/, fontSmall));
-                    hoursTable.addCell(new Phrase(Integer.toString(factHours)/*fact hours*/, fontSmall));
-                    hoursTable.addCell(new Phrase(Integer.toString(cancelledHours)/*cancelled hours*/, fontSmall));
-                    hoursTable.addCell(new Phrase(Integer.toString(planHours-factHours-cancelledHours)/*Rest hours hours*/, fontSmall));
-                    PdfPCell temp = new PdfPCell((hoursTable));
-                    temp.setPadding(0);
-                    table.addCell(temp);
-                }
-            }
-
-            try {
-                document.add(table);
-            } catch (DocumentException e) {
-                e.printStackTrace();
+            } else {
+                genDocument(document,Integer.parseInt(courseSpinner.getSelectedItem().toString()),fontSmall,speciality);
             }
             document.close();
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -835,7 +744,169 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void genDocument(Document document, int courseNumber, Font fontSmall, Speciality speciality){
+        List<AcademicHour> academicHourList = new ArrayList<>();
+        List<Group> groupList = new ArrayList<>();
+        List<Subject> subjectList = new ArrayList<>();
+        for(AcademicHour academicHour : AcademicHour.academicHourListFromPeriod(dateFrom.toDate(),dateTo.plusDays(1).toDate())){
+            try{
+                TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+                if(templateAcademicHour!=null){
+                    Group group = templateAcademicHour.getGroup();
+                    Subject subject = templateAcademicHour.getSubject();
+                    if(group!=null && subject!=null){
+                        Speciality specialityFromHour = group.getSpecialty();
+                        if(specialityFromHour!=null && speciality.equals(specialityFromHour) && group.getNumberCourse()==courseNumber){
+                            groupList.add(group);
+                            subjectList.add(subject);
+                            academicHourList.add(academicHour);
+                        }
+                    }
+                }
+            } catch (Exception ex){
+                Log.e(TAG, "reportGen:"+ex.toString());
+            }
+
+        }
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", LocaleManager.getLocale(getResources()));
+            Paragraph paragraphCourse = new Paragraph();
+            paragraphCourse.setSpacingAfter(32);
+
+            Chunk course = new Chunk(getString(R.string.courseLabelPDF) + " " + courseNumber, fontSmall);
+            paragraphCourse.add(course);
+            paragraphCourse.setAlignment(Element.ALIGN_CENTER);
+
+            Paragraph paragraphSpeciality = new Paragraph();
+            paragraphSpeciality.setSpacingAfter(32);
+
+            Chunk specialityLabel = new Chunk(getString(R.string.specialityLabelPDF) + " " + speciality.getName(), fontSmall);
+            paragraphSpeciality.add(specialityLabel);
+            paragraphSpeciality.setAlignment(Element.ALIGN_CENTER);
+            try {
+                document.add(paragraphCourse);
+                document.add(paragraphSpeciality);
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            }
+
+            DateTime currentDate = DateTime.now();
+
+            Paragraph paragraphDates = new Paragraph();
+            paragraphDates.setIndentationLeft(100f);
+            paragraphDates.setIndentationRight(100f);
+            paragraphDates.setSpacingAfter(32);
+            Chunk glue = new Chunk(new VerticalPositionMark());
+            Phrase dates = new Phrase("", fontSmall);
+
+            dates.add(getString(R.string.creationDatePDF) + " " + simpleDateFormat.format(currentDate.toDate()));
+            dates.add(glue);
+            dates.add(getString(R.string.periodLabelPDF) + " " + simpleDateFormat.format(dateFrom.toDate()) + " - " + simpleDateFormat.format(dateTo.toDate()));
+            paragraphDates.add(dates);
+            try {
+                document.add(paragraphDates);
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            }
+            if(academicHourList.size()!=0) {
+                groupList = new ArrayList<>(new LinkedHashSet<>(groupList));
+                subjectList = new ArrayList<>(new LinkedHashSet<>(subjectList));
+
+                Map<Group, List<AcademicHour>> academicHoursOfGroup = new HashMap<>();
+                for (Group group : groupList) {
+                    List<AcademicHour> academicHours = new ArrayList<>();
+                    for (AcademicHour academicHour : academicHourList) {
+                        TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+                        if (templateAcademicHour.getGroup() != null && group.equals(templateAcademicHour.getGroup())) {
+                            academicHours.add(academicHour);
+                        }
+                    }
+                    academicHoursOfGroup.put(group, academicHours);
+                }
+
+
+                PdfPTable table = new PdfPTable(groupList.size() + 1);
+                float[] relWidths = new float[groupList.size() + 1];
+                relWidths[0] = 12f;
+                for (int i = 1; i < groupList.size() + 1; i++) {
+                    relWidths[i] = 2f;
+                }
+                try {
+                    table.setWidths(relWidths);
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+
+
+                PdfPCell cellDiscipline = new PdfPCell(new Phrase(getResources().getString(R.string.tableDisciplineHeader), fontSmall));
+                cellDiscipline.setRowspan(2);
+                cellDiscipline.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cellDiscipline.setVerticalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cellDiscipline);
+                PdfPCell cellGroupHeader = new PdfPCell(new Phrase(getResources().getString(R.string.tableGroupHeader), fontSmall));
+                cellGroupHeader.setColspan(groupList.size());
+                cellGroupHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cellGroupHeader.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                table.addCell(cellGroupHeader);
+
+                for (int i = 0; i < groupList.size(); i++) {
+                    PdfPCell cellGroupName = new PdfPCell(new Phrase(groupList.get(i).getName(), fontSmall));
+                    cellGroupName.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellGroupName.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    table.addCell(cellGroupName);
+                }
+                for (int i = 0; i < subjectList.size(); i++) {
+                    PdfPTable innerTable = new PdfPTable(2);
+                    PdfPCell subjectCell = new PdfPCell(new Phrase(subjectList.get(i).getName(), fontSmall));
+                    subjectCell.setRowspan(4);
+                    subjectCell.setBorder(Rectangle.NO_BORDER);
+                    innerTable.addCell(subjectCell);
+                    innerTable.addCell(new Phrase(getResources().getString(R.string.tablePlanHeader), fontSmall));
+                    innerTable.addCell(new Phrase(getResources().getString(R.string.tableFactHeader), fontSmall));
+                    innerTable.addCell(new Phrase(getResources().getString(R.string.tableCanceledHeader), fontSmall));
+                    innerTable.addCell(new Phrase(getResources().getString(R.string.tableRestHeader), fontSmall));
+                    PdfPCell inOutPadding = new PdfPCell(innerTable);
+                    inOutPadding.setPadding(0);
+                    table.addCell(inOutPadding);
+                    for (int j = 0; j < groupList.size(); j++) {
+                        PdfPTable hoursTable = new PdfPTable(1);
+                        int planHours = groupList.get(j).getPlanHours(subjectList.get(i), academicHoursOfGroup.get(groupList.get(j)));
+                        int factHours = groupList.get(j).getReadHours(subjectList.get(i), academicHoursOfGroup.get(groupList.get(j)));
+                        int cancelledHours = groupList.get(j).getCanceledHours(subjectList.get(i), academicHoursOfGroup.get(groupList.get(j)));
+                        hoursTable.addCell(new Phrase(Integer.toString(planHours)/*plan hours*/, fontSmall));
+                        hoursTable.addCell(new Phrase(Integer.toString(factHours)/*fact hours*/, fontSmall));
+                        hoursTable.addCell(new Phrase(Integer.toString(cancelledHours)/*cancelled hours*/, fontSmall));
+                        hoursTable.addCell(new Phrase(Integer.toString(planHours - factHours - cancelledHours)/*Rest hours hours*/, fontSmall));
+                        PdfPCell temp = new PdfPCell((hoursTable));
+                        temp.setPadding(0);
+                        table.addCell(temp);
+                    }
+                }
+
+                try {
+                    document.add(table);
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Paragraph thereIsNoGroups = new Paragraph();
+                Chunk noSuitableGroups = new Chunk(getString(R.string.there_is_no_groups), fontSmall);
+                thereIsNoGroups.add(noSuitableGroups);
+                thereIsNoGroups.setAlignment(Element.ALIGN_CENTER);
+                try {
+                    document.add(thereIsNoGroups);
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+            }
+    }
+
+
+    Button pickerFrom = null;
+    Button pickerTo = null;
     public void prepareActionImportTemplates() {
+        dateFrom = DateTime.now();
+        dateTo = DateTime.now();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.action_importTemplates);
         AtomicBoolean isUpperFirst = new AtomicBoolean(true);
@@ -847,7 +918,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                onClickAcceptImportTemplates(dialog,which,isUpperFirst.get());
+                //onClickAcceptImportTemplates(dialog,which,isUpperFirst.get());
             }
         });
         builder.setNegativeButton(R.string.popup_cancel,new DialogInterface.OnClickListener(){
@@ -904,8 +975,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         final TextView periodFromLabel = importTemplates.findViewById(R.id.periodFromLabel);
         final TextView periodToLabel = importTemplates.findViewById(R.id.periodToLabel);
-        final DatePicker pickerFrom = importTemplates.findViewById(R.id.dateFromPicker);
-        final DatePicker pickerTo = importTemplates.findViewById(R.id.dateToPicker);
+        pickerFrom = importTemplates.findViewById(R.id.dateFromPicker);
+        pickerFrom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(currentContext,dFromListener, dateFrom.getYear(),dateFrom.getMonthOfYear()-1,dateFrom.getDayOfMonth()).show();
+            }
+        });
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy",LocaleManager.getLocale(getResources()));
+        pickerTo = importTemplates.findViewById(R.id.dateToPicker);
+        pickerTo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(currentContext,dToListener, dateTo.getYear(),dateTo.getMonthOfYear()-1,dateTo.getDayOfMonth()).show();
+            }
+        });
+        pickerFrom.setText(simpleDateFormat.format(dateFrom.toDate()));
+        pickerTo.setText(simpleDateFormat.format(dateTo.toDate()));
         builder.setView(importTemplates);
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -913,6 +999,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onShow(DialogInterface arg0) {
                 dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.sideBar));
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.sideBar));
+            }
+        });
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        // TODO Do something
+                        onClickAcceptImportTemplates(dialog,isUpperFirst.get());
+                        //Dismiss once everything is OK
+                    }
+                });
             }
         });
         dialog.show();
@@ -923,24 +1026,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         leftSpacer.setVisibility(View.GONE);
     }
 
+    DatePickerDialog.OnDateSetListener dFromListener=new DatePickerDialog.OnDateSetListener() {
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            dateFrom = dateFrom.withYear(year).withMonthOfYear(monthOfYear+1).withDayOfMonth(dayOfMonth);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy",LocaleManager.getLocale(getResources()));
+            pickerFrom.setText(simpleDateFormat.format(dateFrom.toDate()));
+        }
+    };
+
+    DatePickerDialog.OnDateSetListener dToListener=new DatePickerDialog.OnDateSetListener() {
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            dateTo = dateTo.withYear(year).withMonthOfYear(monthOfYear+1).withDayOfMonth(dayOfMonth);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy",LocaleManager.getLocale(getResources()));
+            pickerTo.setText(simpleDateFormat.format(dateTo.toDate()));
+        }
+    };
+
     private void onClickCancelmportTemplates(DialogInterface dialog, int which) {
         dialog.cancel();
     }
 
-    private void onClickAcceptImportTemplates(DialogInterface dialog, int which, boolean isUpperTemplate) {
-        DatePicker dateFromPicker = importTemplates.findViewById(R.id.dateFromPicker);
-        DatePicker dateToPicker = importTemplates.findViewById(R.id.dateToPicker);
+    private void onClickAcceptImportTemplates(DialogInterface dialog,  boolean isUpperTemplate) {
+        /*DatePicker dateFromPicker = importTemplates.findViewById(R.id.dateFromPicker);
+        DatePicker dateToPicker = importTemplates.findViewById(R.id.dateToPicker);*/
         List<TemplateAcademicHour> templateListUpper = upperTemplate.getTemplateAcademicHourList();
         List<TemplateAcademicHour> templateListBottom = bottomTemplate.getTemplateAcademicHourList();
-        DateTime from = new DateTime(dateFromPicker.getYear(),dateFromPicker.getMonth()+1,dateFromPicker.getDayOfMonth(),0,0);
-        DateTime to = new DateTime(dateToPicker.getYear(),dateToPicker.getMonth()+1,dateToPicker.getDayOfMonth(),0,0);
+        DateTime from = dateFrom;
+        DateTime to = dateTo;
         boolean isDatesCorrect = true;
-        if(dateFromPicker.getYear()<1990 && (dateFromPicker.getMonth())+1<1 && dateFromPicker.getDayOfMonth()<1
-                && dateToPicker.getYear()<1990 && dateToPicker.getMonth()+1<1 && dateToPicker.getDayOfMonth()<1
+        if(dateFrom.getYear()<1990 && (dateFrom.getMonthOfYear())<1 && dateFrom.getDayOfMonth()<1
+                && dateTo.getYear()<1990 && dateTo.getMonthOfYear()<1 && dateTo.getDayOfMonth()<1
                 && from.isBefore(to)) {
             isDatesCorrect = false;
         }
+        ProgressBar bar = importTemplates.findViewById(R.id.bar);
         if(isDatesCorrect){
+
             int weekCount = countWeeks(from,to);
             List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(from.toDate(),to.toDate()));
             Collections.sort(academicHours, (o1, o2) -> {
@@ -948,6 +1069,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     return 0;
                 return o1.getDate().compareTo(o2.getDate());
             });
+
             boolean isUpperCopy = isUpperTemplate;
             for(int i = 0; i<weekCount;i++){
                 if(isUpperCopy) {
@@ -983,8 +1105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
 
-
-
+            runOnUiThread(()-> bar.setProgress(20));
             DateTime current = new DateTime(from);
             List<AcademicHour> academicHourList = new ArrayList<>();
             for(int i = 0; i<weekCount;i++){
@@ -1035,10 +1156,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     current = current.dayOfWeek().withMaximumValue().plusDays(1);
                     isUpperTemplate = true;
                 }
+                int finalI = i;
+                runOnUiThread(()-> bar.setProgress(20+getBarProgress(weekCount, finalI +1,40)));
             }
+            AtomicInteger hoursWritten = new AtomicInteger();
             for(AcademicHour academicHour : academicHourList){
                 try {
-                    DBManager.write(academicHour.createEntity());
+                    DBManager.write(academicHour.createEntityWithoutChecking());
+                    academicHour.refreshAllNumberPair(null);
                 } catch (Exception e) {
                     Log.e(TAG,"error when writing templates"+e.toString());
                 }
@@ -1056,10 +1181,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     ((DayScheduleFragment)oldFragment3).invokeRefresh();
                 }
             }
+            dialog.dismiss();
         } else {
             prepareActionImportTemplates();
             Toast.makeText(getApplicationContext(),R.string.popup_dates_wrong,Toast.LENGTH_LONG).show();
         }
+
+    }
+
+    private int getBarProgress(int total, int current,int sum) {
+        return (current*total/sum);
     }
 
     private int countWeeks(DateTime from, DateTime to) {

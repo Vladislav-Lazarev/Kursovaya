@@ -5,11 +5,6 @@
     android:background="?android:attr/activatedBackgroundIndicator">
 
 
-    <RelativeLayout
-        android:layout_alignParentStart="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toStartOf="@id/contentBlock">
 
         <TextView
             android:id="@+id/groupNameLabel"
@@ -41,7 +36,7 @@
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
             android:layout_marginTop="10dp"
-            android:layout_below="@id/specialityLabel"
+            android:layout_below="@id/specialityText"
             android:layout_marginStart="6dp"/>
 
 
@@ -80,18 +75,13 @@
             android:layout_marginTop="10dp"
             android:layout_below="@id/canceledHoursLabel"
             android:layout_marginStart="6dp"/>
-    </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/contentBlock"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
         <TextView
             android:id="@+id/groupNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/textStub"
+            android:layout_alignStart="@id/totalHoursText"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
             android:layout_marginTop="10dp" />
@@ -100,6 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/textStub"
+            android:layout_alignStart="@id/totalHoursText"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
             android:layout_marginTop="10dp"
@@ -108,6 +99,8 @@
             android:id="@+id/totalHoursText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_toEndOf="@id/totalHoursLabel"
             android:text="@string/textStub"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
@@ -119,6 +112,7 @@
             android:layout_height="wrap_content"
             android:text="@string/textStub"
             android:textSize="16sp"
+            android:layout_alignStart="@id/totalHoursText"
             android:textColor="@color/appDefaultBlack"
             android:layout_marginTop="10dp"
             android:layout_below="@id/totalHoursText" />
@@ -127,6 +121,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/textStub"
+            android:layout_alignStart="@id/totalHoursText"
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
             android:layout_marginTop="10dp"
@@ -139,7 +134,7 @@
             android:textSize="16sp"
             android:textColor="@color/appDefaultBlack"
             android:layout_marginTop="10dp"
+            android:layout_alignStart="@id/totalHoursText"
             android:layout_marginBottom="10dp"
             android:layout_below="@id/canceledHoursText" />
-    </RelativeLayout>
 </RelativeLayout>

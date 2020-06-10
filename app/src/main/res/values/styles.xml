@@ -22,6 +22,7 @@
 
     </style>
 
+
     <style name="mainActStyle" parent="AppTheme">
         <item name="colorPrimaryDark">#FFFFFF</item>
         <item name="android:windowTranslucentStatus">true</item>
