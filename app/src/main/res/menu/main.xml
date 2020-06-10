@@ -4,11 +4,6 @@
     <group
         android:id="@+id/main_menu_group">
         <item
-            android:id="@+id/action_deleteClasses"
-            android:orderInCategory="100"
-            android:title="@string/action_deleteClasses"
-            app:showAsAction="never" />
-        <item
             android:id="@+id/action_checkRead"
             android:orderInCategory="100"
             android:title="@string/action_read"
@@ -22,6 +17,11 @@
             android:id="@+id/action_importTemplates"
             android:orderInCategory="100"
             android:title="@string/action_importTemplates"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_deleteClasses"
+            android:orderInCategory="100"
+            android:title="@string/action_deleteClasses"
             app:showAsAction="never" />
         <item
             android:id="@+id/action_reportPeriod"

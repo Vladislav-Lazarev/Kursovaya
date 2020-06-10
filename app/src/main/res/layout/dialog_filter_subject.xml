@@ -11,6 +11,17 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/filterGroupLabel"
+                android:text="@string/groupName_label"
+                android:textColor="@color/appDefaultBlack"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="23dp"
+               />
+
+            <TextView
                 android:id="@+id/filterSpecialityLabel"
                 android:text="@string/specialty_label"
                 android:textColor="@color/appDefaultBlack"
@@ -19,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="23dp"
                 android:layout_marginStart="15dp"
+                android:layout_below="@id/filterGroupLabel"
                 />
 
             <TextView
@@ -32,12 +44,22 @@
                 android:layout_marginTop="23dp"
                 android:layout_below="@id/filterSpecialityLabel"/>
 
+            <Spinner
+                android:id="@+id/spinnerGroup"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="63dp"
+                android:layout_marginTop="19dp"
+                android:layout_toEndOf="@id/filterGroupLabel"/>
+
 
             <Spinner
                 android:id="@+id/spinnerSpeciality"
                 android:layout_width="wrap_content"
                 android:layout_marginEnd="15dp"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/spinnerGroup"
                 android:layout_toEndOf="@id/filterSpecialityLabel"
                 android:layout_marginStart="9dp"
                 android:layout_marginTop="26dp"

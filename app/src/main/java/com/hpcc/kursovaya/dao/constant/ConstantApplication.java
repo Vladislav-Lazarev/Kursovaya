@@ -107,6 +107,10 @@ public class ConstantApplication {
         return false;
     }
 
+    public static int secondCellShift(int currentCellPosition){
+        return (currentCellPosition % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1;
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // UI
 

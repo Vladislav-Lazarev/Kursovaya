@@ -9,10 +9,13 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 
 import com.hpcc.kursovaya.AlarmClassReceiver;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.EntityI;
+import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.query.DBManager;
 
@@ -21,6 +24,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +32,9 @@ import java.util.Objects;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, Parcelable, Cloneable {
@@ -42,6 +48,7 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
     private int notificationBefore;//значение оповещения для оператора выбора
     private boolean isCompleted;// Проведенная или не проведенная полупара
     private boolean isCanceled;// Отмененная или не проведенная полупара
+    private int numberPair;
 
     public AcademicHour() {
         id = 0;
@@ -51,8 +58,9 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
         note = "";
         isCompleted = false;
         isCanceled = false;
+        numberPair = 7;
     }
-    public AcademicHour(int id, @NotNull TemplateAcademicHour templateAcademicHour, @NotNull Date date, @NotNull String note,int notificationBefore,int repeatForNextWeek, boolean isCompleted, boolean isCanceled) {
+    public AcademicHour(int id, @NotNull TemplateAcademicHour templateAcademicHour, @NotNull Date date, @NotNull String note,int notificationBefore,int repeatForNextWeek, boolean isCompleted, boolean isCanceled, int numberPair) {
         this();
         setId(id);
         setTemplateAcademicHour(templateAcademicHour);
@@ -62,6 +70,7 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
         setRepeatForNextWeek(repeatForNextWeek);
         setCompleted(isCompleted);
         setCanceled(isCanceled);
+        setNumberPair(numberPair);
     }
 
     public int getRepeatForNextWeek() {
@@ -123,6 +132,15 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
         this.note = note;
         return this;
     }
+
+    public int getNumberPair() {
+        return numberPair;
+    }
+    public AcademicHour setNumberPair(int numberPair) {
+        this.numberPair = numberPair;
+        return this;
+    }
+
     @NotNull
     public boolean hasCompleted() {
         return isCompleted;
@@ -165,6 +183,7 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
         return "AcademicHour{" +
                 "id=" + id +
                 ", idTemplateAcademicHour=" + idTemplateAcademicHour +
+                ", numberPair=" + numberPair +
                 ", date=" + date +
                 ", note='" + note + '\'' +
                 ", isCompleted=" + isCompleted +
@@ -183,85 +202,6 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
         Log.d(TAG,  "academicHourListFromPeriod" + list.get(ConstantApplication.ZERO).toString());
         return (list.get(ConstantApplication.ZERO));
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    // EntityI
-    private static int countObj = 0;
-
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public boolean existsEntity() {
-        // TODO Пока коряво
-        RealmResults<TemplateAcademicHour> existingEntities =
-                DBManager.readAll(TemplateAcademicHour.class);
-        for (TemplateAcademicHour entity : existingEntities) {
-            if (this.equals(entity)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isEntity() {
-        setTemplateAcademicHour(getTemplateAcademicHour());
-        setDate(getDate());
-        setNote(getNote());
-        setCompleted(hasCompleted());
-        setCanceled(hasCanceled());
-
-        return id > ConstantApplication.ZERO;
-    }
-    @Override
-    public void checkEntity() throws Exception {
-        try {
-            setTemplateAcademicHour(getTemplateAcademicHour());
-            setDate(getDate());
-            setNote(getNote());
-            setCompleted(hasCompleted());
-            setCanceled(hasCanceled());
-        } catch(RuntimeException ex) {
-            throw new Exception("Entity = ", ex);
-        }
-    }
-    @Override
-    public AcademicHour createEntity() throws Exception {
-        if (!isEntity()){
-            checkEntity();
-            int maxID = DBManager.findMaxID(this.getClass());
-            setId((maxID > ConstantApplication.ZERO)? ++maxID : ++countObj);
-        }
-
-        return this;
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    // Parcelable
-    protected AcademicHour(Parcel in) {
-        id = in.readInt();
-        idTemplateAcademicHour = in.readInt();
-        date = (Date) in.readSerializable();
-        note = in.readString();
-        repeatForNextWeek = in.readInt();
-        notificationBefore = in.readInt();
-        isCompleted =(Boolean) in.readValue(null);
-        isCanceled = (Boolean) in.readValue(null);
-    }
-    public static final Creator<AcademicHour> CREATOR = new Creator<AcademicHour>() {
-        @Override
-        public AcademicHour createFromParcel(Parcel in) {
-            return new AcademicHour(in);
-        }
-
-        @Override
-        public AcademicHour[] newArray(int size) {
-            return new AcademicHour[size];
-        }
-    };
 
     public static void setNotifaction(Context context,AcademicHour academicHour){
         DateTime dateOfNotification = new DateTime(academicHour.getDate());
@@ -313,6 +253,180 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
         }
     }
 
+    public void refreshAllNumberPair(AcademicHour beforeСhangeAcademicHour){
+        if (beforeСhangeAcademicHour != null){
+            dateSorting(beforeСhangeAcademicHour.getTemplateAcademicHour().getGroup(),
+                    beforeСhangeAcademicHour.getTemplateAcademicHour().getSubject());
+        }
+
+        dateSorting(getTemplateAcademicHour().getGroup(),
+                getTemplateAcademicHour().getSubject());
+
+    }
+    private List<AcademicHour> dateSorting(@NotNull Group group, @NotNull Subject subject){
+        List<String> fieldsNameGroupAndSubject = Arrays.asList("idGroup", "idSubject");
+        List<Object> valuesGroupAndSubject = Arrays.asList(group.getId(), subject.getId());
+        List<String> fieldsSort = Arrays.asList("numberDayOfWeek", "numberHalfPair");
+        List<Sort> sorts = Arrays.asList(Sort.ASCENDING, Sort.ASCENDING);
+
+        final List<TemplateAcademicHour> templateAcademicHourList = DBManager.readAll(TemplateAcademicHour.class,
+                fieldsNameGroupAndSubject, valuesGroupAndSubject,
+                fieldsSort, sorts);
+
+        Realm realm = DBManager.getRealm();
+        final List<RealmResults<AcademicHour>> academicHourRealmResults = new ArrayList<>();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmQuery<AcademicHour> query = realm.where(AcademicHour.class);
+                if (!templateAcademicHourList.isEmpty()){
+                    query.beginGroup();
+                    for (int i = 0; i < templateAcademicHourList.size(); i++) {
+                        String field = "idTemplateAcademicHour";
+                        Integer value = templateAcademicHourList.get(i).getId();
+
+                        query.equalTo(field, value);
+
+                        if(i < (templateAcademicHourList.size() - 1)){
+                            query.or();
+                        }
+                    }
+                    query.endGroup();
+                    query.and().sort("date", Sort.ASCENDING);
+                }
+                academicHourRealmResults.add(query.findAll());
+            }
+        });
+
+        List<AcademicHour> academicHourList = DBManager.copyObjectFromRealm(academicHourRealmResults.get(0));
+        final Date currentDate = getDate();
+        final Pair<Integer, Integer> currentDayAndPair_1hour = getTemplateAcademicHour().getDayAndPairButton();
+
+        for (int i = 0, numberPair = 1; i < academicHourList.size(); i++, numberPair++) {
+            Pair<Integer, Integer> dayAndPair_1hour =
+                    academicHourList.get(i).getTemplateAcademicHour().getDayAndPairButton();
+
+            if (currentDate.equals(academicHourList.get(i).getDate()) &&
+                    currentDayAndPair_1hour.equals(dayAndPair_1hour)){
+                setNumberPair(numberPair);
+            }
+
+            switch (dayAndPair_1hour.second){
+                case 0:
+                case 2:
+                case 4:
+                case 6:
+                case 8:
+                    academicHourList.get(i).setNumberPair(numberPair);
+                    if (i == academicHourList.size() - ConstantApplication.ONE) break;
+
+                    final int iNext = ConstantApplication.ONE;
+                    Pair<Integer, Integer> dayAndPair_2hour =
+                            academicHourList.get(i + iNext).getTemplateAcademicHour().getDayAndPairButton();
+
+                    if (dayAndPair_1hour.first.equals(dayAndPair_2hour.first) &&
+                            dayAndPair_1hour.second.equals(dayAndPair_2hour.second - ConstantApplication.ONE)){
+                        i++;
+                    } else {
+                        break;
+                    }
+                case 1:
+                case 3:
+                case 5:
+                case 7:
+                case 9:
+                    academicHourList.get(i).setNumberPair(numberPair);
+                    break;
+                default:
+                    Log.d("dayAndPair", "error");
+            }
+        }
+
+        DBManager.writeAll(academicHourList);
+        return academicHourList;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // EntityI
+    private static int countObj = 0;
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public boolean existsEntity() {
+        // TODO Пока коряво
+        RealmResults<TemplateAcademicHour> existingEntities =
+                DBManager.readAll(TemplateAcademicHour.class);
+        for (TemplateAcademicHour entity : existingEntities) {
+            if (this.equals(entity)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isEntity() {
+        setTemplateAcademicHour(getTemplateAcademicHour());
+        setDate(getDate());
+        setNote(getNote());
+        setCompleted(hasCompleted());
+        setCanceled(hasCanceled());
+
+        return id > ConstantApplication.ZERO;
+    }
+    @Override
+    public void checkEntity() throws Exception {
+        try {
+            setTemplateAcademicHour(getTemplateAcademicHour());
+            setDate(getDate());
+            setNote(getNote());
+            setCompleted(hasCompleted());
+            setCanceled(hasCanceled());
+            setNumberPair(getNumberPair());
+        } catch(RuntimeException ex) {
+            throw new Exception("Entity = ", ex);
+        }
+    }
+    @Override
+    public AcademicHour createEntity() throws Exception {
+        if (!isEntity()){
+            checkEntity();
+            int maxID = DBManager.findMaxID(this.getClass());
+            setId((maxID > ConstantApplication.ZERO)? ++maxID : ++countObj);
+        }
+
+        return this;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Parcelable
+    protected AcademicHour(Parcel in) {
+        id = in.readInt();
+        idTemplateAcademicHour = in.readInt();
+        date = (Date) in.readSerializable();
+        note = in.readString();
+        repeatForNextWeek = in.readInt();
+        notificationBefore = in.readInt();
+        isCompleted = (Boolean) in.readValue(null);
+        isCanceled = (Boolean) in.readValue(null);
+        numberPair = in.readInt();
+    }
+    public static final Creator<AcademicHour> CREATOR = new Creator<AcademicHour>() {
+        @Override
+        public AcademicHour createFromParcel(Parcel in) {
+            return new AcademicHour(in);
+        }
+
+        @Override
+        public AcademicHour[] newArray(int size) {
+            return new AcademicHour[size];
+        }
+    };
+
     @Override
     public int describeContents() {
         return 0;
@@ -327,6 +441,7 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
         dest.writeInt(notificationBefore);
         dest.writeValue(isCompleted);
         dest.writeValue(isCanceled);
+        dest.writeInt(numberPair);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

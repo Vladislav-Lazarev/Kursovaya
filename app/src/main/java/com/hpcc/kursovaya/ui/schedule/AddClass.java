@@ -20,7 +20,6 @@ public class AddClass extends Class {
         super.onCreate(savedInstanceState);
         numberOfHalf = ((numberOfLesson+1) % 2 == 0)? 1 : 0;
         numberOfLesson = numberOfLesson/2;
-        String str = "";
     }
 
     @Override
@@ -29,10 +28,6 @@ public class AddClass extends Class {
     }
 
     protected void actionBar(ActionBarI actionBarI){
-        super.actionBar(this::addClass);
+        super.actionBar(this::saveClass);
     }
-
-
-
-
 }

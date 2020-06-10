@@ -29,6 +29,8 @@ import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewFragment;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
+
 public class HandleClassDialog extends DialogFragment {
     private static String TAG = HandleClassDialog.class.getSimpleName();
 
@@ -37,22 +39,19 @@ public class HandleClassDialog extends DialogFragment {
     private int classHour;
     private DateTime dayOfWeek;
     private long mLastClickTime = 0;
-    private AcademicHour currentCell;
-    private int secondClassHour;
-    private AcademicHour secondCell;
+    private ArrayList<AcademicHour> academicHourList;
     private ClassesButtonWrapper classesButton;
 
     public static HandleClassDialog newInstance(Context context, int classDay, int classHour, DateTime dayOfWeek,
-                                                AcademicHour currentCell, int secondClassHour, AcademicHour secondCell, ClassesButtonWrapper classesButtonWrapper) {
+                                                ArrayList<AcademicHour> academicHourList,
+                                                ClassesButtonWrapper classesButtonWrapper) {
         Bundle args = new Bundle();
         HandleClassDialog fragment = new HandleClassDialog();
         fragment.context = context;
         fragment.classHour = classHour;
         fragment.classDay = classDay;
         fragment.dayOfWeek = dayOfWeek;
-        fragment.currentCell = currentCell;
-        fragment.secondClassHour = secondClassHour;
-        fragment.secondCell = secondCell;
+        fragment.academicHourList = academicHourList;
         fragment.classesButton = classesButtonWrapper;
         fragment.setArguments(args);
         return fragment;
@@ -75,28 +74,22 @@ public class HandleClassDialog extends DialogFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
                 Intent intent;
                 switch (position){
                     case 0:
-                        /*intent = new Intent(getActivity(), AddClass.class);
-                        intent.putExtra("classDay", classDay);
-                        intent.putExtra("classHour", classHour);
-                        intent.putExtra("dayOfWeek", dayOfWeek);
-                        dismiss();
-                        startActivityForResult(intent, ADD_CLASS);*/
+                        DialogFragment dialogFragment = AboutClassDialog.newInstance(context, academicHourList.get(ConstantApplication.ZERO));
+                        dialogFragment.show(getParentFragmentManager(),"info");
                         break;
                     case 1:
                         intent = new Intent(getActivity(), EditClass.class);
                         intent.putExtra("classDay", classDay);
                         intent.putExtra("classHour", classHour);
                         intent.putExtra("dayOfWeek", dayOfWeek);
-                        intent.putExtra("currentCell",currentCell);
-                        intent.putExtra("secondClassHour", secondClassHour);
-                        intent.putExtra("secondCell", secondCell);
+                        intent.putParcelableArrayListExtra("academicHourList", academicHourList);
                         startActivityForResult(intent, WeekViewFragment.EDIT_CLASS);
                         break;
                     case 2:
@@ -123,7 +116,9 @@ public class HandleClassDialog extends DialogFragment {
 
                     default:
                 }
-                dismiss();
+                if(position!=0){
+                    dismiss();
+                }
                 String selectedItem = HANDLE_CLASS[position];
                 Log.i(TAG, selectedItem);
             }
@@ -304,7 +299,6 @@ public class HandleClassDialog extends DialogFragment {
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
                 classesButton.clearButtonContent();
-
             }
         });
         builder.setCancelable(false);

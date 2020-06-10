@@ -395,7 +395,8 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
     }
     @Override
     public List<String> entityToNameList() {
-        return entityToNameList(DBManager.readAll(Subject.class, this.getName().toLowerCase()));
+        return entityToNameList(DBManager
+                .copyObjectFromRealm(DBManager.readAll(Subject.class, this.getName())));
     }
 
     public static int findMaxNumberCourse(List<Subject> subjectList){

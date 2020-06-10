@@ -7,6 +7,7 @@ import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +30,6 @@ public class DBManager {
     public static <T extends RealmObject> int write(@NotNull final T model){
         result.clear();
 
-
         try {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
@@ -42,82 +42,11 @@ public class DBManager {
 
 
         } catch (Throwable ex) {
-                result.add(ConstantApplication.ZERO);
-                Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
+            result.add(ConstantApplication.ZERO);
+            Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
         }
 
-        int returnValue = (int)result.get(ConstantApplication.ZERO);
-
-        /*if(model instanceof AcademicHour && !((AcademicHour) model).hasCanceled() && !((AcademicHour) model).hasCompleted()){
-            Realm realm = Realm.getDefaultInstance();
-            List<RealmResults<AcademicHour>> resultPeriod = new ArrayList<>();
-            DateTime begin = DateTime.now();
-            DateTime end = DateTime.now();
-            if(begin.getMonthOfYear()< DateTimeConstants.SEPTEMBER){
-                begin = begin.minusYears(1).withMonthOfYear(DateTimeConstants.SEPTEMBER).withDayOfMonth(1);
-                end = end.withMonthOfYear(DateTimeConstants.JULY).withDayOfMonth(1);
-            } else {
-                begin = begin.withMonthOfYear(DateTimeConstants.SEPTEMBER).withDayOfMonth(1);
-                end = end.plusYears(1).withMonthOfYear(DateTimeConstants.JULY).withDayOfMonth(1);
-            }
-            Date finalBegin = begin.toDate();
-            Date finalEnd = end.toDate();
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    resultPeriod.add(realm.where(AcademicHour.class).between("date", finalBegin, finalEnd).findAll());
-                }
-            });
-            Log.d(TAG,  "academicHourListFromPeriod" + resultPeriod.get(ConstantApplication.ZERO).toString());
-            List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(resultPeriod.get(ConstantApplication.ZERO));
-            Subject subject = ((AcademicHour) model).getTemplateAcademicHour().getSubject();
-            Group group = ((AcademicHour) model).getTemplateAcademicHour().getGroup();
-
-            ArrayList<AcademicHour> completedList = new ArrayList<>();
-            ArrayList<AcademicHour> canceledList = new ArrayList<>();
-            ArrayList<AcademicHour> restList = new ArrayList<>();
-            for(AcademicHour academicHour: academicHours){
-                Group listGroup = academicHour.getTemplateAcademicHour().getGroup();
-                Subject listSubject = academicHour.getTemplateAcademicHour().getSubject();
-                if(group.equals(listGroup) && subject.equals(listSubject)){
-                    if(academicHour.hasCompleted()){
-                        completedList.add(academicHour);
-                    } else if(academicHour.hasCanceled()){
-                        canceledList.add(academicHour);
-                    } else {
-                        restList.add(academicHour);
-                    }
-                }
-            }
-            Collections.sort(restList, (o1, o2) -> {
-                if (o1.getDate() == null || o2.getDate() == null)
-                    return 0;
-                return o1.getDate().compareTo(o2.getDate());
-            });
-            int totalHours = subject.getSpecialityCountHourMap().get(group.getSpecialty())-canceledList.size();
-            if (totalHours < completedList.size()+restList.size()){
-                DateTime current = new DateTime(((AcademicHour) model).getDate());
-                boolean hasOld = false;
-                for(AcademicHour academicHour: restList){
-                    DateTime hourDate = new DateTime(academicHour.getDate());
-                    if(hourDate.isBefore(current)){
-                        TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
-                        DBManager.delete(TemplateAcademicHour.class,ConstantApplication.ID,templateAcademicHour.getId());
-                        DBManager.delete(AcademicHour.class,ConstantApplication.ID,academicHour.getId());
-                        hasOld = true;
-                        break;
-                    }
-                }
-                if(!hasOld){
-                    TemplateAcademicHour templateAcademicHour = restList.get(restList.size()-1).getTemplateAcademicHour();
-                    DBManager.delete(TemplateAcademicHour.class,ConstantApplication.ID,templateAcademicHour.getId());
-                    DBManager.delete(AcademicHour.class, ConstantApplication.ID,restList.get(restList.size()-1).getId());
-                }
-            }
-        }*/
-
-
-        return returnValue;
+        return (int)result.get(ConstantApplication.ZERO);
     }
     public static <T extends RealmObject> int writeAll(@NotNull final List<T> model) {
         result.clear();
@@ -246,7 +175,7 @@ public class DBManager {
         return (T)result.get(ConstantApplication.ZERO);
     }
     public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz){
-        return readAll(clazz, null, null, null, null);
+        return readAll(clazz, Collections.singletonList(null), Collections.singletonList(null), null, null);
     }
     public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz, final String nameSort){
         return readAll(clazz, nameSort, Sort.ASCENDING);
@@ -255,18 +184,19 @@ public class DBManager {
         return readAll(clazz, null, null, nameSort, sort);
     }
 
-    public static <T extends RealmObject, V> RealmResults<T> readAll(@NotNull final Class<T> clazz,
-                                                                     @NotNull final String fieldName, @NotNull V value) {
+    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz,
+                                                                     @NotNull final String fieldName, @NotNull Object value) {
         return readAll(clazz, fieldName, value, null);
     }
-    public static <T extends RealmObject, V> RealmResults<T> readAll(@NotNull final Class<T> clazz,
-                                                                     @NotNull final String fieldName, @NotNull V value,
+    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz,
+                                                                     @NotNull final String fieldName, @NotNull Object value,
                                                                      final String nameSort) {
         return readAll(clazz, fieldName, value, nameSort, Sort.ASCENDING);
     }
-    public static <T extends RealmObject, V> RealmResults<T> readAll(@NotNull final Class<T> clazz,
-                                                                  final String fieldName, V value,
-                                                                  final String nameSort, Sort sort){
+    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz,
+                                                                  final String fieldName, Object value,
+                                                                  final String fieldSort, Sort sort){
+
         result.clear();
 
         try {
@@ -284,8 +214,8 @@ public class DBManager {
             }
 
             RealmResults<T> model = query.findAll();
-            if (nameSort != null){
-                model = model.sort(nameSort, sort);
+            if (fieldSort != null){
+                model = model.sort(fieldSort, sort);
             }
 
             result.add(model);
@@ -298,15 +228,40 @@ public class DBManager {
         return (RealmResults<T>) result.get(ConstantApplication.ZERO);
     }
 
-    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz, @NotNull final List <String> fieldsName, @NotNull final List<Object> values){
+    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz,
+                                                                     final List<String> fieldsName, final List<Object> values){
+        return readAll(clazz, fieldsName, values, null);
+    }
+    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz,
+                                                                  final List<String> fieldsName, final List<Object> values,
+                                                                  List<String> fieldsSort){
+        List<Sort> sorts = new ArrayList<>();
+        for (int i = 0; fieldsSort != null && i < fieldsSort.size(); i++) {
+            sorts.add(Sort.ASCENDING);
+        }
+
+        return readAll(clazz, fieldsName, values, fieldsSort, sorts);
+    }
+    public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz,
+                                                                  List<String> fieldsName, List<Object> values,
+                                                                  List<String> fieldsSort, List<Sort> sorts){
+
+        if (fieldsName.size() != values.size()){
+            return null;
+        }
+
+        if (fieldsSort != null && sorts != null){
+            if (fieldsSort.size() != sorts.size()) return null;
+        }
+
         result.clear();
 
         try {
             final RealmQuery<T> query = realm.where(clazz);
 
-            for(String field: fieldsName) {
-                int index = fieldsName.indexOf(field);
-                Object value = values.get(index);
+            for (int i = 0; i < fieldsName.size(); i++) {
+                String field = fieldsName.get(i);
+                Object value = values.get(i);
 
                 if (field != null) {
                     if (value instanceof Integer) {
@@ -320,10 +275,13 @@ public class DBManager {
                     }
                 }
 
-                if(index < (fieldsName.size() - 1)){
+                if(i < (fieldsName.size() - 1)){
                     query.and();
                 }
+            }
 
+            if (fieldsSort != null){
+                query.sort((String[]) fieldsSort.toArray(), (Sort[]) sorts.toArray());
             }
 
             result.add(query.findAll());

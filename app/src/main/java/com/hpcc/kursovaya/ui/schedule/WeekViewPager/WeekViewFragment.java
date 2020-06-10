@@ -367,7 +367,10 @@ public class WeekViewFragment extends Fragment {
                                         if(DBManager.readAll(Group.class).size()!=0) {
                                             if(DBManager.readAll(Subject.class).size()!=0) {
                                                 DateTime dayOfWeek = firstDayOfWeek.plusDays(classDay).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-                                                if (classesButtonWrapperList.get(classHour).getBtn().getText().equals("")) {
+                                                int hourOfDay = ConstantApplication.timeArray[classHour/2][((classHour+1) % 2 == 0)? 1 : 0][0];
+                                                int minuteOfHour = ConstantApplication.timeArray[classHour/2][((classHour+1) % 2 == 0)? 1 : 0][1];
+                                                dayOfWeek = dayOfWeek.withHourOfDay(hourOfDay).withMinuteOfHour(minuteOfHour);
+                                                if (classesButtonWrapperList.get(classHour).getBtn().getText().toString().isEmpty()) {
                                                     AddEventDialog eventDialog = AddEventDialog.newInstance(getActivity(),classDay,classHour,dayOfWeek);
                                                     eventDialog.setTargetFragment(WeekViewFragment.this,1);
                                                     eventDialog.show(getFragmentManager(),"addEvent");
@@ -379,9 +382,16 @@ public class WeekViewFragment extends Fragment {
                                                 } else {
                                                     DialogFragment handleDialog= null;
                                                     if(classesButtonWrapperList.get(classHour).getEvent()==null){
-                                                        int secondCellHour = classHour + ((classHour % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1);
-                                                        handleDialog = HandleClassDialog.newInstance(getActivity(),classDay,classHour,dayOfWeek, classes.get(classDay).get(classHour).getAcademicHour(),
-                                                                secondCellHour,classes.get(classDay).get(secondCellHour).getAcademicHour(),classes.get(classDay).get(classHour));
+                                                        ArrayList<AcademicHour> academicHourList = new ArrayList<>();
+                                                        academicHourList.add(classes.get(classDay).get(classHour).getAcademicHour());
+
+                                                        int secondCellHour = classHour + ConstantApplication.secondCellShift(classHour);
+                                                        if (classes.get(classDay).get(secondCellHour).getAcademicHour() != null){
+                                                            academicHourList.add(classes.get(classDay).get(secondCellHour).getAcademicHour());
+                                                        }
+                                                        handleDialog = HandleClassDialog.newInstance(getActivity(),classDay,classHour,dayOfWeek,
+                                                                academicHourList,
+                                                                classes.get(classDay).get(classHour));
                                                     } else if (classesButtonWrapperList.get(classHour).getAcademicHour()==null){
                                                         handleDialog = HandleEventDialog.newInstance(getActivity(),classHour,classDay,dayOfWeek,classesButtonWrapperList.get(classHour));
                                                     }
@@ -739,6 +749,7 @@ public class WeekViewFragment extends Fragment {
         }
         selectedButtons.clear();
         cancelSelect.performClick();
+        refreshGrid(firstDayOfWeek.minusWeeks(1), firstDayOfWeek.minusWeeks(1).plusDays(6));
     }
 
     //handle data from activities here
@@ -746,44 +757,39 @@ public class WeekViewFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG,resultCode+""+requestCode);
         if(resultCode== Activity.RESULT_OK){
-            boolean isTwoHours = data.getBooleanExtra("isTwoHour",false);
+            List<AcademicHour> academicHourList = data.getParcelableArrayListExtra("academicHourList");
             int classDay = data.getIntExtra("classDay", 0);
             int classHour = data.getIntExtra("classHour", 0);
+
             switch (requestCode){
                 case ADD_CLASS:
-                    AcademicHour academicHourFirst = data.getParcelableExtra("firstHour");
-                    classes.get(classDay).get(classHour).setAcademicHour(academicHourFirst);
-
-                    repeatForWeeks(academicHourFirst,classDay,classHour, getActivity());
-                    if(isTwoHours){
-                        AcademicHour academicHourSecond = data.getParcelableExtra("secondHour");
-                        int secondCellShift = data.getIntExtra("secondCellPosition",0);
-                        classes.get(classDay).get(classHour+secondCellShift).setAcademicHour(academicHourSecond);
-                        repeatForWeeks(academicHourSecond,classDay,classHour+secondCellShift,getActivity());
-                    }
-                    Log.d(TAG,classDay + " " + classHour);
-                    break;
                 case EDIT_CLASS:
-                    AcademicHour academicHourEditedFirst = data.getParcelableExtra("firstHour");
                     boolean isHourChanged = data.getBooleanExtra("clearSecondCell",false);
-                    classes.get(classDay).get(classHour).setAcademicHour(academicHourEditedFirst);
-                    repeatForWeeks(academicHourEditedFirst,classDay,classHour,getActivity());
                     if(isHourChanged){
-                        int secondCellShift = data.getIntExtra("secondClassHour",0);
-                        classes.get(classDay).get(secondCellShift).clearButtonContent();
-                    }
-                    if(isTwoHours){
-                        AcademicHour academicHourEditedSecond = data.getParcelableExtra("secondHour");
-                        int secondCellShift = data.getIntExtra("secondClassHour",0);
-                        classes.get(classDay).get(secondCellShift).setAcademicHour(academicHourEditedSecond);
-                        repeatForWeeks(academicHourEditedSecond,classDay,secondCellShift,getActivity());
+                        int pos = ConstantApplication.secondCellShift(classHour);
+                        classes.get(classDay).get(classHour + pos).clearButtonContent();
                     }
 
-                    Log.d(TAG,classDay + " " + classHour);
+                    int posSecondCell = 0;
+                    for (int i = 0; i < academicHourList.size(); i++) {
+                        academicHourList.get(i).refreshAllNumberPair(classes.get(classDay).get(classHour + posSecondCell).getAcademicHour());
+
+                        classes.get(classDay).get(classHour + posSecondCell).setAcademicHour(academicHourList.get(i));
+                        repeatForWeeks(academicHourList.get(i),classDay,classHour + posSecondCell,getActivity());
+
+                        if (academicHourList.size() == ConstantApplication.TWO &&
+                                i < academicHourList.size() - ConstantApplication.ONE){
+                            posSecondCell = ConstantApplication.secondCellShift(classHour);
+                            AcademicHour adjacentCellToDelete = classes.get(classDay).get(classHour + posSecondCell).getAcademicHour();
+
+                            if (adjacentCellToDelete != null){
+                                classes.get(classDay).get(classHour + posSecondCell).clearButtonContent();
+                            }
+                        }
+                    }
                     break;
-                case EDIT_EVENT:
-
                 case ADD_EVENT:
+                case EDIT_EVENT:
                     AnotherEvent anotherEvent = data.getParcelableExtra("anotherEvent");
                     classes.get(classDay).get(classHour).setAnotherEvent(anotherEvent);
                     break;
@@ -796,11 +802,20 @@ public class WeekViewFragment extends Fragment {
     public static void repeatForWeeks(AcademicHour academicHour, int classDay, int classHour, Context context) {
         int numberOfWeeks = academicHour.getRepeatForNextWeek();
         DateTime start = new DateTime(academicHour.getDate());
-        List<AcademicHour> academicHours = AcademicHour.academicHourListFromPeriod(start.plusDays(1).toDate(),start.plusWeeks(3).toDate());
+        List<AcademicHour> academicHours =
+                AcademicHour.academicHourListFromPeriod(start.plusDays(1).toDate(),start.plusWeeks(3).toDate());
+
         for(AcademicHour academicHourToDelete: academicHours){
             TemplateAcademicHour templateAcHour = academicHourToDelete.getTemplateAcademicHour();
-            if(templateAcHour.getNumberDayOfWeek()==classDay && templateAcHour.getNumberHalfPairButton()==classHour){
+            Group group = templateAcHour.getGroup();
+            Subject subject = templateAcHour.getSubject();
+
+            if(templateAcHour.getNumberDayOfWeek()==classDay && templateAcHour.getNumberHalfPairButton()==classHour
+                    && group.equals(academicHour.getTemplateAcademicHour().getGroup())
+                    && subject.equals(academicHour.getTemplateAcademicHour().getSubject())){
+
                 DBManager.delete(AcademicHour.class,ConstantApplication.ID,academicHourToDelete.getId());
+                academicHourToDelete.refreshAllNumberPair(null);
                 DBManager.delete(TemplateAcademicHour.class,ConstantApplication.ID,templateAcHour.getId());
             }
         }
@@ -821,7 +836,7 @@ public class WeekViewFragment extends Fragment {
                     Log.d(TAG,"repeatForWeeks"+e.toString());
                 }
                 AcademicHour nextAcademicHour = new AcademicHour(0, templateAcademicHour, nextWeek.toDate()
-                        , academicHour.getNote(), academicHour.getNotificationBefore(), 0, false, false);
+                        , academicHour.getNote(), academicHour.getNotificationBefore(), 0, false, false, academicHour.getNumberPair());
                 try {
                     DBManager.write(nextAcademicHour.createEntity());
                     Log.d(TAG, "repeatForWeeks = " + nextAcademicHour.toString());
@@ -842,7 +857,8 @@ public class WeekViewFragment extends Fragment {
             toCurrentDay.setVisibility(View.VISIBLE);
             currentDayText.setVisibility(View.VISIBLE);
         }
-        List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(from.toDate(),to.toDate()));
+        List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(
+                AcademicHour.academicHourListFromPeriod(from.toDate(),to.toDate()));
         List<AnotherEvent> anotherEvents = DBManager.copyObjectFromRealm(AnotherEvent.anotherEventsFromPeriod(from.toDate(),to.toDate()));
         for(List<ClassesButtonWrapper> classs : classes ){
             for(ClassesButtonWrapper clazz : classs){
@@ -854,7 +870,7 @@ public class WeekViewFragment extends Fragment {
         for(AcademicHour hour: academicHours){
             TemplateAcademicHour templateAcademicHour = hour.getTemplateAcademicHour();
             classes.get(templateAcademicHour.getNumberDayOfWeek()).get(templateAcademicHour.getNumberHalfPairButton()).setAcademicHour(hour);
-            classes.get(templateAcademicHour.getNumberDayOfWeek()).get(templateAcademicHour.getNumberHalfPairButton()).setTextNumber("105");
+            classes.get(templateAcademicHour.getNumberDayOfWeek()).get(templateAcademicHour.getNumberHalfPairButton()).setTextNumber(Integer.toString(hour.getNumberPair()));
         }
         for(AnotherEvent event: anotherEvents){
             TemplateAnotherEvent templateAnotherEvent = event.getTemplateAnotherEvent();
@@ -875,7 +891,7 @@ public class WeekViewFragment extends Fragment {
                 StringBuilder title = new StringBuilder();
                 title.append(monthNumberToString(firstDayOfWeek.getMonthOfYear())).append(", ").append(firstDayOfWeek.getYear());
                 Log.d(TAG, firstDayOfWeek.toString());
-                refreshGrid(firstDayOfWeek,firstDayOfWeek.plusDays(6));
+                refreshGrid(firstDayOfWeek,firstDayOfWeek.plusDays(6).withHourOfDay(23).withMinuteOfHour(59));
                 ((MainActivity) getActivity()).setActionBarTitle(title.toString());
             }
         } else if (((MainActivity)getActivity()).isLanguageChanged()) {

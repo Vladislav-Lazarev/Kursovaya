@@ -37,6 +37,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
 import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.query.DBManager;
@@ -61,9 +62,8 @@ public class SubjectsFragment extends Fragment {
     private View sortSubjectView;
     private Spinner spinnerSpeciality;
     private Spinner spinnerCourse;
+    private Spinner spinnerGroup;
     private AlertDialog sortDialogSubject;
-    private boolean isOverflowShown;
-    private Menu subjectMenu;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup  container, Bundle savedInstanceState) {
@@ -264,7 +264,6 @@ public class SubjectsFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.menu_subject, menu);
-        subjectMenu = menu;
     }
 
     @Override
@@ -273,16 +272,16 @@ public class SubjectsFragment extends Fragment {
 
         if(subjectList.size() == ConstantApplication.ZERO){
             Toast.makeText(getContext(), R.string.toast_fragment_no_subjects, Toast.LENGTH_LONG).show();
-            return false;
+            return true;
         }
 
         switch (item.getItemId()){
             case R.id.filter_subject:
                 onClickPrepareFilterSubject();
-                break;
+                return true;
             case R.id.sort_subject:
                 onClickPrepareSortSubject();
-                break;
+                return true;
         }
         return false;
     }
@@ -301,6 +300,7 @@ public class SubjectsFragment extends Fragment {
                 String specialityName = String.valueOf(spinnerSpeciality.getSelectedItem());
                 String course = String.valueOf(spinnerCourse.getSelectedItem());
                 List<Subject> subjectList = new ArrayList<>();
+                List<Subject> findSubjectList = new ArrayList<>();
 
                 if(course.equals(getString(R.string.spinner_all))){
                     subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class));
@@ -311,9 +311,9 @@ public class SubjectsFragment extends Fragment {
 
                 if(!specialityName.equals(getString(R.string.spinner_all))){
                     for(Subject subject: subjectList){
-                        if(!subject.containsKeySpecialityCountHour(new Speciality().setName(specialityName))){
-                            subjectList.remove(subject);
-                        }
+                       if (subject.getSpecialityList().contains(new Speciality().setName(specialityName))){
+                           findSubjectList.add(subject);
+                       }
                     }
                 }
 
@@ -331,6 +331,7 @@ public class SubjectsFragment extends Fragment {
         });
         filterSubjectView = getLayoutInflater().inflate(R.layout.dialog_filter_subject, null);
         builder.setView(filterSubjectView);
+
         List<String> specialityNameList = new ArrayList<>();
 
         List<Speciality> specialityList = DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class));
@@ -492,7 +493,6 @@ public class SubjectsFragment extends Fragment {
                         DBManager.readAll(Subject.class, ConstantApplication.NUMBER_COURSE, Sort.ASCENDING));
                 List<Subject> findSubjectList = new ArrayList<>();
 
-
                 if(!item.equals(getString(R.string.spinner_all))){
                     Speciality speciality = DBManager.copyObjectFromRealm(DBManager.read(Speciality.class, ConstantApplication.NAME, item));
 
@@ -515,6 +515,7 @@ public class SubjectsFragment extends Fragment {
                         ConstantApplication.fillingSpinner(getContext(), filterSubjectView.findViewById(R.id.spinnerCourse),
                                 courseList);
                 ConstantApplication.setSpinnerText(spinnerCourse, String.valueOf(spinnerCourse.getSelectedItem()));
+                listenerSpinnerCourse(spinnerCourse);
 
             }
             public void onNothingSelected(AdapterView<?> parent) {
@@ -522,14 +523,48 @@ public class SubjectsFragment extends Fragment {
         });
     }
 
+    private void listenerSpinnerCourse(Spinner spinner) {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent,
+                                       View itemSelected, int selectedItemPosition, long selectedId) {
+                String item = (String) parent.getItemAtPosition(selectedItemPosition);
+                String itemSpeciality = String.valueOf(spinnerSpeciality.getSelectedItem());
+                List<Group> groupList = new ArrayList<>();
+                List<String> groupNameList = new ArrayList<>();
+                List<String> fieldName = new ArrayList<>();
+                List<Object> value = new ArrayList<>();
 
-    /*public void showOverflowMenu(boolean showMenu) {
-        if (subjectMenu == null){
-            isOverflowShown = showMenu;
-            return;
-        } else if(isLanguageChanged){
-            isOverflowShown = showMenu;
-        }
-        subjectMenu.setGroupVisible(R.id.main_menu_group, showMenu);
-    }*/
+
+                if(!itemSpeciality.equals(getString(R.string.spinner_all))){
+                     Speciality speciality = DBManager.copyObjectFromRealm(DBManager.read(Speciality.class, ConstantApplication.NAME, itemSpeciality));
+
+                     fieldName.add(ConstantApplication.ID_SPECIALITY);
+                     value.add(speciality.getId());
+                }
+
+                if(!item.equals(getString(R.string.spinner_all))){
+                    int course = Integer.parseInt(item);
+
+                    fieldName.add(ConstantApplication.NUMBER_COURSE);
+                    value.add(course);
+                }
+
+                groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, fieldName, value));
+
+                for(Group group: groupList){
+                    groupNameList.add(group.getName());
+                }
+
+
+                spinnerGroup = ConstantApplication.fillingSpinner(getContext(), filterSubjectView.findViewById(R.id.spinnerGroup),
+                                groupNameList);
+
+                ConstantApplication.setSpinnerText(spinnerGroup, String.valueOf(spinnerGroup.getSelectedItem()));
+
+
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
 }

@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
+import com.hpcc.kursovaya.dao.entity.Group;
+import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.AnotherEvent;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
@@ -94,8 +96,11 @@ public class ClassesButtonWrapper {
         if(academicHour!=null && anotherEvent==null) {
             drawableDef = context.getResources().getDrawable(R.drawable.hover_add);
             if (academicHour.getTemplateAcademicHour() != null) {
-                DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, academicHour.getTemplateAcademicHour().getId());
+                Subject subject = academicHour.getTemplateAcademicHour().getSubject();
+                Group group = academicHour.getTemplateAcademicHour().getGroup();
                 DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+                academicHour.refreshAllNumberPair(null);
+                DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, academicHour.getTemplateAcademicHour().getId());
             }
         } else if(anotherEvent!=null && academicHour==null){
             drawableDef = context.getResources().getDrawable(R.drawable.hover_add);

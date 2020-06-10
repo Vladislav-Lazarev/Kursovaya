@@ -72,18 +72,24 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
 
     int posSecondCell = 0;
 
+    protected void setHeader(int popup_super){
+        // Name Head
+        TextView textCont = findViewById(R.id.toolbar_title);
+        textCont.setText(getResources().getString(popup_super));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //intent = getIntent();
         setContentView(R.layout.activity_add_class);
-        posSecondCell = secondCellShift(numberOfLesson);
-        groupNameSuggest = findViewById(R.id.groupNameSuggestET);
+
         academicHourList = new ArrayList<>(Collections.singletonList(new AcademicHour()));
-        templateAcademicHourList = new ArrayList<>(Collections.singletonList(new TemplateAcademicHour()));
+        templateAcademicHourList = new ArrayList<>(Collections
+                .singletonList(new TemplateAcademicHour().setDayAndPair(Pair.create(classDay, classHour))));
         currentAcademicHour = academicHourList.get(ConstantApplication.ZERO);
         currentTemplateAcademicHour = templateAcademicHourList.get(ConstantApplication.ZERO);
-        currentTemplateAcademicHour.setDayAndPair(Pair.create(classDay,classHour));
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_path_150));
         //here place for getting classDay, classHour and Group\Subject entities
@@ -144,7 +150,7 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
         }
         });
         groupNameSuggest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-        @Override
+            @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             Group pressedGroup = (Group) adapterView.getItemAtPosition(i);
             currentTemplateAcademicHour.setGroup(pressedGroup);
@@ -159,37 +165,41 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
 
         ((RadioButton)findViewById(R.id.duration_rgroup_short)).setChecked(true);
         radioGroup = findViewById(R.id.duration_rgroup);
-        currentTemplateAcademicHour.setDayAndPair(Pair.create(classDay, classHour));
+        posSecondCell = ConstantApplication.secondCellShift(numberOfLesson);
         radioGroup.setOnCheckedChangeListener((rg, checkedId) -> {
-        final int posSecondCell = secondCellShift(classHour);
         switch (checkedId){
             case R.id.duration_rgroup_short:
                 if (templateAcademicHourList.size() == ConstantApplication.TWO) {
-                    templateAcademicHourList.remove(ConstantApplication.ONE);
+                    AcademicHour deleteAcademicHour = academicHourList.get(ConstantApplication.ONE);
+                    if (deleteAcademicHour.getId() != ConstantApplication.ZERO) {
+                        DBManager.delete(AcademicHour.class, ConstantApplication.ID,
+                                deleteAcademicHour.getId());
+                        DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID,
+                                deleteAcademicHour.getTemplateAcademicHour().getId());
+                    }
+
                     academicHourList.remove(ConstantApplication.ONE);
+                    templateAcademicHourList.remove(ConstantApplication.ONE);
                 }
                 break;
             case R.id.duration_rgroup_full:
-                if (templateAcademicHourList.size() == ConstantApplication.ONE){
-                    TemplateAcademicHour following = new TemplateAcademicHour();
-                    if (currentTemplateAcademicHour.getGroup() != null){
-                        following.setGroup(currentTemplateAcademicHour.getGroup())
-                                .setSubject(currentTemplateAcademicHour.getSubject())
-                                .setDayAndPair(Pair.create(classDay, classHour + posSecondCell));
-                    }
-                    templateAcademicHourList.add(following);
-                    AcademicHour followingHour = new AcademicHour();
-                    followingHour.setDate(currentAcademicHour.getDate())
-                                 .setNote(currentAcademicHour.getNote());
-                    academicHourList.add(followingHour);
-                } else if (templateAcademicHourList.size() == ConstantApplication.TWO) {
-                    templateAcademicHourList.set(ConstantApplication.ONE,
-                            templateAcademicHourList.get(ConstantApplication.ONE)
-                                    .setDayAndPair(Pair.create(classDay, classHour + posSecondCell)));
+                if (academicHourList.size() == ConstantApplication.TWO &&
+                        academicHourList.get(ConstantApplication.ONE).getId() != ConstantApplication.ZERO) {
+                    break;
                 }
+
+                TemplateAcademicHour following = new TemplateAcademicHour();
+                if (currentTemplateAcademicHour.getGroup() != null) {
+                    following.setGroup(currentTemplateAcademicHour.getGroup())
+                            .setSubject(currentTemplateAcademicHour.getSubject())
+                            .setDayAndPair(Pair.create(classDay, classHour + posSecondCell));
+                }
+                templateAcademicHourList.add(following);
+                academicHourList.add(new AcademicHour());
                 break;
         }
         });
+
         classSummary = findViewById(R.id.description_editText);
         notificationBeforeContent = findViewById(R.id.spinnerNotificationBefore);
         repeatForNextWeekContent = findViewById(R.id.spinnerRepeatForWeeks);
@@ -197,62 +207,7 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
         setHeader(R.string.super_class);
     }
 
-    protected void fillSpinnerByGroup(Context context, Spinner spinner, Group group){
-        List<Subject> subjectList = group.toSubjectList(group.getNumberCourse(), group.getSpecialty());
-        List<String> stringList = new Subject().entityToNameList(subjectList);
-        ConstantApplication.fillingSpinner(context, spinner, stringList);
-    }
-
-    private void listenerSpinnerSubject(Spinner spinner) {
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent,
-                                       View itemSelected, int selectedItemPosition, long selectedId) {
-                String item = (String) parent.getItemAtPosition(selectedItemPosition);
-                Subject subject = DBManager.read(Subject.class, ConstantApplication.NAME, item);
-                currentTemplateAcademicHour.setSubject(subject);
-
-                if (templateAcademicHourList.size() == ConstantApplication.TWO){
-                    templateAcademicHourList.set(ConstantApplication.ONE,
-                            templateAcademicHourList.get(ConstantApplication.ONE).setSubject(subject));
-                }
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-    }
-
-    // Название Активити
-    protected void setHeader(int popup_super){
-        // Name Head
-        TextView textCont = findViewById(R.id.toolbar_title);
-        textCont.setText(getResources().getString(popup_super));
-    }
-
-    interface ActionBarI{
-        void superClass();
-    }
-
-    protected int secondCellShift(int currentCellPosition){
-        return (currentCellPosition % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1;
-    }
-
-    protected void actionBar(ActionBarI actionBarI){
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayShowTitleEnabled(false);
-        ImageButton btnAdd = findViewById(R.id.create_class);
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
-                actionBarI.superClass();
-            }
-        });
-    }
-
-    protected void addClass() {
+    protected void saveClass() {
         Date entityDate = dayOfWeek.toDate();
         String description = classSummary.getText().toString();
         String groupNameStr = groupNameSuggest.getText().toString();
@@ -266,44 +221,36 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
             return;
         }
 
-        for (TemplateAcademicHour templateAcademicHour : templateAcademicHourList){
+        academicHourList.get(ConstantApplication.ZERO)
+                .setNotificationBefore(notificationBeforeContent.getSelectedItemPosition());
+        for (int i = 0; templateAcademicHourList.size() == academicHourList.size() && i < academicHourList.size(); i++){
+            TemplateAcademicHour currentTemplate = null;
             try {
-                if(templateAcademicHour.getNumberHalfPairButton()==-1){
-                    final int posSecondCell = secondCellShift(classHour);
-                    templateAcademicHour.setDayAndPair(Pair.create(classDay, (classHour + posSecondCell)));
-                }
-                DBManager.write(templateAcademicHour.createEntity());
-                Log.d(TAG, "templateAcademicHour = " + templateAcademicHour.toString());
+                currentTemplate = templateAcademicHourList.get(i).createEntity();
+                DBManager.write(currentTemplate);
+                Log.d(TAG, "templateAcademicHour = " + currentTemplate.toString());
             } catch (Exception e) {
-                // TODO Оповещение о не правильности\корректности
                 e.printStackTrace();
             }
-        }
-        academicHourList.get(0).setNotificationBefore(notificationBeforeContent.getSelectedItemPosition());
-        for(int i = 0; i<academicHourList.size();i++){
+
             academicHourList.get(i).setRepeatForNextWeek(repeatForNextWeekContent.getSelectedItemPosition());
             academicHourList.get(i).setNote(description);
             academicHourList.get(i).setDate(entityDate);
-            academicHourList.get(i).setTemplateAcademicHour(templateAcademicHourList.get(i));
+            academicHourList.get(i).setTemplateAcademicHour(currentTemplate);
             try {
                 DBManager.write(academicHourList.get(i).createEntity());
                 Log.d(TAG, "templateAcademicHour = " + academicHourList.get(i).toString());
+                academicHourList.get(i).refreshAllNumberPair(null);
             } catch (Exception e) {
-                // TODO Оповещение о не правильности\корректности
                 e.printStackTrace();
             }
+
         }
-        intent.putExtra("isTwoHour",false);
-        intent.putExtra("firstHour",academicHourList.get(0));
-        if(academicHourList.size()==2){
-            intent.putExtra("isTwoHour",true);
-            intent.putExtra("secondCellPosition",posSecondCell);
-            intent.putExtra("secondHour",academicHourList.get(1));
-        }
+        intent.putExtra("academicHourList", academicHourList);
 
         DateTime now = DateTime.now();
         Seconds difference = Seconds.secondsBetween(now,timeOfRing);
-        if(notificationBefore && difference.getSeconds()>0) {
+        if(notificationBefore && difference.getSeconds() > 0) {
 
             Log.d(TAG,timeOfRing.toString());
             Log.d(TAG, difference.toString());
@@ -328,6 +275,50 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
         }
         setResult(Activity.RESULT_OK,intent);
         finish();
+    }
+
+    protected void fillSpinnerByGroup(Context context, Spinner spinner, Group group){
+        List<Subject> subjectList = group.toSubjectList(group.getNumberCourse(), group.getSpecialty());
+        List<String> stringList = Subject.entityToNameList(subjectList);
+        ConstantApplication.fillingSpinner(context, spinner, stringList);
+    }
+
+    private void listenerSpinnerSubject(Spinner spinner) {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent,
+                                       View itemSelected, int selectedItemPosition, long selectedId) {
+                String item = (String) parent.getItemAtPosition(selectedItemPosition);
+                Subject subject = DBManager.read(Subject.class, ConstantApplication.NAME, item);
+                currentTemplateAcademicHour.setSubject(subject);
+
+                if (templateAcademicHourList.size() == ConstantApplication.TWO){
+                    templateAcademicHourList.set(ConstantApplication.ONE,
+                            templateAcademicHourList.get(ConstantApplication.ONE).setSubject(subject));
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+    // Название Активити
+
+    interface ActionBarI{
+        void superClass();
+    }
+    protected void actionBar(ActionBarI actionBarI){
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayShowTitleEnabled(false);
+        ImageButton btnAdd = findViewById(R.id.create_class);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ConstantApplication.CLICK_TIME){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                actionBarI.superClass();
+            }
+        });
     }
 
     @Override

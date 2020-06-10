@@ -62,7 +62,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
     protected EditText templateNameEditText;
 
     protected TemplateAcademicHour currentTemplate;
-    protected List<TemplateAcademicHour> templateAcademicHourList = new ArrayList<>();
+    protected List<TemplateAcademicHour> templateAcademicHourList;
 
     protected TemplateScheduleWeek scheduleWeek;
     protected Intent intent;
@@ -212,9 +212,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
         List<String> stringList = new Subject().entityToNameList(subjectList);
         ConstantApplication.fillingSpinner(context, spinner, stringList);
     }
-    private int secondCellShift(int currentCellPosition){
-        return (currentCellPosition % ConstantApplication.TWO == ConstantApplication.ZERO) ? 1 : -1;
-    }
     protected List<TemplateAcademicHour> convert2DimensionalTo1Dimensional(List<List<TemplateClassesButtonWrapper>> _2DList){
         List<TemplateAcademicHour> result = new ArrayList<>();
 
@@ -349,9 +346,11 @@ public abstract class TemplateActivity extends AppCompatActivity {
         builder.setView(classView);
 
         //create a list for writing a dialog box
-        templateAcademicHourList = new ArrayList<>(Collections.singletonList(new TemplateAcademicHour()));
+        templateAcademicHourList = new ArrayList<>(Collections
+                .singletonList(new TemplateAcademicHour().setDayAndPair(Pair.create(classDay, classHour))));
         currentTemplate = templateAcademicHourList.get(ConstantApplication.ZERO);
-        final int posSecondCell = secondCellShift(classHour);
+
+        int posSecondCell = ConstantApplication.secondCellShift(classHour);
 
         subjectSpinner = classView.findViewById(R.id.spinnerSubject);
         listenerSpinnerSubject(subjectSpinner);
@@ -361,7 +360,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
         groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantApplication.NAME));
         GroupAutoCompleteAdapter adapter = new GroupAutoCompleteAdapter(currentContext,R.layout.group_auto, groupList);
         groupNameSuggest.setAdapter(adapter);
-
         groupNameSuggest.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -392,7 +390,6 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
             }
         });
-
         // Нажатие на выпадающий список групп и заполнение spinner subject
         groupNameSuggest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -412,36 +409,37 @@ public abstract class TemplateActivity extends AppCompatActivity {
         });
 
         // Выбор, определения сколько часов она будет ввести
-        ((RadioButton)classView
-                .findViewById(R.id.popup_duration_rgroup_short)).setChecked(true);
+        ((RadioButton) classView.findViewById(R.id.popup_duration_rgroup_short)).setChecked(true);
         radioGroup = classView.findViewById(R.id.popup_duration_rgroup);
-        currentTemplate.setDayAndPair(Pair.create(classDay, classHour));
         radioGroup.setOnCheckedChangeListener((radioGroup, checkedId) -> {
             switch (checkedId) {
                 case R.id.popup_duration_rgroup_short:
                     if (templateAcademicHourList.size() == ConstantApplication.TWO) {
+                        if (templateAcademicHourList.get(ConstantApplication.ONE).getId() != ConstantApplication.ZERO) {
+                            DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID,
+                                    templateAcademicHourList.get(ConstantApplication.ONE).getId());
+                        }
                         templateAcademicHourList.remove(ConstantApplication.ONE);
                     }
                     break;
                 case R.id.popup_duration_rgroup_full:
-                    if (templateAcademicHourList.size() == ConstantApplication.ONE) {
-                        TemplateAcademicHour following = new TemplateAcademicHour();
-                        if (currentTemplate.getGroup() != null) {
-                            following.setGroup(currentTemplate.getGroup())
-                                    .setSubject(currentTemplate.getSubject())
-                                    .setDayAndPair(Pair.create(classDay, classHour + posSecondCell));
-                        }
-                        templateAcademicHourList.add(following);
-                    } else if (templateAcademicHourList.size() == ConstantApplication.TWO) {
-                        templateAcademicHourList.set(ConstantApplication.ONE,
-                                templateAcademicHourList.get(ConstantApplication.ONE)
-                                        .setDayAndPair(Pair.create(classDay, classHour + posSecondCell)));
+                    if (templateAcademicHourList.size() == ConstantApplication.TWO &&
+                            templateAcademicHourList.get(ConstantApplication.ONE).getId() != ConstantApplication.ZERO) {
+                        break;
                     }
+
+                    TemplateAcademicHour following = new TemplateAcademicHour();
+                    if (currentTemplate.getGroup() != null) {
+                        following.setGroup(currentTemplate.getGroup())
+                                .setSubject(currentTemplate.getSubject())
+                                .setDayAndPair(Pair.create(classDay, classHour + posSecondCell));
+                    }
+                    templateAcademicHourList.add(following);
                     break;
             }
         });
 
-        if ("".equals(classes.get(classDay).get(classHour).getBtn().getText().toString())) {
+        if (classes.get(classDay).get(classHour).getBtn().getText().toString().isEmpty()) {
             builder.setTitle(R.string.popup_add_class);
             builder.setPositiveButton(R.string.popup_accept,new DialogInterface.OnClickListener(){
                 @Override
@@ -451,59 +449,27 @@ public abstract class TemplateActivity extends AppCompatActivity {
             });
         } else {
             builder.setTitle(R.string.popup_edit_class);
+            // Fill UI
             templateAcademicHourList.clear();
 
-            // Fill UI
             currentTemplate = classes.get(classDay).get(classHour).getTemplateAcademicHour();
             templateAcademicHourList.add(currentTemplate);
-            TemplateAcademicHour following = classes.get(classDay).get(classHour + posSecondCell).getTemplateAcademicHour();
 
+            TemplateAcademicHour following = classes.get(classDay).get(classHour + posSecondCell).getTemplateAcademicHour();
             if (following != null &&
                     currentTemplate.getGroup().equals(following.getGroup()) &&
                     currentTemplate.getSubject().equals(following.getSubject())) {
                 templateAcademicHourList.add(following);
             }
 
-            final int maxCountButton = templateAcademicHourList.size();
-
             groupNameSuggest.setText(currentTemplate.getGroup().getName());
-            groupNameSuggest.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    String strGroup = s.toString();
-                    Group group = DBManager.read(Group.class, ConstantApplication.NAME, strGroup);
-
-                    if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_GROUP, strGroup) || group == null){
-                        ConstantApplication.fillingSpinner(currentContext, subjectSpinner, new ArrayList<>());
-                        return;
-                    }
-
-                    currentTemplate.setGroup(DBManager.copyObjectFromRealm(group));
-                    fillSpinnerByGroup(currentContext, subjectSpinner, group);
-
-                    if (templateAcademicHourList.size() == ConstantApplication.TWO){
-                        templateAcademicHourList.set(ConstantApplication.ONE,
-                                templateAcademicHourList.get(ConstantApplication.ONE).setGroup(group));
-                    }
-                }
-            });
-
+            final int maxCountButton = templateAcademicHourList.size();
             switch (maxCountButton){
                 case ConstantApplication.ONE:
-                    radioGroup.check(R.id.popup_duration_rgroup_short);
+                    ((RadioButton) classView.findViewById(R.id.popup_duration_rgroup_short)).setChecked(true);
                     break;
                 case ConstantApplication.TWO:
-                    radioGroup.check(R.id.popup_duration_rgroup_full);
+                    ((RadioButton) classView.findViewById(R.id.popup_duration_rgroup_full)).setChecked(true);
                     break;
             }
 
@@ -529,27 +495,31 @@ public abstract class TemplateActivity extends AppCompatActivity {
         dialog.cancel();
     }
     protected void onClickAcceptClass(DialogInterface dialog, int which,int classDay, int classHour) {
+
+        int pos = ConstantApplication.secondCellShift(classHour);
+        TemplateAcademicHour adjacentCellToDelete = classes.get(classDay).get(classHour + pos).getTemplateAcademicHour();
+        if (templateAcademicHourList.size() == ConstantApplication.TWO && adjacentCellToDelete != null){
+            classes.get(classDay).get(classHour + pos).clearButtonContent();
+        }
+        
         for (TemplateAcademicHour templateAcademicHour : templateAcademicHourList){
             try {
                 DBManager.write(templateAcademicHour.createEntity());
                 Log.d(TAG, "templateAcademicHour = " + templateAcademicHour.toString());
             } catch (Exception e) {
-                // TODO Оповещение о не правильности\корректности
                 e.printStackTrace();
             }
         }
 
-        int pos = 0;
+        pos = 0;
         for (TemplateAcademicHour templateAcademicHour : templateAcademicHourList){
             // Assigning data to a cell
             classes.get(classDay).get(classHour + pos).setTemplateAcademicHour(templateAcademicHour);
 
             if (templateAcademicHourList.size() == ConstantApplication.TWO){
-                pos = secondCellShift(classHour);
+                pos = ConstantApplication.secondCellShift(classHour);
             }
         }
-
-        templateAcademicHourList.clear();
     }
     private void onClickAcceptEditClass(DialogInterface dialog, int which, int classDay, int classHour, final int maxCountButton) {
         /**
@@ -561,12 +531,11 @@ public abstract class TemplateActivity extends AppCompatActivity {
 
         if (templateAcademicHourList.size() != maxCountButton &&
                 templateAcademicHourList.size() == ConstantApplication.ONE){
-            int pos = secondCellShift(classHour);
+            int pos = ConstantApplication.secondCellShift(classHour);
             classes.get(classDay).get(classHour + pos).clearButtonContent();
         }
-        onClickAcceptClass(dialog, which, classDay, classHour);
 
-        templateAcademicHourList.clear();
+        onClickAcceptClass(dialog, which, classDay, classHour);
     }
 
     //~~~~~~ Формирование имени Шаблона

@@ -200,16 +200,16 @@ public class GroupsFragment extends Fragment {
 
         if(groupList.size() == ConstantApplication.ZERO){
             Toast.makeText(getContext(), R.string.toast_fragment_no_groups, Toast.LENGTH_LONG).show();
-            return false;
+            return true;
         }
 
         switch (item.getItemId()){
             case R.id.filter_group:
                 onClickPrepareFilterGroup();
-                break;
+                return true;
             case R.id.sort_group:
                 onClickPrepareSortGroup();
-                break;
+                return true;
         }
         return false;
     }
