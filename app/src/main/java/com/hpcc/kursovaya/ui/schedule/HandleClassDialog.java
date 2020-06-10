@@ -162,7 +162,7 @@ public class HandleClassDialog extends DialogFragment {
         return  builder.create();
     }
 
-    private void prepareUncancelledClasses() {
+    protected void prepareUncancelledClasses() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_cut_classes_template);
         builder.setMessage(R.string.popup_uncut_classes_content);
@@ -203,7 +203,7 @@ public class HandleClassDialog extends DialogFragment {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    private void prepareCancelledClassesDialog() {
+    protected void prepareCancelledClassesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_cut_classes_single_title);
         builder.setMessage(R.string.popup_cut_classes_single_content);
@@ -240,7 +240,7 @@ public class HandleClassDialog extends DialogFragment {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    private void prepareCancelCompletedClassesDialog() {
+    protected void prepareCancelCompletedClassesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_uncomplete_single_title);
         builder.setMessage(R.string.popup_uncomplete_single_content);
@@ -281,7 +281,7 @@ public class HandleClassDialog extends DialogFragment {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    private void prepareCompletedClassesDialog() {
+    protected void prepareCompletedClassesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_complete_single_title);
         builder.setCancelable(false);
@@ -322,7 +322,7 @@ public class HandleClassDialog extends DialogFragment {
         leftSpacer.setVisibility(View.GONE);
     }
 
-    private void prepareDeleteDialog() {
+    protected void prepareDeleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.popup_delete_classes_template);
         builder.setMessage(R.string.popup_delete_classes_content);

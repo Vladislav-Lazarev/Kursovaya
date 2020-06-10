@@ -118,9 +118,6 @@ public class ClassesButtonWrapper {
     }
     public void clearButtonContentWithoutDeleting(){
         btn.setBackground(drawableDef);
-        if (academicHour != null){
-            academicHour.refreshAllNumberPair(null);
-        }
         academicHour = null;
         anotherEvent = null;
         isBackgroundChanged = false;

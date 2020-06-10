@@ -857,6 +857,9 @@ public class WeekViewFragment extends Fragment {
         for(List<ClassesButtonWrapper> classs : classes ){
             for(ClassesButtonWrapper clazz : classs){
                 if(clazz!=null) {
+                    if (clazz.getAcademicHour() != null){
+                        clazz.getAcademicHour().refreshAllNumberPair(null);
+                    }
                     clazz.clearButtonContentWithoutDeleting();
                 }
             }

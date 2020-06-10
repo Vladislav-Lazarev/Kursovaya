@@ -312,4 +312,20 @@
     <string name="label_read_hours_part3">пар(и);</string>
     <string name="label_left_hours_part1">Залишилось у групі:</string>
     <string name="about_class_dialog_title">Інформація про заняття</string>
+    <string name="label_cancelled_hours_part1">Знято у групі</string>
+    <string name="all_courses">Всі</string>
+    <string name="there_is_no_groups">Групи з цього курсу на обраній спеціальності відсутні</string>
+    <string name="popup_delete_event_template">Ви дійсно хочете видалити подію?</string>
+    <string name="hour_conformity_per_group">Відповідність годин у групах</string>
+    <string name="group_check_no_problems_conformity">Немає проблем з відповідністю годин</string>
+    <string name="group_check_problems_conformity">Наявна невідповідність у годинах деяких предметів!</string>
+    <string name="unreadLabel">Непрочитаних годин:</string>
+    <string name="subjectTotalInSchedule">Усього годин внесено до розкладу:</string>
+    <string name="subjectRestHours">Залишилось вичитати годин:</string>
+    <string name="subjectsOfGroup">Предмети групи:</string>
+    <string name="subject_check_problems_conformity">Наявна невідповідність годин!</string>
+    <string name="tab_unread">Невичитані</string>
+    <string name="tab_read">Вичитані</string>
+    <string name="tab_canceled">Скасовані</string>
+    <string name="class_excess">Це заняття є зайвими! Видаліть, щоб кількість занять не перевищувала планову!</string>
 </resources>
