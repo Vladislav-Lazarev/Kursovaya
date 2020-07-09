@@ -31,7 +31,10 @@ public class LocaleManager {
     public static String getLanguage(Context c) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         Locale currentLocale = getLocale(c.getResources());
-        return !prefs.contains(LANGUAGE_KEY) ? null : prefs.getString(LANGUAGE_KEY, currentLocale.toString());
+        if(!prefs.contains(LANGUAGE_KEY)){
+            prefs.edit().putString(LANGUAGE_KEY,currentLocale.getLanguage()).commit();
+        }
+        return prefs.getString(LANGUAGE_KEY, currentLocale.toString());
     }
 
     @SuppressLint("ApplySharedPref")

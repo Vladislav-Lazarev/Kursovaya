@@ -9,7 +9,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 public class GroupSubjectTabViewPager extends FragmentPagerAdapter {
     final int PAGE_COUNT = 3;
-    private Context context;
 
 
 

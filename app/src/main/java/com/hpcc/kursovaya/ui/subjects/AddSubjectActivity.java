@@ -224,10 +224,12 @@ public class AddSubjectActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
-    private void checkSubject(String str){
+    private boolean checkSubject(String str){
         if (!ConstantApplication.checkUI(ConstantApplication.PATTERN_SUBJECT, str)){
             subjectEditText.setError(getString(R.string.toast_check));
+            return false;
         }
+        return true;
     }
     private void addSubject(){
         String strSubject = subjectEditText.getText().toString();
@@ -249,10 +251,10 @@ public class AddSubjectActivity extends AppCompatActivity {
                 return;
             }
         }
-        checkSubject(strSubject);
+        if (!checkSubject(strSubject)) return;
 
         Map<Speciality, Integer> resultMap = ConstantApplication.convertMapEditTextToMapInt(map);
-        subject.setName(strSubject.toLowerCase())
+        subject.setName(strSubject)
                 .setSpecialityCountHourMap(resultMap);
 
         Intent intent = getIntent();

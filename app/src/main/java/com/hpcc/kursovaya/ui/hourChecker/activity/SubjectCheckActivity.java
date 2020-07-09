@@ -2,6 +2,7 @@ package com.hpcc.kursovaya.ui.hourChecker.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SubjectCheckActivity extends AppCompatActivity implements SubjectAdapter.ItemClickListener {
+    private static final String TAG = SubjectCheckActivity.class.getSimpleName();
     Group group;
     List<SubjectModel> subjects;
     SubjectAdapter adapter;
@@ -79,6 +81,7 @@ public class SubjectCheckActivity extends AppCompatActivity implements SubjectAd
             subjects = new ArrayList<>(new LinkedHashSet<>(subjects));
 
             for(int i=0; i<subjects.size();i++){
+                subjects.get(i).initMap();
                 final int planHours = subjects.get(i).getSpecialityCountHour(group.getSpecialty());
                 final List<AcademicHour> readList = new ArrayList<>();
                 final List<AcademicHour> canceledList = new ArrayList<>();
@@ -108,7 +111,7 @@ public class SubjectCheckActivity extends AppCompatActivity implements SubjectAd
             onResume();
         }
 
-
+        Log.d(TAG,"stop");
     }
 
     @Override

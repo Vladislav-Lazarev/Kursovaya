@@ -9,8 +9,6 @@ import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 public class SubjectModel implements Parcelable {
@@ -42,11 +40,11 @@ public class SubjectModel implements Parcelable {
 
     private void order(List<AcademicHour> hours) {
 
-        Collections.sort(hours, (Comparator<AcademicHour>) (o1, o2) -> {
+        Collections.sort(hours, (o1, o2) -> {
 
-            Date x1 = (o1).getDate();
-            Date x2 = ( o2).getDate();
-            return x1.compareTo(x2);
+            Integer x1 = (o1).getNumberAcademicHour();
+            Integer x2 = ( o2).getNumberAcademicHour();
+            return -x1.compareTo(x2);
         });
     }
 

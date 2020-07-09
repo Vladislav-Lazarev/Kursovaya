@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -27,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -45,7 +48,7 @@ import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Case;
+import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class GroupsFragment extends Fragment {
@@ -62,6 +65,8 @@ public class GroupsFragment extends Fragment {
     private Spinner spinnerSpeciality;
     private Spinner spinnerCourse;
     private AlertDialog sortGroupDialog;
+    private TextView listEmpty;
+    private View coverView;
 
     public void setActionBarTitle(){
         ((MainActivity)getActivity()).setActionBarTitle(getContext().getString(R.string.menu_groups));
@@ -75,6 +80,12 @@ public class GroupsFragment extends Fragment {
             //creating elements for listview
             root = inflater.inflate(R.layout.fragment_groups, container, false);
             listView = root.findViewById(R.id.groupLSV);
+            listEmpty = root.findViewById(R.id.listEmptyFirstPart);
+            coverView = root.findViewById(R.id.emptyList);
+            SpannableStringBuilder builder = new SpannableStringBuilder();
+            builder.append(getString(R.string.emprty_list))
+                    .append(" ",new ImageSpan(getActivity(),R.mipmap.ic_add_white),0);
+            listEmpty.setText(builder);
             final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
             EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
             textSearch.addTextChangedListener(new TextWatcher() {
@@ -91,10 +102,16 @@ public class GroupsFragment extends Fragment {
                     if (s.toString().isEmpty()){
                         groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantApplication.NAME));
                     } else {
-                        groupList = DBManager.copyObjectFromRealm(DBManager
-                                .search(Group.class, ConstantApplication.NAME, s.toString(),
-                                        Case.INSENSITIVE, ConstantApplication.NAME, Sort.ASCENDING));
+                        groupList.clear();
+                        final RealmResults<Group> groupAll = DBManager.readAll(Group.class, ConstantApplication.NAME);
+
+                        for (Group group : groupAll){
+                            if (group.getName().trim().toLowerCase().contains(s.toString().trim().toLowerCase())){
+                                groupList.add(DBManager.copyObjectFromRealm(group));
+                            }
+                        }
                     }
+
                     adapter.addAll(groupList);
                 }
 
@@ -184,6 +201,17 @@ public class GroupsFragment extends Fragment {
         }
         isCreatedAlready=true;
         setActionBarTitle();
+
+        if(!groupList.isEmpty()){
+            coverView.setVisibility(View.GONE);
+            listEmpty.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        } else {
+            listEmpty.setVisibility(View.VISIBLE);
+            coverView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
+
         setHasOptionsMenu(true);
         return root;
     }
@@ -229,6 +257,8 @@ public class GroupsFragment extends Fragment {
             Group group = data.getParcelableExtra(strParcelableExtra);
             adapter.write(group);
             adapter.update(ConstantApplication.NAME);
+            listEmpty.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -446,7 +476,11 @@ public class GroupsFragment extends Fragment {
                     }
                 }
                 adapter.update(ConstantApplication.NAME);
-
+                if (adapter.getCount()==0){
+                    listEmpty.setVisibility(View.VISIBLE);
+                    coverView.setVisibility(View.VISIBLE);
+                    listView.setVisibility(View.GONE);
+                }
                 if (positionDel.size() == ConstantApplication.ONE){
                     Toast.makeText(getContext(), R.string.toast_del_entity, Toast.LENGTH_SHORT).show();
                 } else {

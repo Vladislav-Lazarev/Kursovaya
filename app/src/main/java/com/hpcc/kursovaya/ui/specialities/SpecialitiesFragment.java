@@ -6,7 +6,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -23,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,8 +42,7 @@ import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
 import java.util.List;
 
-import io.realm.Case;
-import io.realm.Sort;
+import io.realm.RealmResults;
 
 public class SpecialitiesFragment extends Fragment {
     private static final String TAG = SpecialitiesFragment.class.getSimpleName();
@@ -54,9 +56,10 @@ public class SpecialitiesFragment extends Fragment {
     private long mLastClickTime = 0;
 
     private EditText specText;
-    private EditText code;
+    private EditText codeText;
     List<Speciality> specialityList;
-
+    private TextView listEmpty;
+    private View coverView;
 
     private View root;
 
@@ -68,6 +71,12 @@ public class SpecialitiesFragment extends Fragment {
         root = inflater.inflate(R.layout.fragment_specialities, container, false);
         specialityLSV = root.findViewById(R.id.specialitiesLSV);
         addSpeciality = root.findViewById(R.id.fab);
+        listEmpty = root.findViewById(R.id.listEmptyFirstPart);
+        coverView = root.findViewById(R.id.emptyList);
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        builder.append(getString(R.string.emprty_list))
+                .append(" ",new ImageSpan(getActivity(),R.mipmap.ic_add_white),0);
+        listEmpty.setText(builder);
         final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
         final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
         EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
@@ -85,10 +94,16 @@ public class SpecialitiesFragment extends Fragment {
                 if (s.toString().isEmpty()){
                     specialityList = DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class, ConstantApplication.NAME));
                 } else {
-                    specialityList = DBManager.copyObjectFromRealm(DBManager
-                            .search(Speciality.class, ConstantApplication.NAME, s.toString(),
-                                    Case.INSENSITIVE, ConstantApplication.NAME, Sort.ASCENDING));
+                    specialityList.clear();
+                    final RealmResults<Speciality> specialityAll = DBManager.readAll(Speciality.class, ConstantApplication.NAME);
+
+                    for (Speciality speciality : specialityAll){
+                        if (speciality.getName().trim().toLowerCase().contains(s.toString().trim().toLowerCase())){
+                            specialityList.add(DBManager.copyObjectFromRealm(speciality));
+                        }
+                    }
                 }
+
                 adapter.addAll(specialityList);
             }
 
@@ -104,7 +119,7 @@ public class SpecialitiesFragment extends Fragment {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                onClickPrepareAddSpeciality();
+                onClickPrepareAddSpeciality("", "");
             }
         });
         specialityList = DBManager.copyObjectFromRealm(
@@ -162,6 +177,15 @@ public class SpecialitiesFragment extends Fragment {
             }
         });
         setActionBarTitle();
+        if(!specialityList.isEmpty()){
+            coverView.setVisibility(View.GONE);
+            listEmpty.setVisibility(View.GONE);
+            specialityLSV.setVisibility(View.VISIBLE);
+        } else {
+            listEmpty.setVisibility(View.VISIBLE);
+            coverView.setVisibility(View.VISIBLE);
+            specialityLSV.setVisibility(View.GONE);
+        }
         return root;
     }
 
@@ -170,7 +194,7 @@ public class SpecialitiesFragment extends Fragment {
         ((MainActivity) getActivity()).showOverflowMenu(false);
     }
 
-    private void onClickPrepareAddSpeciality() {
+    private void onClickPrepareAddSpeciality(String strSpec, String strCode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle(R.string.dialog_add_speciality);
         builder.setPositiveButton(R.string.dialog_button_add, new DialogInterface.OnClickListener() {
@@ -193,6 +217,12 @@ public class SpecialitiesFragment extends Fragment {
         addSpecialityView = getLayoutInflater().inflate(R.layout.dialog_speciality, null);
         builder.setView(addSpecialityView);
 
+        specText = addSpecialityView.findViewById(R.id.speciality_name_text);
+        codeText = addSpecialityView.findViewById(R.id.code_text);
+
+        specText.setText(strSpec);
+        codeText.setText(strCode);
+
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -208,26 +238,24 @@ public class SpecialitiesFragment extends Fragment {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-
     private void onClickAcceptAddSpeciality(DialogInterface dialog, int which) {
-       specText = addSpecialityView.findViewById(R.id.speciality_name_text);
-       code = addSpecialityView.findViewById(R.id.code_text);
-
        String strSpeciality = specText.getText().toString().trim();
-       String strCode = code.getText().toString().trim();
+       String strCode = codeText.getText().toString().trim();
 
        if (strSpeciality.isEmpty() || strCode.isEmpty() ||
                !ConstantApplication.checkUI(ConstantApplication.PATTERN_SPECIALITY, strSpeciality)){
             Toast.makeText(currentContext, R.string.toast_check, Toast.LENGTH_LONG).show();
-            onClickPrepareAddSpeciality();
+            onClickPrepareAddSpeciality(strSpeciality, strCode);
             return;
         }
 
-        int codeSpeciality = Integer.parseInt(code.getText().toString());
-        Speciality speciality = new Speciality(strSpeciality.toLowerCase(), codeSpeciality);
+        int codeSpeciality = Integer.parseInt(strCode);
+        Speciality speciality = new Speciality(strSpeciality, codeSpeciality);
 
         adapter.write(speciality);
         adapter.update(ConstantApplication.NAME);
+        listEmpty.setVisibility(View.GONE);
+        specialityLSV.setVisibility(View.VISIBLE);
     }
 
     private void prepareDeleteDialog(final ActionMode mode) {
@@ -252,6 +280,11 @@ public class SpecialitiesFragment extends Fragment {
                 }
                 adapter.update(ConstantApplication.NAME);
 
+                if (adapter.getCount()==0){
+                    listEmpty.setVisibility(View.VISIBLE);
+                    coverView.setVisibility(View.VISIBLE);
+                    specialityLSV.setVisibility(View.GONE);
+                }
                 if (positionDel.size() == ConstantApplication.ONE){
                     Toast.makeText(currentContext, R.string.toast_del_entity, Toast.LENGTH_SHORT).show();
                 } else {
@@ -308,10 +341,10 @@ public class SpecialitiesFragment extends Fragment {
         builder.setView(editSpecialityView);
 
         specText = editSpecialityView.findViewById(R.id.speciality_name_text);
-        code = editSpecialityView.findViewById(R.id.code_text);
+        codeText = editSpecialityView.findViewById(R.id.code_text);
 
         specText.setText(entity.getName());
-        code.setText(Integer.toString(entity.getCode()));
+        codeText.setText(Integer.toString(entity.getCode()));
 
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -328,10 +361,9 @@ public class SpecialitiesFragment extends Fragment {
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
     }
-
     private void onClickAcceptEditSpeciality(DialogInterface dialog, int which, Speciality entity) {
         String strSpeciality = specText.getText().toString().trim();
-        String strCode = code.getText().toString().trim();
+        String strCode = codeText.getText().toString().trim();
 
         if (strSpeciality.isEmpty() ||
                 strCode.isEmpty() ||
@@ -341,8 +373,9 @@ public class SpecialitiesFragment extends Fragment {
             return;
         }
 
-        int codeSpeciality = Integer.parseInt(code.getText().toString());
-        entity.setName(strSpeciality.toLowerCase()).setCode(codeSpeciality);
+        int codeSpeciality = Integer.parseInt(strCode);
+        entity.setName(strSpeciality)
+                .setCode(codeSpeciality);
 
         adapter.write(entity);
         adapter.update(ConstantApplication.NAME);

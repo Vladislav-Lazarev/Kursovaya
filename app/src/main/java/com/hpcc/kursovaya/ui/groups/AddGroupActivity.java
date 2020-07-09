@@ -39,7 +39,6 @@ public class AddGroupActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +98,7 @@ public class AddGroupActivity extends AppCompatActivity {
             return;
         }
 
-        group.setName(strGroup.toLowerCase());
+        group.setName(strGroup);
 
         Intent intent = getIntent();
         intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_ADD), group);

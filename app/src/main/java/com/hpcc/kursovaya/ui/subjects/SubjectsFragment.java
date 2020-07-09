@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -27,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,7 +49,7 @@ import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Case;
+import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class SubjectsFragment extends Fragment {
@@ -64,6 +67,8 @@ public class SubjectsFragment extends Fragment {
     private Spinner spinnerCourse;
     private Spinner spinnerGroup;
     private AlertDialog sortDialogSubject;
+    private TextView listEmpty;
+    private View coverView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup  container, Bundle savedInstanceState) {
@@ -73,9 +78,14 @@ public class SubjectsFragment extends Fragment {
         if(!isCreatedAlready) {
             root = inflater.inflate(R.layout.fragment_subjects, container, false);
             listView = root.findViewById(R.id.subjectsLSV);
-
-            final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
+            listEmpty = root.findViewById(R.id.listEmptyFirstPart);
+            coverView = root.findViewById(R.id.emptyList);
+            SpannableStringBuilder builder = new SpannableStringBuilder();
+            builder.append(getString(R.string.emprty_list))
+                    .append(" ",new ImageSpan(getActivity(),R.mipmap.ic_add_white),0);
+            listEmpty.setText(builder);
             Context context = getActivity();
+            final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
             final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
             EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
             textSearch.addTextChangedListener(new TextWatcher() {
@@ -92,10 +102,16 @@ public class SubjectsFragment extends Fragment {
                     if (s.toString().isEmpty()){
                         subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantApplication.NAME));
                     } else {
-                        subjectList = DBManager.copyObjectFromRealm(DBManager
-                                .search(Subject.class, ConstantApplication.NAME, s.toString(),
-                                        Case.INSENSITIVE, ConstantApplication.NAME, Sort.ASCENDING));
+                        subjectList.clear();
+                        final RealmResults<Subject> subjectAll = DBManager.readAll(Subject.class, ConstantApplication.NAME);
+
+                        for (Subject subject : subjectAll){
+                            if (subject.getName().trim().toLowerCase().contains(s.toString().trim().toLowerCase())){
+                                subjectList.add(DBManager.copyObjectFromRealm(subject));
+                            }
+                        }
                     }
+
                     adapter.addAll(subjectList);
                 }
 
@@ -180,6 +196,15 @@ public class SubjectsFragment extends Fragment {
         isCreatedAlready=true;
         setActionBarTitle();
         setHasOptionsMenu(true);
+        if(!subjectList.isEmpty()){
+            coverView.setVisibility(View.GONE);
+            listEmpty.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        } else {
+            listEmpty.setVisibility(View.VISIBLE);
+            coverView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
         return root;
     }
 
@@ -203,6 +228,8 @@ public class SubjectsFragment extends Fragment {
             Subject subject = data.getParcelableExtra(strParcelableExtra);
             adapter.write(subject);
             adapter.update(ConstantApplication.NAME);
+            listEmpty.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -227,7 +254,11 @@ public class SubjectsFragment extends Fragment {
                     }
                 }
                 adapter.update(ConstantApplication.NAME);
-
+                if (adapter.getCount()==0){
+                    listEmpty.setVisibility(View.VISIBLE);
+                    coverView.setVisibility(View.VISIBLE);
+                    listView.setVisibility(View.GONE);
+                }
                 if (positionDel.size() == ConstantApplication.ONE){
                     Toast.makeText(getContext(), R.string.toast_del_entity, Toast.LENGTH_SHORT).show();
                 } else {

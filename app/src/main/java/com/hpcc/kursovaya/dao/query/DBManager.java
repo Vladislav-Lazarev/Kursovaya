@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
@@ -20,14 +19,10 @@ import io.realm.Sort;
 
 public class DBManager {
     private static  final String TAG = DBManager.class.getSimpleName();
-    private static Realm realm = Realm.getDefaultInstance();
     private static List result = new ArrayList<>();
 
-    public static Realm getRealm() {
-        return realm;
-    }
-
     public static <T extends RealmObject> int write(@NotNull final T model){
+        Realm realm = Realm.getDefaultInstance();
         result.clear();
 
         try {
@@ -49,6 +44,7 @@ public class DBManager {
         return (int)result.get(ConstantApplication.ZERO);
     }
     public static <T extends RealmObject> int writeAll(@NotNull final List<T> model) {
+        Realm realm = Realm.getDefaultInstance();
         result.clear();
 
         try {
@@ -70,6 +66,7 @@ public class DBManager {
     }
 
     public static <T extends RealmObject, V> int delete(@NotNull final Class<T> clazz, @NotNull final String fieldName, @NotNull final V value){
+        Realm realm = Realm.getDefaultInstance();
         result.clear();
 
         try {
@@ -105,10 +102,12 @@ public class DBManager {
         return (int)result.get(ConstantApplication.ZERO);
     }
     public static <T extends RealmObject> int deleteAll(@NotNull final Class<T> clazz){
+        Realm realm = Realm.getDefaultInstance();
         return deleteAll(clazz, null, null);
     }
 
     public static <T extends RealmObject, V> int deleteAll(@NotNull final Class<T> clazz, final String fieldName, final V value){
+        Realm realm = Realm.getDefaultInstance();
         result.clear();
 
         try {
@@ -148,25 +147,28 @@ public class DBManager {
     }
 
     public static <T extends RealmObject, V> T read(@NotNull final Class<T> clazz, @NotNull String fieldName, @NotNull V value){
+        Realm realm = Realm.getDefaultInstance();
         result.clear();
 
         try {
             final RealmQuery<T> query = realm.where(clazz);
 
-            if (fieldName != null) {
-                if (value instanceof Integer) {
-                    query.equalTo(fieldName, (Integer) value);
-                } else if (value instanceof String) {
-                    query.equalTo(fieldName, ((String) value).toLowerCase());
-                } else if (value instanceof Date) {
-                    query.equalTo(fieldName, (Date) value);
-                } else {
-                    throw new Exception("Error type!");
-                }
+            if (value instanceof Integer) {
+                query.equalTo(fieldName, (Integer) value);
+            } else if (value instanceof String) {
+                query.equalTo(fieldName, (String) value);
+            } else if (value instanceof Date) {
+                query.equalTo(fieldName, (Date) value);
+            } else {
+                throw new Exception("Error type!");
             }
 
             result.add(query.findFirst());
-            Log.v(TAG, "Success -> " + result.get(ConstantApplication.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantApplication.ZERO).toString());
+            if (!result.isEmpty()){
+                Log.v(TAG, "Success -> " + result.get(ConstantApplication.ZERO).getClass().getSimpleName() + " was read: " + result.get(ConstantApplication.ZERO).toString());
+            } else {
+                Log.v(TAG, "Success -> " + null + " was read: " + result.get(ConstantApplication.ZERO).toString());
+            }
         } catch (Throwable ex) {
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
             return null;
@@ -196,7 +198,7 @@ public class DBManager {
     public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz,
                                                                   final String fieldName, Object value,
                                                                   final String fieldSort, Sort sort){
-
+        Realm realm = Realm.getDefaultInstance();
         result.clear();
 
         try {
@@ -205,7 +207,7 @@ public class DBManager {
                 if (value instanceof Integer) {
                     query.equalTo(fieldName, (Integer) value);
                 } else if (value instanceof String) {
-                    query.equalTo(fieldName, ((String) value).toLowerCase());
+                    query.equalTo(fieldName, ((String) value));
                 } else if (value instanceof Date) {
                     query.equalTo(fieldName, (Date) value);
                 } else {
@@ -219,7 +221,11 @@ public class DBManager {
             }
 
             result.add(model);
-            Log.v(TAG, "Success -> " + result.get(ConstantApplication.ZERO).getClass().getSimpleName() + " was readAll: " + result.get(ConstantApplication.ZERO).toString());
+            if (!result.isEmpty()){
+                Log.v(TAG, "Success -> " + result.get(ConstantApplication.ZERO).getClass().getSimpleName() + " was readAll: " + result.get(ConstantApplication.ZERO).toString());
+            } else {
+                Log.v(TAG, "Success -> " + null + " was readAll: " + result.get(ConstantApplication.ZERO).toString());
+            }
         } catch (Throwable ex) {
             result.add(null);
             Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
@@ -245,6 +251,7 @@ public class DBManager {
     public static <T extends RealmObject> RealmResults<T> readAll(@NotNull final Class<T> clazz,
                                                                   List<String> fieldsName, List<Object> values,
                                                                   List<String> fieldsSort, List<Sort> sorts){
+        Realm realm = Realm.getDefaultInstance();
 
         if (fieldsName.size() != values.size()){
             return null;
@@ -295,6 +302,8 @@ public class DBManager {
     }
 
     public static <T extends RealmObject> int findMaxID(@NotNull Class<T> clazz){
+        Realm realm = Realm.getDefaultInstance();
+
         Number maxID = realm.where(clazz).max(ConstantApplication.ID);
 
         if (maxID != null) {
@@ -304,6 +313,8 @@ public class DBManager {
     }
 
     public static <T extends RealmObject> T copyObjectFromRealm(T obj){
+        Realm realm = Realm.getDefaultInstance();
+
         if(obj!=null) {
             return realm.copyFromRealm(obj);
         } else {
@@ -311,24 +322,7 @@ public class DBManager {
         }
     }
     public static <T extends RealmObject> List<T> copyObjectFromRealm(List<T> obj){
+        Realm realm = Realm.getDefaultInstance();
         return realm.copyFromRealm(obj);
-    }
-
-    public static  <T extends RealmObject> RealmResults<T> search(@NotNull Class<T> clazz, @NotNull final String fieldName, @NotNull String value,
-                                                                  @NotNull Case casing, @NotNull final String nameSort, Sort sort){
-        result.clear();
-
-        try {
-            RealmResults<T> model = realm.where(clazz)
-                    .like(fieldName, "*" + value.toLowerCase() + "*", casing)
-                    .sort(nameSort, sort).findAll();
-            result.add(model);
-            Log.v(TAG, "Success -> " + result.get(ConstantApplication.ZERO).getClass().getSimpleName() + " was search: " + result.get(ConstantApplication.ZERO).toString());
-        } catch (Throwable ex) {
-            result.add(null);
-            Log.e(TAG, "Failed -> " + ex.getMessage(), ex);
-        }
-
-        return (RealmResults<T>) result.get(ConstantApplication.ZERO);
     }
 }

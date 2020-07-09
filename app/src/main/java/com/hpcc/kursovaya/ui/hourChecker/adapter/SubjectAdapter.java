@@ -54,7 +54,9 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
             if(!model.isFull()){
                 holder.checkResult.setText(R.string.subject_check_problems_conformity);
                 holder.checkResult.setTextColor(Color.RED);
-
+            } else{
+                holder.checkResult.setText(R.string.group_check_no_problems_conformity);
+                holder.checkResult.setTextColor(Color.GREEN);
             }
         }
     }

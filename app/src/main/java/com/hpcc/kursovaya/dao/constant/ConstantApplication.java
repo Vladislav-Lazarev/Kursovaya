@@ -1,7 +1,6 @@
 package com.hpcc.kursovaya.dao.constant;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ConstantApplication {
@@ -117,26 +115,14 @@ public class ConstantApplication {
     public static final String PATTERN_DATE_TIME = "dd/MM/yyyy HH:mm:ss";
     public static final String MIN_DATE_TIME = "01/01/1990 00:00:00";
 
-    public static final String PATTERN_SPECIALITY = "^(\\p{Upper}\\p{Lower}+[.]?)(([\\s-])(\\p{Lower}{2,})[.]?)*|(\\p{Upper}{2,})$";
-    public static final String PATTERN_GROUP = "^([\\p{Alnum}-]{2,})$";
+    public static final String PATTERN_SPECIALITY = "^(\\p{Upper}\\p{Lower}+[.]?)(([\\s-])(\\p{Alpha}{2,})[.]?)*|(\\p{Upper}{2,})$";
+    public static final String PATTERN_GROUP = "^[\\p{Alnum}-]{2,}$";
     public static final String PATTERN_SUBJECT = PATTERN_SPECIALITY;
     public static final String PATTERN_TEMPLATE = "^[\\p{Alnum}\\p{Punct}][\\s\\p{Alnum}\\p{Punct}]*$";
-    public static final String PATTERN_TEXT_VISUAL = "^(\\p{Alnum})(.+)";
 
     // checkUI
     public static boolean checkUI(@NotNull String pattern, @NotNull String str){
         return Pattern.matches(pattern, str);
-    }
-
-    public static String textVisual(@NotNull String strPattern, @NotNull String text){
-        Pattern pattern = Pattern.compile(strPattern);
-        Matcher matcher = pattern.matcher(text);
-
-        if (matcher.find()){
-            text = text.replace(matcher.group(), matcher.group(1).toUpperCase() + matcher.group(2));
-        }
-        Log.d("textVisual", text);
-        return text;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

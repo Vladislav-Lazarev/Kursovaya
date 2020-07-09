@@ -58,7 +58,7 @@ public class Speciality extends RealmObject implements EntityI<Speciality>, Parc
 
     @NotNull
     public String getName() {
-        return ConstantApplication.textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, name);
+        return name;
     }
     public Speciality setName(@NotNull String name) {
         if("".equals(name)){

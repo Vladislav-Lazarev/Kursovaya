@@ -596,7 +596,7 @@ public abstract class TemplateActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.toast_check, Toast.LENGTH_LONG);
             return;
         }
-        scheduleWeek.setName(strTemplate.toLowerCase())
+        scheduleWeek.setName(strTemplate)
                 .setTemplateAcademicHourList(convert2DimensionalTo1Dimensional(classes));
     }
 }

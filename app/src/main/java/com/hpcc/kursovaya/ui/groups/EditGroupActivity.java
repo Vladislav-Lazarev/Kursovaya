@@ -113,7 +113,7 @@ public class EditGroupActivity extends AppCompatActivity {
             return;
         }
 
-        group.setName(strGroup.toLowerCase());
+        group.setName(strGroup);
 
         Intent intent = getIntent();
         intent.putExtra(String.valueOf(ConstantApplication.ACTIVITY_EDIT), group);

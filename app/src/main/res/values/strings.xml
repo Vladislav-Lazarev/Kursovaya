@@ -328,4 +328,7 @@
     <string name="tab_read">Вичитані</string>
     <string name="tab_canceled">Скасовані</string>
     <string name="class_excess">Це заняття є зайвими! Видаліть, щоб кількість занять не перевищувала планову!</string>
+    <string name="progress_importing_dialog">Імпортування шаблонів...</string>
+    <string name="gen_report_progress">Генерація звіту</string>
+    <string name="emprty_list">Елементи відсутні. Додайте нові елементи за допомогою кнопки - </string>
 </resources>

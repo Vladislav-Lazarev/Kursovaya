@@ -769,7 +769,9 @@ public class WeekViewFragment extends Fragment {
                         academicHourList.get(i).refreshAllNumberPair(classes.get(classDay).get(classHour + posSecondCell).getAcademicHour());
 
                         classes.get(classDay).get(classHour + posSecondCell).setAcademicHour(academicHourList.get(i));
-                        repeatForWeeks(academicHourList.get(i),classDay,classHour + posSecondCell,getActivity());
+                        //if(academicHourList.get(i).getRepeatForNextWeek()!=0) {
+                            repeatForWeeks(academicHourList.get(i), classDay, classHour + posSecondCell, getActivity());
+                        //}
 
                         if (academicHourList.size() == ConstantApplication.TWO &&
                                 i < academicHourList.size() - ConstantApplication.ONE){
@@ -794,51 +796,53 @@ public class WeekViewFragment extends Fragment {
     }
 
     public static void repeatForWeeks(AcademicHour academicHour, int classDay, int classHour, Context context) {
-        int numberOfWeeks = academicHour.getRepeatForNextWeek();
-        DateTime start = new DateTime(academicHour.getDate());
-        List<AcademicHour> academicHours =
-                AcademicHour.academicHourListFromPeriod(start.plusDays(1).toDate(),start.plusWeeks(3).toDate());
+        if(academicHour!=null) {
+            int numberOfWeeks = academicHour.getRepeatForNextWeek();
+            DateTime start = new DateTime(academicHour.getDate());
+            List<AcademicHour> academicHours =
+                    AcademicHour.academicHourListFromPeriod(start.plusDays(1).toDate(), start.plusWeeks(3).toDate());
 
-        for(AcademicHour academicHourToDelete: academicHours){
-            TemplateAcademicHour templateAcHour = academicHourToDelete.getTemplateAcademicHour();
-            Group group = templateAcHour.getGroup();
-            Subject subject = templateAcHour.getSubject();
+            for (AcademicHour academicHourToDelete : academicHours) {
+                TemplateAcademicHour templateAcHour = academicHourToDelete.getTemplateAcademicHour();
+                Group group = templateAcHour.getGroup();
+                Subject subject = templateAcHour.getSubject();
 
-            if(templateAcHour.getNumberDayOfWeek()==classDay && templateAcHour.getNumberHalfPairButton()==classHour
-                    && group.equals(academicHour.getTemplateAcademicHour().getGroup())
-                    && subject.equals(academicHour.getTemplateAcademicHour().getSubject())){
+                if (templateAcHour.getNumberDayOfWeek() == classDay && templateAcHour.getNumberHalfPairButton() == classHour
+                        && group.equals(academicHour.getTemplateAcademicHour().getGroup())
+                        && subject.equals(academicHour.getTemplateAcademicHour().getSubject())) {
 
-                DBManager.delete(AcademicHour.class,ConstantApplication.ID,academicHourToDelete.getId());
-                academicHourToDelete.refreshAllNumberPair(null);
-                DBManager.delete(TemplateAcademicHour.class,ConstantApplication.ID,templateAcHour.getId());
+                    DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHourToDelete.getId());
+                    academicHourToDelete.refreshAllNumberPair(null);
+                    DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcHour.getId());
+                }
             }
-        }
-        if(numberOfWeeks!=0) {
-            for (int i = 0; i < numberOfWeeks; i++) {
-                Date date = academicHour.getDate();
-                DateTime nextWeek = (date == null) ? null : new DateTime(date).plusWeeks(i + 1);
-                TemplateAcademicHour templateAcademicHourSource = academicHour.getTemplateAcademicHour();
-                TemplateAcademicHour templateAcademicHour = new TemplateAcademicHour();
-                templateAcademicHour.setGroup(templateAcademicHourSource.getGroup());
-                templateAcademicHour.setSubject(templateAcademicHourSource.getSubject());
-                templateAcademicHour.setDayAndPair(templateAcademicHourSource.getDayAndPairButton());
-                try {
-                    DBManager.write(templateAcademicHour.createEntity());
-                    Log.d(TAG, "repeatForWeeks = " + templateAcademicHour.toString());
-                } catch (Exception e) {
-                    // TODO Оповещение о не правильности\корректности
-                    Log.d(TAG,"repeatForWeeks"+e.toString());
+            if (numberOfWeeks != 0) {
+                for (int i = 0; i < numberOfWeeks; i++) {
+                    Date date = academicHour.getDate();
+                    DateTime nextWeek = (date == null) ? null : new DateTime(date).plusWeeks(i + 1);
+                    TemplateAcademicHour templateAcademicHourSource = academicHour.getTemplateAcademicHour();
+                    TemplateAcademicHour templateAcademicHour = new TemplateAcademicHour();
+                    templateAcademicHour.setGroup(templateAcademicHourSource.getGroup());
+                    templateAcademicHour.setSubject(templateAcademicHourSource.getSubject());
+                    templateAcademicHour.setDayAndPair(templateAcademicHourSource.getDayAndPairButton());
+                    try {
+                        DBManager.write(templateAcademicHour.createEntity());
+                        Log.d(TAG, "repeatForWeeks = " + templateAcademicHour.toString());
+                    } catch (Exception e) {
+                        // TODO Оповещение о не правильности\корректности
+                        Log.d(TAG, "repeatForWeeks" + e.toString());
+                    }
+                    AcademicHour nextAcademicHour = new AcademicHour(0, templateAcademicHour, nextWeek.toDate()
+                            , academicHour.getNote(), academicHour.getNotificationBefore(), 0, false, false,academicHour.getNumberAcademicHour() ,academicHour.getNumberPair());
+                    try {
+                        DBManager.write(nextAcademicHour.createEntity());
+                        Log.d(TAG, "repeatForWeeks = " + nextAcademicHour.toString());
+                    } catch (Exception e) {
+                        // TODO Оповещение о не правильности\корректности
+                        e.printStackTrace();
+                    }
+                    AcademicHour.setNotifaction(context.getApplicationContext(), nextAcademicHour);
                 }
-                AcademicHour nextAcademicHour = new AcademicHour(0, templateAcademicHour, nextWeek.toDate()
-                        , academicHour.getNote(), academicHour.getNotificationBefore(), 0, false, false, academicHour.getNumberPair());
-                try {
-                    DBManager.write(nextAcademicHour.createEntity());
-                    Log.d(TAG, "repeatForWeeks = " + nextAcademicHour.toString());
-                } catch (Exception e) {
-                    // TODO Оповещение о не правильности\корректности
-                    e.printStackTrace();
-                }
-                AcademicHour.setNotifaction(context.getApplicationContext(),nextAcademicHour);
             }
         }
     }
@@ -853,13 +857,14 @@ public class WeekViewFragment extends Fragment {
         }
         List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(
                 AcademicHour.academicHourListFromPeriod(from.toDate(),to.toDate()));
+        if (academicHours != null && !academicHours.isEmpty()) {
+            academicHours.get(ConstantApplication.ZERO).refreshAllNumberPair(null);
+        }
+
         List<AnotherEvent> anotherEvents = DBManager.copyObjectFromRealm(AnotherEvent.anotherEventsFromPeriod(from.toDate(),to.toDate()));
         for(List<ClassesButtonWrapper> classs : classes ){
             for(ClassesButtonWrapper clazz : classs){
                 if(clazz!=null) {
-                    if (clazz.getAcademicHour() != null){
-                        clazz.getAcademicHour().refreshAllNumberPair(null);
-                    }
                     clazz.clearButtonContentWithoutDeleting();
                 }
             }
@@ -874,8 +879,6 @@ public class WeekViewFragment extends Fragment {
             classes.get(templateAnotherEvent.getNumberDayOfWeek()).get(templateAnotherEvent.getNumberHalfPairButton()).setAnotherEvent(event);
         }
     }
-
-
 
     @Override
     public void onResume(){

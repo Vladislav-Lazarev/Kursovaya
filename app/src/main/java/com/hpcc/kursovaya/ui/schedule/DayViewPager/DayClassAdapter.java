@@ -35,14 +35,24 @@ public class DayClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     protected ItemClickListener mClickListener;
     protected SparseBooleanArray selectedItems;
 
-
     public void delete(Integer position) {
-       AcademicHour academicHour = academicHourList.get(position).academicHour;
-        if(academicHour!=null){
-            DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, academicHour.getTemplateAcademicHour().getId());
-            DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+       DayViewFragment.EventAgregator eventAgregator = academicHourList.get(position);
+        if(eventAgregator!=null){
+            if(eventAgregator.academicHour!=null){
+                AcademicHour academicHour = eventAgregator.academicHour;
+                int templateId =  academicHour.getTemplateAcademicHour().getId();
+                int academicId = academicHour.getId();
+                DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicId);
+                academicHour.refreshAllNumberPair(null);
+                DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateId);
+            } else if(eventAgregator.anotherEvent!=null){
+                DBManager.delete(AnotherEvent.class, ConstantApplication.ID, eventAgregator.anotherEvent.getId());
+                DBManager.delete(TemplateAnotherEvent.class, ConstantApplication.ID, eventAgregator.anotherEvent.getTemplateAnotherEvent().getId());
+            }
             academicHourList.set(position,null);
+            notifyDataSetChanged();
         }
+
     }
 
 
@@ -76,10 +86,10 @@ public class DayClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         int couple = position / 2;
         int half = ((position + 1) % 2 == 0) ? 1 : 0;
-        if(academicHour!=null){
+        if(academicHour!=null && academicHour.getTemplateAcademicHour()!=null){
             int numberHalfPair = academicHour.getTemplateAcademicHour().getNumberHalfPairButton();
             couple = numberHalfPair/2;
-            half= ((position+1)%2 ==0) ? 1: 0;
+            half= ((numberHalfPair+1)%2 ==0) ? 1: 0;
         }
         String timeHeader = getCoupleHeader(couple, half);
         holder.timeHeader.setText(timeHeader);
@@ -93,7 +103,7 @@ public class DayClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.subjectName.setTextColor(Color.WHITE);
         holder.subjectName.setPaintFlags(0);
         holder.rl.setBackgroundColor(context.getResources().getColor(R.color.colorStatusBar));
-        if(academicHour!=null){
+        if(academicHour!=null && academicHour.getTemplateAcademicHour()!=null){
             Group group = academicHour.getTemplateAcademicHour().getGroup();
             Subject subject = academicHour.getTemplateAcademicHour().getSubject();
             String description = academicHour.getNote();
@@ -211,6 +221,8 @@ public class DayClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
         DBManager.write(selected);
+        selected.refreshAllNumberPair(null);
+
     }
 
     public void setCanceled(int position,boolean b) {
@@ -229,6 +241,9 @@ public class DayClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
         DBManager.write(selected);
+        selected.refreshAllNumberPair(null);
+
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {

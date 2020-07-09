@@ -140,6 +140,7 @@ public class HandleEventDialog extends DialogFragment {
                     classesButton.clearButtonContent();
                 } else {
                     adapter.delete(classHour);
+                    adapter.notifyDataSetChanged();
                 }
 
             }

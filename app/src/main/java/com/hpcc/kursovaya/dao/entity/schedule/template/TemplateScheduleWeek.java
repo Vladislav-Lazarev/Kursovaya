@@ -72,7 +72,7 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
 
     @NotNull
     public String getName() {
-        return ConstantApplication.textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, name);
+        return name;
     }
     public TemplateScheduleWeek setName(@NotNull String name) {
         if (name.isEmpty()) {
@@ -81,6 +81,7 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
         this.name = name;
         return this;
     }
+
 
     @NotNull
     public List<TemplateAcademicHour> getTemplateAcademicHourList() {

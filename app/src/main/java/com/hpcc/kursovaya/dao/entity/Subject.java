@@ -95,7 +95,7 @@ public class Subject extends RealmObject implements EntityI<Subject>, Parcelable
 
     @NotNull
     public String getName() {
-        return ConstantApplication.textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, name);
+        return name;
     }
     public Subject setName(@NotNull String name) {
         if("".equals(name)){

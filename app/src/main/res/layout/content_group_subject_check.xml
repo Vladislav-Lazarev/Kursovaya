@@ -15,7 +15,7 @@
         app:tabMode="fixed"
         />
 
-    <androidx.viewpager.widget.ViewPager
+    <com.hpcc.kursovaya.ui.schedule.DayViewPager.CustomViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0px"

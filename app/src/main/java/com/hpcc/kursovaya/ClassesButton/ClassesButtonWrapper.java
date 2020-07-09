@@ -10,8 +10,6 @@ import android.widget.TextView;
 
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
-import com.hpcc.kursovaya.dao.entity.Group;
-import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.schedule.AcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.AnotherEvent;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
@@ -96,8 +94,6 @@ public class ClassesButtonWrapper {
         if(academicHour!=null && anotherEvent==null) {
             drawableDef = context.getResources().getDrawable(R.drawable.hover_add);
             if (academicHour.getTemplateAcademicHour() != null) {
-                Subject subject = academicHour.getTemplateAcademicHour().getSubject();
-                Group group = academicHour.getTemplateAcademicHour().getGroup();
                 DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
                 academicHour.refreshAllNumberPair(null);
                 DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, academicHour.getTemplateAcademicHour().getId());
@@ -105,8 +101,8 @@ public class ClassesButtonWrapper {
         } else if(anotherEvent!=null && academicHour==null){
             drawableDef = context.getResources().getDrawable(R.drawable.hover_add);
             if(anotherEvent.getTemplateAnotherEvent()!=null){
-                DBManager.delete(TemplateAnotherEvent.class,"id",anotherEvent.getTemplateAnotherEvent().getId());
-                DBManager.delete(AnotherEvent.class,"id",anotherEvent.getId());
+                DBManager.delete(AnotherEvent.class, ConstantApplication.ID ,anotherEvent.getId());
+                DBManager.delete(TemplateAnotherEvent.class, ConstantApplication.ID, anotherEvent.getTemplateAnotherEvent().getId());
             }
         }
         btn.setBackground(drawableDef);

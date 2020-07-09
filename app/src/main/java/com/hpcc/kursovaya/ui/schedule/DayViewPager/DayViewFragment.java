@@ -216,19 +216,22 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
                     intent.putExtra("secondCell", secondAcademicHour);
                     startActivityForResult(intent, EDIT_CLASS);*/
                 } else if(event.anotherEvent!=null){
-                    handleDialog = HandleEventDialog.newInstance(getActivity(),position,currentDate.getDayOfWeek() - 1,currentDate,adapter,event.anotherEvent);
+                    handleDialog = HandleEventDialog.newInstance(getActivity(),currentDate.getDayOfWeek() - 1,position,currentDate,adapter,event.anotherEvent);
 
                 }
                 handleDialog.setTargetFragment(DayViewFragment.this,1);
                 handleDialog.show(getFragmentManager(),"handleDialog");
             }
         } else {
-            if(event.academicHour==null || event.anotherEvent==null){
-                Toast.makeText(context, R.string.cant_select_empty_class, Toast.LENGTH_SHORT).show();
+            if (event!=null) {
+                if(event.academicHour != null || event.anotherEvent != null) {
+                    toggleSelection(position);
+                }
             } else {
-                toggleSelection(position);
+                Toast.makeText(context, R.string.cant_select_empty_class, Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 
     @Override
@@ -310,21 +313,20 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
                     academicHourList.set(classHour,eventAgregator);
                     //classes.get(classDay).get(classHour).setAcademicHour(academicHourEditedFirst);
                     WeekViewFragment.repeatForWeeks(academicHourEditedFirst,classDay,classHour,getActivity());
+                    int secondCellShift = (classHour%2==0) ? 1 : -1;
                     if(isHourChanged){
-                        int secondCellShift = data.getIntExtra("secondClassHour",0);
-                        AcademicHour academicHourSecond = academicHourList.get(secondCellShift).academicHour;
+                        AcademicHour academicHourSecond = academicHourList.get(classHour+secondCellShift).academicHour;
                         if(academicHourSecond!=null && academicHourSecond.getTemplateAcademicHour()!=null) {
                             DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, academicHourSecond.getTemplateAcademicHour().getId());
                             DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHourSecond.getId());
                         }
-                        academicHourList.set(secondCellShift,null);
+                        academicHourList.set(classHour+secondCellShift,null);
                         //classes.get(classDay).get(secondCellShift).clearButtonContent();
                     }
                     if(isTwoHours){
                         AcademicHour academicHourEditedSecond = data.getParcelableExtra("secondHour");
                         secondHour.academicHour = academicHourEditedSecond;
-                        int secondCellShift = data.getIntExtra("secondClassHour",0);
-                        academicHourList.set(secondCellShift,secondHour);
+                        academicHourList.set(secondCellShift+classHour,secondHour);
                         //classes.get(classDay).get(secondCellShift).setAcademicHour(academicHourEditedSecond);
                         WeekViewFragment.repeatForWeeks(academicHourEditedSecond,classDay,secondCellShift,getActivity());
                     }
@@ -346,7 +348,8 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
     }
 
     public void refreshGrid() {
-        List<AcademicHour> actualAcademicHours = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class,"date",currentDate.toDate()));
+        List<AcademicHour> actualAcademicHours = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class, "date", currentDate.toDate()));
+
         for(AcademicHour academicHour:actualAcademicHours){
             TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
             EventAgregator event = new EventAgregator();

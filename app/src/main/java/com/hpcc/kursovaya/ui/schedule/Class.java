@@ -283,7 +283,13 @@ public abstract class Class extends AppCompatActivity implements AdapterView.OnI
 
         }
         intent.putExtra("academicHourList", academicHourList);
-
+        intent.putExtra("isTwoHour",false);
+        intent.putExtra("firstHour",academicHourList.get(0));
+        if(academicHourList.size()==2){
+            intent.putExtra("isTwoHour",true);
+            intent.putExtra("secondCellPosition",posSecondCell);
+            intent.putExtra("secondHour",academicHourList.get(1));
+        }
         DateTime now = DateTime.now();
         Seconds difference = Seconds.secondsBetween(now,timeOfRing);
         if(notificationBefore && difference.getSeconds() > 0) {

@@ -55,7 +55,7 @@ public class Group extends RealmObject implements EntityI<Group>, Parcelable, Cl
     }
 
     public String getName() {
-        return ConstantApplication.textVisual(ConstantApplication.PATTERN_TEXT_VISUAL, name);
+        return name;
     }
     public Group setName(@NotNull String name) {
         if("".equals(name)){

@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -21,6 +23,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,8 +42,7 @@ import com.hpcc.kursovaya.dao.query.DBManager;
 
 import java.util.List;
 
-import io.realm.Case;
-import io.realm.Sort;
+import io.realm.RealmResults;
 
 public class TemplatesFragment extends Fragment {
     private static final String TAG = TemplatesFragment.class.getSimpleName();
@@ -50,6 +52,8 @@ public class TemplatesFragment extends Fragment {
     private View root;
     private long mLastClickTime = 0;
     private Toolbar toolbar;
+    private TextView listEmpty;
+    private View coverView;
     TemplateListAdapter adapter;
     private List<TemplateScheduleWeek> scheduleWeekList;
 
@@ -63,37 +67,15 @@ public class TemplatesFragment extends Fragment {
         setHasOptionsMenu(false);
         root = inflater.inflate(R.layout.fragment_templates, container, false);
         listView = root.findViewById(R.id.templatesLSV);
+        listEmpty = root.findViewById(R.id.listEmptyFirstPart);
+        coverView = root.findViewById(R.id.emptyList);
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        builder.append(getString(R.string.emprty_list))
+                .append(" ",new ImageSpan(getActivity(),R.mipmap.ic_add_white),0);
+        listEmpty.setText(builder);
+
         Context context = getActivity();
         getActivity().setTitle("");
-
-        final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
-        EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
-        textSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.clear();
-                adapter.notifyDataSetChanged();
-
-                if (s.toString().isEmpty()){
-                    scheduleWeekList = DBManager.copyObjectFromRealm(DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME));
-                } else {
-                    scheduleWeekList = DBManager.copyObjectFromRealm(DBManager
-                            .search(TemplateScheduleWeek.class, ConstantApplication.NAME, s.toString(),
-                                    Case.INSENSITIVE, ConstantApplication.NAME, Sort.ASCENDING));
-                }
-                adapter.addAll(scheduleWeekList);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
         FloatingActionButton button = root.findViewById(R.id.fab);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,21 +101,67 @@ public class TemplatesFragment extends Fragment {
             }
         });
 
+        final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
+        EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
+        textSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.clear();
+                adapter.notifyDataSetChanged();
+
+                if (s.toString().isEmpty()){
+                    scheduleWeekList = DBManager.copyObjectFromRealm(DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME));
+                } else {
+                    scheduleWeekList.clear();
+                    final RealmResults<TemplateScheduleWeek> groupAll = DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME);
+
+                    for (TemplateScheduleWeek templateScheduleWeek : groupAll){
+                        if (templateScheduleWeek.getName().trim().toLowerCase().contains(s.toString().trim().toLowerCase())){
+                            scheduleWeekList.add(DBManager.copyObjectFromRealm(templateScheduleWeek));
+                        }
+                    }
+                }
+
+                adapter.addAll(scheduleWeekList);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        scheduleWeekList = DBManager.copyObjectFromRealm(
+                DBManager.readAll(TemplateScheduleWeek.class));
+        adapter = new TemplateListAdapter(getActivity(), R.layout.list_view_item_template, scheduleWeekList);
+        listView.setAdapter(adapter);
+
         Thread fillListView = new Thread(this::listViewFiller);
         fillListView.run();
-        setActionBarTitle();
         try {
             fillListView.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        if(!scheduleWeekList.isEmpty()){
+            coverView.setVisibility(View.GONE);
+            listEmpty.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        } else {
+            listEmpty.setVisibility(View.VISIBLE);
+            coverView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
 
+        setActionBarTitle();
         return root;
     }
 
     public void listViewFiller(){
-        scheduleWeekList = DBManager.copyObjectFromRealm(
-                DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME));
         adapter = new TemplateListAdapter(getActivity(), R.layout.list_view_item_template, scheduleWeekList);
         listView.setAdapter(adapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -201,10 +229,13 @@ public class TemplatesFragment extends Fragment {
                 case ConstantApplication.ACTIVITY_EDIT:
                     strParcelableExtra = String.valueOf(ConstantApplication.ACTIVITY_EDIT);
                     break;
+
             }
             TemplateScheduleWeek scheduleWeek = data.getParcelableExtra(strParcelableExtra);
             adapter.write(scheduleWeek);
             adapter.update(ConstantApplication.NAME);
+            listEmpty.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -229,7 +260,11 @@ public class TemplatesFragment extends Fragment {
                                     }
                                 }
                                 adapter.update(ConstantApplication.NAME);
-
+                                if (adapter.getCount()==0){
+                                    listEmpty.setVisibility(View.VISIBLE);
+                                    coverView.setVisibility(View.VISIBLE);
+                                    listView.setVisibility(View.GONE);
+                                }
                                 if (positionDel.size() == ConstantApplication.ONE){
                                     Toast.makeText(getContext(), R.string.toast_del_entity, Toast.LENGTH_SHORT).show();
                                 } else {
