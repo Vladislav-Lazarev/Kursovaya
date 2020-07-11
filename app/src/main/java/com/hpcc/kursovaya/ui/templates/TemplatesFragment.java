@@ -19,9 +19,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +42,7 @@ import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
 import com.hpcc.kursovaya.dao.query.DBManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmResults;
@@ -101,6 +104,9 @@ public class TemplatesFragment extends Fragment {
             }
         });
 
+
+
+        final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
         final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
         EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
         textSearch.addTextChangedListener(new TextWatcher() {
@@ -111,23 +117,21 @@ public class TemplatesFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.clear();
+                scheduleWeekList.clear();
                 adapter.notifyDataSetChanged();
-
                 if (s.toString().isEmpty()){
-                    scheduleWeekList = DBManager.copyObjectFromRealm(DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME));
+                    List<TemplateScheduleWeek> copyList = DBManager.copyObjectFromRealm(DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME));
+                    scheduleWeekList.addAll(copyList);
                 } else {
-                    scheduleWeekList.clear();
-                    final RealmResults<TemplateScheduleWeek> groupAll = DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME);
+                    final RealmResults<TemplateScheduleWeek> subjectAll = DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME);
 
-                    for (TemplateScheduleWeek templateScheduleWeek : groupAll){
-                        if (templateScheduleWeek.getName().trim().toLowerCase().contains(s.toString().trim().toLowerCase())){
-                            scheduleWeekList.add(DBManager.copyObjectFromRealm(templateScheduleWeek));
+                    for (TemplateScheduleWeek tmpl : subjectAll){
+                        if (tmpl.getName().trim().toLowerCase().contains(s.toString().trim().toLowerCase())){
+                            scheduleWeekList.add(DBManager.copyObjectFromRealm(tmpl));
                         }
                     }
                 }
-
-                adapter.addAll(scheduleWeekList);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -135,8 +139,26 @@ public class TemplatesFragment extends Fragment {
 
             }
         });
-        scheduleWeekList = DBManager.copyObjectFromRealm(
-                DBManager.readAll(TemplateScheduleWeek.class));
+        ImageButton turnOffSearch = toolbarSearch.findViewById(R.id.turnOff_search);
+        ImageButton clearButton = toolbarSearch.findViewById(R.id.clear_search);
+        clearButton.setOnClickListener(v -> {
+            textSearch.setText("");
+            scheduleWeekList.clear();
+            scheduleWeekList.addAll(DBManager.copyObjectFromRealm(DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME)));
+            adapter.notifyDataSetChanged();
+        });
+        turnOffSearch.setOnClickListener(v ->{
+            toolbar.setVisibility(View.VISIBLE);
+            toolbarSearch.setVisibility(View.GONE);
+            scheduleWeekList.clear();
+            scheduleWeekList.addAll(DBManager.copyObjectFromRealm(DBManager.readAll(TemplateScheduleWeek.class, ConstantApplication.NAME)));
+            adapter.notifyDataSetChanged();
+            hideKeyboardFrom(getActivity(),root);
+        });
+
+        scheduleWeekList = new ArrayList<>();
+        scheduleWeekList.addAll(DBManager.copyObjectFromRealm(
+                DBManager.readAll(TemplateScheduleWeek.class)));
         adapter = new TemplateListAdapter(getActivity(), R.layout.list_view_item_template, scheduleWeekList);
         listView.setAdapter(adapter);
 
@@ -289,5 +311,11 @@ public class TemplatesFragment extends Fragment {
             }
         });
         alert.show();
+    }
+
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

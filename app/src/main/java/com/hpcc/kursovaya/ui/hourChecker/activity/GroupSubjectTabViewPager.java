@@ -7,6 +7,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.hpcc.kursovaya.ui.schedule.DayViewPager.DayViewFragment;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class GroupSubjectTabViewPager extends FragmentPagerAdapter {
     final int PAGE_COUNT = 3;
 

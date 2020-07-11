@@ -21,10 +21,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -85,6 +87,7 @@ public class SubjectsFragment extends Fragment {
                     .append(" ",new ImageSpan(getActivity(),R.mipmap.ic_add_white),0);
             listEmpty.setText(builder);
             Context context = getActivity();
+
             final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
             final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
             EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
@@ -96,13 +99,12 @@ public class SubjectsFragment extends Fragment {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    adapter.clear();
+                    subjectList.clear();
                     adapter.notifyDataSetChanged();
-
                     if (s.toString().isEmpty()){
-                        subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantApplication.NAME));
+                        List<Subject> copyList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantApplication.NAME));
+                        subjectList.addAll(copyList);
                     } else {
-                        subjectList.clear();
                         final RealmResults<Subject> subjectAll = DBManager.readAll(Subject.class, ConstantApplication.NAME);
 
                         for (Subject subject : subjectAll){
@@ -111,14 +113,29 @@ public class SubjectsFragment extends Fragment {
                             }
                         }
                     }
-
-                    adapter.addAll(subjectList);
+                    adapter.notifyDataSetChanged();
                 }
 
                 @Override
                 public void afterTextChanged(Editable s) {
 
                 }
+            });
+            ImageButton turnOffSearch = toolbarSearch.findViewById(R.id.turnOff_search);
+            ImageButton clearButton = toolbarSearch.findViewById(R.id.clear_search);
+            clearButton.setOnClickListener(v -> {
+                textSearch.setText("");
+                subjectList.clear();
+                subjectList.addAll(DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantApplication.NAME)));
+                adapter.notifyDataSetChanged();
+            });
+            turnOffSearch.setOnClickListener(v ->{
+                toolbar.setVisibility(View.VISIBLE);
+                toolbarSearch.setVisibility(View.GONE);
+                subjectList.clear();
+                subjectList.addAll(DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantApplication.NAME)));
+                adapter.notifyDataSetChanged();
+                hideKeyboardFrom(getActivity(),root);
             });
             FloatingActionButton button = root.findViewById(R.id.fab);
             button.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +154,9 @@ public class SubjectsFragment extends Fragment {
                 }
             });
 
-            subjectList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantApplication.NAME));
+            subjectList = new ArrayList<>();
+            List<Subject> copyList = DBManager.copyObjectFromRealm(DBManager.readAll(Subject.class, ConstantApplication.NAME));
+            subjectList.addAll(copyList);
             adapter = new SubjectListAdapter(getActivity(), R.layout.list_view_item_subject, subjectList);
             listView.setAdapter(adapter);
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -295,6 +314,11 @@ public class SubjectsFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.menu_subject, menu);
+    }
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override

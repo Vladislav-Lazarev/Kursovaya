@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.EntityI;
@@ -125,6 +126,15 @@ public class TemplateScheduleWeek extends RealmObject implements EntityI<Templat
             if (this.equals(entity)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        TemplateScheduleWeek templateScheduleWeek = (TemplateScheduleWeek) obj;
+        if(this.id == templateScheduleWeek.id){
+            return true;
         }
         return false;
     }

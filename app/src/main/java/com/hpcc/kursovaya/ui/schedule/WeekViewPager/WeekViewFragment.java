@@ -353,7 +353,7 @@ public class WeekViewFragment extends Fragment {
                         int classRes = getResources().getIdentifier(className.toString(),"id",getActivity().getPackageName());
                         int classNumRes = getResources().getIdentifier(classNumber.toString(),"id",getActivity().getPackageName());
                         TextView classNumberTextV = view.findViewById(classNumRes);
-                        classesButtonWrapperList.add(new ClassesButtonWrapper((Button)view.findViewById(classRes),classNumberTextV,getContext()));
+                        classesButtonWrapperList.add(new ClassesButtonWrapper((Button)view.findViewById(classRes),classNumberTextV,getContext(), (WeekViewFragment) thisFragment));
                         classesButtonWrapperList.get(classHour).getBtn().setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -845,6 +845,10 @@ public class WeekViewFragment extends Fragment {
                 }
             }
         }
+    }
+
+    public void refreshGrid(){
+        refreshGrid(firstDayOfWeek,firstDayOfWeek.plusDays(6).withHourOfDay(23).withMinuteOfHour(59));
     }
 
     public void refreshGrid(DateTime from, DateTime to){

@@ -21,10 +21,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -42,6 +44,7 @@ import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
 import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateScheduleWeek;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
@@ -86,6 +89,9 @@ public class GroupsFragment extends Fragment {
             builder.append(getString(R.string.emprty_list))
                     .append(" ",new ImageSpan(getActivity(),R.mipmap.ic_add_white),0);
             listEmpty.setText(builder);
+
+
+            final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
             final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
             EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
             textSearch.addTextChangedListener(new TextWatcher() {
@@ -96,23 +102,21 @@ public class GroupsFragment extends Fragment {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    adapter.clear();
+                    groupList.clear();
                     adapter.notifyDataSetChanged();
-
                     if (s.toString().isEmpty()){
-                        groupList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantApplication.NAME));
+                        List<Group> copyList = DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantApplication.NAME));
+                        groupList.addAll(copyList);
                     } else {
-                        groupList.clear();
-                        final RealmResults<Group> groupAll = DBManager.readAll(Group.class, ConstantApplication.NAME);
+                        final RealmResults<Group> subjectAll = DBManager.readAll(Group.class, ConstantApplication.NAME);
 
-                        for (Group group : groupAll){
-                            if (group.getName().trim().toLowerCase().contains(s.toString().trim().toLowerCase())){
-                                groupList.add(DBManager.copyObjectFromRealm(group));
+                        for (Group grp : subjectAll){
+                            if (grp.getName().trim().toLowerCase().contains(s.toString().trim().toLowerCase())){
+                                groupList.add(DBManager.copyObjectFromRealm(grp));
                             }
                         }
                     }
-
-                    adapter.addAll(groupList);
+                    adapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -120,12 +124,29 @@ public class GroupsFragment extends Fragment {
 
                 }
             });
-            groupList = DBManager.copyObjectFromRealm(
-                    DBManager.readAll(Group.class));
+            ImageButton turnOffSearch = toolbarSearch.findViewById(R.id.turnOff_search);
+            ImageButton clearButton = toolbarSearch.findViewById(R.id.clear_search);
+            clearButton.setOnClickListener(v -> {
+                textSearch.setText("");
+                groupList.clear();
+                groupList.addAll(DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantApplication.NAME)));
+                adapter.notifyDataSetChanged();
+            });
+            turnOffSearch.setOnClickListener(v ->{
+                toolbar.setVisibility(View.VISIBLE);
+                toolbarSearch.setVisibility(View.GONE);
+                groupList.clear();
+                groupList.addAll(DBManager.copyObjectFromRealm(DBManager.readAll(Group.class, ConstantApplication.NAME)));
+                adapter.notifyDataSetChanged();
+                hideKeyboardFrom(getActivity(),root);
+            });
+
+            groupList =  new ArrayList<>();
+            groupList.addAll(DBManager.copyObjectFromRealm(
+                    DBManager.readAll(Group.class)));
             adapter = new GroupListAdapter(getActivity(), R.layout.list_view_item_group, groupList);
             listView.setAdapter(adapter);
 
-            final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
             FloatingActionButton button = root.findViewById(R.id.fab);
             Context context = getActivity();
             button.setOnClickListener(new View.OnClickListener() {
@@ -453,6 +474,12 @@ public class GroupsFragment extends Fragment {
         parent.setGravity(Gravity.CENTER_HORIZONTAL);
         View leftSpacer = parent.getChildAt(1);
         leftSpacer.setVisibility(View.GONE);
+    }
+
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void prepareDeleteDialog(final ActionMode mode) {

@@ -13,12 +13,15 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -143,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DateTime dateFrom = DateTime.now().withMillisOfDay(0);
     private DateTime dateTo = DateTime.now().withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).withMillisOfSecond(999);
+    private boolean isImportSuccesfull;
 
     public void setToolbarSearch(Toolbar toolbarSearch) {
         this.toolbarSearch = toolbarSearch;
@@ -253,7 +257,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void setCurrentViewSelected(int currentViewSelected) {
         this.currentViewSelected = currentViewSelected;
     }
-
 
     private void prepareModeSelection() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -658,14 +661,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 && !from.isBefore(to)) {
             isDatesCorrect = false;
         }
-        if (isDatesCorrect) {
-            progressBarDialog.show();
-            t.start();
-        } else {
-            dialog.dismiss();
-            prepareReporDatePicker();
-            Toast.makeText(getApplicationContext(), R.string.popup_dates_wrong, Toast.LENGTH_LONG).show();
-        }
+            if (isDatesCorrect) {
+                progressBarDialog.show();
+                t.start();
+            } else {
+                dialog.dismiss();
+                prepareReporDatePicker();
+                Toast.makeText(getApplicationContext(), R.string.popup_dates_wrong, Toast.LENGTH_LONG).show();
+            }
     }
 
     private void listenerSpinnerSpeciality(Spinner spinner, Spinner spinnerCourse, List<Speciality> specialities) {
@@ -705,65 +708,65 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-        dialog.setProgress(10);
-        StringBuilder reportName = new StringBuilder("/report")
-                .append(fileNameFormat.format(DateTime.now().toDate()))
-                .append(".pdf");
+            dialog.setProgress(10);
+            StringBuilder reportName = new StringBuilder("/report")
+                    .append(fileNameFormat.format(DateTime.now().toDate()))
+                    .append(".pdf");
 
-        String existstoragedir = getExternalFilesDir(null).getAbsolutePath() + reportName.toString();
-        File file = new File(existstoragedir);
+            String existstoragedir = getExternalFilesDir(null).getAbsolutePath() + reportName.toString();
+            File file = new File(existstoragedir);
 
 
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        dialog.setProgress(20);
-        String FONT = "/assets/fonts/arial.ttf";
-        BaseFont bf = null;
-        try {
-            bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Font fontSmall = new Font(bf, 10, Font.NORMAL);
-        Document document = new Document();
-        PdfWriter writer = null;
-        try {
-            writer = PdfWriter.getInstance(document, new FileOutputStream(file.getAbsoluteFile()));
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        document.open();
-        document.setPageSize(PageSize.A4);
-        dialog.setProgress(30);
-        if(courseSpinner.getSelectedItem().toString().equals(getResources().getString(R.string.all_courses))){
-            for(int i=1; i<5;i++){
-                genDocument(document,i,fontSmall,speciality);
-                document.newPage();
-                dialog.setProgress(30+(i*70/5));
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } else {
-            genDocument(document,Integer.parseInt(courseSpinner.getSelectedItem().toString()),fontSmall,speciality);
-        }
-        dialog.setProgress(100);
-        document.close();
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(FileProvider.getUriForFile(MainActivity.this,BuildConfig.APPLICATION_ID+".provider",file),"application/pdf");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        Intent intentOpen = Intent.createChooser(intent,getString(R.string.open_pdf));
-        try {
-            startActivity(intentOpen);
-        } catch (ActivityNotFoundException e) {
-            Log.e(TAG, e.toString());
-        }
+            dialog.setProgress(20);
+            String FONT = "/assets/fonts/arial.ttf";
+            BaseFont bf = null;
+            try {
+                bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Font fontSmall = new Font(bf, 10, Font.NORMAL);
+            Document document = new Document();
+            PdfWriter writer = null;
+            try {
+                writer = PdfWriter.getInstance(document, new FileOutputStream(file.getAbsoluteFile()));
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            document.open();
+            document.setPageSize(PageSize.A4);
+            dialog.setProgress(30);
+            if(courseSpinner.getSelectedItem().toString().equals(getResources().getString(R.string.all_courses))){
+                for(int i=1; i<5;i++){
+                    genDocument(document,i,fontSmall,speciality);
+                    document.newPage();
+                    dialog.setProgress(30+(i*70/5));
+                }
+            } else {
+                genDocument(document,Integer.parseInt(courseSpinner.getSelectedItem().toString()),fontSmall,speciality);
+            }
+            dialog.setProgress(100);
+            document.close();
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(FileProvider.getUriForFile(MainActivity.this,BuildConfig.APPLICATION_ID+".provider",file),"application/pdf");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Intent intentOpen = Intent.createChooser(intent,getString(R.string.open_pdf));
+            try {
+                startActivity(intentOpen);
+            } catch (ActivityNotFoundException e) {
+                Log.e(TAG, e.toString());
+            }
     }
 
     private void genDocument(Document document, int courseNumber, Font fontSmall, Speciality speciality){
@@ -791,136 +794,136 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", LocaleManager.getLocale(getResources()));
-        Paragraph paragraphCourse = new Paragraph();
-        paragraphCourse.setSpacingAfter(32);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", LocaleManager.getLocale(getResources()));
+            Paragraph paragraphCourse = new Paragraph();
+            paragraphCourse.setSpacingAfter(32);
 
-        Chunk course = new Chunk(getString(R.string.courseLabelPDF) + " " + courseNumber, fontSmall);
-        paragraphCourse.add(course);
-        paragraphCourse.setAlignment(Element.ALIGN_CENTER);
+            Chunk course = new Chunk(getString(R.string.courseLabelPDF) + " " + courseNumber, fontSmall);
+            paragraphCourse.add(course);
+            paragraphCourse.setAlignment(Element.ALIGN_CENTER);
 
-        Paragraph paragraphSpeciality = new Paragraph();
-        paragraphSpeciality.setSpacingAfter(32);
+            Paragraph paragraphSpeciality = new Paragraph();
+            paragraphSpeciality.setSpacingAfter(32);
 
-        Chunk specialityLabel = new Chunk(getString(R.string.specialityLabelPDF) + " " + speciality.getName(), fontSmall);
-        paragraphSpeciality.add(specialityLabel);
-        paragraphSpeciality.setAlignment(Element.ALIGN_CENTER);
-        try {
-            document.add(paragraphCourse);
-            document.add(paragraphSpeciality);
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        }
+            Chunk specialityLabel = new Chunk(getString(R.string.specialityLabelPDF) + " " + speciality.getName(), fontSmall);
+            paragraphSpeciality.add(specialityLabel);
+            paragraphSpeciality.setAlignment(Element.ALIGN_CENTER);
+            try {
+                document.add(paragraphCourse);
+                document.add(paragraphSpeciality);
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            }
 
-        DateTime currentDate = DateTime.now();
+            DateTime currentDate = DateTime.now();
 
-        Paragraph paragraphDates = new Paragraph();
-        paragraphDates.setIndentationLeft(100f);
-        paragraphDates.setIndentationRight(100f);
-        paragraphDates.setSpacingAfter(32);
-        Chunk glue = new Chunk(new VerticalPositionMark());
-        Phrase dates = new Phrase("", fontSmall);
+            Paragraph paragraphDates = new Paragraph();
+            paragraphDates.setIndentationLeft(100f);
+            paragraphDates.setIndentationRight(100f);
+            paragraphDates.setSpacingAfter(32);
+            Chunk glue = new Chunk(new VerticalPositionMark());
+            Phrase dates = new Phrase("", fontSmall);
 
-        dates.add(getString(R.string.creationDatePDF) + " " + simpleDateFormat.format(currentDate.toDate()));
-        dates.add(glue);
-        dates.add(getString(R.string.periodLabelPDF) + " " + simpleDateFormat.format(dateFrom.toDate()) + " - " + simpleDateFormat.format(dateTo.toDate()));
-        paragraphDates.add(dates);
-        try {
-            document.add(paragraphDates);
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        }
-        if(academicHourList.size()!=0) {
-            groupList = new ArrayList<>(new LinkedHashSet<>(groupList));
-            subjectList = new ArrayList<>(new LinkedHashSet<>(subjectList));
+            dates.add(getString(R.string.creationDatePDF) + " " + simpleDateFormat.format(currentDate.toDate()));
+            dates.add(glue);
+            dates.add(getString(R.string.periodLabelPDF) + " " + simpleDateFormat.format(dateFrom.toDate()) + " - " + simpleDateFormat.format(dateTo.toDate()));
+            paragraphDates.add(dates);
+            try {
+                document.add(paragraphDates);
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            }
+            if(academicHourList.size()!=0) {
+                groupList = new ArrayList<>(new LinkedHashSet<>(groupList));
+                subjectList = new ArrayList<>(new LinkedHashSet<>(subjectList));
 
-            Map<Group, List<AcademicHour>> academicHoursOfGroup = new HashMap<>();
-            for (Group group : groupList) {
-                List<AcademicHour> academicHours = new ArrayList<>();
-                for (AcademicHour academicHour : academicHourList) {
-                    TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
-                    if (templateAcademicHour.getGroup() != null && group.equals(templateAcademicHour.getGroup())) {
-                        academicHours.add(academicHour);
+                Map<Group, List<AcademicHour>> academicHoursOfGroup = new HashMap<>();
+                for (Group group : groupList) {
+                    List<AcademicHour> academicHours = new ArrayList<>();
+                    for (AcademicHour academicHour : academicHourList) {
+                        TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+                        if (templateAcademicHour.getGroup() != null && group.equals(templateAcademicHour.getGroup())) {
+                            academicHours.add(academicHour);
+                        }
+                    }
+                    academicHoursOfGroup.put(group, academicHours);
+                }
+
+
+                PdfPTable table = new PdfPTable(groupList.size() + 1);
+                float[] relWidths = new float[groupList.size() + 1];
+                relWidths[0] = 12f;
+                for (int i = 1; i < groupList.size() + 1; i++) {
+                    relWidths[i] = 2f;
+                }
+                try {
+                    table.setWidths(relWidths);
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+
+
+                PdfPCell cellDiscipline = new PdfPCell(new Phrase(getResources().getString(R.string.tableDisciplineHeader), fontSmall));
+                cellDiscipline.setRowspan(2);
+                cellDiscipline.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cellDiscipline.setVerticalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cellDiscipline);
+                PdfPCell cellGroupHeader = new PdfPCell(new Phrase(getResources().getString(R.string.tableGroupHeader), fontSmall));
+                cellGroupHeader.setColspan(groupList.size());
+                cellGroupHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cellGroupHeader.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                table.addCell(cellGroupHeader);
+
+                for (int i = 0; i < groupList.size(); i++) {
+                    PdfPCell cellGroupName = new PdfPCell(new Phrase(groupList.get(i).getName(), fontSmall));
+                    cellGroupName.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellGroupName.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    table.addCell(cellGroupName);
+                }
+                for (int i = 0; i < subjectList.size(); i++) {
+                    PdfPTable innerTable = new PdfPTable(2);
+                    PdfPCell subjectCell = new PdfPCell(new Phrase(subjectList.get(i).getName(), fontSmall));
+                    subjectCell.setRowspan(4);
+                    subjectCell.setBorder(Rectangle.NO_BORDER);
+                    innerTable.addCell(subjectCell);
+                    innerTable.addCell(new Phrase(getResources().getString(R.string.tablePlanHeader), fontSmall));
+                    innerTable.addCell(new Phrase(getResources().getString(R.string.tableFactHeader), fontSmall));
+                    innerTable.addCell(new Phrase(getResources().getString(R.string.tableCanceledHeader), fontSmall));
+                    innerTable.addCell(new Phrase(getResources().getString(R.string.tableRestHeader), fontSmall));
+                    PdfPCell inOutPadding = new PdfPCell(innerTable);
+                    inOutPadding.setPadding(0);
+                    table.addCell(inOutPadding);
+                    for (int j = 0; j < groupList.size(); j++) {
+                        PdfPTable hoursTable = new PdfPTable(1);
+                        int planHours = groupList.get(j).getPlanHours(subjectList.get(i), academicHoursOfGroup.get(groupList.get(j)));
+                        int factHours = groupList.get(j).getReadHours(subjectList.get(i), academicHoursOfGroup.get(groupList.get(j)));
+                        int cancelledHours = groupList.get(j).getCanceledHours(subjectList.get(i), academicHoursOfGroup.get(groupList.get(j)));
+                        hoursTable.addCell(new Phrase(Integer.toString(planHours)/*plan hours*/, fontSmall));
+                        hoursTable.addCell(new Phrase(Integer.toString(factHours)/*fact hours*/, fontSmall));
+                        hoursTable.addCell(new Phrase(Integer.toString(cancelledHours)/*cancelled hours*/, fontSmall));
+                        hoursTable.addCell(new Phrase(Integer.toString(planHours - factHours - cancelledHours)/*Rest hours hours*/, fontSmall));
+                        PdfPCell temp = new PdfPCell((hoursTable));
+                        temp.setPadding(0);
+                        table.addCell(temp);
                     }
                 }
-                academicHoursOfGroup.put(group, academicHours);
-            }
 
-
-            PdfPTable table = new PdfPTable(groupList.size() + 1);
-            float[] relWidths = new float[groupList.size() + 1];
-            relWidths[0] = 12f;
-            for (int i = 1; i < groupList.size() + 1; i++) {
-                relWidths[i] = 2f;
-            }
-            try {
-                table.setWidths(relWidths);
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
-
-
-            PdfPCell cellDiscipline = new PdfPCell(new Phrase(getResources().getString(R.string.tableDisciplineHeader), fontSmall));
-            cellDiscipline.setRowspan(2);
-            cellDiscipline.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cellDiscipline.setVerticalAlignment(Element.ALIGN_CENTER);
-            table.addCell(cellDiscipline);
-            PdfPCell cellGroupHeader = new PdfPCell(new Phrase(getResources().getString(R.string.tableGroupHeader), fontSmall));
-            cellGroupHeader.setColspan(groupList.size());
-            cellGroupHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cellGroupHeader.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table.addCell(cellGroupHeader);
-
-            for (int i = 0; i < groupList.size(); i++) {
-                PdfPCell cellGroupName = new PdfPCell(new Phrase(groupList.get(i).getName(), fontSmall));
-                cellGroupName.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cellGroupName.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                table.addCell(cellGroupName);
-            }
-            for (int i = 0; i < subjectList.size(); i++) {
-                PdfPTable innerTable = new PdfPTable(2);
-                PdfPCell subjectCell = new PdfPCell(new Phrase(subjectList.get(i).getName(), fontSmall));
-                subjectCell.setRowspan(4);
-                subjectCell.setBorder(Rectangle.NO_BORDER);
-                innerTable.addCell(subjectCell);
-                innerTable.addCell(new Phrase(getResources().getString(R.string.tablePlanHeader), fontSmall));
-                innerTable.addCell(new Phrase(getResources().getString(R.string.tableFactHeader), fontSmall));
-                innerTable.addCell(new Phrase(getResources().getString(R.string.tableCanceledHeader), fontSmall));
-                innerTable.addCell(new Phrase(getResources().getString(R.string.tableRestHeader), fontSmall));
-                PdfPCell inOutPadding = new PdfPCell(innerTable);
-                inOutPadding.setPadding(0);
-                table.addCell(inOutPadding);
-                for (int j = 0; j < groupList.size(); j++) {
-                    PdfPTable hoursTable = new PdfPTable(1);
-                    int planHours = groupList.get(j).getPlanHours(subjectList.get(i), academicHoursOfGroup.get(groupList.get(j)));
-                    int factHours = groupList.get(j).getReadHours(subjectList.get(i), academicHoursOfGroup.get(groupList.get(j)));
-                    int cancelledHours = groupList.get(j).getCanceledHours(subjectList.get(i), academicHoursOfGroup.get(groupList.get(j)));
-                    hoursTable.addCell(new Phrase(Integer.toString(planHours)/*plan hours*/, fontSmall));
-                    hoursTable.addCell(new Phrase(Integer.toString(factHours)/*fact hours*/, fontSmall));
-                    hoursTable.addCell(new Phrase(Integer.toString(cancelledHours)/*cancelled hours*/, fontSmall));
-                    hoursTable.addCell(new Phrase(Integer.toString(planHours - factHours - cancelledHours)/*Rest hours hours*/, fontSmall));
-                    PdfPCell temp = new PdfPCell((hoursTable));
-                    temp.setPadding(0);
-                    table.addCell(temp);
+                try {
+                    document.add(table);
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Paragraph thereIsNoGroups = new Paragraph();
+                Chunk noSuitableGroups = new Chunk(getString(R.string.there_is_no_groups), fontSmall);
+                thereIsNoGroups.add(noSuitableGroups);
+                thereIsNoGroups.setAlignment(Element.ALIGN_CENTER);
+                try {
+                    document.add(thereIsNoGroups);
+                } catch (DocumentException e) {
+                    e.printStackTrace();
                 }
             }
-
-            try {
-                document.add(table);
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Paragraph thereIsNoGroups = new Paragraph();
-            Chunk noSuitableGroups = new Chunk(getString(R.string.there_is_no_groups), fontSmall);
-            thereIsNoGroups.add(noSuitableGroups);
-            thereIsNoGroups.setAlignment(Element.ALIGN_CENTER);
-            try {
-                document.add(thereIsNoGroups);
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 
@@ -1073,6 +1076,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         progressBarDialog.setTitle(getString(R.string.progress_importing_dialog));
         progressBarDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 
+        isImportSuccesfull = false;
         progressBarDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
@@ -1094,6 +1098,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Thread t = new Thread(() -> {
             onClickAcceptImportTemplates(progressBarDialog, isUpperTemplate);
             progressBarDialog.dismiss();
+            if(isImportSuccesfull){
+                dialog.dismiss();
+            }
+            isImportSuccesfull = false;
         });
         DateTime from = dateFrom;
         DateTime to = dateTo;
@@ -1117,130 +1125,132 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         /*DatePicker dateFromPicker = importTemplates.findViewById(R.id.dateFromPicker);
         DatePicker dateToPicker = importTemplates.findViewById(R.id.dateToPicker);*/
 //        TemplateScheduleWeek upperTemplate = DBManager.copyObjectFromRealm(DBManager.read(TemplateScheduleWeek.class,ConstantApplication.ID,this.upperTemplate.getId()));
-        //      TemplateScheduleWeek bottomTemplate = DBManager.copyObjectFromRealm(DBManager.read(TemplateScheduleWeek.class,ConstantApplication.ID,this.bottomTemplate.getId()));
+  //      TemplateScheduleWeek bottomTemplate = DBManager.copyObjectFromRealm(DBManager.read(TemplateScheduleWeek.class,ConstantApplication.ID,this.bottomTemplate.getId()));
         List<TemplateAcademicHour> templateListUpper = upperTemplate.getTemplateAcademicHourList();
         List<TemplateAcademicHour> templateListBottom = bottomTemplate.getTemplateAcademicHourList();
         DateTime from = dateFrom;
         DateTime to = dateTo;
 
-        int weekCount = countWeeks(from,to);
-        List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(from.toDate(),to.toDate()));
-        Collections.sort(academicHours, (o1, o2) -> {
-            if (o1.getDate() == null || o2.getDate() == null)
-                return 0;
-            return o1.getDate().compareTo(o2.getDate());
-        });
-        dialog.setProgress(10);
-        boolean isUpperCopy = isUpperTemplate;
-        for(int i = 0; i<weekCount;i++){
-            if(isUpperCopy) {
-                for (int j = 0; j<academicHours.size();j++) {
-                    AcademicHour academicHour = academicHours.get(j);
-                    TemplateAcademicHour templateAcHour = academicHour.getTemplateAcademicHour();
-                    for(TemplateAcademicHour templateAcademicHour:templateListUpper){
-                        if(templateAcademicHour.getNumberDayOfWeek()==templateAcHour.getNumberDayOfWeek() && templateAcademicHour.getNumberHalfPairButton() == templateAcHour.getNumberHalfPairButton()) {
-                            DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcHour.getId());
-                            DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
-                            academicHours.remove(academicHour);
+            int weekCount = countWeeks(from,to);
+            List<AcademicHour> academicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(from.toDate(),to.toDate()));
+            Collections.sort(academicHours, (o1, o2) -> {
+                if (o1.getDate() == null || o2.getDate() == null)
+                    return 0;
+                return o1.getDate().compareTo(o2.getDate());
+            });
+            dialog.setProgress(10);
+            boolean isUpperCopy = isUpperTemplate;
+            for(int i = 0; i<weekCount;i++){
+                if(isUpperCopy) {
+                    for (int j = 0; j<academicHours.size();j++) {
+                        AcademicHour academicHour = academicHours.get(j);
+                        TemplateAcademicHour templateAcHour = academicHour.getTemplateAcademicHour();
+                        for(TemplateAcademicHour templateAcademicHour:templateListUpper){
+                            if(templateAcademicHour.getNumberDayOfWeek()==templateAcHour.getNumberDayOfWeek() && templateAcademicHour.getNumberHalfPairButton() == templateAcHour.getNumberHalfPairButton()) {
+                                DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcHour.getId());
+                                DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+                                academicHours.remove(academicHour);
+                            }
+                        }
+                        if((new DateTime(academicHour.getDate())).getDayOfWeek()== DateTimeConstants.SUNDAY){
+                            isUpperCopy = false;
                         }
                     }
-                    if((new DateTime(academicHour.getDate())).getDayOfWeek()== DateTimeConstants.SUNDAY){
-                        isUpperCopy = false;
-                    }
-                }
-            } else {
-                for (int j = 0; j<academicHours.size();j++) {
-                    AcademicHour academicHour = academicHours.get(j);
-                    TemplateAcademicHour templateAcHour = academicHour.getTemplateAcademicHour();
-                    for(TemplateAcademicHour templateAcademicHour:templateListUpper){
-                        if(templateAcademicHour.getNumberDayOfWeek()==templateAcHour.getNumberDayOfWeek() && templateAcademicHour.getNumberHalfPairButton() == templateAcHour.getNumberHalfPairButton()) {
-                            DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcHour.getId());
-                            DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
-                            academicHours.remove(academicHour);
+                } else {
+                    for (int j = 0; j<academicHours.size();j++) {
+                        AcademicHour academicHour = academicHours.get(j);
+                        TemplateAcademicHour templateAcHour = academicHour.getTemplateAcademicHour();
+                        for(TemplateAcademicHour templateAcademicHour:templateListUpper){
+                            if(templateAcademicHour.getNumberDayOfWeek()==templateAcHour.getNumberDayOfWeek() && templateAcademicHour.getNumberHalfPairButton() == templateAcHour.getNumberHalfPairButton()) {
+                                DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateAcHour.getId());
+                                DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicHour.getId());
+                                academicHours.remove(academicHour);
+                            }
                         }
-                    }
-                    if((new DateTime(academicHour.getDate())).getDayOfWeek()== DateTimeConstants.SUNDAY){
-                        isUpperCopy = true;
+                        if((new DateTime(academicHour.getDate())).getDayOfWeek()== DateTimeConstants.SUNDAY){
+                            isUpperCopy = true;
+                        }
                     }
                 }
             }
-        }
-        dialog.setProgress(20);
-        DateTime current = new DateTime(from);
-        List<AcademicHour> academicHourList = new ArrayList<>();
-        for(int i = 0; i<weekCount;i++){
-            if(isUpperTemplate){
-                for(TemplateAcademicHour templateAcademicHour: templateListUpper){
-                    int dayDiff = templateAcademicHour.getNumberDayOfWeek() - (current.getDayOfWeek()-1);
-                    if(templateAcademicHour.getNumberDayOfWeek()>=(current.getDayOfWeek()-1) &&
-                            (current.plusDays(dayDiff).equals(to)||current.plusDays(dayDiff).isBefore(to))){
-                        current = current.plusDays(dayDiff);
-                        AcademicHour academicHour = new AcademicHour();
-                        TemplateAcademicHour templateAcademicHourCopy = new TemplateAcademicHour();
-                        templateAcademicHourCopy.setGroup(templateAcademicHour.getGroup());
-                        templateAcademicHourCopy.setDayAndPair(templateAcademicHour.getDayAndPairButton());
-                        templateAcademicHourCopy.setSubject(templateAcademicHour.getSubject());
-                        try {
-                            DBManager.write(templateAcademicHourCopy.createEntity());
-                        } catch (Exception e) {
-                            Log.d(TAG,"import templates" + e.toString());
-                        }
-                        int halfPair = templateAcademicHour.getNumberHalfPairButton();
-                        int numberPair = templateAcademicHour.getNumberHalfPairButton()/2;
-                        int numberHalf = (templateAcademicHour.getNumberHalfPairButton()%2==0) ? 0 : 1;
+            dialog.setProgress(20);
+            DateTime current = new DateTime(from);
+            List<AcademicHour> academicHourList = new ArrayList<>();
+            for(int i = 0; i<weekCount;i++){
+                if(isUpperTemplate){
+                    for(TemplateAcademicHour templateAcademicHour: templateListUpper){
+                        int dayDiff = templateAcademicHour.getNumberDayOfWeek() - (current.getDayOfWeek()-1);
+                        if(templateAcademicHour.getNumberDayOfWeek()>=(current.getDayOfWeek()-1) &&
+                                (current.plusDays(dayDiff).equals(to)||current.plusDays(dayDiff).isBefore(to))){
+                            current = current.plusDays(dayDiff);
+                            AcademicHour academicHour = new AcademicHour();
+                            TemplateAcademicHour templateAcademicHourCopy = new TemplateAcademicHour();
+                            templateAcademicHourCopy.setGroup(templateAcademicHour.getGroup());
+                            templateAcademicHourCopy.setDayAndPair(templateAcademicHour.getDayAndPairButton());
+                            templateAcademicHourCopy.setSubject(templateAcademicHour.getSubject());
+                            try {
+                                DBManager.write(templateAcademicHourCopy.createEntity());
+                            } catch (Exception e) {
+                                Log.d(TAG,"import templates" + e.toString());
+                            }
+                            int halfPair = templateAcademicHour.getNumberHalfPairButton();
+                            int numberPair = templateAcademicHour.getNumberHalfPairButton()/2;
+                            int numberHalf = (templateAcademicHour.getNumberHalfPairButton()%2==0) ? 0 : 1;
 
-                        current = current.withHourOfDay(ConstantApplication.timeArray[numberPair][numberHalf][0]).withMinuteOfHour(ConstantApplication.timeArray[numberPair][numberHalf][1])
-                                .withSecondOfMinute(0).withMillisOfSecond(0);
-                        academicHour.setDate(current.toDate());
-                        academicHour.setTemplateAcademicHour(templateAcademicHourCopy);
-                        academicHourList.add(academicHour);
-                    }
-                }
-                //current.dayOfWeek().withMaximumValue()
-                current = current.dayOfWeek().withMaximumValue().plusDays(1);
-                isUpperTemplate = false;
-            } else {
-                for(TemplateAcademicHour templateAcademicHour : templateListBottom){
-                    int dayDiff = templateAcademicHour.getNumberDayOfWeek() - (current.getDayOfWeek()-1);
-                    if(templateAcademicHour.getNumberDayOfWeek()>=(current.getDayOfWeek()-1) && (current.equals(to)||current.isBefore(to))){
-                        current = current.plusDays(dayDiff);
-                        AcademicHour academicHour = new AcademicHour();
-                        TemplateAcademicHour templateAcademicHourCopy = new TemplateAcademicHour();
-                        templateAcademicHourCopy.setGroup(templateAcademicHour.getGroup());
-                        templateAcademicHourCopy.setDayAndPair(templateAcademicHour.getDayAndPairButton());
-                        templateAcademicHourCopy.setSubject(templateAcademicHour.getSubject());
-                        try {
-                            DBManager.write(templateAcademicHourCopy.createEntity());
-                        } catch (Exception e) {
-                            Log.d(TAG,"import templates" + e.toString());
+                            current = current.withHourOfDay(ConstantApplication.timeArray[numberPair][numberHalf][0]).withMinuteOfHour(ConstantApplication.timeArray[numberPair][numberHalf][1])
+                                    .withSecondOfMinute(0).withMillisOfSecond(0);
+                            academicHour.setDate(current.toDate());
+                            academicHour.setTemplateAcademicHour(templateAcademicHourCopy);
+                            academicHourList.add(academicHour);
                         }
-                        int numberPair = templateAcademicHour.getNumberHalfPairButton()/2;
-                        int numberHalf = (templateAcademicHour.getNumberHalfPairButton()%2==0) ? 0 : 1;
-
-                        current = current.withHourOfDay(ConstantApplication.timeArray[numberPair][numberHalf][0]).withMinuteOfHour(ConstantApplication.timeArray[numberPair][numberHalf][1])
-                                .withSecondOfMinute(0).withMillisOfSecond(0);
-                        academicHour.setDate(current.toDate());
-                        academicHour.setTemplateAcademicHour(templateAcademicHourCopy);
-                        academicHourList.add(academicHour);
                     }
+                    //current.dayOfWeek().withMaximumValue()
+                    current = current.dayOfWeek().withMaximumValue().plusDays(1);
+                    isUpperTemplate = false;
+                } else {
+                    for(TemplateAcademicHour templateAcademicHour : templateListBottom){
+                        int dayDiff = templateAcademicHour.getNumberDayOfWeek() - (current.getDayOfWeek()-1);
+                        if(templateAcademicHour.getNumberDayOfWeek()>=(current.getDayOfWeek()-1) && (current.equals(to)||current.isBefore(to))){
+                            current = current.plusDays(dayDiff);
+                            AcademicHour academicHour = new AcademicHour();
+                            TemplateAcademicHour templateAcademicHourCopy = new TemplateAcademicHour();
+                            templateAcademicHourCopy.setGroup(templateAcademicHour.getGroup());
+                            templateAcademicHourCopy.setDayAndPair(templateAcademicHour.getDayAndPairButton());
+                            templateAcademicHourCopy.setSubject(templateAcademicHour.getSubject());
+                            try {
+                                DBManager.write(templateAcademicHourCopy.createEntity());
+                            } catch (Exception e) {
+                                Log.d(TAG,"import templates" + e.toString());
+                            }
+                            int numberPair = templateAcademicHour.getNumberHalfPairButton()/2;
+                            int numberHalf = (templateAcademicHour.getNumberHalfPairButton()%2==0) ? 0 : 1;
+
+                            current = current.withHourOfDay(ConstantApplication.timeArray[numberPair][numberHalf][0]).withMinuteOfHour(ConstantApplication.timeArray[numberPair][numberHalf][1])
+                                    .withSecondOfMinute(0).withMillisOfSecond(0);
+                            academicHour.setDate(current.toDate());
+                            academicHour.setTemplateAcademicHour(templateAcademicHourCopy);
+                            academicHourList.add(academicHour);
+                        }
+                    }
+                    current = current.dayOfWeek().withMaximumValue().plusDays(1);
+                    isUpperTemplate = true;
                 }
-                current = current.dayOfWeek().withMaximumValue().plusDays(1);
-                isUpperTemplate = true;
+                int finalI = i;
             }
-            int finalI = i;
-        }
-        dialog.setProgress(30);
-        int hoursWritten = 0;
-        for(AcademicHour academicHour : academicHourList){
-            try {
-                DBManager.write(academicHour.createEntityWithoutChecking());
-                academicHour.refreshAllNumberPair(null);
-                ++hoursWritten;
-                dialog.setProgress(30+getBarProgress(academicHourList.size(),hoursWritten));
-            } catch (Exception e) {
-                Log.e(TAG,"error when writing templates"+e.toString());
+            dialog.setProgress(30);
+            int hoursWritten = 0;
+            for(AcademicHour academicHour : academicHourList){
+                try {
+                    DBManager.write(academicHour.createEntityWithoutChecking());
+                    academicHour.refreshAllNumberPair(null);
+                    ++hoursWritten;
+                    dialog.setProgress(30+getBarProgress(academicHourList.size(),hoursWritten));
+                } catch (Exception e) {
+                    Log.e(TAG,"error when writing templates"+e.toString());
+                }
             }
-        }
+            
+            isImportSuccesfull = true;
 
     }
 

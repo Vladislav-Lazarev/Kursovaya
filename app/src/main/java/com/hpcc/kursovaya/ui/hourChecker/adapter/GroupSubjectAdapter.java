@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +46,7 @@ public class GroupSubjectAdapter extends DayClassAdapter {
     public void delete(Integer position) {
         super.delete(position);
         int pos = position;
+
       //  academicHourList.remove(pos);
         notifyDataSetChanged();
     }

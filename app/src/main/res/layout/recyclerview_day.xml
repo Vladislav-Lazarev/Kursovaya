@@ -40,8 +40,9 @@
                 android:id="@+id/groupName"
                 android:text="@string/day_fragment_no_group"
                 android:textSize="15sp"
+                android:layout_toEndOf="@id/numberPair"
                 android:layout_marginBottom="1dp"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
@@ -49,13 +50,14 @@
                 android:layout_below="@id/groupName"
                 android:text="@string/day_fragment_class_free"
                 android:textSize="15sp"
-                android:layout_marginStart="20dp"
+                android:layout_alignStart="@id/groupName"
                 android:layout_marginBottom="1dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/description"
-                android:layout_marginStart="20dp"
+
+                android:layout_alignStart="@id/groupName"
                 android:text="@string/day_fragment_class_no_description"
                 android:textSize="15sp"
                 android:layout_below="@id/subjectName"

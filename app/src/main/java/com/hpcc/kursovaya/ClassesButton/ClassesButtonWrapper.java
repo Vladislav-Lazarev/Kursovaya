@@ -15,12 +15,14 @@ import com.hpcc.kursovaya.dao.entity.schedule.AnotherEvent;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAnotherEvent;
 import com.hpcc.kursovaya.dao.query.DBManager;
+import com.hpcc.kursovaya.ui.schedule.WeekViewPager.WeekViewFragment;
 
 public class ClassesButtonWrapper {
     private Button btn;
     private TextView textNumber;
     private Context context;
     private Drawable drawableDef;
+    private WeekViewFragment fragment;
 
 
     private AnotherEvent anotherEvent;
@@ -45,11 +47,12 @@ public class ClassesButtonWrapper {
         this.context= context;
         drawableDef = btn.getBackground();
     }
-    public ClassesButtonWrapper(Button btn,TextView textNumber, Context context){
+    public ClassesButtonWrapper(Button btn,TextView textNumber, Context context, WeekViewFragment fragment){
         this.btn = btn;
         this.textNumber = textNumber;
         this.context= context;
         drawableDef = btn.getBackground();
+        this.fragment = fragment;
     }
 
     public void setTextNumber(String text){
@@ -111,6 +114,7 @@ public class ClassesButtonWrapper {
         btn.setText("");
         isSelected = false;
         textNumber.setText("");
+        fragment.refreshGrid();
     }
     public void clearButtonContentWithoutDeleting(){
         btn.setBackground(drawableDef);

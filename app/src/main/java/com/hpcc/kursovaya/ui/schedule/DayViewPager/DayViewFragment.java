@@ -348,15 +348,7 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
     }
 
     public void refreshGrid() {
-        List<AcademicHour> actualAcademicHours = DBManager.copyObjectFromRealm(DBManager.readAll(AcademicHour.class, "date", currentDate.toDate()));
-
-        for(AcademicHour academicHour:actualAcademicHours){
-            TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
-            EventAgregator event = new EventAgregator();
-            event.academicHour = academicHour;
-            academicHourList.set(templateAcademicHour.getNumberHalfPairButton(),event);
-        }
-        adapter.notifyDataSetChanged();
+        adapter.updateList(currentDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDate(),currentDate.toDate());
     }
 
     private class ActionModeCallback implements ActionMode.Callback{
@@ -615,8 +607,7 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
         for (int i = 0; i < selectedItemPositions.size(); i++) {
             adapter.delete((Integer) selectedItemPositions.get(i));
         }
-        adapter.notifyDataSetChanged();
-
+        adapter.updateList(currentDate.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDate(),currentDate.toDate());
         if (adapter.getItemCount() == 0)
             ((MainActivity)getActivity()).getToolbar().setVisibility(View.VISIBLE);
         mode.finish();
@@ -628,6 +619,7 @@ public class DayViewFragment extends Fragment implements DayClassAdapter.ItemCli
     @Override
     public void onResume() {
         super.onResume();
+        refreshGrid();
         if (isResumed() && !((MainActivity) getActivity()).isLanguageChanged()) {
             //((MainActivity)getActivity()).setWeeksFromCurrent();
             if (((MainActivity) getActivity()).isScheduleSelected()) {

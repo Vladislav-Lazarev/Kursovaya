@@ -361,6 +361,7 @@ public class HandleClassDialog extends DialogFragment {
                 mLastClickTime = SystemClock.elapsedRealtime();
                 if (classesButton!=null) {
                     classesButton.clearButtonContent();
+
                 } else if(dayClassAdapter!=null){
                     dayClassAdapter.delete(classHour);
                     dayClassAdapter.notifyDataSetChanged();

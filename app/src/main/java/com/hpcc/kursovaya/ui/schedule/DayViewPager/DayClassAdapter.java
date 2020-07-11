@@ -1,20 +1,32 @@
 package com.hpcc.kursovaya.ui.schedule.DayViewPager;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import androidx.appcompat.view.ActionMode;
+
 import android.graphics.Paint;
+import android.os.SystemClock;
 import android.util.SparseBooleanArray;
+import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.hpcc.kursovaya.ClassesButton.ClassesButtonWrapper;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Group;
@@ -24,8 +36,14 @@ import com.hpcc.kursovaya.dao.entity.schedule.AnotherEvent;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAcademicHour;
 import com.hpcc.kursovaya.dao.entity.schedule.template.TemplateAnotherEvent;
 import com.hpcc.kursovaya.dao.query.DBManager;
+import com.hpcc.kursovaya.ui.schedule.MonthViewPager.MonthViewAdapter;
+import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class DayClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -35,6 +53,7 @@ public class DayClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     protected ItemClickListener mClickListener;
     protected SparseBooleanArray selectedItems;
 
+
     public void delete(Integer position) {
        DayViewFragment.EventAgregator eventAgregator = academicHourList.get(position);
         if(eventAgregator!=null){
@@ -42,17 +61,38 @@ public class DayClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 AcademicHour academicHour = eventAgregator.academicHour;
                 int templateId =  academicHour.getTemplateAcademicHour().getId();
                 int academicId = academicHour.getId();
-                DBManager.delete(AcademicHour.class, ConstantApplication.ID, academicId);
+                DBManager.delete(AcademicHour.class, ConstantApplication.ID,academicId);
                 academicHour.refreshAllNumberPair(null);
-                DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID, templateId);
+                DBManager.delete(TemplateAcademicHour.class, ConstantApplication.ID,templateId);
             } else if(eventAgregator.anotherEvent!=null){
-                DBManager.delete(AnotherEvent.class, ConstantApplication.ID, eventAgregator.anotherEvent.getId());
-                DBManager.delete(TemplateAnotherEvent.class, ConstantApplication.ID, eventAgregator.anotherEvent.getTemplateAnotherEvent().getId());
+                DBManager.delete(TemplateAnotherEvent.class,ConstantApplication.ID,eventAgregator.anotherEvent.getTemplateAnotherEvent().getId());
+                DBManager.delete(AnotherEvent.class,ConstantApplication.ID,eventAgregator.anotherEvent.getId());
             }
             academicHourList.set(position,null);
             notifyDataSetChanged();
         }
 
+    }
+
+
+    public void updateList(Date from, Date to){
+        List<DayViewFragment.EventAgregator> academicHourList =Arrays.asList(new DayViewFragment.EventAgregator[10]);
+        List<AcademicHour> actualAcademicHours = DBManager.copyObjectFromRealm(AcademicHour.academicHourListFromPeriod(from,to));
+        List<AnotherEvent> actualAnotherEvent = DBManager.copyObjectFromRealm(AnotherEvent.anotherEventListFromPeriod(from,to));
+        for(AcademicHour academicHour:actualAcademicHours){
+            TemplateAcademicHour templateAcademicHour = academicHour.getTemplateAcademicHour();
+            DayViewFragment.EventAgregator event = new DayViewFragment.EventAgregator();
+            event.academicHour = academicHour;
+            academicHourList.set(templateAcademicHour.getNumberHalfPairButton(),event);
+        }
+        for(AnotherEvent anotherEvent:actualAnotherEvent){
+            TemplateAnotherEvent templateAnotherEvent = anotherEvent.getTemplateAnotherEvent();
+            DayViewFragment.EventAgregator event = new DayViewFragment.EventAgregator();
+            event.anotherEvent = anotherEvent;
+            academicHourList.set(templateAnotherEvent.getNumberHalfPairButton(),event);
+        }
+        this.academicHourList = academicHourList;
+        notifyDataSetChanged();
     }
 
 
@@ -75,6 +115,9 @@ public class DayClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return new ViewHolder(view);
     }
 
+
+
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder baseHolder, int position) {
         AcademicHour academicHour = null;
@@ -93,6 +136,7 @@ public class DayClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         String timeHeader = getCoupleHeader(couple, half);
         holder.timeHeader.setText(timeHeader);
+        holder.numberPair.setVisibility(View.GONE);
         holder.groupName.setText(context.getResources().getString(R.string.day_fragment_no_group));
         holder.subjectName.setText(context.getResources().getString(R.string.day_fragment_class_free));
         holder.description.setText(context.getResources().getString(R.string.day_fragment_class_no_description));

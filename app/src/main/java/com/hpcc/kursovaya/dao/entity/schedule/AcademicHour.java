@@ -443,8 +443,8 @@ public class AcademicHour extends RealmObject implements EntityI<AcademicHour>, 
         notificationBefore = in.readInt();
         isCompleted = (Boolean) in.readValue(null);
         isCanceled = (Boolean) in.readValue(null);
-        numberPair = in.readInt();
         numberAcademicHour = in.readInt();
+        numberPair = in.readInt();
     }
     public static final Creator<AcademicHour> CREATOR = new Creator<AcademicHour>() {
         @Override

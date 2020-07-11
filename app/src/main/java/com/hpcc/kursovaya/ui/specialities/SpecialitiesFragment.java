@@ -1,5 +1,6 @@
 package com.hpcc.kursovaya.ui.specialities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,10 +20,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,9 +40,11 @@ import com.hpcc.kursovaya.MainActivity;
 import com.hpcc.kursovaya.R;
 import com.hpcc.kursovaya.dao.constant.ConstantApplication;
 import com.hpcc.kursovaya.dao.entity.Speciality;
+import com.hpcc.kursovaya.dao.entity.Subject;
 import com.hpcc.kursovaya.dao.query.DBManager;
 import com.hpcc.kursovaya.ui.settings.language.LocaleManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmResults;
@@ -77,6 +82,7 @@ public class SpecialitiesFragment extends Fragment {
         builder.append(getString(R.string.emprty_list))
                 .append(" ",new ImageSpan(getActivity(),R.mipmap.ic_add_white),0);
         listEmpty.setText(builder);
+
         final Toolbar toolbar = ((MainActivity)getActivity()).getToolbar();
         final Toolbar toolbarSearch = ((MainActivity) getActivity()).getToolbarSearch();
         EditText textSearch = toolbarSearch.findViewById(R.id.textView_search);
@@ -88,29 +94,43 @@ public class SpecialitiesFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.clear();
+                specialityList.clear();
                 adapter.notifyDataSetChanged();
-
                 if (s.toString().isEmpty()){
-                    specialityList = DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class, ConstantApplication.NAME));
+                    List<Speciality> copyList = DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class, ConstantApplication.NAME));
+                    specialityList.addAll(copyList);
                 } else {
-                    specialityList.clear();
-                    final RealmResults<Speciality> specialityAll = DBManager.readAll(Speciality.class, ConstantApplication.NAME);
+                    final RealmResults<Speciality> subjectAll = DBManager.readAll(Speciality.class, ConstantApplication.NAME);
 
-                    for (Speciality speciality : specialityAll){
-                        if (speciality.getName().trim().toLowerCase().contains(s.toString().trim().toLowerCase())){
-                            specialityList.add(DBManager.copyObjectFromRealm(speciality));
+                    for (Speciality spec : subjectAll){
+                        if (spec.getName().trim().toLowerCase().contains(s.toString().trim().toLowerCase())){
+                            specialityList.add(DBManager.copyObjectFromRealm(spec));
                         }
                     }
                 }
-
-                adapter.addAll(specialityList);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
 
             }
+        });
+        ImageButton turnOffSearch = toolbarSearch.findViewById(R.id.turnOff_search);
+        ImageButton clearButton = toolbarSearch.findViewById(R.id.clear_search);
+        clearButton.setOnClickListener(v -> {
+            textSearch.setText("");
+            specialityList.clear();
+            specialityList.addAll(DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class, ConstantApplication.NAME)));
+            adapter.notifyDataSetChanged();
+        });
+        turnOffSearch.setOnClickListener(v ->{
+            toolbar.setVisibility(View.VISIBLE);
+            toolbarSearch.setVisibility(View.GONE);
+            specialityList.clear();
+            specialityList.addAll(DBManager.copyObjectFromRealm(DBManager.readAll(Speciality.class, ConstantApplication.NAME)));
+            adapter.notifyDataSetChanged();
+            hideKeyboardFrom(getActivity(),root);
         });
         addSpeciality.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,8 +142,9 @@ public class SpecialitiesFragment extends Fragment {
                 onClickPrepareAddSpeciality("", "");
             }
         });
-        specialityList = DBManager.copyObjectFromRealm(
-                DBManager.readAll(Speciality.class, ConstantApplication.NAME));
+        specialityList = new ArrayList<>();
+        specialityList.addAll(DBManager.copyObjectFromRealm(
+                DBManager.readAll(Speciality.class, ConstantApplication.NAME)));
         Log.d(TAG, "DBManager.copyObjectFromRealm = " + specialityList.toString());
 
         adapter = new SpecialityListAdapter(currentContext,R.layout.listview_item_specialties, specialityList);
@@ -256,6 +277,12 @@ public class SpecialitiesFragment extends Fragment {
         adapter.update(ConstantApplication.NAME);
         listEmpty.setVisibility(View.GONE);
         specialityLSV.setVisibility(View.VISIBLE);
+    }
+
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void prepareDeleteDialog(final ActionMode mode) {
