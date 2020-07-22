@@ -311,15 +311,12 @@ public class GroupsFragment extends Fragment {
                     value.add(Integer.parseInt(course));
                 }
 
+                groupList.clear();
 
-                List<Group> groupList = new ArrayList<>();
                 groupList.addAll(DBManager.copyObjectFromRealm(
                         DBManager.readAll(Group.class, fieldName, value)));
 
-
-                adapter.clear();
-
-                adapter.addAll(groupList);
+                adapter.notifyDataSetChanged();
             }
         });
         builder.setCancelable(false);

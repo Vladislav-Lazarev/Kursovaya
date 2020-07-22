@@ -431,16 +431,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 showOverflowMenu(true);
                 break;
             case R.id.nav_templates:
-                String specTag2 = getResources().getString(R.string.templatesTag);
-                Fragment oldFragment2 = manager.findFragmentByTag(specTag2);
-                backToCurrentDay.setVisibility(View.GONE);
-                currentDayText.setVisibility(View.GONE);
-                if (oldFragment2 != null) {
-                    transaction.replace(R.id.nav_host_fragment, oldFragment2);
-                    ((TemplatesFragment) oldFragment2).setActionBarTitle();
-                } else {
-                    transaction.add(R.id.nav_host_fragment, new TemplatesFragment());
-                }
+                transaction.add(R.id.nav_host_fragment, new TemplatesFragment());
                 isScheduleSelected = false;
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarSearch.setVisibility(View.GONE);
@@ -449,16 +440,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 showOverflowMenu(false);
                 break;
             case R.id.nav_groups:
-                String specTag3 = getResources().getString(R.string.groupsTag);
-                Fragment oldFragment3 = manager.findFragmentByTag(specTag3);
                 backToCurrentDay.setVisibility(View.GONE);
                 currentDayText.setVisibility(View.GONE);
-                if (oldFragment3 != null) {
-                    transaction.replace(R.id.nav_host_fragment, oldFragment3);
-                    ((GroupsFragment) oldFragment3).setActionBarTitle();
-                } else {
-                    transaction.add(R.id.nav_host_fragment, new GroupsFragment());
-                }
+                transaction.add(R.id.nav_host_fragment, new GroupsFragment());
                 isScheduleSelected = false;
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarSearch.setVisibility(View.GONE);
@@ -466,17 +450,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 searchButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_subjects:
-                String specTag4 = getResources().getString(R.string.subjectsTag);
-                Fragment oldFragment4 = manager.findFragmentByTag(specTag4);
-                backToCurrentDay.setVisibility(View.GONE);
-                currentDayText.setVisibility(View.GONE);
-                if (oldFragment4 != null) {
-                    transaction.replace(R.id.nav_host_fragment, oldFragment4);
-                    ((SubjectsFragment) oldFragment4).setActionBarTitle();
-
-                } else {
-                    transaction.add(R.id.nav_host_fragment, new SubjectsFragment());
-                }
+                transaction.add(R.id.nav_host_fragment, new SubjectsFragment());
                 isScheduleSelected = false;
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarSearch.setVisibility(View.GONE);
@@ -484,16 +458,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 searchButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_specialities:
-                String specTag6 = "Specialities";
-                Fragment oldFragment6 = manager.findFragmentByTag(specTag6);
-                backToCurrentDay.setVisibility(View.GONE);
-                currentDayText.setVisibility(View.GONE);
-                if(oldFragment6 != null){
-                    transaction.replace(R.id.nav_host_fragment,oldFragment6);
-                    ((SpecialitiesFragment) oldFragment6).setActionBarTitle();
-                } else {
-                    transaction.add(R.id.nav_host_fragment, new SpecialitiesFragment());
-                }
+                transaction.add(R.id.nav_host_fragment, new SpecialitiesFragment());
                 isScheduleSelected = false;
                 toolbar.setVisibility(View.VISIBLE);
                 toolbarSearch.setVisibility(View.GONE);
